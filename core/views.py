@@ -92,3 +92,8 @@ def product_preview(request, slug: str):
 
 	# Fallback to the generic preview template
 	return render(request, 'core/product_preview.html', context)
+
+
+def location(request):
+	"""Simple location/contact page. Can be enriched later with map or store hours."""
+	return render(request, 'core/location.html')
