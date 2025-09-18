@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Accueil — La Caverne des Monts{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'core/css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="container carousel-page">
+    <figure class="carousel carousel--clean" data-carousel aria-label="Galerie d'accueil">
+      <button class="nav prev" data-prev aria-label="Précédent">&#10094;</button>
+      <div class="slides">
+        <div class="slide active">
+          <img src="{% static 'core/img/slide1.png' %}?v=1" alt="Randonnée en montagne">
+        </div>
+        <div class="slide">
+          <img src="{% static 'core/img/slide2.png' %}?v=1" alt="Paysage outdoor">
+        </div>
+      </div>
+      <button class="nav next" data-next aria-label="Suivant">&#10095;</button>
+      <div class="indicators" data-indicators></div>
+    </figure>
+  </section>
+  <section class="container usp-wrap" aria-label="Garanties & services">
+    <ul class="usp-chips">
+      <li class="chip">
+        <span class="ico-wrap" aria-hidden="true">
+          <svg viewBox="0 0 24 24" class="ico"><path d="M13 7h5v5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 13a8 8 0 11-2.34-5.66L18 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div class="txt"><strong>Retour & Échange</strong> <small>en 3 jours</small></div>
+      </li>
+      <li class="chip">
+        <span class="ico-wrap" aria-hidden="true">
+          <svg viewBox="0 0 24 24" class="ico"><path d="M3 7h13l3 4v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="19" r="1.75" fill="currentColor"/><circle cx="17" cy="19" r="1.75" fill="currentColor"/></svg>
+        </span>
+        <div class="txt"><strong>Port offert</strong> <small>dès 99€ d'achat</small></div>
+      </li>
+      <li class="chip">
+        <span class="ico-wrap" aria-hidden="true">
+          <svg viewBox="0 0 24 24" class="ico"><path d="M12 17.27l5.18 3.04-1.64-5.81L20 10.5l-6-.5L12 4 10 10l-6 .5 4.46 3.99L6.82 20.3 12 17.27z" fill="currentColor"/></svg>
+        </span>
+        <div class="txt"><strong>Satisfait ou remboursé</strong></div>
+      </li>
+      <li class="chip">
+        <span class="ico-wrap" aria-hidden="true">
+          <svg viewBox="0 0 24 24" class="ico"><path d="M22 16.92v2a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 3.1 2 2 0 0 1 4.11 1h2a2 2 0 0 1 2 1.72 12.66 12.66 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.9 9.1a16 16 0 0 0 6 6l1.46-1.46a2 2 0 0 1 2.11-.45 12.66 12.66 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" fill="currentColor"/></svg>
+        </span>
+        <div class="txt"><strong>Besoin d'aide?</strong> <small>04 50 40 46 17</small></div>
+      </li>
+    </ul>
+  </section>
+  
+  <section class="container product-section" data-product-section aria-label="Produits">
+    <div class="pc-tabs" role="tablist" aria-label="Tri des produits">
+      <button class="pc-tab" role="tab" aria-selected="true" data-tab="popular">Populaire</button>
+      <button class="pc-tab" role="tab" aria-selected="false" data-tab="bestsellers">Meilleures ventes</button>
+    </div>
+    <div class="ps-panel" data-panel="popular">
+      <div class="catalog-grid">
+  <a class="product-card" href="{% url 'core:product_preview' 'veste-polaire-urbaine-noire-peak-mountain' %}?price=29,00">
+    <div class="thumb"><img src="{% static 'core/img/products/veste-polaire-urbaine-noire-peak-mountain/1-veste-polaire-urbaine-noire.png' %}" alt="Veste polaire urbaine noire Peak Mountain" loading="lazy" width="1000" height="1333" /></div>
+          <div class="meta">
+            <div class="name">Veste polaire urbaine noire Peak Mountain</div>
+            <div class="price">29,00 €</div>
+          </div>
+        </a>
+  <a class="product-card" href="{% url 'core:product_preview' 'blouson-softshell-homme-impermeable' %}?price=79,90">
+    <div class="thumb"><img src="{% static 'core/img/products/blouson-softshell-homme-impermeable/2-blouson-softshell-homme-bleu.png' %}" alt="Blouson softshell homme imperméable" loading="lazy" width="1000" height="1333" /></div>
+          <div class="meta">
+            <div class="name">Blouson softshell homme imperméable</div>
+            <div class="price">79,90 €</div>
+          </div>
+        </a>
+  <a class="product-card" href="{% url 'core:product_preview' 'veste-hybride-multi-matieres-femme' %}?price=89,00">
+    <div class="thumb"><img src="{% static 'core/img/products/veste-hybride-multi-matieres-femme/3-veste-hybride-femme-gris.png' %}" alt="Veste hybride multi-matières femme" loading="lazy" width="1000" height="1333" /></div>
+          <div class="meta">
+            <div class="name">Veste hybride multi-matières femme</div>
+            <div class="price">89,00 €</div>
+          </div>
+        </a>
+  <a class="product-card" href="{% url 'core:product_preview' 'veste-multi-matieres-femme-avec-doudoune' %}?price=89,00">
+    <div class="thumb"><img src="{% static 'core/img/products/veste-multi-matieres-femme-avec-doudoune/4-veste-multi-matieres-femme-noire.png' %}" alt="Veste multi-matières femme avec doudoune" loading="lazy" width="1000" height="1333" /></div>
+          <div class="meta">
+            <div class="name">Veste multi-matières femme avec doudoune</div>
+            <div class="price">89,00 €</div>
+          </div>
+        </a>
+  <a class="product-card" href="{% url 'core:product_preview' 'veste-tri-matieres-femme-blanche-capuche' %}?price=89,00">
+    <div class="thumb"><img src="{% static 'core/img/products/veste-tri-matieres-femme-blanche-capuche/5-veste-tri-matieres-femme-blanche.png' %}" alt="Veste tri-matières femme blanche capuche" loading="lazy" width="1000" height="1333" /></div>
+          <div class="meta">
+            <div class="name">Veste tri-matières femme blanche capuche</div>
+            <div class="price">89,00 €</div>
+          </div>
+        </a>
+  <a class="product-card" href="{% url 'core:product_preview' 'blouson-softshell-impermeable-femme-bordeaux' %}?price=79,00">
+    <div class="thumb"><img src="{% static 'core/img/products/blouson-softshell-impermeable-femme-bordeaux/6-blouson-softshell-femme-bordeaux.png' %}" alt="Blouson softshell imperméable femme bordeaux" loading="lazy" width="1000" height="1333" /></div>
+          <div class="meta">
+            <div class="name">Blouson softshell imperméable femme</div>
+            <div class="price">79,00 €</div>
+          </div>
+        </a>
+  <a class="product-card" href="{% url 'core:product_preview' 'blouson-softshell-impermeable-femme-gris' %}?price=79,00">
+    <div class="thumb"><img src="{% static 'core/img/products/blouson-softshell-impermeable-femme-gris/7-blouson-softshell-femme-gris.png' %}" alt="Blouson softshell imperméable femme gris" loading="lazy" width="1000" height="1333" /></div>
+          <div class="meta">
+            <div class="name">Blouson softshell imperméable femme</div>
+            <div class="price">79,00 €</div>
+          </div>
+        </a>
+  <a class="product-card" href="{% url 'core:product_preview' 'veste-outdoor-anapurna-homme' %}?price=69,00">
+    <div class="thumb"><img src="{% static 'core/img/products/veste-outdoor-anapurna-homme/8-veste-outdoor-anapurna-homme.png' %}" alt="Veste outdoor anapurna homme" loading="lazy" width="1000" height="1333" /></div>
+          <div class="meta">
+            <div class="name">Veste outdoor anapurna homme</div>
+            <div class="price">69,00 €</div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="ps-panel" data-panel="bestsellers" hidden>
+      <div class="catalog-grid">
+  <a class="product-card" href="{% url 'core:product_preview' 'chaussettes-antiderapantes-mouton-fuchsia' %}?price=8,00">
+    <div class="thumb"><img src="{% static 'core/img/best_product/chaussettes-antiderapantes-mouton-fuchsia/1-Chaussettes antidérapantes Mouton Fuchsia.png' %}" alt="Chaussettes antidérapantes Mouton Fuchsia" loading="lazy" /></div>
+          <div class="meta">
+            <div class="name">Chaussettes antidérapantes Mouton Fuchsia</div>
+            <div class="price">8,00 €</div>
+          </div>
+        </a>
+  <a class="product-card" href="{% url 'core:product_preview' 'veste-polaire-de-montagne-rouge' %}?price=36,00">
+    <div class="thumb"><img src="{% static 'core/img/best_product/veste-polaire-de-montagne-rouge/2-Veste polaire de montagne Rouge.png' %}" alt="Veste polaire de montagne Rouge" loading="lazy" /></div>
+          <div class="meta">
+            <div class="name">Veste polaire de montagne Rouge</div>
+            <div class="price">36,00 €</div>
+          </div>
+        </a>
+  <a class="product-card" href="{% url 'core:product_preview' 'chaussettes-antiderapantes-marmottes-blanches' %}?price=8,00">
+    <div class="thumb"><img src="{% static 'core/img/best_product/chaussettes-antiderapantes-marmottes-blanches/3-Chaussettes antidérapantes Marmottes Blanches.png' %}" alt="Chaussettes antidérapantes Marmottes Blanches" loading="lazy" /></div>
+          <div class="meta">
+            <div class="name">Chaussettes antidérapantes Marmottes Blanches</div>
+            <div class="price">8,00 €</div>
+          </div>
+        </a>
+  <a class="product-card" href="{% url 'core:product_preview' 'chaussettes-antiderapantes-vache-taupe' %}?price=8,00">
+    <div class="thumb"><img src="{% static 'core/img/best_product/chaussettes-antiderapantes-vache-taupe/4-Chaussettes antidérapantes Vache taupe.png' %}" alt="Chaussettes antidérapantes Vache Taupe" loading="lazy" /></div>
+          <div class="meta">
+            <div class="name">Chaussettes antidérapantes Vache Taupe</div>
+            <div class="price">8,00 €</div>
+          </div>
+        </a>
+  <a class="product-card" href="{% url 'core:product_preview' 'veste-polaire-femme-anapurna-utern-violet' %}?price=36,00">
+    <div class="thumb"><img src="{% static 'core/img/best_product/veste-polaire-femme-anapurna-utern-violet/5-Veste polaire Femme ANAPURNA utern Violet.png' %}" alt="Veste polaire Femme ANAPURNA Utern Violet" loading="lazy" /></div>
+          <div class="meta">
+            <div class="name">Veste polaire Femme ANAPURNA Utern Violet</div>
+            <div class="price">36,00 €</div>
+          </div>
+        </a>
+  <a class="product-card" href="{% url 'core:product_preview' 'veste-polaire-de-montagne-beige' %}?price=36,00">
+    <div class="thumb"><img src="{% static 'core/img/best_product/veste-polaire-de-montagne-beige/6-Veste polaire de montagne Beige.png' %}" alt="Veste polaire de montagne Beige" loading="lazy" /></div>
+          <div class="meta">
+            <div class="name">Veste polaire de montagne Beige</div>
+            <div class="price">36,00 €</div>
+          </div>
+        </a>
+  <a class="product-card" href="{% url 'core:product_preview' 'veste-polaire-douce-cocooning-canadian' %}?price=36,00">
+    <div class="thumb"><img src="{% static 'core/img/best_product/veste-polaire-douce-cocooning-canadian/7-Veste polaire douce cocooning Canadian....png' %}" alt="Veste polaire douce cocooning Canadian" loading="lazy" /></div>
+          <div class="meta">
+            <div class="name">Veste polaire douce cocooning Canadian</div>
+            <div class="price">36,00 €</div>
+          </div>
+        </a>
+  <a class="product-card" href="{% url 'core:product_preview' 'veste-polaire-douce-cocooning-canadian-2' %}?price=36,00">
+    <div class="thumb"><img src="{% static 'core/img/best_product/veste-polaire-douce-cocooning-canadian-2/8-Veste polaire douce cocooning Canadian....png' %}" alt="Veste polaire douce cocooning Canadian" loading="lazy" /></div>
+          <div class="meta">
+            <div class="name">Veste polaire douce cocooning Canadian</div>
+            <div class="price">36,00 €</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+  
+
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'core/js/home.js' %}"></script>
+    <script src="{% static 'core/js/catalog.js' %}"></script>
+{% endblock %}

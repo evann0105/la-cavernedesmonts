@@ -1,0 +1,78 @@
+/* Accueil styles (moved from core/home.css) */
+:root{
+  --bg:#ffffff;--fg:#0f172a;--panel:#ffffff;--muted:#6b7280;--accent:#111827;--brand:#000;--link:#111827;
+  --radius:14px;--radius-lg:20px;--radius-xl:28px;--radius-2xl:36px;
+  --shadow-sm:0 6px 18px rgba(0,0,0,.06);
+  --shadow-md:0 14px 34px rgba(0,0,0,.08);
+  --shadow-lg:0 24px 60px rgba(0,0,0,.10);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{color:#111827;line-height:1.55;background:radial-gradient(1200px 600px at 20% -10%, #f1f5f9 0%, #fafafa 40%, #ffffff 100%)}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.muted{color:#6b7280}
+
+.carousel{position:relative}
+.carousel .slides{position:relative;overflow:hidden;border-radius:var(--radius-xl);box-shadow:var(--shadow-lg);aspect-ratio:16/9;background:#f3f4f6}
+.carousel .slide{position:absolute;inset:0;opacity:0;transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);transform:scale(1.01);will-change:opacity,transform;backface-visibility:hidden}
+.carousel .slide.active{opacity:1;transform:scale(1)}
+.carousel img{display:block;width:100%;height:100%;object-fit:cover;transform:translateZ(0)}
+.carousel .slide::after{content:"";position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.1) 40%, transparent 65%);pointer-events:none}
+.carousel figcaption{position:absolute;left:0;right:0;bottom:0;padding:24px 24px 28px;color:#fff;text-align:left;z-index:2}
+.carousel figcaption strong{display:block;font-size:30px;line-height:1.2;letter-spacing:.2px}
+.carousel figcaption span{display:block;margin-top:4px;opacity:.95}
+.carousel figcaption .cta{display:inline-block;margin-top:12px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);backdrop-filter:saturate(140%) blur(6px);color:#fff;text-decoration:none;transition:transform .15s ease, background-color .2s ease}
+.carousel figcaption .cta:hover{background:rgba(255,255,255,.22)}
+.carousel figcaption .cta:active{transform:scale(.98)}
+.carousel .nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(17,24,39,.65);backdrop-filter:saturate(140%) blur(6px);color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:999px;width:44px;height:44px;display:grid;place-items:center;cursor:pointer;transition:background .2s,border-color .2s, transform .15s}
+.carousel .nav:hover{background:rgba(17,24,39,.9);border-color:rgba(255,255,255,.25)}
+.carousel .nav:active{transform:translateY(-50%) scale(.96)}
+.carousel .nav.prev{left:14px}
+.carousel .nav.next{right:14px}
+.carousel .indicators{position:absolute;left:0;right:0;bottom:12px;display:flex;gap:8px;justify-content:center;z-index:3}
+.carousel .indicators button{appearance:none;-webkit-appearance:none;display:inline-block;padding:0;margin:0;width:8px;height:8px;border-radius:999px;border:0;background:rgba(255,255,255,.55);cursor:pointer;transition:width .2s ease, background-color .2s ease}
+.carousel .indicators button[aria-current="true"]{background:#fff;width:18px;border-radius:999px}
+
+@media (prefers-reduced-motion: reduce){
+  .carousel .slide{transition:none}
+  .carousel .nav{transition:none}
+}
+
+/* === Clean hero carousel (centered image) === */
+.carousel-page{padding:calc(var(--floating-nav-height, 56px) + 64px) 0 40px}
+.carousel--clean{max-width:1200px;margin:0 auto;background:transparent;box-shadow:none}
+.carousel--clean .slides{border-radius:18px;box-shadow:var(--shadow-lg);background:#f7f7f8}
+.carousel--clean img{display:block;width:100%;height:auto;border-radius:18px}
+.carousel--clean .nav{background:rgba(17,17,17,.6);border:1px solid rgba(255,255,255,.2)}
+
+/* === USP chips row under carousel === */
+.usp-wrap{margin:18px auto 18px}
+.usp-chips{list-style:none;margin:0 auto;padding:14px 18px;max-width:980px;display:flex;gap:28px;align-items:center;justify-content:center;border-radius:42px;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.06);border:1px solid #e5e7eb}
+.usp-chips .chip{display:flex;align-items:center;gap:10px;color:#111827}
+.usp-chips .ico-wrap{width:36px;height:36px;display:grid;place-items:center;border-radius:999px;border:1px solid #e5e7eb;background:#fff}
+.usp-chips .ico{width:18px;height:18px;opacity:.9}
+.usp-chips .txt{display:flex;flex-direction:column}
+.usp-chips small{color:#6b7280}
+@media (max-width: 900px){.usp-chips{flex-wrap:wrap;gap:14px;padding:12px 14px}}
+
+/* === Product section (grid) === */
+.product-section{margin:8px auto 10px}
+.product-section .pc-tabs{display:flex;gap:28px;justify-content:center;align-items:center;margin:8px auto 18px;border-bottom:1px solid #e5e7eb;max-width:1100px}
+.product-section .pc-tab{appearance:none;background:none;border:0;margin:0;padding:10px 0 14px;font-weight:800;letter-spacing:.3px;color:#111827;opacity:.85;cursor:pointer}
+.product-section .pc-tab[aria-selected="true"]{opacity:1;border-bottom:3px solid #111827}
+.product-section .catalog-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:36px;max-width:1100px;margin:24px auto}
+.product-section .product-card{display:block;text-decoration:none;color:#111827}
+.product-section .product-card{border-radius:14px;transition:transform .18s ease, box-shadow .18s ease}
+.product-section .thumb{aspect-ratio:3/4;border:1px solid #e5e7eb;border-radius:12px;background:#fff;display:grid;place-items:center;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.05)}
+.product-section .thumb img{width:100%;height:100%;object-fit:contain;display:block}
+.product-section .meta{padding:12px 6px 0;text-align:center;border-top:1px solid #e5e7eb;margin-top:10px}
+.product-section .name{text-transform:uppercase;letter-spacing:.3px;font-size:12px;margin:10px 0 6px;display:-webkit-box;line-clamp:2;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.product-section .price{font-weight:800;margin-bottom:10px}
+.product-section .product-card:hover{transform:translateY(-2px)}
+.product-section .product-card:hover .thumb{box-shadow:0 18px 46px rgba(0,0,0,.12);border-color:#d1d5db}
+.product-section .product-card:hover .name{text-decoration:underline}
+.product-section .product-card:focus-visible{outline:3px solid #111827;outline-offset:4px;border-radius:14px}
+
+@media (max-width: 1100px){ .product-section .catalog-grid{grid-template-columns:repeat(3,1fr)} }
+@media (max-width: 820px){ .product-section .catalog-grid{grid-template-columns:repeat(2,1fr)} }
+@media (max-width: 520px){ .product-section .catalog-grid{grid-template-columns:1fr;gap:18px} }

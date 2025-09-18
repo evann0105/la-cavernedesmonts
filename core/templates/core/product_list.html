@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Produits — La Caverne des Monts{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'core/css/home.css' %}">
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'core/js/catalog.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  <section class="catalog">
+    <div class="tabs" role="tablist" aria-label="Classement">
+      <button role="tab" aria-selected="true" class="tab">Populaire</button>
+      <button role="tab" aria-selected="false" class="tab" disabled>Meilleures ventes</button>
+    </div>
+    <div class="catalog-grid">
+      {% for p in products %}
+        <div class="product-card">
+          <a class="thumb" href="{% url 'core:product_detail' slug=p.slug %}">
+            {% if p.main_image %}
+              <img src="{{ p.main_image.url }}" alt="{{ p.name }}" loading="lazy">
+            {% else %}
+              <div class="placeholder" aria-hidden="true"></div>
+            {% endif %}
+          </a>
+          <div class="meta">
+            <h3 class="name">{{ p.name }}</h3>
+            <div class="price">{{ p.price }} €</div>
+            <div class="row-actions">
+              <a class="mini-link" href="{% url 'core:product_detail' slug=p.slug %}">Voir</a>
+              <button class="mini-link quickview" data-pid="{{ p.id }}" type="button">Aperçu</button>
+            </div>
+          </div>
+          {% if p.images.all %}
+          <template id="qv-{{ p.id }}">
+            <div class="qv">
+              <div class="qv-gallery">
+                <div class="qv-main">
+                  {% if p.main_image %}<img src="{{ p.main_image.url }}" alt="{{ p.name }}">{% endif %}
+                </div>
+                <div class="qv-thumbs">
+                  {% if p.main_image %}<img src="{{ p.main_image.url }}" alt="{{ p.name }}">{% endif %}
+                  {% for img in p.images.all %}
+                    <img src="{{ img.image.url }}" alt="{{ img.alt|default:p.name }}">
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="qv-summary">
+                <h3>{{ p.name }}</h3>
+                <div class="price">{{ p.price }} €</div>
+                <button class="cta-primary" type="button">Ajouter au panier</button>
+              </div>
+            </div>
+          </template>
+          {% endif %}
+        </div>
+      {% empty %}
+        <p>Aucun produit pour le moment.</p>
+      {% endfor %}
+    </div>
+  </section>
+  <div class="qv-modal">
+    <div class="qv-content" role="dialog" aria-modal="true" aria-label="Aperçu produit"></div>
+  </div>
+{% endblock %}
