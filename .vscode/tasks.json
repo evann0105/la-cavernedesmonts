@@ -1,0 +1,75 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Django check",
+			"type": "shell",
+			"command": "python manage.py check",
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Django check (venv)",
+			"type": "shell",
+			"command": "/Users/evannmegret/Documents/la-cavernedesmonts/.venv/bin/python manage.py check",
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Django check (venv)",
+			"type": "shell",
+			"command": "/Users/evannmegret/Documents/la-cavernedesmonts/.venv/bin/python manage.py check",
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Django check (venv)",
+			"type": "shell",
+			"command": "/Users/evannmegret/Documents/la-cavernedesmonts/.venv/bin/python manage.py check",
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Django check (venv)",
+			"type": "shell",
+			"command": "/Users/evannmegret/Documents/la-cavernedesmonts/.venv/bin/python manage.py check",
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Django check (venv)",
+			"type": "shell",
+			"command": "/Users/evannmegret/Documents/la-cavernedesmonts/.venv/bin/python manage.py check",
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Django check (venv)",
+			"type": "shell",
+			"command": "/Users/evannmegret/Documents/la-cavernedesmonts/.venv/bin/python manage.py check",
+			"isBackground": false,
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build"
+		}
+	]
+}

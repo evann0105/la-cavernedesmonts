@@ -6,16 +6,13 @@
   const lightboxImg = lightbox ? lightbox.querySelector('img') : null;
   let currentIndex = 0;
 
-  // Swap image on thumb click
+  // Swap image on thumb click, hover, and keyboard focus
   thumbs.forEach((t, i)=>{
     if(!mainImg) return;
-    t.addEventListener('click', ()=>{
-      thumbs.forEach(x=>x.removeAttribute('aria-current'));
-      t.setAttribute('aria-current','true');
-      mainImg.src = t.src;
-      currentIndex = i;
-      if(lightboxImg) lightboxImg.src = t.src;
-    });
+    const activate = ()=> showAt(i);
+    t.addEventListener('click', activate);
+    t.addEventListener('mouseenter', activate);
+    t.addEventListener('focus', activate);
     if(i===0) t.setAttribute('aria-current','true');
   });
 

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ name }} — La Caverne des Monts{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'pages_products/css/product_page.css' %}">
+{% endblock %}
+
+{% block content %}
+  <article class="pp container">
+    <div class="pp__gallery">
+      <div class="pp__main">
+        {% if images %}
+          <img src="{{ images.0 }}" alt="{{ name }}">
+        {% endif %}
+      </div>
+      <div class="pp__thumbs">
+        {% for url in images %}
+          <img src="{{ url }}" alt="{{ name }}" loading="lazy">
+        {% endfor %}
+      </div>
+    </div>
+    <div class="pp__summary">
+      <h1>Blouson Softshell homme imperméable Marine/orange PEAK MOUNTAIN</h1>
+      <ul class="pp__facts">
+        <li><strong>Modèle</strong> HME/Soft /Cab/PKMTN</li>
+        <li><strong>Condition</strong> Nouveau</li>
+        <li>Blouson Softshell technique pour homme avec doublure intérieure en polaire</li>
+        <li>Coupe-vent imperméable, déperlant</li>
+        <li>Disponible de la taille S au 3XL</li>
+        <li>Coloris Bleu marine, zips en contraste orange</li>
+        <li><strong>Marque</strong> PEAK MOUNTAIN</li>
+      </ul>
+      <div class="pp__cta">
+        <button class="pp__btn">Ajouter au panier</button>
+      </div>
+    </div>
+  </article>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'pages_products/js/product_page.js' %}"></script>
+{% endblock %}

@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('accueil.urls')),  # Accueil homepage
     path('', include('core.urls')),     # Core routes
+    path('page-produit/', include('pages_products.urls')),  # Dedicated product pages
 ]
 
 if settings.DEBUG:

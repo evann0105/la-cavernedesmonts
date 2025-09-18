@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # Local apps
     'accueil',
     'core',
+    'pages_products',
 ]
 
 MIDDLEWARE = [

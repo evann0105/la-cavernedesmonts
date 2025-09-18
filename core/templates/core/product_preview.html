@@ -49,8 +49,8 @@
             <option>5 ans</option>
             <option>6 ans</option>
             <option>8 ans</option>
-            <option>10 ans</option>
             <option>12 ans</option>
+            <option>14 ans</option>
           </select>
         </div>
 
@@ -69,20 +69,41 @@
     </div>
   </article>
 
-  <section class="container specs">
-    <details class="specs" open>
-      <summary>Caractéristiques</summary>
+  <section class="container info-cards">
+    <div class="card">
+      <h3 class="card-title">Caractéristiques</h3>
       <div class="specs-table">
         <div class="specs-row">
-          <div class="specs-key">Compositions</div>
-          <div class="specs-val">Polyester</div>
-        </div>
-        <div class="specs-row">
-          <div class="specs-key">Styles</div>
-          <div class="specs-val">Sportswear</div>
+          <div class="specs-key">Propriétés</div>
+          <div class="specs-val">Imperméable et Déperlant</div>
         </div>
       </div>
-    </details>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Plus d'informations</h3>
+      <div class="prose">
+        <p>Veste polaire garçon style Urbain pour un look sportswear&nbsp;!</p>
+        <p>100&nbsp;% polyester</p>
+        <p>2 poches zippées, fermeture par zip intégral avec patte de protection du menton.<br>
+        Finition des manches et de la taille par biais élastique contrastant.</p>
+        <p>Chaude et confortable, vous apprécierez son style moderne avec son logo discret sur le bras et sa broderie design sur la poitrine et dans le haut du dos.</p>
+        <p>Jolies couleurs noir/gris/vert contrastants<br>
+        Un look sport chic garanti&nbsp;!</p>
+        <div class="tip">
+          <div class="tip-badge">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a7 7 0 00-7 7c0 2.38 1.23 4.47 3.08 5.67L8 20l3.03-1.01A7 7 0 1012 3z" fill="#111827" opacity=".12"/><path d="M9.5 10.5h5M12 8v5.5" stroke="#111827" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span>Conseils et Astuces</span>
+          </div>
+          <div class="tip-text">Prenez votre taille habituelle</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Avis</h3>
+      <p class="muted">Aucun avis pour le moment.</p>
+    </div>
   </section>
 
   <div class="lightbox" aria-modal="true" role="dialog" aria-label="Aperçu image">
@@ -94,31 +115,6 @@
     {% endif %}
   </div>
 
-  <section class="container more-info">
-    <h3 class="section-title">Plus d'informations</h3>
-    <div class="prose center">
-      <p>Veste polaire garçon style Urbain pour un look sportswear&nbsp;!</p>
-      <p>100&nbsp;% polyester</p>
-      <p>2 poches zippées, fermeture par zip intégral avec patte de protection du menton.<br>
-      Finition des manches et de la taille par biais élastique contrastant.</p>
-      <p>Chaude et confortable, vous apprécierez son style moderne avec son logo discret sur le bras et sa broderie design sur la poitrine et dans le haut du dos.</p>
-      <p>Jolies couleurs noir/gris/vert contrastants<br>
-      Un look sport chic garanti&nbsp;!</p>
-
-      <div class="tip">
-        <div class="tip-badge">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a7 7 0 00-7 7c0 2.38 1.23 4.47 3.08 5.67L8 20l3.03-1.01A7 7 0 1012 3z" fill="#111827" opacity=".12"/><path d="M9.5 10.5h5M12 8v5.5" stroke="#111827" stroke-width="1.5" stroke-linecap="round"/></svg>
-          <span>Conseils et Astuces</span>
-        </div>
-        <div class="tip-text">Prenez votre taille habituelle</div>
-      </div>
-    </div>
-  </section>
-
-  <section class="container reviews">
-    <h3 class="section-title">Avis</h3>
-    <p class="muted">Aucun avis pour le moment.</p>
-  </section>
 {% endblock %}
 
 {% block scripts %}
