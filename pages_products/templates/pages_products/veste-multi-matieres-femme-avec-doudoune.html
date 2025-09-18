@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ name }} — La Caverne des Monts{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'pages_products/css/product_page.css' %}">
+{% endblock %}
+
+{% block content %}
+  <article class="pp container">
+    <div class="pp__gallery">
+      <div class="pp__main">
+        {% if images %}
+          <img src="{{ images.0 }}" alt="{{ name }}">
+        {% endif %}
+      </div>
+      <div class="pp__thumbs">
+        {% for url in images %}
+          <img src="{{ url }}" alt="{{ name }}" loading="lazy">
+        {% endfor %}
+      </div>
+    </div>
+    <div class="pp__summary">
+      <h1>{{ name }}</h1>
+      <div class="pp__cta">
+        <button class="pp__btn">Ajouter au panier</button>
+      </div>
+    </div>
+  </article>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'pages_products/js/product_page.js' %}"></script>
+{% endblock %}

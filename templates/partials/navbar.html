@@ -1,0 +1,65 @@
+{% load static %}
+<header class="floating-bar" role="banner">
+  <div class="floating-bar__inner">
+    <div class="fb-section fb-section--left">
+      <nav class="fb-cats" aria-label="Catégories">
+        <button class="fb-cat" type="button" data-panel="femmes" aria-expanded="false">Femmes</button>
+        <button class="fb-cat" type="button" data-panel="hommes" aria-expanded="false">Hommes</button>
+        <button class="fb-cat" type="button" data-panel="enfants" aria-expanded="false">Enfants</button>
+        <button class="fb-cat" type="button" data-panel="softshell" aria-expanded="false">Nos blousons softshell</button>
+      </nav>
+    </div>
+    <div class="fb-section fb-section--center">
+  <a href="{% url 'accueil:home' %}" class="fb-brand" aria-label="Accueil">
+        <img src="{% static 'core/img/logo.png' %}?v=2" alt="La Caverne des Monts" class="fb-brand__img" />
+        <span class="fb-brand__text">La Caverne des Monts</span>
+      </a>
+    </div>
+    <div class="fb-section fb-section--right">
+      <div class="fb-actions">
+        <a href="#produits" class="fb-chip">Catalogue</a>
+        <a href="#services" class="fb-chip">Services</a>
+        <a href="#contact" class="fb-chip">Contact</a>
+        <a href="/admin/" class="fb-chip fb-chip--primary">Réserver</a>
+      </div>
+    </div>
+  </div>
+  <div id="mega" class="fb-mega" hidden>
+    <div class="fb-mega__inner">
+      <section class="fb-mega__panel" data-panel="femmes" hidden>
+        <h3>Femmes</h3>
+        <ul class="fb-mega__list">
+          <li><a href="#">Nouveautés</a></li>
+          <li><a href="#">Robes & jupes</a></li>
+          <li><a href="#">Manteaux</a></li>
+          <li><a href="#">Accessoires</a></li>
+        </ul>
+      </section>
+      <section class="fb-mega__panel" data-panel="hommes" hidden>
+        <h3>Hommes</h3>
+        <ul class="fb-mega__list">
+          <li><a href="#">Nouveautés</a></li>
+          <li><a href="#">Blousons</a></li>
+          <li><a href="#">Pulls & sweats</a></li>
+          <li><a href="#">Accessoires</a></li>
+        </ul>
+      </section>
+      <section class="fb-mega__panel" data-panel="enfants" hidden>
+        <h3>Enfants</h3>
+        <ul class="fb-mega__list">
+          <li><a href="#">Bébé</a></li>
+          <li><a href="#">Fille</a></li>
+          <li><a href="#">Garçon</a></li>
+        </ul>
+      </section>
+      <section class="fb-mega__panel" data-panel="softshell" hidden>
+        <h3>Nos blousons softshell</h3>
+        <ul class="fb-mega__list">
+          <li><a href="#">Softshell classiques</a></li>
+          <li><a href="#">Softshell doublés</a></li>
+          <li><a href="#">Promotions</a></li>
+        </ul>
+      </section>
+    </div>
+  </div>
+</header>

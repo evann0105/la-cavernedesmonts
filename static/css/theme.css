@@ -1,0 +1,42 @@
+/* Global theme: typography, colors, headings (deep black) */
+
+:root{
+  --font-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  --ink-900: #0b0f19; /* deep black */
+  --ink-800: #111827;
+  --muted-600: #4b5563;
+  --muted-500: #6b7280;
+  --border: #e5e7eb;
+  --bg: #ffffff;
+  --radius: 14px;
+  --ring: 2px solid #111827;
+  --shadow-1: 0 8px 24px rgba(0,0,0,.08);
+}
+
+html{font-size:16px;text-rendering:optimizeLegibility;-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--font-sans);color:var(--ink-900);background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+/* Headings */
+h1,h2,h3,h4,h5,h6{color:var(--ink-900);margin:0 0 .5rem 0;line-height:1.15;letter-spacing:-0.02em}
+h1{font-weight:800;font-size:clamp(2rem, 2.4vw + 1rem, 3rem)}
+h2{font-weight:800;font-size:clamp(1.5rem, 1.6vw + .8rem, 2.2rem)}
+h3{font-weight:700;font-size:1.25rem}
+h4{font-weight:700;font-size:1.125rem}
+h5{font-weight:600;font-size:1rem}
+h6{font-weight:600;font-size:.95rem}
+
+p{margin:.6rem 0;color:var(--ink-800)}
+small,.muted{color:var(--muted-500)}
+strong{font-weight:700}
+
+/* Links inherit color by default; underline on hover with subtle offset */
+a{color:inherit;text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration:underline}
+
+/* Buttons (base) */
+button{font-family:inherit}
+button:focus-visible{outline:var(--ring);outline-offset:2px}
+
+/* Utilities */
+.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.visually-hidden{position:absolute !important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}

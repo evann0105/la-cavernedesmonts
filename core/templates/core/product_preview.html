@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ preview.name }} — La Caverne des Monts{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'core/css/product.css' %}">
+{% endblock %}
+
+{% block content %}
+  <button class="back-fab" type="button" aria-label="Retour">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 19l-7-7 7-7"/></svg>
+  </button>
+
+  <article class="product-detail container">
+    <div class="gallery">
+      <div class="main">
+        {% if preview.images %}
+          <img src="{{ preview.images.0 }}" alt="{{ preview.name }}">
+        {% else %}
+          <div class="placeholder" aria-hidden="true"></div>
+        {% endif %}
+        <button class="zoom" type="button" aria-label="Agrandir">+</button>
+      </div>
+      <div class="thumbs">
+        {% for url in preview.images %}
+          <img src="{{ url }}" alt="{{ preview.name }}" loading="lazy">
+        {% endfor %}
+      </div>
+    </div>
+    <div class="summary">
+      <h1>{{ preview.name }}</h1>
+      {% if preview.price %}<div class="price">{{ preview.price }} €</div>{% endif %}
+      {% if preview.description %}<p class="desc">{{ preview.description|linebreaksbr }}</p>{% endif %}
+
+      <form>
+        <div class="field">
+          <label class="label">Quantité</label>
+          <div class="quantity" role="group" aria-label="Quantité">
+            <button class="minus" type="button" aria-label="Retirer">−</button>
+            <input type="number" value="1" min="1" inputmode="numeric" pattern="[0-9]*" aria-label="Quantité">
+            <button class="plus" type="button" aria-label="Ajouter">+</button>
+          </div>
+        </div>
+
+        <div class="field select">
+          <label for="size" class="label">Taille</label>
+          <select id="size" name="size">
+            <option>5 ans</option>
+            <option>6 ans</option>
+            <option>8 ans</option>
+            <option>12 ans</option>
+            <option>14 ans</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="label">Couleur</label>
+          <div class="swatches" role="radiogroup" aria-label="Couleur">
+            <button type="button" class="swatch swatch--black" aria-checked="true" aria-label="Noir"></button>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <button class="cta-primary" type="button">Ajouter au panier</button>
+          <button class="cta-secondary" type="button">Ajouter à ma liste</button>
+        </div>
+      </form>
+    </div>
+  </article>
+
+  <section class="container info-cards">
+    <div class="card">
+      <h3 class="card-title">Caractéristiques</h3>
+      <div class="specs-table">
+        <div class="specs-row">
+          <div class="specs-key">Propriétés</div>
+          <div class="specs-val">Imperméable et Déperlant</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Plus d'informations</h3>
+      <div class="prose">
+        <p>Veste polaire garçon style Urbain pour un look sportswear&nbsp;!</p>
+        <p>100&nbsp;% polyester</p>
+        <p>2 poches zippées, fermeture par zip intégral avec patte de protection du menton.<br>
+        Finition des manches et de la taille par biais élastique contrastant.</p>
+        <p>Chaude et confortable, vous apprécierez son style moderne avec son logo discret sur le bras et sa broderie design sur la poitrine et dans le haut du dos.</p>
+        <p>Jolies couleurs noir/gris/vert contrastants<br>
+        Un look sport chic garanti&nbsp;!</p>
+        <div class="tip">
+          <div class="tip-badge">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a7 7 0 00-7 7c0 2.38 1.23 4.47 3.08 5.67L8 20l3.03-1.01A7 7 0 1012 3z" fill="#111827" opacity=".12"/><path d="M9.5 10.5h5M12 8v5.5" stroke="#111827" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span>Conseils et Astuces</span>
+          </div>
+          <div class="tip-text">Prenez votre taille habituelle</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Avis</h3>
+      <p class="muted">Aucun avis pour le moment.</p>
+    </div>
+  </section>
+
+  <div class="lightbox" aria-modal="true" role="dialog" aria-label="Aperçu image">
+    <button class="close" aria-label="Fermer">✕</button>
+    <button class="ctrl prev" aria-label="Précédent">❮</button>
+    <button class="ctrl next" aria-label="Suivant">❯</button>
+    {% if preview.images %}
+      <img src="{{ preview.images.0 }}" alt="{{ preview.name }}">
+    {% endif %}
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'core/js/product.js' %}"></script>
+{% endblock %}

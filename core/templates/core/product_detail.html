@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} — La Caverne des Monts{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'core/css/product.css' %}">
+{% endblock %}
+
+{% block content %}
+  <article class="product-detail">
+    <div class="gallery">
+      <div class="main">
+        {% if product.main_image %}
+          <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+        {% else %}
+          <div class="placeholder" aria-hidden="true"></div>
+        {% endif %}
+        <button class="zoom" type="button" aria-label="Agrandir">+</button>
+      </div>
+      <div class="thumbs">
+        {% if product.main_image %}
+          <img src="{{ product.main_image.url }}" alt="{{ product.name }}" loading="lazy">
+        {% endif %}
+        {% for img in images %}
+          <img src="{{ img.image.url }}" alt="{{ img.alt|default:product.name }}" loading="lazy">
+        {% endfor %}
+      </div>
+    </div>
+    <div class="summary">
+      <h1>{{ product.name }}</h1>
+      <div class="price">{{ product.price }} €</div>
+      <p class="desc">{{ product.description|linebreaksbr }}</p>
+
+      <form>
+        <div class="field">
+          <label class="label">Quantité</label>
+          <div class="quantity" role="group" aria-label="Quantité">
+            <button class="minus" type="button" aria-label="Retirer">−</button>
+            <input type="number" value="1" min="1" inputmode="numeric" pattern="[0-9]*" aria-label="Quantité">
+            <button class="plus" type="button" aria-label="Ajouter">+</button>
+          </div>
+        </div>
+
+        <div class="field select">
+          <label for="size" class="label">Taille</label>
+          <select id="size" name="size">
+            <option>5 ans</option>
+            <option>6 ans</option>
+            <option>8 ans</option>
+            <option>12 ans</option>
+            <option>14 ans</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="label">Couleur</label>
+          <div class="swatches" role="radiogroup" aria-label="Couleur">
+            <button type="button" class="swatch swatch--black" aria-checked="true" aria-label="Noir"></button>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <button class="cta-primary" type="button">Ajouter au panier</button>
+          <button class="cta-secondary" type="button">Ajouter à ma liste</button>
+        </div>
+      </form>
+    </div>
+  </article>
+
+  <div class="lightbox" aria-modal="true" role="dialog" aria-label="Aperçu image">
+    <button class="close" aria-label="Fermer">✕</button>
+    {% if product.main_image %}
+      <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'core/js/product.js' %}"></script>
+{% endblock %}
