@@ -2,30 +2,34 @@
 <header class="floating-bar" role="banner">
   <div class="floating-bar__inner">
     <div class="fb-section fb-section--left">
-      <nav class="fb-cats" aria-label="Catégories">
-        <button class="fb-cat" type="button" data-panel="femmes" aria-expanded="false">Femmes</button>
-        <button class="fb-cat" type="button" data-panel="hommes" aria-expanded="false">Hommes</button>
-        <button class="fb-cat" type="button" data-panel="enfants" aria-expanded="false">Enfants</button>
-        <button class="fb-cat" type="button" data-panel="softshell" aria-expanded="false">Nos blousons softshell</button>
-      </nav>
+      <button class="fb-menu" type="button" aria-expanded="false" aria-controls="mega">
+        <span class="fb-menu__ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </span>
+        Menu
+      </button>
     </div>
     <div class="fb-section fb-section--center">
   <a href="{% url 'accueil:home' %}" class="fb-brand" aria-label="Accueil">
         <img src="{% static 'core/img/logo.png' %}?v=2" alt="La Caverne des Monts" class="fb-brand__img" />
-        <span class="fb-brand__text">La Caverne des Monts</span>
       </a>
     </div>
     <div class="fb-section fb-section--right">
       <div class="fb-actions">
-        <a href="#produits" class="fb-chip">Catalogue</a>
-        <a href="#services" class="fb-chip">Services</a>
-        <a href="#contact" class="fb-chip">Contact</a>
         <a href="/admin/" class="fb-chip fb-chip--primary">Réserver</a>
+        <a href="/accounts/login/" class="fb-chip">Connexion</a>
+        <a href="/accounts/signup/" class="fb-chip">Inscription</a>
       </div>
     </div>
   </div>
   <div id="mega" class="fb-mega" hidden>
     <div class="fb-mega__inner">
+      <nav class="fb-mega-tabs" aria-label="Catégories">
+        <button class="fb-mega-tab" type="button" data-panel="femmes" aria-selected="true">Femmes</button>
+        <button class="fb-mega-tab" type="button" data-panel="hommes" aria-selected="false">Hommes</button>
+        <button class="fb-mega-tab" type="button" data-panel="enfants" aria-selected="false">Enfants</button>
+        <button class="fb-mega-tab" type="button" data-panel="softshell" aria-selected="false">Softshell</button>
+      </nav>
       <section class="fb-mega__panel" data-panel="femmes" hidden>
         <h3>Femmes</h3>
         <ul class="fb-mega__list">
