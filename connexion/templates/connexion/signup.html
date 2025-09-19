@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inscription — La Caverne des Monts{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'connexion/css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="signup-hero">
+  <div class="sg-bg" aria-hidden="true">
+    <div class="sg-orb sg-orb-a"></div>
+    <div class="sg-orb sg-orb-b"></div>
+    <div class="sg-noise"></div>
+  </div>
+  <div class="sg-glass">
+    <header class="sg-head">
+      <img class="sg-logo" src="{% static 'core/img/logo.png' %}?v=3" alt="La Caverne des Monts" loading="lazy" />
+      <div>
+        <h1>Créer un compte</h1>
+        <p class="muted">Rejoignez l'univers de la montagne</p>
+      </div>
+    </header>
+    <form class="sg-form" novalidate>
+      <div class="sg-panel">
+        <div class="sg-grid">
+          <label class="sg-field has-icon">
+            <span>Adresse e‑mail</span>
+            <div class="sg-input-wrap">
+              <span class="field-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 8h16"/><path d="M9 4v4"/></svg>
+              </span>
+              <input type="email" placeholder="vous@exemple.com" disabled>
+            </div>
+          </label>
+          <label class="sg-field has-icon">
+            <span>Nom d’utilisateur</span>
+            <div class="sg-input-wrap">
+              <span class="field-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5z"/><path d="M3.5 20a8.38 8.38 0 0 1 17 0"/></svg>
+              </span>
+              <input type="text" placeholder="pseudo" disabled>
+            </div>
+          </label>
+          <label class="sg-field has-icon">
+            <span>Mot de passe</span>
+            <div class="sg-input-wrap">
+              <span class="field-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
+              <div class="sg-pass">
+                <input type="password" placeholder="••••••••" disabled>
+                <button type="button" class="toggle" disabled>Afficher</button>
+              </div>
+            </div>
+            <div class="sg-meter" aria-hidden="true">
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+            </div>
+          </label>
+          <label class="sg-field has-icon">
+            <span>Confirmer le mot de passe</span>
+            <div class="sg-input-wrap">
+              <span class="field-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
+              <input type="password" placeholder="••••••••" disabled>
+            </div>
+          </label>
+        </div>
+        <div class="sg-terms">
+          <label class="sg-check">
+            <input type="checkbox" disabled>
+            <span>J’accepte les conditions & politique de confidentialité</span>
+          </label>
+        </div>
+      </div>
+      <button class="sg-submit" type="button" disabled>
+        <span class="btn-glow"></span>
+        <span>S’inscrire</span>
+      </button>
+      <p class="sg-alt">Déjà un compte ? <a href="{% url 'connexion:login' %}">Se connecter</a></p>
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'connexion/js/signup.js' %}"></script>
+{% endblock %}

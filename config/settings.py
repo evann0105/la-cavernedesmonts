@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'accueil',
     'core',
     'pages_products',
+    'connexion',
 ]
 
 MIDDLEWARE = [

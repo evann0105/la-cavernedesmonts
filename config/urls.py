@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('accueil.urls')),  # Accueil homepage
     path('', include('core.urls')),     # Core routes
     path('page-produit/', include('pages_products.urls')),  # Dedicated product pages
+    path('accounts/', include('connexion.urls')),  # Connexion app
 ]
 
 if settings.DEBUG:
