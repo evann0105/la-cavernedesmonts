@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Mon Panier - La Caverne des Monts{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
+{% endblock %}
+{% block content %}
+<section class="cart-hero">
+  <h1 class="cart-title">Mon panier</h1>
+  <p class="cart-sub">Résumé de votre panier et étapes de commande</p>
+</section>
+
+<section class="cart-steps" aria-label="Étapes commande">
+  <div class="cart-step">
+    <div class="cart-step__badge">01</div>
+    <h3>Résumé</h3>
+    <p>Aperçu de vos articles sélectionnés</p>
+  </div>
+  <div class="cart-step">
+    <div class="cart-step__badge">02</div>
+    <h3>Se connecter</h3>
+    <p>Identifiez-vous ou créez un compte</p>
+  </div>
+  <div class="cart-step">
+    <div class="cart-step__badge">03</div>
+    <h3>Coordonnées</h3>
+    <p>Renseignez votre adresse et vos informations</p>
+  </div>
+  <div class="cart-step">
+    <div class="cart-step__badge">04</div>
+    <h3>Livraison</h3>
+    <p>Choisissez votre mode de livraison</p>
+  </div>
+  <div class="cart-step">
+    <div class="cart-step__badge">05</div>
+    <h3>Paiement</h3>
+    <p>Validez et réglez votre commande</p>
+  </div>
+</section>
+
+<section class="cart-content">
+  {% if cart_items %}
+    <ul class="cart-list">
+      {% for item in cart_items %}
+      <li class="cart-item">
+        <div class="ci-main">
+          <strong>{{ item.name }}</strong>
+          <span class="ci-price">{{ item.price }} €</span>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    <div class="cart-total">Total : <strong>{{ total }} €</strong></div>
+  {% else %}
+    <div class="cart-empty">Votre panier est vide.</div>
+  {% endif %}
+</section>
+{% endblock %}

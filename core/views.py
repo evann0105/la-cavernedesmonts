@@ -97,3 +97,18 @@ def product_preview(request, slug: str):
 def location(request):
 	"""Simple location/contact page. Can be enriched later with map or store hours."""
 	return render(request, 'core/location.html')
+
+
+def cart(request):
+	"""Very simple cart/checkout placeholder page.
+
+	For now it just renders a three-step progression styled like the provided
+	design (planifiez/configurez/confirmez). Later this can include real cart
+	line items stored in session or database.
+	"""
+	# Placeholder items list (empty) and total; adapt later when cart model exists
+	context = {
+		'cart_items': [],
+		'total': 0,
+	}
+	return render(request, 'core/cart.html', context)
