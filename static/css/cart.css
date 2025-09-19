@@ -1,0 +1,27 @@
+.cart-hero{margin-bottom:34px;text-align:center}
+.cart-title{font-size:40px;line-height:1.1;margin:0 0 6px;font-weight:800;background:linear-gradient(110deg,#111,#383e47 45%,#111);-webkit-background-clip:text;color:transparent}
+.cart-sub{margin:0;color:#475569;font-weight:500}
+
+.cart-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:36px;margin-bottom:46px;background:linear-gradient(135deg,#f1f5f9,#eceef2 40%,#f1f5f9);padding:50px 40px;border-radius:30px;box-shadow:0 20px 50px -18px rgba(0,0,0,.15),0 8px 22px -4px rgba(0,0,0,.08)}
+.cart-step{background:rgba(255,255,255,.92);padding:42px 28px 34px;border-radius:16px;text-align:center;box-shadow:0 10px 30px -10px rgba(0,0,0,.12),0 4px 12px -4px rgba(0,0,0,.08);display:flex;flex-direction:column;align-items:center;gap:10px;backdrop-filter:blur(8px)}
+/* Badge now inside the card */
+.cart-step__badge{position:static;transform:none;margin:0 0 10px;width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;letter-spacing:.5px;color:#1e293b;background:linear-gradient(145deg,#ffffff,#f1f5f9);border:1px solid #e2e8f0;box-shadow:0 4px 10px -4px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04)}
+/* Hover / active state idea (not used yet) */
+.cart-step:hover .cart-step__badge{background:linear-gradient(145deg,#f8fafc,#eef2f6)}
+.cart-step h3{margin:8px 0 4px;font-size:20px;font-weight:700;color:#111}
+.cart-step p{margin:0;font-size:14px;line-height:1.5;font-weight:500;color:#374151}
+
+.cart-content{max-width:880px;margin:0 auto 80px;display:grid;gap:30px}
+.cart-empty{padding:40px 30px;border:2px dashed #cbd5e1;border-radius:22px;text-align:center;font-weight:600;color:#475569;background:#f8fafc}
+.cart-list{list-style:none;margin:0;padding:0;display:grid;gap:16px}
+.cart-item{padding:18px 22px;background:#fff;border:1px solid #e2e8f0;border-radius:16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 4px 12px -4px rgba(0,0,0,.06)}
+.ci-main{display:flex;align-items:center;justify-content:space-between;font-size:15px}
+.ci-price{font-weight:700;color:#111}
+.cart-total{font-size:18px;font-weight:700;border-top:1px solid #e2e8f0;padding-top:18px;text-align:right}
+
+@media (max-width:740px){
+  .cart-step{padding:42px 20px 30px}
+  .cart-step h3{font-size:18px}
+  .cart-steps{padding:60px 26px 50px;gap:28px}
+  .cart-title{font-size:34px}
+}
