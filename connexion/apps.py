@@ -1,0 +1,7 @@
+from django.apps import AppConfig
+
+
+class ConnexionConfig(AppConfig):
+	default_auto_field = 'django.db.models.BigAutoField'
+	name = 'connexion'
+	verbose_name = 'Connexion'
