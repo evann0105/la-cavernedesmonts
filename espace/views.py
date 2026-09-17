@@ -8,7 +8,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 from django.utils.translation import gettext as _
 from django.db.models import Q
-from two_factor.utils import default_device
+from connexion.email_verification import email_verified
 from core.models import Product, Category
 from paiement.models import Order
 from .models import Address, CreditNote, Voucher
@@ -18,11 +18,8 @@ from .forms import AddressForm, PersonalForm
 def private(view):
     @wraps(view)
     def guarded(request, *args, **kwargs):
-        device = default_device(request.user)
-        if request.user.is_staff and not device:
-            return redirect('two_factor:setup')
-        if device and not request.user.is_verified():
-            return redirect_to_login(request.get_full_path(), login_url='two_factor:login')
+        if not email_verified(request.user):
+            return redirect('connexion:verify_email')
         return view(request, *args, **kwargs)
     return never_cache(login_required(guarded))
 
@@ -92,7 +89,13 @@ def address_delete(request, pk):
 def personal(request):
     form=PersonalForm(request.POST if request.method=='POST' else None,instance=request.user)
     if request.method=='POST' and form.is_valid():
-        form.save(); messages.success(request,_('Vos informations ont été enregistrées.')); return redirect('espace:personal')
+        form.save()
+        if not email_verified(request.user):
+            from connexion.email_verification import send_verification
+            send_verification(request.user)
+            return redirect('connexion:verify_email')
+        messages.success(request,_('Vos informations ont été enregistrées.'))
+        return redirect('espace:personal')
     return render(request,'espace/form.html',{'title':_('Mes informations personnelles'),'form':form})
 
 

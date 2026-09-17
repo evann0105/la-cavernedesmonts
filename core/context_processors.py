@@ -4,7 +4,8 @@ def basket(request):
 
 def catalog_access(request):
     from .catalog_access import can_manage_catalog
-    return {'can_manage_catalog': can_manage_catalog(request.user)}
+    from connexion.email_verification import email_verified
+    return {'can_manage_catalog': can_manage_catalog(request.user), 'email_confirmed': email_verified(request.user)}
 
 
 def back_navigation(request):

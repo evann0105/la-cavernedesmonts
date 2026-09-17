@@ -56,14 +56,13 @@ class ShopTests(TestCase):
         self.assertEqual(client.post('/panier/modifier/', {}).status_code, 403)
 
     def test_signup_and_safe_login_redirect(self):
+        from connexion.test_helpers import verify_test_user
         response = self.client.post('/accounts/signup/', {'username':'test-alpin', 'email':'test@example.test', 'password1':'qZ9!mR5#vT2@xL8', 'password2':'qZ9!mR5#vT2@xL8'})
-        self.assertRedirects(response, '/')
-        self.assertTrue(User.objects.filter(username='test-alpin').exists())
+        self.assertRedirects(response, '/accounts/verification-email/')
+        verify_test_user(User.objects.get(username='test-alpin'))
         self.client.post('/accounts/logout/')
-        page = self.client.get('/accounts/login/?next=https://malicious.example/')
-        management = page.context['wizard']['management_form']
-        response = self.client.post('/accounts/login/?next=https://malicious.example/', {management.add_prefix('current_step'): 'auth', 'auth-username':'test@example.test','auth-password':'qZ9!mR5#vT2@xL8'})
-        self.assertRedirects(response, '/')
+        response = self.client.post('/accounts/login/?next=https://malicious.example/', {'username':'test@example.test','password':'qZ9!mR5#vT2@xL8'})
+        self.assertRedirects(response, '/mon-compte/')
 
     def test_weak_password_and_duplicate_email_rejected(self):
         User.objects.create_user('existing', email='same@example.test', password='Strong-test-5491!!')

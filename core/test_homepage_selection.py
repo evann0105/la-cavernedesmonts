@@ -1,3 +1,5 @@
+from connexion.test_helpers import verify_test_user
+from connexion.models import EmailVerification
 from django.contrib.auth.models import User, Group
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -14,6 +16,7 @@ class HomepageSelectionTests(TestCase):
             self.products[slot] = Product.objects.create(name=f'Produit {slot}', price=20, category=category, static_image=f'core/img/{slot}.png')
         self.manager = User.objects.create_user('gerante', is_staff=True)
         self.manager.groups.add(Group.objects.get(name='Gestion du catalogue'))
+        verify_test_user(self.manager)
         self.device = TOTPDevice.objects.create(user=self.manager, name='default', confirmed=True)
         self.client.force_login(self.manager, backend='connexion.backends.EmailOrUsernameBackend')
         session = self.client.session
@@ -74,13 +77,14 @@ class HomepageSelectionTests(TestCase):
         self.assertEqual(HomepageSelection.objects.filter(product=None).count(), 3)
         self.assertTrue(all(c['product'] for c in self.client.get('/').context['world_cards']))
 
-    def test_access_requires_catalog_permission_otp_and_csrf(self):
+    def test_access_requires_catalog_permission_email_and_csrf(self):
         self.client.logout()
         self.assertEqual(self.client.post(self.url, self.payload()).status_code, 302)
         customer = User.objects.create_user('client')
         self.client.force_login(customer, backend='connexion.backends.EmailOrUsernameBackend')
         self.assertEqual(self.client.get(self.url).status_code, 403)
         self.assertEqual(self.client.post(self.url, self.payload()).status_code, 403)
+        EmailVerification.objects.filter(user=self.manager).delete()
         self.client.force_login(self.manager, backend='connexion.backends.EmailOrUsernameBackend')
         self.assertEqual(self.client.post(self.url, self.payload()).status_code, 302)
         self.assertEqual(Client(enforce_csrf_checks=True).post(self.url, self.payload()).status_code, 403)

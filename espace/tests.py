@@ -1,3 +1,5 @@
+from connexion.test_helpers import verify_test_user
+from connexion.models import EmailVerification
 from django.test import TestCase, Client, override_settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -14,6 +16,8 @@ class CustomerPagesTests(TestCase):
     def setUp(self):
         self.user=get_user_model().objects.create_user('customer',email='customer@example.com',password='Test-password-123')
         self.other=get_user_model().objects.create_user('other',email='other@example.com')
+        verify_test_user(self.user)
+        verify_test_user(self.other)
         self.client.force_login(self.user,backend='connexion.backends.EmailOrUsernameBackend')
         self.order=Order.objects.create(user=self.user,session_key='first',items=[],subtotal=1000,status='paid',total_paid=1200)
         self.other_order=Order.objects.create(user=self.other,session_key='second',items=[],subtotal=2000,status='paid')
@@ -68,13 +72,16 @@ class CustomerPagesTests(TestCase):
         data['current_password']='Test-password-123'
         self.assertEqual(self.client.post(reverse('espace:personal'),data).status_code,302)
         self.user.refresh_from_db();self.assertEqual(self.user.email,'new@example.com');self.assertFalse(self.user.is_superuser)
+        self.assertEqual(self.client.get(reverse('espace:orders')).status_code,302)
+        verify_test_user(self.user)
         data['email']=self.other.email
         self.assertEqual(self.client.post(reverse('espace:personal'),data).status_code,200)
         self.user.refresh_from_db();self.assertEqual(self.user.email,'new@example.com')
 
-    def test_staff_and_enabled_otp_cannot_bypass_otp(self):
+    def test_staff_requires_email_confirmation(self):
         self.user.is_staff=True;self.user.save()
-        self.assertRedirects(self.client.get(reverse('espace:account')),reverse('two_factor:setup'),fetch_redirect_response=False)
+        EmailVerification.objects.filter(user=self.user).delete()
+        self.assertRedirects(self.client.get(reverse('espace:account')),reverse('connexion:verify_email'),fetch_redirect_response=False)
         TOTPDevice.objects.create(user=self.user,confirmed=True)
         self.assertEqual(self.client.get(reverse('espace:orders')).status_code,302)
 

@@ -1,3 +1,5 @@
+from connexion.test_helpers import verify_test_user
+from connexion.models import EmailVerification
 import tempfile
 from io import BytesIO
 from decimal import Decimal
@@ -37,6 +39,7 @@ class CatalogManagementTests(TestCase):
     def login_verified(self, client=None):
         client = client or self.client
         client.force_login(self.manager, backend='connexion.backends.EmailOrUsernameBackend')
+        verify_test_user(self.manager)
         session = client.session
         session['otp_device_id'] = self.device.persistent_id
         session.save()
@@ -67,15 +70,16 @@ class CatalogManagementTests(TestCase):
             for path in paths:
                 self.assertEqual(self.client.get(path).status_code, 403)
                 self.assertEqual(self.client.post(path, self.data()).status_code, 403)
+        EmailVerification.objects.filter(user=self.manager).delete()
         self.client.force_login(self.manager, backend='connexion.backends.EmailOrUsernameBackend')
         for path in paths:
             self.assertEqual(self.client.get(path).status_code, 302)
         self.product.refresh_from_db()
         self.assertEqual(self.product.price, Decimal('30'))
 
-    def test_manager_without_otp_goes_to_setup(self):
-        self.device.delete()
-        self.assertRedirects(self.client.get(self.edit_url()), reverse('two_factor:setup'), fetch_redirect_response=False)
+    def test_manager_without_verified_email_goes_to_confirmation(self):
+        EmailVerification.objects.filter(user=self.manager).delete()
+        self.assertRedirects(self.client.get(self.edit_url()), reverse('connexion:verify_email'), fetch_redirect_response=False)
 
     def test_create_and_publish_with_images_category_and_price(self):
         response = self.client.post(reverse('core:catalog_add'), self.data(name='Nouveau bébé', main_image=photo(), new_photos=[photo('second.png'), photo('third.png')]))
