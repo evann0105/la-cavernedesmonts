@@ -1,0 +1,644 @@
+msgid ""
+msgstr "Language: it\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nProject-Id-Version: La Caverne des Monts\nMIME-Version: 1.0\nPO-Revision-Date: 2026-09-17 00:00+0200\nLast-Translator: La Caverne des Monts\nLanguage-Team: Boutique\n"
+
+msgid "ACCESSOIRES BÉBÉ"
+msgstr "ACCESSORI BEBÈ"
+
+msgid "APPELEZ-NOUS"
+msgstr "CHIAMACI"
+
+msgid "Accessoires bébé"
+msgstr "Accessori bebè"
+
+msgid "Accueil"
+msgstr "Home"
+
+msgid "Actualiser le statut"
+msgstr "Aggiorna lo stato"
+
+msgid "Adresse e-mail"
+msgstr "Indirizzo email"
+
+msgid "Adresse e-mail ou nom d’utilisateur"
+msgstr "Email o nome utente"
+
+msgid "Ajouter à mon panier"
+msgstr "Aggiungi al carrello"
+
+msgid "Aller au contenu"
+msgstr "Vai al contenuto"
+
+msgid "Annuler"
+msgstr "Annulla"
+
+msgid "Aperçu privé ·"
+msgstr "Anteprima privata ·"
+
+msgid "Appeler la boutique ↗"
+msgstr "Chiama la boutique ↗"
+
+msgid "Articles"
+msgstr "Articoli"
+
+msgid "Aucun article pour cette envie."
+msgstr "Nessun articolo corrispondente."
+
+msgid "Aucun compte nécessaire pour commander."
+msgstr "Non serve un account per ordinare."
+
+msgid "Aucune offre spéciale pour le moment. En attendant, découvrez le reste de la collection."
+msgstr "Al momento non ci sono offerte speciali. Nel frattempo, scopri il resto della collezione."
+
+msgid "BIENTÔT CHEZ VOUS"
+msgstr "PRESTO A CASA TUA"
+
+msgid "BIENVENUE DANS NOTRE UNIVERS"
+msgstr "BENVENUTI NEL NOSTRO MONDO"
+
+msgid "Besoin d’un conseil ?"
+msgstr "Hai bisogno di un consiglio?"
+
+msgid "Bien choisir sa taille"
+msgstr "Scegliere la taglia giusta"
+
+msgid "Bien dans sa nature."
+msgstr "Bene nella propria natura."
+
+msgid "Brouillon : ce produit n’est pas proposé à la vente."
+msgstr "Bozza: questo prodotto non è in vendita."
+
+msgid "CONFIRMATION EN COURS"
+msgstr "CONFERMA IN CORSO"
+
+msgid "Cette adresse e-mail est déjà utilisée."
+msgstr "Questo indirizzo email è già utilizzato."
+
+msgid "Changer la langue"
+msgstr "Cambia lingua"
+
+msgid "Choisissez une quantité entre 1 et 10."
+msgstr "Scegli una quantità tra 1 e 10."
+
+msgid "Choisissez une taille disponible."
+msgstr "Scegli una taglia disponibile."
+
+msgid "Choisissez votre taille"
+msgstr "Scegli la tua taglia"
+
+msgid "Contactez la boutique pour connaître les modalités applicables à votre commande. Les frais de livraison seront indiqués avant tout paiement."
+msgstr "Contatta la boutique per conoscere le condizioni del tuo ordine. Le spese di spedizione sono indicate prima del pagamento."
+
+msgid "Continuer"
+msgstr "Continua"
+
+msgid "Continuer la découverte →"
+msgstr "Continua a scoprire →"
+
+msgid "Continuer vers le paiement sécurisé →"
+msgstr "Continua al pagamento sicuro →"
+
+msgid "Créer mon compte"
+msgstr "Crea il mio account"
+
+msgid "Créer mon compte →"
+msgstr "Crea il mio account →"
+
+msgid "Créer un compte — La Caverne des Monts"
+msgstr "Crea un account — La Caverne des Monts"
+
+msgid "Créez votre compte. Vous pouvez aussi commander sans inscription."
+msgstr "Crea il tuo account. Puoi anche ordinare senza registrarti."
+
+msgid "Dans le même esprit."
+msgstr "Nello stesso spirito."
+
+msgid "De bons conseils."
+msgstr "Buoni consigli."
+
+msgid "De la douceur pour accompagner leurs premières échappées."
+msgstr "Morbidezza per le loro prime avventure."
+
+msgid "De petites attentions pour leurs tout premiers souvenirs de montagne."
+msgstr "Piccoli pensieri per i loro primi ricordi in montagna."
+
+msgid "De vraies personnes."
+msgstr "Persone vere."
+
+msgid "Dehors, on respire."
+msgstr "Fuori, si respira."
+
+msgid "Des conseils humains"
+msgstr "Consigli personali"
+
+msgid "Des essentiels pour les moments"
+msgstr "L’essenziale per i momenti"
+
+msgid "Des randonneurs au pied des montagnes, sur un sentier fleuri"
+msgstr "Escursionisti su un sentiero fiorito in montagna"
+
+msgid "Description disponible en français."
+msgstr "Descrizione disponibile in francese."
+
+msgid "Du premier pas dehors au dernier instant au chaud."
+msgstr "Dal primo passo all’aperto all’ultimo momento al caldo."
+
+msgid "Déconnexion"
+msgstr "Esci"
+
+msgid "Découvrir la collection ↗"
+msgstr "Scopri la collezione ↗"
+
+msgid "Déjà tout un monde."
+msgstr "Già un mondo intero."
+
+msgid "Déjà un compte ?"
+msgstr "Hai già un account?"
+
+msgid "Encore un petit instant."
+msgstr "Ancora un momento."
+
+msgid "Enfant"
+msgstr "Bambini"
+
+msgid "Enfants"
+msgstr "Bambini"
+
+msgid "Essayez un autre mot ou découvrez toute la collection."
+msgstr "Prova un’altra parola o scopri tutta la collezione."
+
+msgid "Explorer"
+msgstr "Esplora"
+
+msgid "Explorer la collection"
+msgstr "Esplora la collezione"
+
+msgid "Femme"
+msgstr "Donna"
+
+msgid "Femmes"
+msgstr "Donna"
+
+msgid "Fil d’Ariane"
+msgstr "Percorso di navigazione"
+
+msgid "Frais de livraison indiqués avant le paiement."
+msgstr "Spese di spedizione indicate prima del pagamento."
+
+msgid "Grandir au grand air."
+msgstr "Crescere all’aria aperta."
+
+msgid "Gérer les produits"
+msgstr "Gestisci prodotti"
+
+msgid "Homme"
+msgstr "Uomo"
+
+msgid "Hommes"
+msgstr "Uomo"
+
+msgid "LE BONHEUR SE PARTAGE"
+msgstr "LA FELICITÀ SI CONDIVIDE"
+
+msgid "La Caverne des Monts — L’esprit montagne"
+msgstr "La Caverne des Monts — Lo spirito della montagna"
+
+msgid "La Caverne des Monts — accueil"
+msgstr "La Caverne des Monts — home"
+
+msgid "La boutique & contact"
+msgstr "Boutique e contatti"
+
+msgid "La collection"
+msgstr "La collezione"
+
+msgid "La journée est belle."
+msgstr "È una bella giornata."
+
+msgid "La montagne nous rassemble."
+msgstr "La montagna ci unisce."
+
+msgid "La quantité doit être comprise entre 0 et 10."
+msgstr "La quantità deve essere tra 0 e 10."
+
+msgid "La taille et la disponibilité sont à confirmer avec la boutique avant de commander."
+msgstr "Conferma taglia e disponibilità con la boutique prima di ordinare."
+
+msgid "Laissez-vous inspirer"
+msgstr "Lasciati ispirare"
+
+msgid "Langue"
+msgstr "Lingua"
+
+msgid "Langue du site"
+msgstr "Lingua del sito"
+
+msgid "Le bonheur n’est jamais très loin."
+msgstr "La felicità non è mai lontana."
+
+msgid "Le goût des choses simples."
+msgstr "Il gusto delle cose semplici."
+
+msgid "Le grand air. La douceur du retour."
+msgstr "L’aria aperta. La dolcezza del ritorno."
+
+msgid "Le paiement en ligne n’est pas encore disponible pour ce panier. Contactez-nous pour préparer votre commande."
+msgstr "Il pagamento online non è ancora disponibile per questo carrello. Contattaci per preparare l’ordine."
+
+msgid "Le paiement en ligne sera bientôt disponible. Pour le moment, contactez-nous pour confirmer les tailles, les disponibilités et la livraison. Votre panier est conservé et aucun paiement n’a été effectué."
+msgstr "Il pagamento online sarà presto disponibile. Per ora contattaci per confermare taglie, disponibilità e consegna. Il carrello è salvato e non è stato effettuato alcun pagamento."
+
+msgid "Le paiement est momentanément indisponible. Votre panier est conservé ; vous pouvez réessayer."
+msgstr "Il pagamento è temporaneamente non disponibile. Il carrello è salvato; puoi riprovare."
+
+msgid "Le plaisir d’échanger."
+msgstr "Il piacere di parlare."
+
+msgid "Les beaux jours vous attendent."
+msgstr "Ti aspettano belle giornate."
+
+msgid "Les belles journées commencent par les choses simples."
+msgstr "Le belle giornate iniziano dalle cose semplici."
+
+msgid "Les belles occasions de retrouver l’esprit montagne."
+msgstr "Belle occasioni per ritrovare lo spirito della montagna."
+
+msgid "Les complices des beaux jours."
+msgstr "Compagni delle belle giornate."
+
+msgid "Les joues fraîches, les petites mains au chaud, les câlins au retour. L’esprit montagne se partage dès les premiers instants."
+msgstr "Guance fresche, manine al caldo, coccole al ritorno. Lo spirito della montagna si condivide fin dai primi istanti."
+
+msgid "Les petites attentions"
+msgstr "Piccole attenzioni"
+
+msgid "Les petits comme les grands"
+msgstr "Per piccoli e grandi"
+
+msgid "Les prochaines belles occasions se préparent."
+msgstr "Nuove belle occasioni stanno arrivando."
+
+msgid "Livraison & retours"
+msgstr "Consegna e resi"
+
+msgid "L’appel du dehors."
+msgstr "Il richiamo dell’aria aperta."
+
+msgid "L’esprit montagne de La Caverne des Monts"
+msgstr "Lo spirito della montagna di La Caverne des Monts"
+
+msgid "L’esprit montagne, à emporter avec soi."
+msgstr "Lo spirito della montagna, da portare con sé."
+
+msgid "L’essentiel, tout simplement"
+msgstr "L’essenziale, semplicemente"
+
+msgid "Maquette privée · Exemples fictifs, non publiés aux visiteurs"
+msgstr "Bozza privata · Esempi fittizi, non visibili ai visitatori"
+
+msgid "Menu ☰"
+msgstr "Menu ☰"
+
+msgid "Merci pour votre confiance."
+msgstr "Grazie per la fiducia."
+
+msgid "Mettre à jour"
+msgstr "Aggiorna"
+
+msgid "Modifier ce produit"
+msgstr "Modifica questo prodotto"
+
+msgid "Mon compte"
+msgstr "Il mio account"
+
+msgid "Navigation mobile"
+msgstr "Navigazione mobile"
+
+msgid "Navigation principale"
+msgstr "Navigazione principale"
+
+msgid "Nos collections bébé et offres"
+msgstr "Le nostre collezioni bebè e offerte"
+
+msgid "Notre boutique"
+msgstr "La nostra boutique"
+
+msgid "Notre boutique & contact — La Caverne des Monts"
+msgstr "Boutique e contatti — La Caverne des Monts"
+
+msgid "Notre sélection"
+msgstr "La nostra selezione"
+
+msgid "Nous attendons la confirmation du paiement. Vous pouvez actualiser cette page dans quelques instants. Ne recommencez pas le paiement."
+msgstr "Stiamo aspettando la conferma del pagamento. Aggiorna questa pagina tra poco. Non ripetere il pagamento."
+
+msgid "OFFRES SPÉCIALES"
+msgstr "OFFERTE SPECIALI"
+
+msgid "Offres spéciales"
+msgstr "Offerte speciali"
+
+msgid "On prend le temps de vous répondre."
+msgstr "Ci prendiamo il tempo per risponderti."
+
+msgid "On reste pour"
+msgstr "Si resta per"
+
+msgid "On vient pour la montagne."
+msgstr "Si viene per la montagna."
+
+msgid "PAIEMENT CONFIRMÉ"
+msgstr "PAGAMENTO CONFERMATO"
+
+msgid "POLAIRES BÉBÉ"
+msgstr "PILE BEBÈ"
+
+msgid "POUR LES JOURS QUI FONT DU BIEN"
+msgstr "PER LE GIORNATE CHE FANNO BENE"
+
+msgid "PROLONGER L’ÉCHAPPÉE"
+msgstr "PROLUNGA L’AVVENTURA"
+
+msgid "Panier ("
+msgstr "Carrello ("
+
+msgid "Partir sans regarder l’heure. Prendre le chemin le plus long. Retrouver le plaisir d’être dehors, tout simplement."
+msgstr "Partire senza guardare l’ora. Prendere il sentiero più lungo. Ritrovare il semplice piacere di stare all’aperto."
+
+msgid "Pas encore de compte ?"
+msgstr "Non hai un account?"
+
+msgid "Passer à la commande →"
+msgstr "Procedi all’ordine →"
+
+msgid "Petits bonheurs"
+msgstr "Piccole gioie"
+
+msgid "Petits détails, grands câlins."
+msgstr "Piccoli dettagli, grandi coccole."
+
+msgid "Polaires bébé"
+msgstr "Pile bebè"
+
+msgid "Pour toute la famille"
+msgstr "Per tutta la famiglia"
+
+msgid "Prendre le large"
+msgstr "Parti all’avventura"
+
+msgid "Prix croissant"
+msgstr "Prezzo crescente"
+
+msgid "Prix décroissant"
+msgstr "Prezzo decrescente"
+
+msgid "Profitez-en."
+msgstr "Goditela."
+
+msgid "Préparons votre commande ensemble."
+msgstr "Prepariamo insieme il tuo ordine."
+
+msgid "Quantité"
+msgstr "Quantità"
+
+msgid "Quelques mots, beaucoup de douceur."
+msgstr "Poche parole, tanta dolcezza."
+
+msgid "Rechercher"
+msgstr "Cerca"
+
+msgid "Rencontrer notre boutique"
+msgstr "Scopri la nostra boutique"
+
+msgid "Retirer"
+msgstr "Rimuovi"
+
+msgid "Retour"
+msgstr "Indietro"
+
+msgid "Retour à la page précédente"
+msgstr "Torna alla pagina precedente"
+
+msgid "Retrouvez l’esprit montagne avec La Caverne des Monts : polaires, vestes et petites attentions pour les jours au grand air comme les retours au chaud."
+msgstr "Ritrova lo spirito della montagna con La Caverne des Monts: pile, giacche e piccoli pensieri per le giornate all’aperto e i ritorni al caldo."
+
+msgid "Retrouvez notre univers à Lélex, 01410, dans le Jura. Avant de venir, appelez-nous pour confirmer les horaires et préparer votre visite."
+msgstr "Ci trovi a Lélex, 01410, nel Giura. Prima di venire, chiamaci per confermare gli orari e organizzare la visita."
+
+msgid "Revenir à la boutique"
+msgstr "Torna alla boutique"
+
+msgid "Référence de commande :"
+msgstr "Riferimento ordine:"
+
+msgid "Se connecter"
+msgstr "Accedi"
+
+msgid "Ses premiers cocons."
+msgstr "I suoi primi morbidi rifugi."
+
+msgid "Sous-total"
+msgstr "Subtotale"
+
+msgid "Suivi du paiement — La Caverne des Monts"
+msgstr "Stato del pagamento — La Caverne des Monts"
+
+msgid "Sécurité de mon compte"
+msgstr "Sicurezza dell’account"
+
+msgid "Taille unique"
+msgstr "Taglia unica"
+
+msgid "Total des articles"
+msgstr "Totale articoli"
+
+msgid "Tout découvrir"
+msgstr "Scopri tutto"
+
+msgid "Tout petit."
+msgstr "Così piccolo."
+
+msgid "Tout simplement."
+msgstr "Semplicemente."
+
+msgid "Toute la collection"
+msgstr "Tutta la collezione"
+
+msgid "Trier par"
+msgstr "Ordina per"
+
+msgid "Trois univers. Le même esprit."
+msgstr "Tre mondi. Lo stesso spirito."
+
+msgid "Trop de tentatives ont été effectuées. Merci de réessayer dans"
+msgstr "Troppi tentativi. Riprova tra"
+
+msgid "Trouver mon bonheur"
+msgstr "Trova la tua gioia"
+
+msgid "UN PEU DE MONTAGNE À EMPORTER"
+msgstr "UN PO’ DI MONTAGNA DA PORTARE CON SÉ"
+
+msgid "UN PEU DE MONTAGNE. BEAUCOUP DE SOUVENIRS."
+msgstr "UN PO’ DI MONTAGNA. TANTI RICORDI."
+
+msgid "Un bébé en bonnet sauge et maille crème dans un chalet lumineux"
+msgstr "Un bebè con berretto salvia in uno chalet luminoso"
+
+msgid "Un bébé en polaire crème blotti dans les bras de sa maman, face aux montagnes"
+msgstr "Un bebè in pile color crema in braccio alla mamma davanti alle montagne"
+
+msgid "Un bébé et sa maman découvrent un cadeau dans une ambiance chalet"
+msgstr "Un bebè e la mamma scoprono un regalo in uno chalet"
+
+msgid "Un conseil ? Parlons-en"
+msgstr "Un consiglio? Parliamone"
+
+msgid "Un dernier pas."
+msgstr "Un ultimo passo."
+
+msgid "Un doute sur une taille ? Parlons-en."
+msgstr "Un dubbio sulla taglia? Parliamone."
+
+msgid "Un petit temps de pause."
+msgstr "Una piccola pausa."
+
+msgid "Un peu de montagne ajouté à votre panier."
+msgstr "Un po’ di montagna nel tuo carrello."
+
+msgid "Un peu de montagne. Beaucoup de souvenirs."
+msgstr "Un po’ di montagna. Tanti ricordi."
+
+msgid "Un peu plus"
+msgstr "Un po’ più"
+
+msgid "Un peu plus dehors."
+msgstr "Un po’ più all’aperto."
+
+msgid "Une bouffée d’air frais. Une polaire toute douce. Une attention pour quelqu’un qu’on aime."
+msgstr "Una boccata d’aria fresca. Un pile morbidissimo. Un pensiero per qualcuno che amiamo."
+
+msgid "Une boutique à votre écoute"
+msgstr "Una boutique che ti ascolta"
+
+msgid "Une hésitation ? Contactez-nous pour vérifier les mesures et la disponibilité du modèle qui vous plaît."
+msgstr "Hai dubbi? Contattaci per verificare misure e disponibilità del modello che ti piace."
+
+msgid "Une hésitation sur une taille ? Une idée cadeau ?"
+msgstr "Un dubbio sulla taglia? Un’idea regalo?"
+
+msgid "Une occasion de faire plaisir."
+msgstr "Un’occasione per fare felici."
+
+msgid "Une polaire, des chaussettes…"
+msgstr "Un pile, dei calzini…"
+
+msgid "Une question ?"
+msgstr "Una domanda?"
+
+msgid "Une question ? Parlons-en."
+msgstr "Una domanda? Parliamone."
+
+msgid "Une question avant de vous décider ?"
+msgstr "Una domanda prima di decidere?"
+
+msgid "Une randonnée en montagne sous un ciel bleu"
+msgstr "Un’escursione in montagna sotto il cielo azzurro"
+
+msgid "Une taille à choisir, une attention à offrir ou l’envie de découvrir notre univers ? Nous sommes là pour vous conseiller."
+msgstr "Una taglia da scegliere, un regalo da fare o voglia di scoprire il nostro mondo? Siamo qui per consigliarti."
+
+msgid "Une vraie boutique"
+msgstr "Una vera boutique"
+
+msgid "Voir tous les articles →"
+msgstr "Vedi tutti gli articoli →"
+
+msgid "Vos prochaines petites joies."
+msgstr "Le tue prossime piccole gioie."
+
+msgid "Votre commande a bien été enregistrée. Un peu de montagne vous accompagnera bientôt."
+msgstr "Il tuo ordine è stato registrato. Un po’ di montagna sarà presto con te."
+
+msgid "Votre commande — La Caverne des Monts"
+msgstr "Il tuo ordine — La Caverne des Monts"
+
+msgid "Votre envie du moment."
+msgstr "La tua voglia del momento."
+
+msgid "Votre panier"
+msgstr "Il tuo carrello"
+
+msgid "Votre panier est conservé."
+msgstr "Il tuo carrello è salvato."
+
+msgid "Votre panier est encore vide. Trouvons de quoi accompagner votre prochaine échappée."
+msgstr "Il tuo carrello è ancora vuoto. Troviamo qualcosa per la tua prossima avventura."
+
+msgid "Votre panier — La Caverne des Monts"
+msgstr "Il tuo carrello — La Caverne des Monts"
+
+msgid "Votre prochaine échappée"
+msgstr "La tua prossima avventura"
+
+msgid "Votre taille"
+msgstr "La tua taglia"
+
+msgid "Votre univers"
+msgstr "Il tuo mondo"
+
+msgid "Vous allez être redirigé vers la page sécurisée de Stripe. Vous y renseignerez votre adresse et consulterez les frais de livraison avant de confirmer le paiement. Vos coordonnées bancaires ne sont pas enregistrées sur notre site."
+msgstr "Verrai reindirizzato alla pagina sicura di Stripe. Inserirai il tuo indirizzo e vedrai le spese di spedizione prima di confermare il pagamento. I dati bancari non vengono memorizzati sul nostro sito."
+
+msgid "Vérifier le code"
+msgstr "Verifica il codice"
+
+msgid "article"
+msgstr "articolo"
+
+msgid "ce qu’on y ressent."
+msgstr "quello che ci fa sentire."
+
+msgid "commence ici."
+msgstr "inizia qui."
+
+msgid "minutes."
+msgstr "minuti."
+
+msgid "qui font vraiment du bien."
+msgstr "che fanno davvero bene."
+
+msgid "vivant."
+msgstr "vivi."
+
+msgid "· L’ESPRIT MONTAGNE"
+msgstr "· LO SPIRITO DELLA MONTAGNA"
+
+msgid "À CHACUN SON ÉCHAPPÉE"
+msgstr "A CIASCUNO LA SUA AVVENTURA"
+
+msgid "À EMPORTER AVEC SOI"
+msgstr "DA PORTARE CON SÉ"
+
+msgid "À Lélex, au cœur du Jura"
+msgstr "A Lélex, nel cuore del Giura"
+
+msgid "À confirmer avec la boutique"
+msgstr "Da confermare con la boutique"
+
+msgid "À explorer"
+msgstr "Da esplorare"
+
+msgid "À votre écoute"
+msgstr "Ti ascoltiamo"
+
+msgid "ÉCRIVEZ-NOUS"
+msgstr "SCRIVICI"
+
+msgid "€ / article"
+msgstr "€ / articolo"
+
+msgid "← Continuer la balade"
+msgstr "← Continua a esplorare"
+
+msgid "← Revenir à mon panier"
+msgstr "← Torna al carrello"

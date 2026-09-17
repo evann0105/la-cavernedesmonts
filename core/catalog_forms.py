@@ -63,6 +63,10 @@ class CatalogProductForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        for code, label in [('en','Anglais'), ('de','Allemand'), ('it','Italien'), ('es','Espagnol')]:
+            existing = self.instance.translations.get(code, {})
+            self.fields[f'name_{code}'] = forms.CharField(label=f'Nom — {label}', max_length=200, required=False, initial=existing.get('name', ''))
+            self.fields[f'description_{code}'] = forms.CharField(label=f'Description — {label}', required=False, initial=existing.get('description', ''), widget=forms.Textarea(attrs={'rows':4}))
         if not self.instance.pk:
             self.fields['is_published'].initial = False
             self.initial['is_published'] = False
@@ -86,6 +90,7 @@ class CatalogProductForm(forms.ModelForm):
 
     def save(self, commit=True):
         product = super().save(commit=False)
+        product.translations = {code: {'name':self.cleaned_data.get(f'name_{code}', ''), 'description':self.cleaned_data.get(f'description_{code}', '')} for code in ('en','de','it','es')}
         if self.cleaned_data.get('remove_original'):
             product.static_image = ''
         if commit:

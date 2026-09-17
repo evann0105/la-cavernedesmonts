@@ -35,3 +35,17 @@ Depuis **Gérer les produits**, cliquez sur **Choisir les produits de l’accuei
 Les cartes conservent leurs textes et leurs liens vers les collections. Leur photo est la photo principale actuelle de la fiche choisie. Si un produit sélectionné devient inéligible, le premier produit éligible par nom le remplace automatiquement ; en l’absence de produit, la carte reste un lien vers la collection sans photo. Le choix automatique peut aussi être sélectionné volontairement. Les choix sont conservés en base et ne sont pas remplacés par les imports.
 
 Ce réglage est indépendant de la case **Afficher dans « Les complices des beaux jours »**, qui concerne les quatre articles présentés plus bas sur l’accueil.
+
+## Langues de la boutique
+
+Un sélecteur en haut du site propose Français, English, Deutsch, Italiano et Español. Validez avec **OK**. Le choix est conservé pendant un an dans un cookie de préférence ; il reste actif lors des visites et des changements de page. Les filtres et le panier sont conservés. Sans choix explicite, la langue du navigateur est utilisée si elle est prise en charge, sinon le français.
+
+Les textes de l’accueil, de navigation, des collections, du panier, du contact et de la commande sont traduits. Le paiement Stripe utilise aussi la langue sélectionnée. L’espace de gestion conserve ses libellés français.
+
+Dans **Modifier un produit → Traductions de la fiche produit**, renseigner le nom et la description pour chacune des quatre autres langues. Le français reste la source et les champs vides conservent le texte français. Une description non traduite est explicitement signalée sur la fiche. Les 110 fiches importées n’ont pas été traduites automatiquement : leurs textes commerciaux doivent être renseignés et validés par la boutique. La recherche retrouve aussi les noms et descriptions traduits.
+
+Les traductions d’interface sont dans `locale/<langue>/LC_MESSAGES/django.po`. Après modification, exécuter `python manage.py compilemessages`. Les fichiers compilés `.mo` sont versionnés pour que le site démarre sans installation de gettext sur l’hébergement. Redémarrer le serveur après une mise à jour de ces fichiers.
+
+## Zone d’avis en préparation
+
+Une maquette discrète apparaît uniquement sur l’accueil pour un gestionnaire connecté avec une double authentification validée. Elle porte la mention **Exemples fictifs, non publiés aux visiteurs**. Les exemples ne sont associés à aucun client, aucune note ni aucune source réelle. Les visiteurs et comptes clients ne voient pas cette zone. Avant toute publication, les remplacer par des témoignages authentiques avec leur source et l’autorisation nécessaire.

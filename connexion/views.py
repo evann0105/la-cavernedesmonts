@@ -43,3 +43,13 @@ def signup_view(request):
 def logout_view(request):
     logout(request)
     return redirect('accueil:home')
+
+
+@require_POST
+def change_language(request):
+    from django.conf import settings
+    from django.http import HttpResponseBadRequest
+    from django.views.i18n import set_language
+    if request.POST.get('language') not in dict(settings.LANGUAGES):
+        return HttpResponseBadRequest('Unsupported language')
+    return set_language(request)

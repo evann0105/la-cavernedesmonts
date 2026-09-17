@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _, get_language
 from pathlib import Path
 from django.conf import settings
 from django.contrib import messages
@@ -16,7 +17,9 @@ def product_list(request):
     if category:
         products = products.filter(Q(category__slug=category) | Q(collections__slug=category)).distinct()
     if query:
-        products = products.filter(Q(name__icontains=query) | Q(description__icontains=query))
+        language = (get_language() or 'fr').split('-')[0]
+        localized = Q(**{f'translations__{language}__name__icontains':query}) | Q(**{f'translations__{language}__description__icontains':query})
+        products = products.filter(Q(name__icontains=query) | Q(description__icontains=query) | localized)
     sort = request.GET.get('tri', '')
     if sort in ('prix', '-prix'):
         products = products.order_by('price' if sort == 'prix' else '-price')
@@ -38,7 +41,7 @@ def product_detail(request, slug, catalog_preview=False):
                     if url not in images:
                         images.append(url)
     photo_alts = {photo.image.url: photo.alt for photo in product.images.all()}
-    gallery = [{'url': url, 'alt': photo_alts.get(url) or product.name} for url in images]
+    gallery = [{'url': url, 'alt': photo_alts.get(url) or product.localized_name} for url in images]
     related = Product.objects.filter(category=product.category, is_published=True).exclude(pk=product.pk)[:4]
     return render(request, 'core/product_detail.html', {'product': product, 'images': images, 'gallery': gallery, 'related': related, 'catalog_preview': catalog_preview})
 
@@ -63,7 +66,7 @@ def cart_add(request, slug):
     size = request.POST.get('size', '').strip()
     # Unconfirmed sizes remain explicit and block payment until merchant review.
     if product.size_options and size not in product.size_options:
-        messages.error(request, 'Choisissez une taille disponible.')
+        messages.error(request, _('Choisissez une taille disponible.'))
         return redirect('core:product_detail', slug=slug)
     if not product.size_options:
         size = 'À confirmer avec la boutique'
@@ -72,13 +75,13 @@ def cart_add(request, slug):
         if not 1 <= quantity <= 10:
             raise ValueError
     except (ValueError, TypeError):
-        messages.error(request, 'Choisissez une quantité entre 1 et 10.')
+        messages.error(request, _('Choisissez une quantité entre 1 et 10.'))
         return redirect('core:product_detail', slug=slug)
     cart = request.session.get('cart', {})
     key = f'{product.pk}:{size}'
     cart[key] = {'product': product.pk, 'size': size, 'quantity': min(10, cart.get(key, {}).get('quantity', 0) + quantity)}
     request.session['cart'] = cart
-    messages.success(request, 'Un peu de montagne ajouté à votre panier.')
+    messages.success(request, _('Un peu de montagne ajouté à votre panier.'))
     return redirect('core:cart')
 
 
@@ -91,7 +94,7 @@ def cart_update(request):
         if not 0 <= quantity <= 10:
             raise ValueError
     except (ValueError, TypeError):
-        messages.error(request, 'La quantité doit être comprise entre 0 et 10.')
+        messages.error(request, _('La quantité doit être comprise entre 0 et 10.'))
         return redirect('core:cart')
     if key in cart:
         if quantity == 0:

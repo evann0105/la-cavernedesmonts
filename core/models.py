@@ -21,6 +21,7 @@ class Product(models.Model):
 	slug = models.SlugField(max_length=220, unique=True)
 	price = models.DecimalField(max_digits=10, decimal_places=2)
 	description = models.TextField(blank=True)
+	translations = models.JSONField(default=dict, blank=True)
 	main_image = models.ImageField(upload_to='products/', blank=True, null=True)
 	is_featured = models.BooleanField(default=False)
 	is_published = models.BooleanField(default=True)
@@ -31,6 +32,25 @@ class Product(models.Model):
 
 	class Meta:
 		permissions = [('manage_catalog', 'Gérer le catalogue depuis la boutique')]
+
+	def translated_value(self, field):
+		from django.utils.translation import get_language
+		language = (get_language() or 'fr').split('-')[0]
+		return self.translations.get(language, {}).get(field) or getattr(self, field)
+
+	@property
+	def localized_name(self):
+		return self.translated_value('name')
+
+	@property
+	def localized_description(self):
+		return self.translated_value('description')
+
+	@property
+	def description_language(self):
+		from django.utils.translation import get_language
+		language = (get_language() or 'fr').split('-')[0]
+		return language if self.translations.get(language, {}).get('description') else 'fr'
 
 	@property
 	def size_options(self):

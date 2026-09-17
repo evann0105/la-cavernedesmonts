@@ -20,7 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from two_factor.urls import urlpatterns as two_factor_urls
-from connexion.views import SecureLoginView
+from connexion.views import SecureLoginView, change_language
 from connexion.admin_site import BoutiqueAdminSite
 
 admin.site.__class__ = BoutiqueAdminSite
@@ -29,6 +29,7 @@ secure_urls = ([path('account/login/', SecureLoginView.as_view(), name='login')]
                [entry for entry in two_factor_urls[0] if entry.name != 'login'], 'two_factor')
 
 urlpatterns = [
+    path('i18n/setlang/', change_language, name='set_language'),
     path('', include(secure_urls)),
     path('paiement/', include('paiement.urls')),
     path('admin/', admin.site.urls),

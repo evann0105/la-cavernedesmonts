@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _
 import logging
 import stripe
 from django.conf import settings
@@ -30,7 +31,7 @@ def checkout(request):
     enabled = ready() and sizes_valid
     if request.method == 'POST':
         if not enabled:
-            messages.info(request, 'Le paiement en ligne n’est pas encore disponible pour ce panier. Contactez-nous pour préparer votre commande.')
+            messages.info(request, _('Le paiement en ligne n’est pas encore disponible pour ce panier. Contactez-nous pour préparer votre commande.'))
             return redirect('paiement:checkout')
         if not request.session.session_key:
             request.session.save()
@@ -55,7 +56,7 @@ def checkout(request):
                 session = stripe.checkout.Session.create(
                     api_key=settings.STRIPE_SECRET_KEY,
                     idempotency_key=f'order-{order.id}',
-                    mode='payment', payment_method_types=['card'], locale='fr',
+                    mode='payment', payment_method_types=['card'], locale=getattr(request, 'LANGUAGE_CODE', 'fr'),
                     line_items=[{'price_data': {'currency': 'eur', 'unit_amount': i['unit_amount'], 'product_data': {'name': f"{i['name']} — {i['size']}"}}, 'quantity': i['quantity']} for i in snapshot],
                     shipping_address_collection={'allowed_countries': ['FR']},
                     shipping_options=[{'shipping_rate': settings.STRIPE_SHIPPING_RATE}],
@@ -69,7 +70,7 @@ def checkout(request):
             return redirect(session.url, permanent=False)
         except stripe.StripeError:
             logger.warning('Stripe Checkout unavailable for order %s', order.id)
-            messages.error(request, 'Le paiement est momentanément indisponible. Votre panier est conservé ; vous pouvez réessayer.')
+            messages.error(request, _('Le paiement est momentanément indisponible. Votre panier est conservé ; vous pouvez réessayer.'))
             return redirect('paiement:checkout')
     return render(request, 'paiement/checkout.html', {'enabled': enabled, 'total': total(items), 'cart_items': items})
 

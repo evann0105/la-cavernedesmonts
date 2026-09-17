@@ -1,0 +1,644 @@
+msgid ""
+msgstr "Language: en\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\nProject-Id-Version: La Caverne des Monts\nMIME-Version: 1.0\nPO-Revision-Date: 2026-09-17 00:00+0200\nLast-Translator: La Caverne des Monts\nLanguage-Team: Boutique\n"
+
+msgid "ACCESSOIRES BÉBÉ"
+msgstr "BABY ACCESSORIES"
+
+msgid "APPELEZ-NOUS"
+msgstr "CALL US"
+
+msgid "Accessoires bébé"
+msgstr "Baby accessories"
+
+msgid "Accueil"
+msgstr "Home"
+
+msgid "Actualiser le statut"
+msgstr "Refresh status"
+
+msgid "Adresse e-mail"
+msgstr "Email address"
+
+msgid "Adresse e-mail ou nom d’utilisateur"
+msgstr "Email address or username"
+
+msgid "Ajouter à mon panier"
+msgstr "Add to my basket"
+
+msgid "Aller au contenu"
+msgstr "Skip to content"
+
+msgid "Annuler"
+msgstr "Cancel"
+
+msgid "Aperçu privé ·"
+msgstr "Private preview ·"
+
+msgid "Appeler la boutique ↗"
+msgstr "Call the shop ↗"
+
+msgid "Articles"
+msgstr "Items"
+
+msgid "Aucun article pour cette envie."
+msgstr "No matching items."
+
+msgid "Aucun compte nécessaire pour commander."
+msgstr "No account needed to order."
+
+msgid "Aucune offre spéciale pour le moment. En attendant, découvrez le reste de la collection."
+msgstr "No special offers right now. Explore the rest of the collection in the meantime."
+
+msgid "BIENTÔT CHEZ VOUS"
+msgstr "SOON AT YOUR DOOR"
+
+msgid "BIENVENUE DANS NOTRE UNIVERS"
+msgstr "WELCOME TO OUR WORLD"
+
+msgid "Besoin d’un conseil ?"
+msgstr "Need advice?"
+
+msgid "Bien choisir sa taille"
+msgstr "Finding your size"
+
+msgid "Bien dans sa nature."
+msgstr "Naturally at ease."
+
+msgid "Brouillon : ce produit n’est pas proposé à la vente."
+msgstr "Draft: this product is not for sale."
+
+msgid "CONFIRMATION EN COURS"
+msgstr "AWAITING CONFIRMATION"
+
+msgid "Cette adresse e-mail est déjà utilisée."
+msgstr "This email address is already in use."
+
+msgid "Changer la langue"
+msgstr "Change language"
+
+msgid "Choisissez une quantité entre 1 et 10."
+msgstr "Choose a quantity between 1 and 10."
+
+msgid "Choisissez une taille disponible."
+msgstr "Choose an available size."
+
+msgid "Choisissez votre taille"
+msgstr "Choose your size"
+
+msgid "Contactez la boutique pour connaître les modalités applicables à votre commande. Les frais de livraison seront indiqués avant tout paiement."
+msgstr "Contact the shop for the terms that apply to your order. Shipping costs are shown before payment."
+
+msgid "Continuer"
+msgstr "Continue"
+
+msgid "Continuer la découverte →"
+msgstr "Keep exploring →"
+
+msgid "Continuer vers le paiement sécurisé →"
+msgstr "Continue to secure payment →"
+
+msgid "Créer mon compte"
+msgstr "Create my account"
+
+msgid "Créer mon compte →"
+msgstr "Create my account →"
+
+msgid "Créer un compte — La Caverne des Monts"
+msgstr "Create an account — La Caverne des Monts"
+
+msgid "Créez votre compte. Vous pouvez aussi commander sans inscription."
+msgstr "Create your account. You can also order without registering."
+
+msgid "Dans le même esprit."
+msgstr "In the same spirit."
+
+msgid "De bons conseils."
+msgstr "Thoughtful advice."
+
+msgid "De la douceur pour accompagner leurs premières échappées."
+msgstr "Softness for their first adventures."
+
+msgid "De petites attentions pour leurs tout premiers souvenirs de montagne."
+msgstr "Little gifts for their very first mountain memories."
+
+msgid "De vraies personnes."
+msgstr "Real people."
+
+msgid "Dehors, on respire."
+msgstr "Outside, breathe freely."
+
+msgid "Des conseils humains"
+msgstr "Personal advice"
+
+msgid "Des essentiels pour les moments"
+msgstr "Essentials for moments"
+
+msgid "Des randonneurs au pied des montagnes, sur un sentier fleuri"
+msgstr "Hikers on a flower-lined mountain trail"
+
+msgid "Description disponible en français."
+msgstr "Description available in French."
+
+msgid "Du premier pas dehors au dernier instant au chaud."
+msgstr "From your first step outdoors to your last cosy moment."
+
+msgid "Déconnexion"
+msgstr "Log out"
+
+msgid "Découvrir la collection ↗"
+msgstr "Explore the collection ↗"
+
+msgid "Déjà tout un monde."
+msgstr "Already a whole world."
+
+msgid "Déjà un compte ?"
+msgstr "Already have an account?"
+
+msgid "Encore un petit instant."
+msgstr "Just a moment longer."
+
+msgid "Enfant"
+msgstr "Children"
+
+msgid "Enfants"
+msgstr "Children"
+
+msgid "Essayez un autre mot ou découvrez toute la collection."
+msgstr "Try another word or explore the whole collection."
+
+msgid "Explorer"
+msgstr "Explore"
+
+msgid "Explorer la collection"
+msgstr "Explore the collection"
+
+msgid "Femme"
+msgstr "Women"
+
+msgid "Femmes"
+msgstr "Women"
+
+msgid "Fil d’Ariane"
+msgstr "Breadcrumb"
+
+msgid "Frais de livraison indiqués avant le paiement."
+msgstr "Shipping costs shown before payment."
+
+msgid "Grandir au grand air."
+msgstr "Growing up outdoors."
+
+msgid "Gérer les produits"
+msgstr "Manage products"
+
+msgid "Homme"
+msgstr "Men"
+
+msgid "Hommes"
+msgstr "Men"
+
+msgid "LE BONHEUR SE PARTAGE"
+msgstr "HAPPINESS IS SHARED"
+
+msgid "La Caverne des Monts — L’esprit montagne"
+msgstr "La Caverne des Monts — The mountain spirit"
+
+msgid "La Caverne des Monts — accueil"
+msgstr "La Caverne des Monts — home"
+
+msgid "La boutique & contact"
+msgstr "Shop & contact"
+
+msgid "La collection"
+msgstr "The collection"
+
+msgid "La journée est belle."
+msgstr "It’s a beautiful day."
+
+msgid "La montagne nous rassemble."
+msgstr "The mountains bring us together."
+
+msgid "La quantité doit être comprise entre 0 et 10."
+msgstr "Quantity must be between 0 and 10."
+
+msgid "La taille et la disponibilité sont à confirmer avec la boutique avant de commander."
+msgstr "Confirm size and availability with the shop before ordering."
+
+msgid "Laissez-vous inspirer"
+msgstr "Find your inspiration"
+
+msgid "Langue"
+msgstr "Language"
+
+msgid "Langue du site"
+msgstr "Website language"
+
+msgid "Le bonheur n’est jamais très loin."
+msgstr "Happiness is never far away."
+
+msgid "Le goût des choses simples."
+msgstr "A love for simple things."
+
+msgid "Le grand air. La douceur du retour."
+msgstr "Fresh air. The comfort of coming home."
+
+msgid "Le paiement en ligne n’est pas encore disponible pour ce panier. Contactez-nous pour préparer votre commande."
+msgstr "Online payment is not yet available for this basket. Contact us to arrange your order."
+
+msgid "Le paiement en ligne sera bientôt disponible. Pour le moment, contactez-nous pour confirmer les tailles, les disponibilités et la livraison. Votre panier est conservé et aucun paiement n’a été effectué."
+msgstr "Online payment will be available soon. For now, contact us to confirm sizes, availability and delivery. Your basket is saved and no payment has been taken."
+
+msgid "Le paiement est momentanément indisponible. Votre panier est conservé ; vous pouvez réessayer."
+msgstr "Payment is temporarily unavailable. Your basket is saved; please try again."
+
+msgid "Le plaisir d’échanger."
+msgstr "The joy of a conversation."
+
+msgid "Les beaux jours vous attendent."
+msgstr "Good days are waiting."
+
+msgid "Les belles journées commencent par les choses simples."
+msgstr "Beautiful days begin with simple things."
+
+msgid "Les belles occasions de retrouver l’esprit montagne."
+msgstr "Lovely opportunities to rediscover the mountain spirit."
+
+msgid "Les complices des beaux jours."
+msgstr "Companions for beautiful days."
+
+msgid "Les joues fraîches, les petites mains au chaud, les câlins au retour. L’esprit montagne se partage dès les premiers instants."
+msgstr "Rosy cheeks, warm little hands, cuddles on returning home. Share the mountain spirit from the very first moments."
+
+msgid "Les petites attentions"
+msgstr "Little thoughtful gifts"
+
+msgid "Les petits comme les grands"
+msgstr "Little ones and grown-ups"
+
+msgid "Les prochaines belles occasions se préparent."
+msgstr "New lovely offers are on their way."
+
+msgid "Livraison & retours"
+msgstr "Delivery & returns"
+
+msgid "L’appel du dehors."
+msgstr "The call of the outdoors."
+
+msgid "L’esprit montagne de La Caverne des Monts"
+msgstr "The mountain spirit of La Caverne des Monts"
+
+msgid "L’esprit montagne, à emporter avec soi."
+msgstr "Take the mountain spirit with you."
+
+msgid "L’essentiel, tout simplement"
+msgstr "Simply the essentials"
+
+msgid "Maquette privée · Exemples fictifs, non publiés aux visiteurs"
+msgstr "Private mock-up · Fictional examples, hidden from visitors"
+
+msgid "Menu ☰"
+msgstr "Menu ☰"
+
+msgid "Merci pour votre confiance."
+msgstr "Thank you for your trust."
+
+msgid "Mettre à jour"
+msgstr "Update"
+
+msgid "Modifier ce produit"
+msgstr "Edit this product"
+
+msgid "Mon compte"
+msgstr "My account"
+
+msgid "Navigation mobile"
+msgstr "Mobile navigation"
+
+msgid "Navigation principale"
+msgstr "Main navigation"
+
+msgid "Nos collections bébé et offres"
+msgstr "Our baby collections and offers"
+
+msgid "Notre boutique"
+msgstr "Our shop"
+
+msgid "Notre boutique & contact — La Caverne des Monts"
+msgstr "Our shop & contact — La Caverne des Monts"
+
+msgid "Notre sélection"
+msgstr "Our selection"
+
+msgid "Nous attendons la confirmation du paiement. Vous pouvez actualiser cette page dans quelques instants. Ne recommencez pas le paiement."
+msgstr "We are waiting for payment confirmation. Refresh this page in a moment. Do not pay again."
+
+msgid "OFFRES SPÉCIALES"
+msgstr "SPECIAL OFFERS"
+
+msgid "Offres spéciales"
+msgstr "Special offers"
+
+msgid "On prend le temps de vous répondre."
+msgstr "We take the time to help."
+
+msgid "On reste pour"
+msgstr "We stay for"
+
+msgid "On vient pour la montagne."
+msgstr "We come for the mountains."
+
+msgid "PAIEMENT CONFIRMÉ"
+msgstr "PAYMENT CONFIRMED"
+
+msgid "POLAIRES BÉBÉ"
+msgstr "BABY FLEECES"
+
+msgid "POUR LES JOURS QUI FONT DU BIEN"
+msgstr "FOR DAYS THAT FEEL GOOD"
+
+msgid "PROLONGER L’ÉCHAPPÉE"
+msgstr "KEEP THE ADVENTURE GOING"
+
+msgid "Panier ("
+msgstr "Basket ("
+
+msgid "Partir sans regarder l’heure. Prendre le chemin le plus long. Retrouver le plaisir d’être dehors, tout simplement."
+msgstr "Head out without watching the clock. Take the longer path. Rediscover the simple joy of being outdoors."
+
+msgid "Pas encore de compte ?"
+msgstr "No account yet?"
+
+msgid "Passer à la commande →"
+msgstr "Proceed to checkout →"
+
+msgid "Petits bonheurs"
+msgstr "Little joys"
+
+msgid "Petits détails, grands câlins."
+msgstr "Little details, big cuddles."
+
+msgid "Polaires bébé"
+msgstr "Baby fleeces"
+
+msgid "Pour toute la famille"
+msgstr "For the whole family"
+
+msgid "Prendre le large"
+msgstr "Head outdoors"
+
+msgid "Prix croissant"
+msgstr "Price: low to high"
+
+msgid "Prix décroissant"
+msgstr "Price: high to low"
+
+msgid "Profitez-en."
+msgstr "Make the most of it."
+
+msgid "Préparons votre commande ensemble."
+msgstr "Let’s prepare your order together."
+
+msgid "Quantité"
+msgstr "Quantity"
+
+msgid "Quelques mots, beaucoup de douceur."
+msgstr "A few words, a little warmth."
+
+msgid "Rechercher"
+msgstr "Search"
+
+msgid "Rencontrer notre boutique"
+msgstr "Meet our shop"
+
+msgid "Retirer"
+msgstr "Remove"
+
+msgid "Retour"
+msgstr "Back"
+
+msgid "Retour à la page précédente"
+msgstr "Back to the previous page"
+
+msgid "Retrouvez l’esprit montagne avec La Caverne des Monts : polaires, vestes et petites attentions pour les jours au grand air comme les retours au chaud."
+msgstr "Discover the mountain spirit at La Caverne des Monts: fleeces, jackets and thoughtful gifts for outdoor days and cosy evenings."
+
+msgid "Retrouvez notre univers à Lélex, 01410, dans le Jura. Avant de venir, appelez-nous pour confirmer les horaires et préparer votre visite."
+msgstr "Find us in Lélex, 01410, in the Jura mountains. Call before visiting to confirm opening hours and plan your visit."
+
+msgid "Revenir à la boutique"
+msgstr "Return to the shop"
+
+msgid "Référence de commande :"
+msgstr "Order reference:"
+
+msgid "Se connecter"
+msgstr "Log in"
+
+msgid "Ses premiers cocons."
+msgstr "Their first cosy layers."
+
+msgid "Sous-total"
+msgstr "Subtotal"
+
+msgid "Suivi du paiement — La Caverne des Monts"
+msgstr "Payment status — La Caverne des Monts"
+
+msgid "Sécurité de mon compte"
+msgstr "Account security"
+
+msgid "Taille unique"
+msgstr "One size"
+
+msgid "Total des articles"
+msgstr "Items total"
+
+msgid "Tout découvrir"
+msgstr "Explore everything"
+
+msgid "Tout petit."
+msgstr "So little."
+
+msgid "Tout simplement."
+msgstr "Simply."
+
+msgid "Toute la collection"
+msgstr "The whole collection"
+
+msgid "Trier par"
+msgstr "Sort by"
+
+msgid "Trois univers. Le même esprit."
+msgstr "Three worlds. One spirit."
+
+msgid "Trop de tentatives ont été effectuées. Merci de réessayer dans"
+msgstr "Too many attempts. Please try again in"
+
+msgid "Trouver mon bonheur"
+msgstr "Find my little joy"
+
+msgid "UN PEU DE MONTAGNE À EMPORTER"
+msgstr "A LITTLE MOUNTAIN JOY TO TAKE HOME"
+
+msgid "UN PEU DE MONTAGNE. BEAUCOUP DE SOUVENIRS."
+msgstr "A LITTLE MOUNTAIN AIR. SO MANY MEMORIES."
+
+msgid "Un bébé en bonnet sauge et maille crème dans un chalet lumineux"
+msgstr "A baby in sage knitwear in a bright chalet"
+
+msgid "Un bébé en polaire crème blotti dans les bras de sa maman, face aux montagnes"
+msgstr "A baby in cream fleece cuddled by their mother with a mountain view"
+
+msgid "Un bébé et sa maman découvrent un cadeau dans une ambiance chalet"
+msgstr "A baby and mother opening a gift in a cosy chalet"
+
+msgid "Un conseil ? Parlons-en"
+msgstr "Need advice? Let’s talk"
+
+msgid "Un dernier pas."
+msgstr "One last step."
+
+msgid "Un doute sur une taille ? Parlons-en."
+msgstr "Unsure about a size? Let’s talk."
+
+msgid "Un petit temps de pause."
+msgstr "A short pause."
+
+msgid "Un peu de montagne ajouté à votre panier."
+msgstr "A little mountain joy added to your basket."
+
+msgid "Un peu de montagne. Beaucoup de souvenirs."
+msgstr "A little mountain air. So many memories."
+
+msgid "Un peu plus"
+msgstr "A little more"
+
+msgid "Un peu plus dehors."
+msgstr "A little more outdoors."
+
+msgid "Une bouffée d’air frais. Une polaire toute douce. Une attention pour quelqu’un qu’on aime."
+msgstr "A breath of fresh air. A wonderfully soft fleece. A thoughtful gift for someone you love."
+
+msgid "Une boutique à votre écoute"
+msgstr "A shop that listens"
+
+msgid "Une hésitation ? Contactez-nous pour vérifier les mesures et la disponibilité du modèle qui vous plaît."
+msgstr "Not sure? Contact us to check measurements and availability of your favourite item."
+
+msgid "Une hésitation sur une taille ? Une idée cadeau ?"
+msgstr "Unsure about a size? Looking for a gift?"
+
+msgid "Une occasion de faire plaisir."
+msgstr "A chance to make someone smile."
+
+msgid "Une polaire, des chaussettes…"
+msgstr "A fleece, some socks…"
+
+msgid "Une question ?"
+msgstr "Any questions?"
+
+msgid "Une question ? Parlons-en."
+msgstr "A question? Let’s talk."
+
+msgid "Une question avant de vous décider ?"
+msgstr "A question before you decide?"
+
+msgid "Une randonnée en montagne sous un ciel bleu"
+msgstr "A mountain hike under a blue sky"
+
+msgid "Une taille à choisir, une attention à offrir ou l’envie de découvrir notre univers ? Nous sommes là pour vous conseiller."
+msgstr "Choosing a size, finding a gift or curious about our world? We’re here to help."
+
+msgid "Une vraie boutique"
+msgstr "A real local shop"
+
+msgid "Voir tous les articles →"
+msgstr "See all items →"
+
+msgid "Vos prochaines petites joies."
+msgstr "Your next little joys."
+
+msgid "Votre commande a bien été enregistrée. Un peu de montagne vous accompagnera bientôt."
+msgstr "Your order has been recorded. A little mountain spirit will soon be with you."
+
+msgid "Votre commande — La Caverne des Monts"
+msgstr "Your order — La Caverne des Monts"
+
+msgid "Votre envie du moment."
+msgstr "What calls to you today."
+
+msgid "Votre panier"
+msgstr "Your basket"
+
+msgid "Votre panier est conservé."
+msgstr "Your basket is saved."
+
+msgid "Votre panier est encore vide. Trouvons de quoi accompagner votre prochaine échappée."
+msgstr "Your basket is still empty. Let’s find something for your next adventure."
+
+msgid "Votre panier — La Caverne des Monts"
+msgstr "Your basket — La Caverne des Monts"
+
+msgid "Votre prochaine échappée"
+msgstr "Your next adventure"
+
+msgid "Votre taille"
+msgstr "Your size"
+
+msgid "Votre univers"
+msgstr "Your world"
+
+msgid "Vous allez être redirigé vers la page sécurisée de Stripe. Vous y renseignerez votre adresse et consulterez les frais de livraison avant de confirmer le paiement. Vos coordonnées bancaires ne sont pas enregistrées sur notre site."
+msgstr "You will be redirected to Stripe’s secure payment page. Enter your address and review shipping costs before confirming payment. Your bank details are not stored on our site."
+
+msgid "Vérifier le code"
+msgstr "Verify code"
+
+msgid "article"
+msgstr "item"
+
+msgid "ce qu’on y ressent."
+msgstr "the way they make us feel."
+
+msgid "commence ici."
+msgstr "starts here."
+
+msgid "minutes."
+msgstr "minutes."
+
+msgid "qui font vraiment du bien."
+msgstr "that truly feel good."
+
+msgid "vivant."
+msgstr "alive."
+
+msgid "· L’ESPRIT MONTAGNE"
+msgstr "· THE MOUNTAIN SPIRIT"
+
+msgid "À CHACUN SON ÉCHAPPÉE"
+msgstr "AN ADVENTURE FOR EVERYONE"
+
+msgid "À EMPORTER AVEC SOI"
+msgstr "TAKE A LITTLE JOY WITH YOU"
+
+msgid "À Lélex, au cœur du Jura"
+msgstr "In Lélex, in the heart of the Jura"
+
+msgid "À confirmer avec la boutique"
+msgstr "To confirm with the shop"
+
+msgid "À explorer"
+msgstr "Explore"
+
+msgid "À votre écoute"
+msgstr "Here to help"
+
+msgid "ÉCRIVEZ-NOUS"
+msgstr "WRITE TO US"
+
+msgid "€ / article"
+msgstr "€ / item"
+
+msgid "← Continuer la balade"
+msgstr "← Keep exploring"
+
+msgid "← Revenir à mon panier"
+msgstr "← Back to my basket"
