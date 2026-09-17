@@ -27,3 +27,11 @@ Ce module gère le catalogue et les tailles disponibles, pas un stock quantitati
 Les photos téléversées sont stockées dans `media/`, qui est volontairement exclu de Git. En production, prévoir un stockage persistant, son service HTTP et des sauvegardes de `media/` et de la base de données. Le serveur local les sert déjà. Les migrations s’appliquent via `./start`.
 
 Références techniques : [sécurité des fichiers Django](https://docs.djangoproject.com/en/5.2/topics/security/#user-uploaded-content) et [authentification OTP](https://django-otp-official.readthedocs.io/en/latest/auth.html).
+
+## Choisir les trois cartes « Votre envie du moment »
+
+Depuis **Gérer les produits**, cliquez sur **Choisir les produits de l’accueil** (`/gestion/accueil/`). Sélectionnez un produit pour Femme, Homme et Enfant. Chaque liste contient les produits publiés, avec photo, rattachés à cette rubrique principale ou complémentaire. L’aperçu évolue immédiatement ; **Enregistrer les trois cartes** applique le choix sur l’accueil.
+
+Les cartes conservent leurs textes et leurs liens vers les collections. Leur photo est la photo principale actuelle de la fiche choisie. Si un produit sélectionné devient inéligible, le premier produit éligible par nom le remplace automatiquement ; en l’absence de produit, la carte reste un lien vers la collection sans photo. Le choix automatique peut aussi être sélectionné volontairement. Les choix sont conservés en base et ne sont pas remplacés par les imports.
+
+Ce réglage est indépendant de la case **Afficher dans « Les complices des beaux jours »**, qui concerne les quatre articles présentés plus bas sur l’accueil.

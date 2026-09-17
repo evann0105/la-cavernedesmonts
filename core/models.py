@@ -65,3 +65,11 @@ class ProductImage(models.Model):
 
 	def __str__(self):
 		return f"Image for {self.product.name}"
+
+
+class HomepageSelection(models.Model):
+    slot = models.CharField(max_length=20, unique=True, choices=[('femmes', 'Femme'), ('hommes', 'Homme'), ('enfants', 'Enfant')])
+    product = models.ForeignKey(Product, null=True, blank=True, on_delete=models.SET_NULL, related_name='homepage_selections')
+
+    def __str__(self):
+        return self.get_slot_display()

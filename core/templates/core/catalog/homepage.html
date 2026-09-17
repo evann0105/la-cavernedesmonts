@@ -1,0 +1,11 @@
+{% extends 'core/catalog/base.html' %}{% load static %}
+{% block catalog_content %}
+<div class="catalog-heading"><div><p class="eyebrow">LES TROIS UNIVERS DE L’ACCUEIL</p><h1>Votre envie du moment.</h1><p>Choisissez le produit qui représente chaque collection. La carte conserve son lien vers la collection et utilise la photo principale du produit.</p></div><a class="button button-outline" href="{% url 'accueil:home' %}#worlds-title">Voir l’accueil ↗</a></div>
+<form method="post" class="catalog-form homepage-selection">{% csrf_token %}{{ form.non_field_errors }}
+{% if form.errors %}<div class="catalog-error" role="alert">Un produit n’est plus disponible pour cette carte. Choisissez un produit publié avec une photo dans la bonne rubrique.</div>{% endif %}
+<div class="homepage-choice-grid">{% for panel in panels %}<section class="catalog-panel homepage-choice" data-slot="{{ panel.card.slot }}"><p class="eyebrow">0{{ forloop.counter }} / {{ panel.card.label|upper }}</p>{% include 'core/catalog/field.html' with field=panel.field %}<div class="homepage-card-preview world-{{ panel.card.style }}"><img data-choice-image src="{{ panel.card.product.image_url|default:'' }}" alt="{{ panel.card.product.name|default:'' }}" width="300" height="360" {% if not panel.card.product %}hidden{% endif %}><p data-choice-name>{{ panel.card.product.name|default:'Aucun produit publié avec photo' }}</p><h2>{{ panel.card.title }}</h2><span>Explorer la collection {{ panel.card.label }}</span></div></section>{% endfor %}</div>
+<p class="help">L’aperçu se met à jour quand vous changez de produit. Cliquez sur Enregistrer pour appliquer vos choix. Si un produit est retiré de la vente, déplacé hors de cette rubrique ou privé de sa photo, un autre produit éligible est affiché automatiquement.</p>
+<div class="catalog-save"><a href="{% url 'core:catalog_list' %}">Retour aux produits</a><button class="button">Enregistrer les trois cartes ✓</button></div>
+</form>{{ choices|json_script:'homepage-product-choices' }}
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/catalog.js' %}" defer></script><script src="{% static 'js/homepage-selection.js' %}" defer></script>{% endblock %}

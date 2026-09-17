@@ -57,7 +57,7 @@ class CatalogProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['name', 'price', 'description', 'category', 'collections', 'sizes', 'is_published', 'is_featured', 'main_image', 'include_imported_gallery']
-        labels = {'name':'Nom du produit', 'description':'Description et conseils', 'sizes':'Tailles disponibles', 'is_published':'Visible dans la boutique', 'is_featured':'Mettre en avant sur l’accueil', 'include_imported_gallery':'Conserver la galerie de photos d’origine'}
+        labels = {'name':'Nom du produit', 'description':'Description et conseils', 'sizes':'Tailles disponibles', 'is_published':'Visible dans la boutique', 'is_featured':'Afficher dans « Les complices des beaux jours »', 'include_imported_gallery':'Conserver la galerie de photos d’origine'}
         help_texts = {'sizes':'Séparez les tailles par des virgules : S, M, L ou 6 mois, 12 mois. Pour un accessoire : Taille unique. Indiquez uniquement les tailles disponibles.', 'is_published':'Décochez pour garder un brouillon ou retirer temporairement cet article de la vente.', 'is_featured':'Les quatre premiers articles mis en avant sont affichés sur l’accueil.'}
         widgets = {'description': forms.Textarea(attrs={'rows':7}), 'sizes':forms.TextInput(attrs={'placeholder':'S, M, L ou Taille unique'})}
 
@@ -113,3 +113,15 @@ class OwnedGalleryFormSet(BaseInlineFormSet):
 
 
 GalleryFormSet = inlineformset_factory(Product, ProductImage, form=GalleryPhotoForm, formset=OwnedGalleryFormSet, extra=0, can_delete=True, max_num=50, absolute_max=50, validate_max=True)
+
+
+class HomepageSelectionForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        from .homepage import WORLD_CARDS, eligible_products
+        super().__init__(*args, **kwargs)
+        for spec in WORLD_CARDS:
+            self.fields[spec['slot']] = forms.ModelChoiceField(
+                label=f"Carte {spec['label']}", queryset=eligible_products(spec['slot']),
+                required=False, empty_label='Choix automatique',
+                help_text='Produits publiés avec une photo, dans cette rubrique. La photo principale sera utilisée.',
+            )

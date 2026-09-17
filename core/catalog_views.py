@@ -60,3 +60,31 @@ def catalog_edit(request, pk=None):
 def catalog_preview(request, pk):
     product = get_object_or_404(Product, pk=pk)
     return product_detail(request, product.slug, catalog_preview=True)
+
+
+@catalog_required
+@require_http_methods(['GET', 'POST'])
+def catalog_homepage(request):
+    from .catalog_forms import HomepageSelectionForm
+    from .homepage import WORLD_CARDS, world_cards
+    from .models import HomepageSelection
+    initial = dict(HomepageSelection.objects.values_list('slot', 'product_id'))
+    for card in world_cards():
+        if card['slot'] not in initial and card['product']:
+            initial[card['slot']] = card['product'].pk
+    form = HomepageSelectionForm(request.POST if request.method == 'POST' else None, initial=initial)
+    if request.method == 'POST' and form.is_valid():
+        with transaction.atomic():
+            for spec in WORLD_CARDS:
+                HomepageSelection.objects.update_or_create(slot=spec['slot'], defaults={'product':form.cleaned_data[spec['slot']]})
+            LogEntry.objects.log_actions(user_id=request.user.pk, queryset=HomepageSelection.objects.filter(slot__in=[s['slot'] for s in WORLD_CARDS]), action_flag=CHANGE, change_message='Sélection des cartes de l’accueil modifiée.')
+        messages.success(request, 'Les trois cartes de « Votre envie du moment » ont été mises à jour.')
+        return redirect('core:catalog_homepage')
+    cards = world_cards()
+    choices = {}
+    for spec in WORLD_CARDS:
+        products = list(form.fields[spec['slot']].queryset)
+        choices[spec['slot']] = {str(p.pk): {'image':p.image_url, 'name':p.name} for p in products}
+        choices[spec['slot']][''] = {'image':products[0].image_url, 'name':products[0].name} if products else {'image':'', 'name':'Aucun produit publié avec photo'}
+    panels = [{'card':card, 'field':form[card['slot']]} for card in cards]
+    return render(request, 'core/catalog/homepage.html', {'form':form, 'panels':panels, 'choices':choices})

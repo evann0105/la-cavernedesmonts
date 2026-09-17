@@ -25,9 +25,9 @@
 <section class="summit-worlds wrap" aria-labelledby="worlds-title">
   <div class="section-heading"><div><p class="eyebrow">À CHACUN SON ÉCHAPPÉE</p><h2 id="worlds-title">Votre envie du moment.</h2></div><span class="quiet-note">Trois univers. Le même esprit.</span></div>
   <div class="world-grid">
-    <a class="world-card world-women" href="{% url 'core:product_list' %}?categorie=femmes"><div class="world-top"><span>01 / FEMME</span><span class="world-arrow" aria-hidden="true">↗</span></div><img src="{% static 'core/img/products/veste-tri-matieres-femme-blanche-capuche/5-veste-tri-matieres-femme-blanche.png' %}" alt="Veste femme blanche et grise à capuche" loading="lazy" width="1000" height="1333"><div class="world-copy"><h3>Bien dans sa nature.</h3><span>Explorer la collection Femme</span></div></a>
-    <a class="world-card world-men" href="{% url 'core:product_list' %}?categorie=hommes"><div class="world-top"><span>02 / HOMME</span><span class="world-arrow" aria-hidden="true">↗</span></div><img src="{% static 'core/img/products/blouson-softshell-homme-impermeable/2-blouson-softshell-homme-bleu.png' %}" alt="Blouson homme bleu marine aux fermetures orange" loading="lazy" width="1000" height="1333"><div class="world-copy"><h3>L’appel du dehors.</h3><span>Explorer la collection Homme</span></div></a>
-    <a class="world-card world-kids" href="{% url 'core:product_list' %}?categorie=enfants"><div class="world-top"><span>03 / ENFANT</span><span class="world-arrow" aria-hidden="true">↗</span></div><img src="{% static 'core/img/enfants/enfant-74-polaire-garcon-ceven/00.jpg' %}" alt="Polaire enfant bleu turquoise" loading="lazy" width="600" height="600"><div class="world-copy"><h3>Grandir au grand air.</h3><span>Explorer la collection Enfant</span></div></a>
+    {% for card in world_cards %}
+    <a class="world-card world-{{ card.style }}" href="{% url 'core:product_list' %}?categorie={{ card.slot }}"><div class="world-top"><span>0{{ forloop.counter }} / {{ card.label|upper }}</span><span class="world-arrow" aria-hidden="true">↗</span></div>{% if card.product %}<img src="{{ card.product.image_url }}" alt="{{ card.product.name }}" loading="lazy" width="1000" height="1333">{% endif %}<div class="world-copy"><h3>{{ card.title }}</h3><span>Explorer la collection {{ card.label }}</span></div></a>
+    {% endfor %}
   </div>
 </section>
 <section class="summit-feature" aria-labelledby="feature-title">
