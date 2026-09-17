@@ -1,0 +1,4 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}Gestion des produits — La Caverne des Monts{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'css/catalog.css' %}">{% endblock %}
+{% block content %}<div class="wrap section catalog-shell"><nav class="breadcrumb"><a href="{% url 'accueil:home' %}">La boutique</a> / <a href="{% url 'core:catalog_list' %}">Gestion des produits</a></nav>{% block catalog_content %}{% endblock %}</div>{% endblock %}

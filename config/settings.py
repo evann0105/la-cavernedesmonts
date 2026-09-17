@@ -28,7 +28,8 @@ environ.Env.read_env(BASE_DIR / ".env")
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY", default="insecure-dev-key-change-me")
+from .secret_key import validate_secret_key
+SECRET_KEY = validate_secret_key(env("SECRET_KEY", default=""))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
@@ -50,16 +51,25 @@ INSTALLED_APPS = [
     'core',
     'pages_products',
     'connexion',
+    'paiement',
+    'axes',
+    'django_otp',
+    'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_totp',
+    'two_factor',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -74,6 +84,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.basket',
+                'core.context_processors.catalog_access',
+                'core.context_processors.back_navigation',
             ],
         },
     },
@@ -139,3 +152,48 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Payment is deliberately inactive until the merchant has completed setup.
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY", default="")
+STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET", default="")
+PAYMENTS_ENABLED = env.bool("PAYMENTS_ENABLED", default=False)
+SHOP_READY = env.bool("SHOP_READY", default=False)
+SITE_URL = env("SITE_URL", default="http://127.0.0.1:8000").rstrip("/")
+STRIPE_SHIPPING_RATE = env("STRIPE_SHIPPING_RATE", default="")
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+
+# Password protection is persistent across processes and local restarts.
+from datetime import timedelta
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
+    'connexion.backends.EmailOrUsernameBackend',
+]
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = timedelta(minutes=15)
+AXES_LOCKOUT_PARAMETERS = ['ip_address']
+AXES_RESET_ON_SUCCESS = False
+AXES_CLIENT_IP_CALLABLE = 'connexion.security.client_ip'
+AXES_LOCKOUT_CALLABLE = 'connexion.security.lockout'
+AXES_SENSITIVE_PARAMETERS = ['username', 'ip_address']
+AXES_ENABLE_ACCESS_FAILURE_LOG = False
+LOGIN_URL = 'two_factor:login'
+LOGIN_REDIRECT_URL = 'accueil:home'
+TWO_FACTOR_PATCH_ADMIN = False
+TWO_FACTOR_LOGIN_TIMEOUT = 300
+OTP_TOTP_ISSUER = 'La Caverne des Monts'
+TWO_FACTOR_REMEMBER_COOKIE_AGE = None
+OTP_TOTP_THROTTLE_FACTOR = 2
+OTP_STATIC_THROTTLE_FACTOR = 2
+SESSION_COOKIE_AGE = 3600
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+LANGUAGES = [('fr', 'Français'), ('en', 'English'), ('de', 'Deutsch'), ('it', 'Italiano'), ('es', 'Español')]
+LOCALE_PATHS = [BASE_DIR / 'locale']
+LANGUAGE_COOKIE_AGE = 31536000
+LANGUAGE_COOKIE_SAMESITE = 'Lax'
+LANGUAGE_COOKIE_SECURE = not DEBUG

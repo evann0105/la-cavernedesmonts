@@ -1,27 +1,7 @@
-{% load static %}
-<!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% block title %}La Caverne des Monts{% endblock %}</title>
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
-  <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-  {% block styles %}{% endblock %}
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⛰️%3C/text%3E%3C/svg%3E">
-  </head>
-  <body class="layout-col">
-    {% include 'partials/navbar.html' %}
-    <main class="container">
-      {% block content %}{% endblock %}
-    </main>
-    <footer class="site-footer container">
-      <small>&copy; {% now 'Y' %} La Caverne des Monts</small>
-    </footer>
-    <script src="{% static 'js/theme.js' %}"></script>
-    <script src="{% static 'core/js/nav.js' %}"></script>
-    {% block scripts %}{% endblock %}
-  </body>
-</html>
+{% load i18n shop_i18n %}{% load static %}<!doctype html>
+{% get_current_language as LANGUAGE_CODE %}<html lang="{{ LANGUAGE_CODE }}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="{% translate 'Retrouvez l’esprit montagne avec La Caverne des Monts : polaires, vestes et petites attentions pour les jours au grand air comme les retours au chaud.' %}"><meta name="theme-color" content="#243e36"><title>{% block title %}{% translate 'La Caverne des Monts — L’esprit montagne' %}{% endblock %}</title><link rel="stylesheet" href="{% static 'css/boutique.css' %}"><link rel="stylesheet" href="{% static 'css/chalet.css' %}"><link rel="stylesheet" href="{% static 'css/summit.css' %}">{% block styles %}{% endblock %}</head>
+<body class="{% block body_class %}{% endblock %}"><a class="skip" href="#contenu">{% translate 'Aller au contenu' %}</a><div class="announcement"><div class="wrap language-bar"><span>{% translate 'L’esprit montagne, à emporter avec soi.' %}</span>{% include 'partials/language_selector.html' %}</div></div>
+{% include 'partials/navbar.html' %}
+<main id="contenu">{% if back_url %}<nav class="wrap page-back" aria-label="{% translate 'Retour' %}"><a href="{{ back_url }}" class="page-back-link" aria-label="{% translate 'Retour à la page précédente' %}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m11 5-7 7 7 7M4 12h16"/></svg><span>{% translate 'Retour' %}</span></a></nav>{% endif %}{% if messages %}<div class="messages wrap" role="status">{% for message in messages %}<p>{{ message }}</p>{% endfor %}</div>{% endif %}{% block content %}{% endblock %}</main>
+<footer><div class="wrap footer-grid"><div><a class="footer-brand" href="{% url 'accueil:home' %}">La Caverne<br>des Monts<span>{% translate 'UN PEU DE MONTAGNE. BEAUCOUP DE SOUVENIRS.' %}</span></a></div><div><h2>{% translate 'À explorer' %}</h2><a href="{% url 'core:product_list' %}">{% translate 'La collection' %}</a><a href="{% url 'core:product_list' %}?categorie=accessoires">{% translate 'Les petites attentions' %}</a><a href="{% url 'core:location' %}">{% translate 'La boutique & contact' %}</a></div><div><h2>{% translate 'À votre écoute' %}</h2><a href="tel:+33450404617">04 50 40 46 17</a><a href="mailto:contact@la-cavernedesmonts.fr">contact@la-cavernedesmonts.fr</a><p>{% translate 'Un doute sur une taille ? Parlons-en.' %}</p></div></div><div class="wrap footer-bottom"><span>© {% now 'Y' %} La Caverne des Monts</span><span>{% translate 'Le goût des choses simples.' %}</span></div></footer>
+<script src="{% static 'js/boutique.js' %}" defer></script>{% block scripts %}{% endblock %}</body></html>
