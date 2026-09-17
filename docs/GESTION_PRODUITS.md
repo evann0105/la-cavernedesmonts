@@ -38,7 +38,7 @@ Ce réglage est indépendant de la case **Afficher dans « Les complices des bea
 
 ## Langues de la boutique
 
-Un sélecteur en haut du site propose Français, English, Deutsch, Italiano et Español. Validez avec **OK**. Le choix est conservé pendant un an dans un cookie de préférence ; il reste actif lors des visites et des changements de page. Les filtres et le panier sont conservés. Sans choix explicite, la langue du navigateur est utilisée si elle est prise en charge, sinon le français.
+Dans **Mon compte**, un sélecteur propose Français, English, Deutsch, Italiano et Español. Validez avec **OK**. Ce réglage est disponible aux clients et aux administrateurs, ainsi qu’avant connexion depuis la page Mon compte. Le choix est conservé pendant un an dans un cookie de préférence ; il reste actif lors des visites et des changements de page. Les filtres et le panier sont conservés. Sans choix explicite, la langue du navigateur est utilisée si elle est prise en charge, sinon le français.
 
 Les textes de l’accueil, de navigation, des collections, du panier, du contact et de la commande sont traduits. Le paiement Stripe utilise aussi la langue sélectionnée. L’espace de gestion conserve ses libellés français.
 

@@ -7,7 +7,9 @@
 {% endblock %}
 
 {% block content %}<section class="auth">
-  <h1>{% block title %}{% trans "Login" %}{% endblock %}</h1>
+  <h1>{% block title %}{% translate "Mon compte" %}{% endblock %}</h1>
+  {% include "partials/account_language.html" %}
+  <h2>{% trans "Login" %}</h2>
 
   {% if wizard.steps.current == 'auth' %}
     <p>{% blocktrans %}Enter your credentials.{% endblocktrans %}</p>
