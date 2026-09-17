@@ -201,3 +201,5 @@ input, select { border-radius: 10px; }.filters .button { min-height: 46px; }
 @media (max-width: 600px) and (prefers-reduced-motion: no-preference) {
   .summit-hero-copy > div:first-child, .summit-hero-side { animation-duration: 350ms; animation-delay: 0ms; }
 }
+
+@media (max-width: 1100px) { .header-actions .manage-link { display: none; } }

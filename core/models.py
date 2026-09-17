@@ -23,9 +23,14 @@ class Product(models.Model):
 	description = models.TextField(blank=True)
 	main_image = models.ImageField(upload_to='products/', blank=True, null=True)
 	is_featured = models.BooleanField(default=False)
+	is_published = models.BooleanField(default=True)
+	include_imported_gallery = models.BooleanField(default=True)
 	static_image = models.CharField(max_length=500, blank=True)
 	sizes = models.CharField(max_length=200, blank=True, help_text='Tailles vendables séparées par une virgule ; utiliser Taille unique si applicable.')
 	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		permissions = [('manage_catalog', 'Gérer le catalogue depuis la boutique')]
 
 	@property
 	def size_options(self):
@@ -41,7 +46,11 @@ class Product(models.Model):
 
 	def save(self, *args, **kwargs):
 		if not self.slug:
-			self.slug = slugify(self.name)[:220]
+			from uuid import uuid4
+			base = slugify(self.name)[:200] or 'produit'
+			self.slug = base
+			while Product.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
+				self.slug = f'{base}-{uuid4().hex[:10]}'
 		super().save(*args, **kwargs)
 
 

@@ -10,7 +10,7 @@ from .cart import lines, total
 
 
 def product_list(request):
-    products = Product.objects.select_related('category').order_by('-is_featured', 'name')
+    products = Product.objects.filter(is_published=True).select_related('category').order_by('-is_featured', 'name')
     category = request.GET.get('categorie', '')
     query = request.GET.get('q', '').strip()[:100]
     if category:
@@ -24,11 +24,12 @@ def product_list(request):
     return render(request, 'core/product_list.html', {'products': products, 'categories': Category.objects.all(), 'selected': category, 'selected_category': selected_category, 'query': query, 'sort': sort})
 
 
-def product_detail(request, slug):
-    product = get_object_or_404(Product.objects.select_related('category'), slug=slug)
+def product_detail(request, slug, catalog_preview=False):
+    products = Product.objects.all() if catalog_preview else Product.objects.filter(is_published=True)
+    product = get_object_or_404(products.select_related('category'), slug=slug)
     images = [product.image_url] if product.image_url else []
     images += [i.image.url for i in product.images.all()]
-    for folder in ('products', 'best_product', 'femmes', 'hommes', 'enfants'):
+    for folder in (('products', 'best_product', 'femmes', 'hommes', 'enfants') if product.include_imported_gallery else ()):
         directory = Path(settings.BASE_DIR) / 'core/static/core/img' / folder / slug
         if directory.is_dir():
             for p in sorted(directory.iterdir()):
@@ -36,12 +37,14 @@ def product_detail(request, slug):
                     url = static(f'core/img/{folder}/{slug}/{p.name}')
                     if url not in images:
                         images.append(url)
-    related = Product.objects.filter(category=product.category).exclude(pk=product.pk)[:4]
-    return render(request, 'core/product_detail.html', {'product': product, 'images': images, 'related': related})
+    photo_alts = {photo.image.url: photo.alt for photo in product.images.all()}
+    gallery = [{'url': url, 'alt': photo_alts.get(url) or product.name} for url in images]
+    related = Product.objects.filter(category=product.category, is_published=True).exclude(pk=product.pk)[:4]
+    return render(request, 'core/product_detail.html', {'product': product, 'images': images, 'gallery': gallery, 'related': related, 'catalog_preview': catalog_preview})
 
 
 def product_preview(request, slug):
-    get_object_or_404(Product, slug=slug)
+    get_object_or_404(Product, slug=slug, is_published=True)
     return redirect('core:product_detail', slug=slug, permanent=True)
 
 
@@ -56,7 +59,7 @@ def cart(request):
 
 @require_POST
 def cart_add(request, slug):
-    product = get_object_or_404(Product, slug=slug)
+    product = get_object_or_404(Product, slug=slug, is_published=True)
     size = request.POST.get('size', '').strip()
     # Unconfirmed sizes remain explicit and block payment until merchant review.
     if product.size_options and size not in product.size_options:
