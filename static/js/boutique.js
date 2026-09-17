@@ -27,7 +27,7 @@ document.querySelectorAll('[data-gallery]').forEach(link => {
   if (!('IntersectionObserver' in window)) return;
 
   const elements = document.querySelectorAll(
-    '.chapter, .section-heading, .family-heading, .moment, .product-card, .family-card, .contact-band h2'
+    '.chapter, .section-heading, .family-heading, .moment, .product-card, .family-card, .contact-band h2, .summit-manifesto h2, .world-card, .feature-copy, .summit-contact h2'
   );
   const seen = new WeakSet();
   let observer;

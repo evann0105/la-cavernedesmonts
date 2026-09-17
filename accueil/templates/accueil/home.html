@@ -1,40 +1,51 @@
-{% extends 'base.html' %}{% load static %}{% block content %}
-<section class="hero wrap" aria-labelledby="hero-title">
-  <div class="hero-content">
-    <p class="eyebrow"><span class="little-line" aria-hidden="true"></span> LA MONTAGNE, UN ART DE VIVRE</p>
-    <h1 id="hero-title">Le grand air.<br>Les petits<br><em>bonheurs.</em></h1>
-    <p>Les joues fraîches, le cœur au chaud.<br> Un peu de montagne à emporter partout avec soi.</p>
-    <a class="button" href="{% url 'core:product_list' %}">Trouver son bonheur <span aria-hidden="true">↗</span></a>
-    <a class="hero-discover" href="#instants">Laissez-vous inspirer <span aria-hidden="true">↓</span></a>
+{% extends 'base.html' %}
+{% load static %}
+{% block body_class %}summit-home{% endblock %}
+{% block content %}
+<section class="summit-hero" aria-labelledby="summit-title">
+  <img class="summit-landscape" src="{% static 'core/img/slide1.png' %}" alt="Des randonneurs au pied des montagnes, sur un sentier fleuri" fetchpriority="high" width="1890" height="1272">
+  <div class="summit-overlay"></div>
+  <div class="summit-topline"><span class="status-dot" aria-hidden="true"></span> LE GRAND AIR COMMENCE ICI</div>
+  <div class="summit-hero-copy">
+    <div><p class="summit-kicker">LA CAVERNE DES MONTS · LÉLEX</p><h1 id="summit-title">Un peu plus dehors.<br>Un peu plus <em>vivant.</em></h1></div>
+    <div class="summit-hero-side"><p>Le grand air. La douceur du retour.<br>Des essentiels pour les moments<br> qui font vraiment du bien.</p><a class="button summit-cta" href="{% url 'core:product_list' %}">Trouver mon bonheur <span aria-hidden="true">↗</span></a></div>
   </div>
-  <figure class="hero-visual">
-    <img class="hero-image" src="{% static 'core/img/slide1.png' %}" alt="Des randonneurs sur un sentier fleuri au pied des montagnes" fetchpriority="high" width="1890" height="1272">
-    <figcaption><span>DEHORS, ON RESPIRE.</span><span>Dedans, on se retrouve.</span></figcaption>
-    <div class="hero-stamp" aria-hidden="true">L’esprit<br><em>montagne</em><span>LA CAVERNE DES MONTS</span></div>
-  </figure>
+  <div class="summit-hero-bottom"><span>L’esprit montagne, à emporter avec soi.</span><a href="#instants">Laissez-vous inspirer <span aria-hidden="true">↓</span></a></div>
 </section>
-<div class="promise-strip wrap"><span>01 <b>Le goût du grand air</b></span><span>02 <b>La douceur du retour</b></span><span>03 <b>Des attentions à partager</b></span></div>
-<section id="instants" class="section wrap"><div class="chapter"><span>01 / L’INSPIRATION</span><span>À votre rythme.</span></div><div class="section-heading"><div><p class="eyebrow">À CHAQUE ENVIE, SON ÉCHAPPÉE</p><h2>Et si on prenait<br>un peu l’air ?</h2></div><p>Pas besoin de partir loin pour retrouver<br>ce qui fait du bien.</p></div><div class="moments"><a class="moment landscape" href="{% url 'core:product_list' %}?categorie=hommes"><img src="{% static 'core/img/slide2.png' %}" alt="Une invitation à vivre dehors" loading="lazy"><div><p class="eyebrow">L’APPEL DU DEHORS</p><h3>Suivre son envie<br>d’ailleurs.</h3><span>Explorer la collection homme ↗</span></div></a><a class="moment cozy" href="{% url 'core:product_list' %}?categorie=femmes"><img src="{% static 'core/img/best_product/veste-polaire-de-montagne-beige/6-Veste polaire de montagne Beige.png' %}" alt="Veste polaire beige" loading="lazy"><div><p class="eyebrow">LES HEURES DOUCES</p><h3>Se sentir<br>bien, simplement.</h3><span>Découvrir la collection femme ↗</span></div></a></div></section>
-<section class="selection"><div class="wrap section"><div class="chapter"><span>02 / LA SÉLECTION</span><span>À aimer longtemps.</span></div><div class="section-heading"><div><p class="eyebrow">LES COMPLICES DE VOS BEAUX JOURS</p><h2>Vos prochains<br><em>bons moments.</em></h2></div><a class="underlined" href="{% url 'core:product_list' %}">Toute la collection ↗</a></div><div class="product-grid">{% for product in products %}{% include 'partials/product_card.html' %}{% endfor %}</div></div></section>
-<section id="petites-attentions" class="section wrap family-collections" aria-labelledby="family-title">
-  <div class="chapter"><span>03 / LES PETITES ATTENTIONS</span><span>Le bonheur se partage.</span></div>
-  <div class="family-heading">
-    <h2 id="family-title">De la douceur.<br><em>Et beaucoup d’amour.</em></h2>
-    <div class="family-intro"><p>Les premières escapades, les petits cadeaux, les grands câlins. Des attentions pour ceux qui comptent.</p><a class="underlined" href="{% url 'core:location' %}">Un conseil ? Parlons-en <span aria-hidden="true">↗</span></a></div>
+<div class="summit-reassurance wrap" aria-label="Une boutique à votre écoute">
+  <a href="{% url 'core:location' %}"><span class="reassurance-icon" aria-hidden="true">⌂</span><span><strong>Une vraie boutique</strong><small>À Lélex, au cœur du Jura</small></span></a>
+  <a href="tel:+33450404617"><span class="reassurance-icon" aria-hidden="true">↗</span><span><strong>Des conseils humains</strong><small>Une question ? Parlons-en.</small></span></a>
+  <a href="{% url 'core:product_list' %}"><span class="reassurance-icon" aria-hidden="true">✳</span><span><strong>Pour toute la famille</strong><small>Les petits comme les grands</small></span></a>
+</div>
+<section id="instants" class="summit-manifesto wrap">
+  <p class="pill-label">L’essentiel, tout simplement</p>
+  <h2>On vient pour la montagne.<br>On reste pour <span>ce qu’on y ressent.</span></h2>
+  <p>Une bouffée d’air frais. Une polaire toute douce. Une attention pour quelqu’un qu’on aime. <span>Les belles journées commencent par les choses simples.</span></p>
+  <a class="underlined" href="{% url 'core:location' %}">Rencontrer notre boutique <span aria-hidden="true">↗</span></a>
+</section>
+<section class="summit-worlds wrap" aria-labelledby="worlds-title">
+  <div class="section-heading"><div><p class="eyebrow">À CHACUN SON ÉCHAPPÉE</p><h2 id="worlds-title">Votre envie du moment.</h2></div><span class="quiet-note">Trois univers. Le même esprit.</span></div>
+  <div class="world-grid">
+    <a class="world-card world-women" href="{% url 'core:product_list' %}?categorie=femmes"><div class="world-top"><span>01 / FEMME</span><span class="world-arrow" aria-hidden="true">↗</span></div><img src="{% static 'core/img/products/veste-tri-matieres-femme-blanche-capuche/5-veste-tri-matieres-femme-blanche.png' %}" alt="Veste femme blanche et grise à capuche" loading="lazy" width="1000" height="1333"><div class="world-copy"><h3>Bien dans sa nature.</h3><span>Explorer la collection Femme</span></div></a>
+    <a class="world-card world-men" href="{% url 'core:product_list' %}?categorie=hommes"><div class="world-top"><span>02 / HOMME</span><span class="world-arrow" aria-hidden="true">↗</span></div><img src="{% static 'core/img/products/blouson-softshell-homme-impermeable/2-blouson-softshell-homme-bleu.png' %}" alt="Blouson homme bleu marine aux fermetures orange" loading="lazy" width="1000" height="1333"><div class="world-copy"><h3>L’appel du dehors.</h3><span>Explorer la collection Homme</span></div></a>
+    <a class="world-card world-kids" href="{% url 'core:product_list' %}?categorie=enfants"><div class="world-top"><span>03 / ENFANT</span><span class="world-arrow" aria-hidden="true">↗</span></div><img src="{% static 'core/img/enfants/enfant-74-polaire-garcon-ceven/00.jpg' %}" alt="Polaire enfant bleu turquoise" loading="lazy" width="600" height="600"><div class="world-copy"><h3>Grandir au grand air.</h3><span>Explorer la collection Enfant</span></div></a>
   </div>
+</section>
+<section class="summit-feature" aria-labelledby="feature-title">
+  <div class="feature-copy"><p class="pill-label">Dehors, on respire.</p><h2 id="feature-title">La journée est belle.<br><span>Profitez-en.</span></h2><p>Partir sans regarder l’heure. Prendre le chemin le plus long. Retrouver le plaisir d’être dehors, tout simplement.</p><a class="button button-cream" href="{% url 'core:product_list' %}">Prendre le large <span aria-hidden="true">↗</span></a><span class="feature-footnote">Un peu de montagne. Beaucoup de souvenirs.</span></div>
+  <div class="feature-visual"><img src="{% static 'core/img/slide2.png' %}" alt="Une randonnée en montagne sous un ciel bleu" loading="lazy" width="1890" height="1272"><span class="feature-photo-note">Le bonheur n’est jamais très loin.</span></div>
+</section>
+<section class="section wrap summit-selection" aria-labelledby="selection-title">
+  <div class="section-heading"><div><p class="eyebrow">À EMPORTER AVEC SOI</p><h2 id="selection-title">Les complices des beaux jours.</h2></div><a class="button button-outline" href="{% url 'core:product_list' %}">Tout découvrir <span aria-hidden="true">↗</span></a></div>
+  <div class="product-grid">{% for product in products %}{% include 'partials/product_card.html' %}{% endfor %}</div>
+</section>
+<section id="petites-attentions" class="section wrap family-collections" aria-labelledby="family-title">
+  <div class="family-heading"><div><p class="eyebrow">LE BONHEUR SE PARTAGE</p><h2 id="family-title">Tout petit.<br><em>Déjà tout un monde.</em></h2></div><div class="family-intro"><p>Les premiers pas, les grands câlins et les petites attentions. De la douceur pour ceux qui comptent.</p><a class="underlined" href="{% url 'core:location' %}">Un conseil ? Parlons-en <span aria-hidden="true">↗</span></a></div></div>
   <nav class="family-grid" aria-label="Nos collections bébé et offres">
-    <a class="family-card" href="{% url 'core:product_list' %}?categorie=accessoires-bebe" aria-label="Accessoires bébé">
-      <div class="family-photo"><img src="{% static 'core/img/bb/image.png' %}" alt="Accessoires bébé" loading="lazy" width="383" height="267"></div>
-      <div class="family-caption"><div><p class="eyebrow">LES PREMIERS SOUVENIRS</p><h3>Petits détails, grands câlins.</h3></div><span class="family-arrow" aria-hidden="true">↗</span></div>
-    </a>
-    <a class="family-card" href="{% url 'core:product_list' %}?categorie=polaires-bebe" aria-label="Polaires bébé">
-      <div class="family-photo"><img src="{% static 'core/img/bb/image copy.png' %}" alt="Polaires bébé" loading="lazy" width="383" height="267"></div>
-      <div class="family-caption"><div><p class="eyebrow">TOUT CONTRE SOI</p><h3>Ses premiers cocons.</h3></div><span class="family-arrow" aria-hidden="true">↗</span></div>
-    </a>
-    <a class="family-card" href="{% url 'core:product_list' %}?categorie=offres-speciales" aria-label="Offres spéciales">
-      <div class="family-photo"><img src="{% static 'core/img/bb/image copy 2.png' %}" alt="Offres spéciales" loading="lazy" width="383" height="267"></div>
-      <div class="family-caption"><div><p class="eyebrow">AU FIL DES ENVIES</p><h3>Une occasion de faire plaisir.</h3></div><span class="family-arrow" aria-hidden="true">↗</span></div>
-    </a>
+    <a class="family-card" href="{% url 'core:product_list' %}?categorie=accessoires-bebe" aria-label="Accessoires bébé"><div class="family-photo"><img src="{% static 'core/img/bb/image.png' %}" alt="Accessoires bébé" loading="lazy" width="383" height="267"></div><div class="family-caption"><div><p class="eyebrow">LES PREMIERS SOUVENIRS</p><h3>Petits détails, grands câlins.</h3></div><span class="family-arrow" aria-hidden="true">↗</span></div></a>
+    <a class="family-card" href="{% url 'core:product_list' %}?categorie=polaires-bebe" aria-label="Polaires bébé"><div class="family-photo"><img src="{% static 'core/img/bb/image copy.png' %}" alt="Polaires bébé" loading="lazy" width="383" height="267"></div><div class="family-caption"><div><p class="eyebrow">TOUT CONTRE SOI</p><h3>Ses premiers cocons.</h3></div><span class="family-arrow" aria-hidden="true">↗</span></div></a>
+    <a class="family-card" href="{% url 'core:product_list' %}?categorie=offres-speciales" aria-label="Offres spéciales"><div class="family-photo"><img src="{% static 'core/img/bb/image copy 2.png' %}" alt="Offres spéciales" loading="lazy" width="383" height="267"></div><div class="family-caption"><div><p class="eyebrow">AU FIL DES ENVIES</p><h3>Une occasion de faire plaisir.</h3></div><span class="family-arrow" aria-hidden="true">↗</span></div></a>
   </nav>
 </section>
-<section class="contact-band"><div class="wrap"><p class="eyebrow">UN CONSEIL, UNE ENVIE, UNE QUESTION ?</p><h2>Les belles histoires<br>commencent par <em>un bonjour.</em></h2><a href="tel:+33450404617">Parlons-en au 04 50 40 46 17 ↗</a></div></section>{% endblock %}
+<section class="summit-contact wrap"><div><p class="eyebrow">LA CAVERNE DES MONTS · LÉLEX</p><h2>De vraies personnes.<br><span>De bons conseils.</span></h2></div><div><p>Une hésitation sur une taille ? Une idée cadeau ?<br>On prend le temps de vous répondre.</p><a class="button" href="tel:+33450404617">04 50 40 46 17 <span aria-hidden="true">↗</span></a></div></section>
+{% endblock %}
