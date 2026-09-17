@@ -4,6 +4,7 @@
 
 {% block content %}<section class="auth">
   <h1>{% block title %}{% translate "Mon compte" %}{% endblock %}</h1>
+  <p><a class="text-link" href="{% url 'espace:account' %}">{% translate 'Mon compte' %} ↗</a></p>
   {% include "partials/account_language.html" %}
   <h2>{% trans "Account Security" %}</h2>
 

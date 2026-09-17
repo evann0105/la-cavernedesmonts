@@ -55,3 +55,21 @@ Une maquette discrète apparaît uniquement sur l’accueil pour un gestionnaire
 Le lancement `./start` conserve désormais la base dans le dossier voisin `la-cavernedesmonts-data/db.sqlite3`, hors du dépôt Git. Si une ancienne base existe encore dans le projet, elle est copiée une seule fois, sans remplacer une base externe existante. Une sauvegarde SQLite cohérente est créée dans `la-cavernedesmonts-data/backups/` avant les migrations et l’import à chaque démarrage. Les sauvegardes ne sont pas supprimées automatiquement.
 
 Sauvegardez aussi ce dossier sur un support distinct : cette protection évite les pertes liées aux branches Git, mais ne remplace pas une sauvegarde contre une panne de disque. Les photos ajoutées sont dans `media/` et la configuration privée dans `.env` ; conservez-les également. En production, le chemin existant est conservé ; `DATABASE_PATH` permet de le définir explicitement.
+
+### Pages de découverte et espace client
+
+Le pied de page regroupe les collections, les informations et les liens « Mon compte ». Les nouveautés présentent les 24 derniers ajouts au catalogue. La page Promotions reprend les produits publiés rattachés à « Offres spéciales » ; aucun pourcentage ni ancien prix n’est inventé. Les meilleures ventes sont classées selon les quantités des commandes réellement payées sur le nouveau site.
+
+Les nouvelles commandes passées en étant connecté sont rattachées au compte côté serveur. Aucun historique n’est attribué à partir d’une simple correspondance d’adresse e-mail. Les commandes anciennes ou invitées nécessitent un traitement séparé, et les anciennes données du site PrestaShop ne sont pas importées par cette fonctionnalité.
+
+Le client peut ajouter, modifier et supprimer ses adresses, modifier ses nom/prénom/e-mail après confirmation de son mot de passe, retrouver ses commandes et consulter ses avoirs et bons. Le carnet d’adresses ne préremplit pas Stripe : le client confirme l’adresse de livraison sur la page de paiement. Les pages privées sont protégées contre la consultation par un autre client et ne sont pas mises en cache. La double authentification reste obligatoire pour l’administration.
+
+Dans l’administration Django sécurisée, la rubrique Espace permet de consigner un **avoir déjà émis**, lié à une commande payée et à son propriétaire. Cette saisie ne déclenche aucun remboursement et ne constitue pas à elle seule une facture d’avoir comptable. Les remboursements et documents comptables doivent être traités par la gérante dans ses outils habituels.
+
+Pour les **bons de réduction**, créer et configurer d’abord le code promotionnel dans Stripe (montant, durée, restrictions, limite d’utilisation et client si nécessaire), puis renseigner sa copie dans Espace > Vouchers avec le bénéficiaire et ses conditions. Le champ de saisie des codes est activé dans Stripe Checkout ; Stripe vérifie leur éligibilité et leurs limites. Le site ne crée pas de coupon Stripe et n’en synchronise pas la consommation : désactiver également la fiche locale lorsqu’un code n’est plus disponible.
+
+### Conditions existantes à actualiser avant mise en vente
+
+Source lue le 18 septembre 2026 : https://la-cavernedesmonts.fr/content/3-conditions-utilisation. Le texte français est repris dans une page avec sommaire. Il mentionne notamment CIC, le paiement par chèque, des e-mails automatiques et des modalités qui ne correspondent pas toutes au nouveau parcours. Ce n’est pas une validation juridique ni une nouvelle rédaction des CGV. Faire valider une version adaptée avant de passer SHOP_READY et PAYMENTS_ENABLED à True. Les traductions concernent l’interface ; le texte contractuel reste identifié comme la version originale française.
+
+Adresse et horaires repris de https://la-cavernedesmonts.fr/content/4-a-propos : 225 rue des Monts-Jura, Résidence Les Gentianes, 01410 Lélex ; mercredi–samedi 9h30–12h et 14h30–18h30, dimanche 9h30–12h, ouverture quotidienne annoncée en haute saison. Le site invite à confirmer par téléphone avant la visite.

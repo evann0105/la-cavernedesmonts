@@ -38,8 +38,8 @@ def checkout(request):
         snapshot = [{'product': i['product'].pk, 'name': i['product'].name, 'size': i['size'], 'quantity': i['quantity'], 'unit_amount': int(i['product'].price * 100)} for i in items]
         # Reuse a pending order to give retries and double-clicks the same Stripe idempotency key.
         order = Order.objects.filter(id=request.session.get('checkout_order'), session_key=request.session.session_key, status='pending').first() if request.session.get('checkout_order') else None
-        if not order or order.items != snapshot:
-            order = Order.objects.create(session_key=request.session.session_key, items=snapshot, subtotal=int(total(items)*100))
+        if not order or order.items != snapshot or order.user_id != (request.user.pk if request.user.is_authenticated else None):
+            order = Order.objects.create(user=request.user if request.user.is_authenticated else None, session_key=request.session.session_key, items=snapshot, subtotal=int(total(items)*100))
             request.session['checkout_order'] = str(order.id)
         try:
             if order.stripe_session_id:
@@ -47,7 +47,7 @@ def checkout(request):
                 if session.status == 'complete':
                     return redirect('paiement:confirmation', order_id=order.id)
                 if session.status == 'expired':
-                    order = Order.objects.create(session_key=request.session.session_key, items=snapshot, subtotal=int(total(items)*100))
+                    order = Order.objects.create(user=request.user if request.user.is_authenticated else None, session_key=request.session.session_key, items=snapshot, subtotal=int(total(items)*100))
                     request.session['checkout_order'] = str(order.id)
                     session = None
             else:
@@ -56,6 +56,7 @@ def checkout(request):
                 session = stripe.checkout.Session.create(
                     api_key=settings.STRIPE_SECRET_KEY,
                     idempotency_key=f'order-{order.id}',
+                    allow_promotion_codes=True,
                     mode='payment', payment_method_types=['card'], locale=getattr(request, 'LANGUAGE_CODE', 'fr'),
                     line_items=[{'price_data': {'currency': 'eur', 'unit_amount': i['unit_amount'], 'product_data': {'name': f"{i['name']} — {i['size']}"}}, 'quantity': i['quantity']} for i in snapshot],
                     shipping_address_collection={'allowed_countries': ['FR']},
