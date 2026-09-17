@@ -210,10 +210,14 @@ input, select { border-radius: 10px; }.filters .button { min-height: 46px; }
 .page-back-link:hover { background:#e5ecdc; border-color:#8b9b80; }
 .page-back-link:focus-visible { outline:3px solid #809867; outline-offset:4px; }
 @media(max-width:600px) { .page-back { padding-top:14px; } }
-.language-bar { display:flex; align-items:center; justify-content:space-between; gap:15px; }.language-form { display:flex; align-items:center; gap:7px; letter-spacing:normal; text-transform:none; font-size:12px; }.language-form label { margin:0; }.language-form select { width:auto; min-height:32px; padding:4px 20px 4px 8px; border:1px solid #b8c4ae; border-radius:20px; background:transparent; color:#243e36; font:inherit; }.language-form button { padding:4px 8px; min-height:32px; border:1px solid #b8c4ae; border-radius:20px; background:transparent; color:#243e36; cursor:pointer; }.language-form :focus-visible { outline:2px solid #243e36; outline-offset:2px; }
+.language-form { display:flex; align-items:center; gap:7px; letter-spacing:normal; text-transform:none; font-size:12px; }.language-form label { margin:0; }.language-form select { width:auto; min-height:32px; padding:4px 20px 4px 8px; border:1px solid #b8c4ae; border-radius:20px; background:transparent; color:#243e36; font:inherit; }.language-form button { padding:4px 8px; min-height:32px; border:1px solid #b8c4ae; border-radius:20px; background:transparent; color:#243e36; cursor:pointer; }.language-form :focus-visible { outline:2px solid #243e36; outline-offset:2px; }
 .review-preview { padding-block:30px 55px; border-top:1px solid #dfe4d9; }.review-preview>p { font-size:12px; color:#687663; }.review-preview h2 { font-size:25px; margin:12px 0 24px; }.review-examples { display:grid; grid-template-columns:repeat(3,1fr); gap:30px; }.review-examples blockquote { margin:0; font-size:15px; line-height:1.8; }.review-examples figcaption { font-size:11px; color:#687663; margin-top:12px; }.review-examples figure { margin:0; }
-@media(max-width:700px){.language-bar>span{display:none}.language-bar{justify-content:flex-end}.review-examples{grid-template-columns:1fr;gap:22px}.announcement{display:block!important}}
+@media(max-width:700px){.review-examples{grid-template-columns:1fr;gap:22px}}
 
-.summit-home .announcement { display:block; }
-.summit-home .header { top:80px; }
-@media(max-width:600px){.summit-home .header { top:68px; }}
+
+.account-language { margin:24px 0 32px; padding:20px; border:1px solid #dce3d3; border-radius:16px; background:#f0f3e9; }
+.account-language h2 { font-size:19px; margin:0 0 14px; }
+.account-language .language-form { flex-wrap:wrap; font-size:14px; gap:12px; }
+.account-language .language-form select { flex:1; min-width:120px; min-height:44px; background:#fff; }
+.account-language .language-form button { min-height:44px; min-width:44px; }
+.summit-hero-bottom { justify-content:flex-end; }

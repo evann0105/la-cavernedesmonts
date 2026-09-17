@@ -38,7 +38,7 @@ Ce réglage est indépendant de la case **Afficher dans « Les complices des bea
 
 ## Langues de la boutique
 
-Un sélecteur en haut du site propose Français, English, Deutsch, Italiano et Español. Validez avec **OK**. Le choix est conservé pendant un an dans un cookie de préférence ; il reste actif lors des visites et des changements de page. Les filtres et le panier sont conservés. Sans choix explicite, la langue du navigateur est utilisée si elle est prise en charge, sinon le français.
+Dans **Mon compte**, un sélecteur propose Français, English, Deutsch, Italiano et Español. Validez avec **OK**. Ce réglage est disponible aux clients et aux administrateurs, ainsi qu’avant connexion depuis la page Mon compte. Le choix est conservé pendant un an dans un cookie de préférence ; il reste actif lors des visites et des changements de page. Les filtres et le panier sont conservés. Sans choix explicite, la langue du navigateur est utilisée si elle est prise en charge, sinon le français.
 
 Les textes de l’accueil, de navigation, des collections, du panier, du contact et de la commande sont traduits. Le paiement Stripe utilise aussi la langue sélectionnée. L’espace de gestion conserve ses libellés français.
 
@@ -49,3 +49,9 @@ Les traductions d’interface sont dans `locale/<langue>/LC_MESSAGES/django.po`.
 ## Zone d’avis en préparation
 
 Une maquette discrète apparaît uniquement sur l’accueil pour un gestionnaire connecté avec une double authentification validée. Elle porte la mention **Exemples fictifs, non publiés aux visiteurs**. Les exemples ne sont associés à aucun client, aucune note ni aucune source réelle. Les visiteurs et comptes clients ne voient pas cette zone. Avant toute publication, les remplacer par des témoignages authentiques avec leur source et l’autorisation nécessaire.
+
+### Protection des données locales
+
+Le lancement `./start` conserve désormais la base dans le dossier voisin `la-cavernedesmonts-data/db.sqlite3`, hors du dépôt Git. Si une ancienne base existe encore dans le projet, elle est copiée une seule fois, sans remplacer une base externe existante. Une sauvegarde SQLite cohérente est créée dans `la-cavernedesmonts-data/backups/` avant les migrations et l’import à chaque démarrage. Les sauvegardes ne sont pas supprimées automatiquement.
+
+Sauvegardez aussi ce dossier sur un support distinct : cette protection évite les pertes liées aux branches Git, mais ne remplace pas une sauvegarde contre une panne de disque. Les photos ajoutées sont dans `media/` et la configuration privée dans `.env` ; conservez-les également. En production, le chemin existant est conservé ; `DATABASE_PATH` permet de le définir explicitement.

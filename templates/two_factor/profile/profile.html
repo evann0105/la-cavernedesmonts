@@ -3,7 +3,9 @@
 {% load two_factor_tags %}
 
 {% block content %}<section class="auth">
-  <h1>{% block title %}{% trans "Account Security" %}{% endblock %}</h1>
+  <h1>{% block title %}{% translate "Mon compte" %}{% endblock %}</h1>
+  {% include "partials/account_language.html" %}
+  <h2>{% trans "Account Security" %}</h2>
 
   {% if default_device %}
     <p>{% blocktrans with primary=default_device|as_action %}Primary method: {{ primary }}{% endblocktrans %}</p>
