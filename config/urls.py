@@ -33,6 +33,7 @@ urlpatterns = [
     path('', include(secure_urls)),
     path('paiement/', include('paiement.urls')),
     path('admin/', admin.site.urls),
+    path('', include('espace.urls')),
     path('', include('accueil.urls')),  # Accueil homepage
     path('', include('core.urls')),     # Core routes
     path('page-produit/', include('pages_products.urls')),  # Dedicated product pages

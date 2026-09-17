@@ -1,0 +1,2 @@
+{% extends 'espace/base.html' %}{% load i18n %}
+{% block page %}<div class="account-layout"><nav class="account-nav" aria-label="{% translate 'Mon compte' %}">{% include 'espace/account_links.html' %}</nav><div class="account-content">{% block account_content %}{% endblock %}</div></div>{% endblock %}

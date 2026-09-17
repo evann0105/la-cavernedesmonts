@@ -705,3 +705,261 @@ msgstr "Behind this window, new discoveries and a friendly helping hand. Come in
 
 msgid "Découvrir notre magasin"
 msgstr "Discover our shop"
+
+msgid "Adresse enregistrée."
+msgstr "Address saved."
+
+msgid "Adresse supprimée."
+msgstr "Address deleted."
+
+msgid "Ajouter une adresse"
+msgstr "Add an address"
+
+msgid "Aucun article à afficher dans cette sélection pour le moment. Retrouvez toutes nos envies de montagne dans la collection."
+msgstr "No items in this selection yet. Explore the full collection for more mountain inspiration."
+
+msgid "Aucun avoir pour le moment."
+msgstr "No credit notes yet."
+
+msgid "Aucune adresse enregistrée pour le moment."
+msgstr "No saved addresses yet."
+
+msgid "Aucune commande liée à votre compte pour le moment."
+msgstr "No orders linked to your account yet."
+
+msgid "Ces adresses composent votre carnet personnel. L’adresse définitive de livraison reste à confirmer sur la page de paiement sécurisée."
+msgstr "These addresses form your personal address book. Confirm the final delivery address at secure checkout."
+
+msgid "Conditions d’utilisation"
+msgstr "Terms and conditions"
+
+msgid "Confirmer la suppression"
+msgstr "Confirm deletion"
+
+msgid "Confirmer la suppression de cette adresse ?"
+msgstr "Delete this address?"
+
+msgid "Consulter la source"
+msgstr "View the source"
+
+msgid "Contactez-nous"
+msgstr "Contact us"
+
+msgid "Des vêtements pour toute la famille, une matière douce, une petite attention à offrir. Nous aimons les trouvailles qui accompagnent les moments heureux."
+msgstr "Clothes for the whole family, a soft fabric, a thoughtful gift. We love finds that become part of happy moments."
+
+msgid "Disponible"
+msgstr "Available"
+
+msgid "Découvrir les promotions"
+msgstr "Explore special offers"
+
+msgid "Détail de la commande"
+msgstr "Order details"
+
+msgid "En attente de paiement"
+msgstr "Awaiting payment"
+
+msgid "En boutique comme à distance, le plaisir reste le même : échanger et vous aider à choisir."
+msgstr "In store or from afar, we always enjoy talking with you and helping you choose."
+
+msgid "Enregistrer"
+msgstr "Save"
+
+msgid "Expiré ou désactivé"
+msgstr "Expired or inactive"
+
+msgid "Garder mes coordonnées à jour."
+msgstr "Keep my details up to date."
+
+msgid "HEUREUX DE VOUS RETROUVER"
+msgstr "WELCOME BACK"
+
+msgid "Informations"
+msgstr "Information"
+
+msgid "La Caverne des Monts, c’est une boutique à Lélex et une envie : partager un peu de l’esprit montagne, bien au-delà des vacances."
+msgstr "La Caverne des Monts is a shop in Lélex with one wish: to share a little mountain spirit, long after the holidays."
+
+msgid "La suite se prépare."
+msgstr "More to come."
+
+msgid "Les articles les plus commandés sur cette boutique en ligne."
+msgstr "The most ordered items in this online shop."
+
+msgid "Les avoirs émis par la boutique pour vos commandes apparaîtront ici."
+msgstr "Credit notes issued by the shop for your orders will appear here."
+
+msgid "Les belles occasions du moment."
+msgstr "Good finds for right now."
+
+msgid "Les derniers ajouts à notre catalogue, à découvrir à votre rythme."
+msgstr "The latest additions to our catalogue, ready to explore at your own pace."
+
+msgid "Les informations de la boutique, réunies pour vous."
+msgstr "The shop’s information, all in one place."
+
+msgid "Les petites attentions se préparent."
+msgstr "Little treats are on their way."
+
+msgid "Meilleures ventes"
+msgstr "Bestsellers"
+
+msgid "Mes adresses"
+msgstr "My addresses"
+
+msgid "Mes avoirs"
+msgstr "My credit notes"
+
+msgid "Mes bons de réduction"
+msgstr "My vouchers"
+
+msgid "Mes commandes"
+msgstr "My orders"
+
+msgid "Mes informations personnelles"
+msgstr "My personal details"
+
+msgid "Modifier"
+msgstr "Edit"
+
+msgid "Mon adresse"
+msgstr "My address"
+
+msgid "Mot de passe actuel"
+msgstr "Current password"
+
+msgid "Mot de passe incorrect."
+msgstr "Incorrect password."
+
+msgid "Nom"
+msgstr "Last name"
+
+msgid "Nos magasins"
+msgstr "Our stores"
+
+msgid "Nouveaux produits"
+msgstr "New products"
+
+msgid "Ou poussez notre porte."
+msgstr "Or visit us in store."
+
+msgid "Parlons de vos envies."
+msgstr "Let’s talk about what you love."
+
+msgid "Payée"
+msgstr "Paid"
+
+msgid "Plan du site"
+msgstr "Sitemap"
+
+msgid "Pour confirmer la modification de vos informations."
+msgstr "To confirm changes to your details."
+
+msgid "Pour une commande, indiquez sa référence dans votre message."
+msgstr "For an order enquiry, include its reference in your message."
+
+msgid "Promotions"
+msgstr "Special offers"
+
+msgid "Prénom"
+msgstr "First name"
+
+msgid "Préparer mes prochaines livraisons."
+msgstr "Prepare my next deliveries."
+
+msgid "Retrouver la gestion de la boutique."
+msgstr "Manage the shop."
+
+msgid "Retrouver mes achats et leur statut."
+msgstr "View my purchases and their status."
+
+msgid "Retrouvez vos achats, vos adresses et vos préférences en un seul endroit."
+msgstr "Your purchases, addresses and preferences, all in one place."
+
+msgid "Seules les commandes passées en étant connecté sur cette nouvelle boutique apparaissent ici. Pour une commande antérieure, contactez-nous."
+msgstr "Only orders placed while signed in to this new shop appear here. For earlier orders, contact us."
+
+msgid "Sommaire"
+msgstr "Contents"
+
+msgid "Supprimer cette adresse"
+msgstr "Delete this address"
+
+msgid "Texte des conditions générales de vente publié par La Caverne des Monts. Version originale en français."
+msgstr "Sales terms published by La Caverne des Monts. Original French version."
+
+msgid "Tous les chemins de la boutique, en un regard."
+msgstr "Every corner of the shop, at a glance."
+
+msgid "Un code valide se saisit sur la page de paiement sécurisée, lorsque le paiement en ligne est disponible. Son application dépend des conditions du bon."
+msgstr "Enter a valid code at secure checkout when online payment is available. Voucher conditions apply."
+
+msgid "Une adresse pour vos prochains bonheurs."
+msgstr "An address for your next little joys."
+
+msgid "Une question sur cette commande ?"
+msgstr "A question about this order?"
+
+msgid "Une taille à choisir, un cadeau à préparer ou une question sur votre commande ? Nous prenons le temps de vous répondre."
+msgstr "Choosing a size, preparing a gift or asking about an order? We take the time to help."
+
+msgid "Une vraie personne, un conseil, une réponse."
+msgstr "A real person, friendly advice, an answer."
+
+msgid "Valable jusqu’au"
+msgstr "Valid until"
+
+msgid "Voir la commande concernée"
+msgstr "View the related order"
+
+msgid "Voir le détail"
+msgstr "View details"
+
+msgid "Vos informations ont été enregistrées."
+msgstr "Your details have been saved."
+
+msgid "Votre histoire commence ici."
+msgstr "Your story starts here."
+
+msgid "Votre petit coin de montagne."
+msgstr "Your own little mountain retreat."
+
+msgid "Vous n’avez pas de bon de réduction attribué pour le moment."
+msgstr "You have no vouchers assigned yet."
+
+msgid "À propos"
+msgstr "About us"
+
+msgid "Nom de cette adresse"
+msgstr "Address label"
+
+msgid "Destinataire"
+msgstr "Recipient"
+
+msgid "Adresse"
+msgstr "Address"
+
+msgid "Complément"
+msgstr "Address line 2"
+
+msgid "Code postal"
+msgstr "Postal code"
+
+msgid "Ville"
+msgstr "City"
+
+msgid "Pays"
+msgstr "Country"
+
+msgid "Horaires de la boutique"
+msgstr "Opening hours"
+
+msgid "Du mercredi au samedi"
+msgstr "Wednesday to Saturday"
+
+msgid "Dimanche"
+msgstr "Sunday"
+
+msgid "Ouvert tous les jours en haute saison. Appelez-nous pour confirmer les horaires avant votre visite."
+msgstr "Open every day in high season. Call to confirm opening hours before your visit."

@@ -705,3 +705,261 @@ msgstr "Hinter diesem Schaufenster warten Entdeckungen und persönliche Beratung
 
 msgid "Découvrir notre magasin"
 msgstr "Unser Geschäft entdecken"
+
+msgid "Adresse enregistrée."
+msgstr "Adresse gespeichert."
+
+msgid "Adresse supprimée."
+msgstr "Adresse gelöscht."
+
+msgid "Ajouter une adresse"
+msgstr "Adresse hinzufügen"
+
+msgid "Aucun article à afficher dans cette sélection pour le moment. Retrouvez toutes nos envies de montagne dans la collection."
+msgstr "In dieser Auswahl sind noch keine Artikel verfügbar. Entdecken Sie unsere gesamte Kollektion."
+
+msgid "Aucun avoir pour le moment."
+msgstr "Noch keine Gutschriften."
+
+msgid "Aucune adresse enregistrée pour le moment."
+msgstr "Noch keine gespeicherten Adressen."
+
+msgid "Aucune commande liée à votre compte pour le moment."
+msgstr "Noch keine Bestellungen mit Ihrem Konto verknüpft."
+
+msgid "Ces adresses composent votre carnet personnel. L’adresse définitive de livraison reste à confirmer sur la page de paiement sécurisée."
+msgstr "Diese Adressen bilden Ihr persönliches Adressbuch. Bestätigen Sie die endgültige Lieferadresse auf der sicheren Zahlungsseite."
+
+msgid "Conditions d’utilisation"
+msgstr "Allgemeine Geschäftsbedingungen"
+
+msgid "Confirmer la suppression"
+msgstr "Löschen bestätigen"
+
+msgid "Confirmer la suppression de cette adresse ?"
+msgstr "Diese Adresse löschen?"
+
+msgid "Consulter la source"
+msgstr "Quelle ansehen"
+
+msgid "Contactez-nous"
+msgstr "Kontakt"
+
+msgid "Des vêtements pour toute la famille, une matière douce, une petite attention à offrir. Nous aimons les trouvailles qui accompagnent les moments heureux."
+msgstr "Kleidung für die ganze Familie, ein weicher Stoff, ein kleines Geschenk. Wir lieben Entdeckungen, die schöne Momente begleiten."
+
+msgid "Disponible"
+msgstr "Verfügbar"
+
+msgid "Découvrir les promotions"
+msgstr "Angebote entdecken"
+
+msgid "Détail de la commande"
+msgstr "Bestelldetails"
+
+msgid "En attente de paiement"
+msgstr "Zahlung ausstehend"
+
+msgid "En boutique comme à distance, le plaisir reste le même : échanger et vous aider à choisir."
+msgstr "Im Geschäft oder aus der Ferne: Wir freuen uns, mit Ihnen zu sprechen und Sie bei der Auswahl zu beraten."
+
+msgid "Enregistrer"
+msgstr "Speichern"
+
+msgid "Expiré ou désactivé"
+msgstr "Abgelaufen oder deaktiviert"
+
+msgid "Garder mes coordonnées à jour."
+msgstr "Meine Kontaktdaten aktuell halten."
+
+msgid "HEUREUX DE VOUS RETROUVER"
+msgstr "WILLKOMMEN ZURÜCK"
+
+msgid "Informations"
+msgstr "Informationen"
+
+msgid "La Caverne des Monts, c’est une boutique à Lélex et une envie : partager un peu de l’esprit montagne, bien au-delà des vacances."
+msgstr "La Caverne des Monts ist ein Geschäft in Lélex mit einem Wunsch: ein Stück Berggefühl teilen, weit über den Urlaub hinaus."
+
+msgid "La suite se prépare."
+msgstr "Bald gibt es mehr."
+
+msgid "Les articles les plus commandés sur cette boutique en ligne."
+msgstr "Die meistbestellten Artikel in diesem Onlineshop."
+
+msgid "Les avoirs émis par la boutique pour vos commandes apparaîtront ici."
+msgstr "Hier erscheinen die Gutschriften zu Ihren Bestellungen."
+
+msgid "Les belles occasions du moment."
+msgstr "Schöne Angebote für jetzt."
+
+msgid "Les derniers ajouts à notre catalogue, à découvrir à votre rythme."
+msgstr "Die neuesten Ergänzungen unseres Katalogs, in Ihrem Tempo zu entdecken."
+
+msgid "Les informations de la boutique, réunies pour vous."
+msgstr "Alle Informationen zum Geschäft an einem Ort."
+
+msgid "Les petites attentions se préparent."
+msgstr "Kleine Aufmerksamkeiten werden vorbereitet."
+
+msgid "Meilleures ventes"
+msgstr "Bestseller"
+
+msgid "Mes adresses"
+msgstr "Meine Adressen"
+
+msgid "Mes avoirs"
+msgstr "Meine Gutschriften"
+
+msgid "Mes bons de réduction"
+msgstr "Meine Gutscheine"
+
+msgid "Mes commandes"
+msgstr "Meine Bestellungen"
+
+msgid "Mes informations personnelles"
+msgstr "Meine persönlichen Daten"
+
+msgid "Modifier"
+msgstr "Bearbeiten"
+
+msgid "Mon adresse"
+msgstr "Meine Adresse"
+
+msgid "Mot de passe actuel"
+msgstr "Aktuelles Passwort"
+
+msgid "Mot de passe incorrect."
+msgstr "Falsches Passwort."
+
+msgid "Nom"
+msgstr "Nachname"
+
+msgid "Nos magasins"
+msgstr "Unsere Geschäfte"
+
+msgid "Nouveaux produits"
+msgstr "Neue Produkte"
+
+msgid "Ou poussez notre porte."
+msgstr "Oder besuchen Sie uns im Geschäft."
+
+msgid "Parlons de vos envies."
+msgstr "Sprechen wir über Ihre Wünsche."
+
+msgid "Payée"
+msgstr "Bezahlt"
+
+msgid "Plan du site"
+msgstr "Seitenübersicht"
+
+msgid "Pour confirmer la modification de vos informations."
+msgstr "Um die Änderung Ihrer Daten zu bestätigen."
+
+msgid "Pour une commande, indiquez sa référence dans votre message."
+msgstr "Bei Fragen zu einer Bestellung geben Sie bitte die Bestellnummer an."
+
+msgid "Promotions"
+msgstr "Angebote"
+
+msgid "Prénom"
+msgstr "Vorname"
+
+msgid "Préparer mes prochaines livraisons."
+msgstr "Meine nächsten Lieferungen vorbereiten."
+
+msgid "Retrouver la gestion de la boutique."
+msgstr "Das Geschäft verwalten."
+
+msgid "Retrouver mes achats et leur statut."
+msgstr "Meine Einkäufe und ihren Status ansehen."
+
+msgid "Retrouvez vos achats, vos adresses et vos préférences en un seul endroit."
+msgstr "Ihre Einkäufe, Adressen und Einstellungen an einem Ort."
+
+msgid "Seules les commandes passées en étant connecté sur cette nouvelle boutique apparaissent ici. Pour une commande antérieure, contactez-nous."
+msgstr "Hier erscheinen nur Bestellungen, die Sie angemeldet in diesem neuen Shop aufgegeben haben. Für frühere Bestellungen kontaktieren Sie uns."
+
+msgid "Sommaire"
+msgstr "Inhalt"
+
+msgid "Supprimer cette adresse"
+msgstr "Diese Adresse löschen"
+
+msgid "Texte des conditions générales de vente publié par La Caverne des Monts. Version originale en français."
+msgstr "Von La Caverne des Monts veröffentlichte Verkaufsbedingungen. Französische Originalfassung."
+
+msgid "Tous les chemins de la boutique, en un regard."
+msgstr "Alle Wege durch den Shop auf einen Blick."
+
+msgid "Un code valide se saisit sur la page de paiement sécurisée, lorsque le paiement en ligne est disponible. Son application dépend des conditions du bon."
+msgstr "Geben Sie einen gültigen Code auf der sicheren Zahlungsseite ein, sobald Onlinezahlungen verfügbar sind. Es gelten die Gutscheinbedingungen."
+
+msgid "Une adresse pour vos prochains bonheurs."
+msgstr "Eine Adresse für Ihre nächsten Glücksmomente."
+
+msgid "Une question sur cette commande ?"
+msgstr "Eine Frage zu dieser Bestellung?"
+
+msgid "Une taille à choisir, un cadeau à préparer ou une question sur votre commande ? Nous prenons le temps de vous répondre."
+msgstr "Eine Größe wählen, ein Geschenk vorbereiten oder eine Frage zur Bestellung? Wir nehmen uns Zeit für Sie."
+
+msgid "Une vraie personne, un conseil, une réponse."
+msgstr "Ein echter Mensch, ein Rat, eine Antwort."
+
+msgid "Valable jusqu’au"
+msgstr "Gültig bis"
+
+msgid "Voir la commande concernée"
+msgstr "Zugehörige Bestellung ansehen"
+
+msgid "Voir le détail"
+msgstr "Details ansehen"
+
+msgid "Vos informations ont été enregistrées."
+msgstr "Ihre Daten wurden gespeichert."
+
+msgid "Votre histoire commence ici."
+msgstr "Ihre Geschichte beginnt hier."
+
+msgid "Votre petit coin de montagne."
+msgstr "Ihr kleines Stück Bergwelt."
+
+msgid "Vous n’avez pas de bon de réduction attribué pour le moment."
+msgstr "Ihnen sind noch keine Gutscheine zugewiesen."
+
+msgid "À propos"
+msgstr "Über uns"
+
+msgid "Nom de cette adresse"
+msgstr "Adressbezeichnung"
+
+msgid "Destinataire"
+msgstr "Empfänger"
+
+msgid "Adresse"
+msgstr "Adresse"
+
+msgid "Complément"
+msgstr "Adresszusatz"
+
+msgid "Code postal"
+msgstr "Postleitzahl"
+
+msgid "Ville"
+msgstr "Ort"
+
+msgid "Pays"
+msgstr "Land"
+
+msgid "Horaires de la boutique"
+msgstr "Öffnungszeiten"
+
+msgid "Du mercredi au samedi"
+msgstr "Mittwoch bis Samstag"
+
+msgid "Dimanche"
+msgstr "Sonntag"
+
+msgid "Ouvert tous les jours en haute saison. Appelez-nous pour confirmer les horaires avant votre visite."
+msgstr "In der Hochsaison täglich geöffnet. Rufen Sie vor Ihrem Besuch an, um die Öffnungszeiten zu bestätigen."

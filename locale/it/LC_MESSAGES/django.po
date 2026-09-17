@@ -705,3 +705,261 @@ msgstr "Dietro questa vetrina, nuove scoperte e il piacere di consigliarvi. Entr
 
 msgid "Découvrir notre magasin"
 msgstr "Scoprire il nostro negozio"
+
+msgid "Adresse enregistrée."
+msgstr "Indirizzo salvato."
+
+msgid "Adresse supprimée."
+msgstr "Indirizzo eliminato."
+
+msgid "Ajouter une adresse"
+msgstr "Aggiungere un indirizzo"
+
+msgid "Aucun article à afficher dans cette sélection pour le moment. Retrouvez toutes nos envies de montagne dans la collection."
+msgstr "Questa selezione non contiene ancora articoli. Scoprite tutta la collezione ispirata alla montagna."
+
+msgid "Aucun avoir pour le moment."
+msgstr "Nessuna nota di credito al momento."
+
+msgid "Aucune adresse enregistrée pour le moment."
+msgstr "Nessun indirizzo salvato."
+
+msgid "Aucune commande liée à votre compte pour le moment."
+msgstr "Nessun ordine associato al vostro account."
+
+msgid "Ces adresses composent votre carnet personnel. L’adresse définitive de livraison reste à confirmer sur la page de paiement sécurisée."
+msgstr "Questi indirizzi compongono la vostra rubrica personale. Confermate l’indirizzo di consegna nella pagina di pagamento sicuro."
+
+msgid "Conditions d’utilisation"
+msgstr "Condizioni di utilizzo"
+
+msgid "Confirmer la suppression"
+msgstr "Confermare l’eliminazione"
+
+msgid "Confirmer la suppression de cette adresse ?"
+msgstr "Eliminare questo indirizzo?"
+
+msgid "Consulter la source"
+msgstr "Consultare la fonte"
+
+msgid "Contactez-nous"
+msgstr "Contattateci"
+
+msgid "Des vêtements pour toute la famille, une matière douce, une petite attention à offrir. Nous aimons les trouvailles qui accompagnent les moments heureux."
+msgstr "Abiti per tutta la famiglia, un tessuto morbido, un piccolo regalo. Amiamo le scoperte che accompagnano i momenti felici."
+
+msgid "Disponible"
+msgstr "Disponibile"
+
+msgid "Découvrir les promotions"
+msgstr "Scoprire le promozioni"
+
+msgid "Détail de la commande"
+msgstr "Dettaglio dell’ordine"
+
+msgid "En attente de paiement"
+msgstr "In attesa di pagamento"
+
+msgid "En boutique comme à distance, le plaisir reste le même : échanger et vous aider à choisir."
+msgstr "In negozio o a distanza, il piacere è lo stesso: parlare con voi e aiutarvi a scegliere."
+
+msgid "Enregistrer"
+msgstr "Salvare"
+
+msgid "Expiré ou désactivé"
+msgstr "Scaduto o disattivato"
+
+msgid "Garder mes coordonnées à jour."
+msgstr "Aggiornare i miei dati."
+
+msgid "HEUREUX DE VOUS RETROUVER"
+msgstr "BENTORNATI"
+
+msgid "Informations"
+msgstr "Informazioni"
+
+msgid "La Caverne des Monts, c’est une boutique à Lélex et une envie : partager un peu de l’esprit montagne, bien au-delà des vacances."
+msgstr "La Caverne des Monts è un negozio a Lélex con un desiderio: condividere un po’ dello spirito della montagna, ben oltre le vacanze."
+
+msgid "La suite se prépare."
+msgstr "Il seguito si prepara."
+
+msgid "Les articles les plus commandés sur cette boutique en ligne."
+msgstr "Gli articoli più ordinati in questo negozio online."
+
+msgid "Les avoirs émis par la boutique pour vos commandes apparaîtront ici."
+msgstr "Qui appariranno le note di credito emesse per i vostri ordini."
+
+msgid "Les belles occasions du moment."
+msgstr "Le belle occasioni del momento."
+
+msgid "Les derniers ajouts à notre catalogue, à découvrir à votre rythme."
+msgstr "Le ultime aggiunte al catalogo, da scoprire con calma."
+
+msgid "Les informations de la boutique, réunies pour vous."
+msgstr "Le informazioni del negozio, riunite per voi."
+
+msgid "Les petites attentions se préparent."
+msgstr "Le piccole attenzioni si preparano."
+
+msgid "Meilleures ventes"
+msgstr "Più venduti"
+
+msgid "Mes adresses"
+msgstr "I miei indirizzi"
+
+msgid "Mes avoirs"
+msgstr "Le mie note di credito"
+
+msgid "Mes bons de réduction"
+msgstr "I miei buoni sconto"
+
+msgid "Mes commandes"
+msgstr "I miei ordini"
+
+msgid "Mes informations personnelles"
+msgstr "I miei dati personali"
+
+msgid "Modifier"
+msgstr "Modificare"
+
+msgid "Mon adresse"
+msgstr "Il mio indirizzo"
+
+msgid "Mot de passe actuel"
+msgstr "Password attuale"
+
+msgid "Mot de passe incorrect."
+msgstr "Password errata."
+
+msgid "Nom"
+msgstr "Cognome"
+
+msgid "Nos magasins"
+msgstr "I nostri negozi"
+
+msgid "Nouveaux produits"
+msgstr "Nuovi prodotti"
+
+msgid "Ou poussez notre porte."
+msgstr "Oppure entrate in negozio."
+
+msgid "Parlons de vos envies."
+msgstr "Parliamo dei vostri desideri."
+
+msgid "Payée"
+msgstr "Pagato"
+
+msgid "Plan du site"
+msgstr "Mappa del sito"
+
+msgid "Pour confirmer la modification de vos informations."
+msgstr "Per confermare la modifica dei vostri dati."
+
+msgid "Pour une commande, indiquez sa référence dans votre message."
+msgstr "Per una domanda su un ordine, indicate il riferimento nel messaggio."
+
+msgid "Promotions"
+msgstr "Promozioni"
+
+msgid "Prénom"
+msgstr "Nome"
+
+msgid "Préparer mes prochaines livraisons."
+msgstr "Preparare le mie prossime consegne."
+
+msgid "Retrouver la gestion de la boutique."
+msgstr "Gestire il negozio."
+
+msgid "Retrouver mes achats et leur statut."
+msgstr "Consultare i miei acquisti e il loro stato."
+
+msgid "Retrouvez vos achats, vos adresses et vos préférences en un seul endroit."
+msgstr "Acquisti, indirizzi e preferenze in un unico posto."
+
+msgid "Seules les commandes passées en étant connecté sur cette nouvelle boutique apparaissent ici. Pour une commande antérieure, contactez-nous."
+msgstr "Qui appaiono solo gli ordini effettuati dopo l’accesso a questo nuovo negozio. Per ordini precedenti, contattateci."
+
+msgid "Sommaire"
+msgstr "Indice"
+
+msgid "Supprimer cette adresse"
+msgstr "Eliminare questo indirizzo"
+
+msgid "Texte des conditions générales de vente publié par La Caverne des Monts. Version originale en français."
+msgstr "Condizioni di vendita pubblicate da La Caverne des Monts. Versione originale in francese."
+
+msgid "Tous les chemins de la boutique, en un regard."
+msgstr "Tutti i percorsi del negozio, a colpo d’occhio."
+
+msgid "Un code valide se saisit sur la page de paiement sécurisée, lorsque le paiement en ligne est disponible. Son application dépend des conditions du bon."
+msgstr "Inserite un codice valido nella pagina di pagamento sicuro quando il pagamento online è disponibile. Si applicano le condizioni del buono."
+
+msgid "Une adresse pour vos prochains bonheurs."
+msgstr "Un indirizzo per le vostre prossime gioie."
+
+msgid "Une question sur cette commande ?"
+msgstr "Una domanda su questo ordine?"
+
+msgid "Une taille à choisir, un cadeau à préparer ou une question sur votre commande ? Nous prenons le temps de vous répondre."
+msgstr "Una taglia da scegliere, un regalo da preparare o una domanda sull’ordine? Ci prendiamo il tempo per rispondervi."
+
+msgid "Une vraie personne, un conseil, une réponse."
+msgstr "Una persona vera, un consiglio, una risposta."
+
+msgid "Valable jusqu’au"
+msgstr "Valido fino al"
+
+msgid "Voir la commande concernée"
+msgstr "Vedere l’ordine relativo"
+
+msgid "Voir le détail"
+msgstr "Vedere i dettagli"
+
+msgid "Vos informations ont été enregistrées."
+msgstr "I vostri dati sono stati salvati."
+
+msgid "Votre histoire commence ici."
+msgstr "La vostra storia inizia qui."
+
+msgid "Votre petit coin de montagne."
+msgstr "Il vostro piccolo angolo di montagna."
+
+msgid "Vous n’avez pas de bon de réduction attribué pour le moment."
+msgstr "Non avete ancora buoni sconto assegnati."
+
+msgid "À propos"
+msgstr "Chi siamo"
+
+msgid "Nom de cette adresse"
+msgstr "Nome dell’indirizzo"
+
+msgid "Destinataire"
+msgstr "Destinatario"
+
+msgid "Adresse"
+msgstr "Indirizzo"
+
+msgid "Complément"
+msgstr "Indirizzo aggiuntivo"
+
+msgid "Code postal"
+msgstr "Codice postale"
+
+msgid "Ville"
+msgstr "Città"
+
+msgid "Pays"
+msgstr "Paese"
+
+msgid "Horaires de la boutique"
+msgstr "Orari del negozio"
+
+msgid "Du mercredi au samedi"
+msgstr "Da mercoledì a sabato"
+
+msgid "Dimanche"
+msgstr "Domenica"
+
+msgid "Ouvert tous les jours en haute saison. Appelez-nous pour confirmer les horaires avant votre visite."
+msgstr "Aperto tutti i giorni in alta stagione. Chiamate per confermare gli orari prima della visita."
