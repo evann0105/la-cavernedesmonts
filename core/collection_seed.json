@@ -1,0 +1,200 @@
+{
+  "fetched_on": "2026-09-17",
+  "categories": [
+    {
+      "slug": "accessoires-bebe",
+      "name": "Accessoires bébé"
+    },
+    {
+      "slug": "polaires-bebe",
+      "name": "Polaires bébé"
+    },
+    {
+      "slug": "offres-speciales",
+      "name": "Offres spéciales"
+    }
+  ],
+  "products": [
+    {
+      "slug": "bebe-101-echarpe-bebe",
+      "name": "Écharpe bébé doublée",
+      "price": "7.00",
+      "description": "Echarpe bébé Polaire doublé coton rayé",
+      "collection": "accessoires-bebe",
+      "image": "core/img/imported/101.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/101-echarpe-bebe-.html",
+      "source_image": "https://la-cavernedesmonts.fr/361-home_default/echarpe-bebe-.jpg",
+      "source_id": 101,
+      "existing": false
+    },
+    {
+      "slug": "chaussettes-antiderapantes-mouton-fuchsia",
+      "name": "Chaussettes antidérapantes Mouton Fuchsia",
+      "price": "8.00",
+      "description": "Chaussettes/Chaussons antidérapants bébé",
+      "collection": "accessoires-bebe",
+      "image": "core/img/imported/104.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/104-chaussettes-antiderapantes-mouton.html",
+      "source_image": "https://la-cavernedesmonts.fr/373-home_default/chaussettes-antiderapantes-mouton.jpg",
+      "source_id": 104,
+      "existing": true
+    },
+    {
+      "slug": "chaussettes-antiderapantes-vache-taupe",
+      "name": "Chaussettes antidérapantes Vache taupe",
+      "price": "8.00",
+      "description": "Chaussettes/Chaussons antidérapants bébé",
+      "collection": "accessoires-bebe",
+      "image": "core/img/imported/105.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/105-chaussettes-antiderapantes-vache.html",
+      "source_image": "https://la-cavernedesmonts.fr/376-home_default/chaussettes-antiderapantes-vache.jpg",
+      "source_id": 105,
+      "existing": true
+    },
+    {
+      "slug": "chaussettes-antiderapantes-marmottes-blanches",
+      "name": "Chaussettes antidérapantes Marmottes Blanches",
+      "price": "8.00",
+      "description": "Chaussettes/Chaussons antidérapants bébé",
+      "collection": "accessoires-bebe",
+      "image": "core/img/imported/106.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/106-chaussettes-antiderapantes-marmottes.html",
+      "source_image": "https://la-cavernedesmonts.fr/377-home_default/chaussettes-antiderapantes-marmottes.jpg",
+      "source_id": 106,
+      "existing": true
+    },
+    {
+      "slug": "bebe-868-body-bebe-montagne-manches-longue-coton",
+      "name": "Body bébé Les 3 marmottes",
+      "price": "9.90",
+      "description": "Body bébé avec motifs marmottes, en pur coton Disponibles en 3 mois, 6mois, 9mois, 12mois, 18mois, 24mois. Divers motifs disponibles",
+      "collection": "accessoires-bebe",
+      "image": "core/img/imported/868.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/868-body-bebe-montagne-manches-longue-coton-.html",
+      "source_image": "https://la-cavernedesmonts.fr/3120-home_default/body-bebe-montagne-manches-longue-coton-.jpg",
+      "source_id": 868,
+      "existing": false
+    },
+    {
+      "slug": "bebe-870-body-bebe-montagne-manches-longue-coton",
+      "name": "Body bébé Un amour de Marmottes",
+      "price": "9.90",
+      "description": "Body bébé avec motifs marmottes, en pur coton Disponibles en 1mois, 3 mois, 6mois, 9mois, 12mois, 18mois, 24mois. Divers motifs disponibles",
+      "collection": "accessoires-bebe",
+      "image": "core/img/imported/870.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/870-body-bebe-montagne-manches-longue-coton-.html",
+      "source_image": "https://la-cavernedesmonts.fr/3128-home_default/body-bebe-montagne-manches-longue-coton-.jpg",
+      "source_id": 870,
+      "existing": false
+    },
+    {
+      "slug": "bebe-872-body-bebe-montagne-manches-longue-coton",
+      "name": "Body bébé brodé les 2 Marmottes",
+      "price": "9.90",
+      "description": "Body bébé brodé \"Un Amour de marmotte\" en pur coton Disponibles en 1mois, 3 mois, 6mois, 9mois, 12mois, 18mois, 24mois. Divers motifs disponibles",
+      "collection": "accessoires-bebe",
+      "image": "core/img/imported/872.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/872-body-bebe-montagne-manches-longue-coton-.html",
+      "source_image": "https://la-cavernedesmonts.fr/3136-home_default/body-bebe-montagne-manches-longue-coton-.jpg",
+      "source_id": 872,
+      "existing": false
+    },
+    {
+      "slug": "bebe-874-body-bebe-montagne-manches-longue-coton",
+      "name": "Body bébé La famille Marmotte",
+      "price": "9.90",
+      "description": "Body bébé brodé \"Un Amour de marmotte\" en pur coton Disponibles en 1mois, 3 mois, 6mois, 9mois, 12mois, 18mois, 24mois. Divers motifs disponibles",
+      "collection": "accessoires-bebe",
+      "image": "core/img/imported/874.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/874-body-bebe-montagne-manches-longue-coton-.html",
+      "source_image": "https://la-cavernedesmonts.fr/3144-home_default/body-bebe-montagne-manches-longue-coton-.jpg",
+      "source_id": 874,
+      "existing": false
+    },
+    {
+      "slug": "bebe-876-body-bebe-montagne-manches-longue-coton",
+      "name": "Body bébé de montagne Les Lugeurs",
+      "price": "9.90",
+      "description": "Body bébé brodé \"Un Amour de marmotte\" en pur coton Disponibles en 1mois, 3 mois, 6mois, 9mois, 12mois, 18mois, 24mois. Divers motifs disponibles",
+      "collection": "accessoires-bebe",
+      "image": "core/img/imported/876.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/876-body-bebe-montagne-manches-longue-coton-.html",
+      "source_image": "https://la-cavernedesmonts.fr/3152-home_default/body-bebe-montagne-manches-longue-coton-.jpg",
+      "source_id": 876,
+      "existing": false
+    },
+    {
+      "slug": "bebe-878-body-bebe-montagne-manches-longue-coton",
+      "name": "Body bébé Les Marmottes au ski",
+      "price": "9.90",
+      "description": "Body bébé avec motifs marmottes, en pur coton Disponibles en 3 mois, 6mois, 9mois, 12mois, 18mois, 24mois. Divers motifs disponibles",
+      "collection": "accessoires-bebe",
+      "image": "core/img/imported/878.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/878-body-bebe-montagne-manches-longue-coton-.html",
+      "source_image": "https://la-cavernedesmonts.fr/3160-home_default/body-bebe-montagne-manches-longue-coton-.jpg",
+      "source_id": 878,
+      "existing": false
+    },
+    {
+      "slug": "bebe-806-veste-polaire-bebe-sans-manche-rose-fushia",
+      "name": "Veste polaire bébé sans manche rose fuchsia",
+      "price": "20.00",
+      "description": "Polaire bébé sans manche douce et moelleuse, Du 3 mois au 24 mois coloris : rose fuchsia",
+      "collection": "polaires-bebe",
+      "image": "core/img/imported/806.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/806-veste-polaire-bebe-sans-manche-rose-fushia.html",
+      "source_image": "https://la-cavernedesmonts.fr/2900-home_default/veste-polaire-bebe-sans-manche-rose-fushia.jpg",
+      "source_id": 806,
+      "existing": false
+    },
+    {
+      "slug": "bebe-808-veste-polaire-bebe-sans-manche-rose-fushia",
+      "name": "Veste polaire bébé sans manche avec capuche doublée de coton rose fuchsia",
+      "price": "29.00",
+      "description": "Polaire bébé sans manche douce et moelleuse, Du 3 mois au 24 mois coloris : rose fuchsia",
+      "collection": "polaires-bebe",
+      "image": "core/img/imported/808.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/808-veste-polaire-bebe-sans-manche-rose-fushia.html",
+      "source_image": "https://la-cavernedesmonts.fr/2904-home_default/veste-polaire-bebe-sans-manche-rose-fushia.jpg",
+      "source_id": 808,
+      "existing": false
+    },
+    {
+      "slug": "bebe-810-veste-polaire-bebe-sans-manche-a-pois-couleur-rose-poudre-fabrique-en-france",
+      "name": "Veste polaire bébé sans manche avec capuche, rose poudré à pois",
+      "price": "29.00",
+      "description": "Polaire bébé sans manche douce et moelleuse avec capuche, Du 6 mois au 24 mois coloris : rose poudré",
+      "collection": "polaires-bebe",
+      "image": "core/img/imported/810.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/810-veste-polaire-bebe-sans-manche-a-pois-couleur-rose-poudre-fabrique-en-france.html",
+      "source_image": "https://la-cavernedesmonts.fr/2916-home_default/veste-polaire-bebe-sans-manche-a-pois-couleur-rose-poudre-fabrique-en-france.jpg",
+      "source_id": 810,
+      "existing": false
+    },
+    {
+      "slug": "bebe-812-veste-polaire-bebe-sans-manche-mixte-fille-garcon-blanc-ecru-beige",
+      "name": "Veste polaire bébé mixte sans manche blanc/écru",
+      "price": "22.00",
+      "description": "Polaire bébé mixte sans manche douce et moelleuse, Du 3 mois au 24 mois coloris : blanc /écru",
+      "collection": "polaires-bebe",
+      "image": "core/img/imported/812.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/812-veste-polaire-bebe-sans-manche-mixte-fille-garcon-blanc-ecru-beige.html",
+      "source_image": "https://la-cavernedesmonts.fr/2918-home_default/veste-polaire-bebe-sans-manche-mixte-fille-garcon-blanc-ecru-beige.jpg",
+      "source_id": 812,
+      "existing": false
+    },
+    {
+      "slug": "bebe-816-veste-polaire-bebe-chorges-blanc-ecru",
+      "name": "Gilet polaire basique bébé blanc/écru",
+      "price": "22.00",
+      "description": "Gilet Polaire bébé col V 100% Polyester disponible en 3; 6; 9 et 12mois",
+      "collection": "polaires-bebe",
+      "image": "core/img/imported/816.jpg",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/816-veste-polaire-bebe-chorges-blanc-ecru.html",
+      "source_image": "https://la-cavernedesmonts.fr/2928-home_default/veste-polaire-bebe-chorges-blanc-ecru.jpg",
+      "source_id": 816,
+      "existing": false
+    }
+  ],
+  "offers_note": "La catégorie 34 renvoie 404 ; /promotions ne contient aucune promotion."
+}

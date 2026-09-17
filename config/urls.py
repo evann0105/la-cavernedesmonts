@@ -19,7 +19,18 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from two_factor.urls import urlpatterns as two_factor_urls
+from connexion.views import SecureLoginView
+from connexion.admin_site import BoutiqueAdminSite
+
+admin.site.__class__ = BoutiqueAdminSite
+# Both public and package login URLs use the same complete 2FA flow.
+secure_urls = ([path('account/login/', SecureLoginView.as_view(), name='login')] +
+               [entry for entry in two_factor_urls[0] if entry.name != 'login'], 'two_factor')
+
 urlpatterns = [
+    path('', include(secure_urls)),
+    path('paiement/', include('paiement.urls')),
     path('admin/', admin.site.urls),
     path('', include('accueil.urls')),  # Accueil homepage
     path('', include('core.urls')),     # Core routes

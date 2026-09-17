@@ -1,114 +1,99 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Product
-from django.templatetags.static import static
-import os
+from pathlib import Path
 from django.conf import settings
-from django.template.loader import get_template
-from django.template import TemplateDoesNotExist
-
-"""Home moved to 'accueil' app."""
+from django.contrib import messages
+from django.db.models import Q
+from django.shortcuts import render, get_object_or_404, redirect
+from django.templatetags.static import static
+from django.views.decorators.http import require_POST
+from .models import Product, Category
+from .cart import lines, total
 
 
 def product_list(request):
-	products = (
-		Product.objects.prefetch_related('images')
-		.order_by('-is_featured', '-created_at')[:12]
-	)
-	return render(request, 'core/product_list.html', {"products": products})
+    products = Product.objects.select_related('category').order_by('-is_featured', 'name')
+    category = request.GET.get('categorie', '')
+    query = request.GET.get('q', '').strip()[:100]
+    if category:
+        products = products.filter(Q(category__slug=category) | Q(collections__slug=category)).distinct()
+    if query:
+        products = products.filter(Q(name__icontains=query) | Q(description__icontains=query))
+    sort = request.GET.get('tri', '')
+    if sort in ('prix', '-prix'):
+        products = products.order_by('price' if sort == 'prix' else '-price')
+    selected_category = Category.objects.filter(slug=category).first() if category else None
+    return render(request, 'core/product_list.html', {'products': products, 'categories': Category.objects.all(), 'selected': category, 'selected_category': selected_category, 'query': query, 'sort': sort})
 
 
-def product_detail(request, slug: str):
-	product = get_object_or_404(Product, slug=slug)
-	images = product.images.all() if hasattr(product, 'images') else []
-	return render(request, 'core/product_detail.html', {"product": product, "images": images})
+def product_detail(request, slug):
+    product = get_object_or_404(Product.objects.select_related('category'), slug=slug)
+    images = [product.image_url] if product.image_url else []
+    images += [i.image.url for i in product.images.all()]
+    for folder in ('products', 'best_product'):
+        directory = Path(settings.BASE_DIR) / 'core/static/core/img' / folder / slug
+        if directory.is_dir():
+            for p in sorted(directory.iterdir()):
+                if p.suffix.lower() in ('.png', '.jpg', '.jpeg', '.webp'):
+                    url = static(f'core/img/{folder}/{slug}/{p.name}')
+                    if url not in images:
+                        images.append(url)
+    related = Product.objects.filter(category=product.category).exclude(pk=product.pk)[:4]
+    return render(request, 'core/product_detail.html', {'product': product, 'images': images, 'related': related})
 
 
-def product_preview(request, slug: str):
-	# Static-based preview using files under core/static/core/img/products/<slug>/
-	base_dir = os.path.join(settings.BASE_DIR, 'core', 'static', 'core', 'img', 'products', slug)
-	image_files = []
-
-	def _img_sort_key(fname: str):
-		"""Sort by leading integer prefix if present (e.g., '1-foo.png' < '10-bar.png'),
-		then fallback to alpha. Keeps non-numbered files after numbered ones."""
-		name = fname.lower()
-		i = 0
-		while i < len(name) and name[i].isdigit():
-			i += 1
-		if i > 0:
-			try:
-				return (0, int(name[:i]), name)
-			except ValueError:
-				pass
-		return (1, name)
-
-	# Allow passing a specific image path via query param for convenience
-	q_img = request.GET.get('img')
-	if q_img:
-		# very small safety: prevent directory traversal and restrict to core/img/
-		if '..' not in q_img and q_img.startswith('core/img/'):
-			image_files.append(static(q_img))
-	if os.path.isdir(base_dir):
-		for fname in sorted(os.listdir(base_dir), key=_img_sort_key):
-			if fname.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
-				image_files.append(static(f'core/img/products/{slug}/{fname}'))
-
-	# Also look under best_product folder for bestsellers content
-	if not image_files:
-		best_dir = os.path.join(settings.BASE_DIR, 'core', 'static', 'core', 'img', 'best_product', slug)
-		if os.path.isdir(best_dir):
-			for fname in sorted(os.listdir(best_dir), key=_img_sort_key):
-				if fname.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
-					image_files.append(static(f'core/img/best_product/{slug}/{fname}'))
-
-	# Fallback to a single image using the previous flat files if exist
-	if not image_files:
-		flat = os.path.join(settings.BASE_DIR, 'core', 'static', 'core', 'img', 'products', f'{slug}.png')
-		if os.path.exists(flat):
-			image_files.append(static(f'core/img/products/{slug}.png'))
-
-	context = {
-		'preview': {
-			'name': request.GET.get('name') or slug.replace('-', ' ').title(),
-			'price': request.GET.get('price', ''),
-			'description': request.GET.get('desc', ''),
-			'images': image_files,
-			'slug': slug,
-		}
-	}
-
-	# If a dedicated per-product template exists under pages_products/<slug>.html, use it
-	try:
-		get_template(f'pages_products/{slug}.html')
-		return render(request, f'pages_products/{slug}.html', {
-			'slug': slug,
-			'name': context['preview']['name'],
-			'images': image_files,
-			'price': request.GET.get('price', ''),
-			'description': request.GET.get('desc', ''),
-		})
-	except TemplateDoesNotExist:
-		pass
-
-	# Fallback to the generic preview template
-	return render(request, 'core/product_preview.html', context)
+def product_preview(request, slug):
+    get_object_or_404(Product, slug=slug)
+    return redirect('core:product_detail', slug=slug, permanent=True)
 
 
 def location(request):
-	"""Simple location/contact page. Can be enriched later with map or store hours."""
-	return render(request, 'core/location.html')
+    return render(request, 'core/location.html')
 
 
 def cart(request):
-	"""Very simple cart/checkout placeholder page.
+    items = lines(request)
+    return render(request, 'core/cart.html', {'cart_items': items, 'total': total(items)})
 
-	For now it just renders a three-step progression styled like the provided
-	design (planifiez/configurez/confirmez). Later this can include real cart
-	line items stored in session or database.
-	"""
-	# Placeholder items list (empty) and total; adapt later when cart model exists
-	context = {
-		'cart_items': [],
-		'total': 0,
-	}
-	return render(request, 'core/cart.html', context)
+
+@require_POST
+def cart_add(request, slug):
+    product = get_object_or_404(Product, slug=slug)
+    size = request.POST.get('size', '').strip()
+    # Unconfirmed sizes remain explicit and block payment until merchant review.
+    if product.size_options and size not in product.size_options:
+        messages.error(request, 'Choisissez une taille disponible.')
+        return redirect('core:product_detail', slug=slug)
+    if not product.size_options:
+        size = 'À confirmer avec la boutique'
+    try:
+        quantity = int(request.POST.get('quantity', '1'))
+        if not 1 <= quantity <= 10:
+            raise ValueError
+    except (ValueError, TypeError):
+        messages.error(request, 'Choisissez une quantité entre 1 et 10.')
+        return redirect('core:product_detail', slug=slug)
+    cart = request.session.get('cart', {})
+    key = f'{product.pk}:{size}'
+    cart[key] = {'product': product.pk, 'size': size, 'quantity': min(10, cart.get(key, {}).get('quantity', 0) + quantity)}
+    request.session['cart'] = cart
+    messages.success(request, 'Un peu de montagne ajouté à votre panier.')
+    return redirect('core:cart')
+
+
+@require_POST
+def cart_update(request):
+    cart = request.session.get('cart', {})
+    key = request.POST.get('key', '')
+    try:
+        quantity = int(request.POST.get('quantity', '0'))
+        if not 0 <= quantity <= 10:
+            raise ValueError
+    except (ValueError, TypeError):
+        messages.error(request, 'La quantité doit être comprise entre 0 et 10.')
+        return redirect('core:cart')
+    if key in cart:
+        if quantity == 0:
+            del cart[key]
+        else:
+            cart[key]['quantity'] = quantity
+        request.session['cart'] = cart
+    return redirect('core:cart')

@@ -1,27 +1,7 @@
-{% load static %}
-<!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% block title %}La Caverne des Monts{% endblock %}</title>
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
-  <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-  {% block styles %}{% endblock %}
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⛰️%3C/text%3E%3C/svg%3E">
-  </head>
-  <body class="layout-col">
-    {% include 'partials/navbar.html' %}
-    <main class="container">
-      {% block content %}{% endblock %}
-    </main>
-    <footer class="site-footer container">
-      <small>&copy; {% now 'Y' %} La Caverne des Monts</small>
-    </footer>
-    <script src="{% static 'js/theme.js' %}"></script>
-    <script src="{% static 'core/js/nav.js' %}"></script>
-    {% block scripts %}{% endblock %}
-  </body>
-</html>
+{% load static %}<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Retrouvez l’esprit montagne avec La Caverne des Monts : polaires, vestes et petites attentions pour les jours au grand air comme les retours au chaud."><meta name="theme-color" content="#243e36"><title>{% block title %}La Caverne des Monts — L’esprit montagne{% endblock %}</title><link rel="stylesheet" href="{% static 'css/boutique.css' %}">{% block styles %}{% endblock %}</head>
+<body><a class="skip" href="#contenu">Aller au contenu</a><div class="announcement">L’esprit montagne, à emporter avec soi.</div>
+{% include 'partials/navbar.html' %}
+<main id="contenu">{% if messages %}<div class="messages wrap" role="status">{% for message in messages %}<p>{{ message }}</p>{% endfor %}</div>{% endif %}{% block content %}{% endblock %}</main>
+<footer><div class="wrap footer-grid"><div><a class="footer-brand" href="{% url 'accueil:home' %}">La Caverne<br>des Monts<span>UN PEU DE MONTAGNE. BEAUCOUP DE SOUVENIRS.</span></a></div><div><h2>À explorer</h2><a href="{% url 'core:product_list' %}">La collection</a><a href="{% url 'core:product_list' %}?categorie=accessoires">Les petites attentions</a><a href="{% url 'core:location' %}">La boutique & contact</a></div><div><h2>À votre écoute</h2><a href="tel:+33450404617">04 50 40 46 17</a><a href="mailto:contact@la-cavernedesmonts.fr">contact@la-cavernedesmonts.fr</a><p>Un doute sur une taille ? Parlons-en.</p></div></div><div class="wrap footer-bottom"><span>© {% now 'Y' %} La Caverne des Monts</span><span>Le goût des choses simples.</span></div></footer>
+<script src="{% static 'js/boutique.js' %}" defer></script>{% block scripts %}{% endblock %}</body></html>

@@ -1,0 +1,98 @@
+[
+  {
+    "slug": "veste-polaire-urbaine-noire-peak-mountain",
+    "name": "Veste polaire urbaine noire Peak Mountain",
+    "price": "29.00",
+    "image": "core/img/products/veste-polaire-urbaine-noire-peak-mountain/1-veste-polaire-urbaine-noire.png"
+  },
+  {
+    "slug": "blouson-softshell-homme-impermeable",
+    "name": "Blouson softshell homme imperméable",
+    "price": "79.90",
+    "image": "core/img/products/blouson-softshell-homme-impermeable/2-blouson-softshell-homme-bleu.png"
+  },
+  {
+    "slug": "veste-hybride-multi-matieres-femme",
+    "name": "Veste hybride multi-matières femme",
+    "price": "89.00",
+    "image": "core/img/products/veste-hybride-multi-matieres-femme/3-veste-hybride-femme-gris.png"
+  },
+  {
+    "slug": "veste-multi-matieres-femme-avec-doudoune",
+    "name": "Veste multi-matières femme avec doudoune",
+    "price": "89.00",
+    "image": "core/img/products/veste-multi-matieres-femme-avec-doudoune/4-veste-multi-matieres-femme-noire.png"
+  },
+  {
+    "slug": "veste-tri-matieres-femme-blanche-capuche",
+    "name": "Veste tri-matières femme blanche capuche",
+    "price": "89.00",
+    "image": "core/img/products/veste-tri-matieres-femme-blanche-capuche/5-veste-tri-matieres-femme-blanche.png"
+  },
+  {
+    "slug": "blouson-softshell-impermeable-femme-bordeaux",
+    "name": "Blouson softshell imperméable femme",
+    "price": "79.00",
+    "image": "core/img/products/blouson-softshell-impermeable-femme-bordeaux/6-blouson-softshell-femme-bordeaux.png"
+  },
+  {
+    "slug": "blouson-softshell-impermeable-femme-gris",
+    "name": "Blouson softshell imperméable femme",
+    "price": "79.00",
+    "image": "core/img/products/blouson-softshell-impermeable-femme-gris/7-blouson-softshell-femme-gris.png"
+  },
+  {
+    "slug": "veste-outdoor-anapurna-homme",
+    "name": "Veste outdoor anapurna homme",
+    "price": "69.00",
+    "image": "core/img/products/veste-outdoor-anapurna-homme/8-veste-outdoor-anapurna-homme.png"
+  },
+  {
+    "slug": "chaussettes-antiderapantes-mouton-fuchsia",
+    "name": "Chaussettes antidérapantes Mouton Fuchsia",
+    "price": "8.00",
+    "image": "core/img/best_product/chaussettes-antiderapantes-mouton-fuchsia/1-Chaussettes antidérapantes Mouton Fuchsia.png"
+  },
+  {
+    "slug": "veste-polaire-de-montagne-rouge",
+    "name": "Veste polaire de montagne Rouge",
+    "price": "36.00",
+    "image": "core/img/best_product/veste-polaire-de-montagne-rouge/2-Veste polaire de montagne Rouge.png"
+  },
+  {
+    "slug": "chaussettes-antiderapantes-marmottes-blanches",
+    "name": "Chaussettes antidérapantes Marmottes Blanches",
+    "price": "8.00",
+    "image": "core/img/best_product/chaussettes-antiderapantes-marmottes-blanches/3-Chaussettes antidérapantes Marmottes Blanches.png"
+  },
+  {
+    "slug": "chaussettes-antiderapantes-vache-taupe",
+    "name": "Chaussettes antidérapantes Vache Taupe",
+    "price": "8.00",
+    "image": "core/img/best_product/chaussettes-antiderapantes-vache-taupe/4-Chaussettes antidérapantes Vache taupe.png"
+  },
+  {
+    "slug": "veste-polaire-femme-anapurna-utern-violet",
+    "name": "Veste polaire Femme ANAPURNA Utern Violet",
+    "price": "36.00",
+    "image": "core/img/best_product/veste-polaire-femme-anapurna-utern-violet/5-Veste polaire Femme ANAPURNA utern Violet.png"
+  },
+  {
+    "slug": "veste-polaire-de-montagne-beige",
+    "name": "Veste polaire de montagne Beige",
+    "price": "36.00",
+    "image": "core/img/best_product/veste-polaire-de-montagne-beige/6-Veste polaire de montagne Beige.png"
+  },
+  {
+    "slug": "veste-polaire-douce-cocooning-canadian",
+    "name": "Veste polaire douce cocooning Canadian",
+    "price": "36.00",
+    "image": "core/img/best_product/veste-polaire-douce-cocooning-canadian/7-Veste polaire douce cocooning Canadian....png"
+  },
+  {
+    "slug": "veste-polaire-douce-cocooning-canadian-2",
+    "name": "Veste polaire douce cocooning Canadian",
+    "price": "36.00",
+    "image": "core/img/best_product/veste-polaire-douce-cocooning-canadian-2/8-Veste polaire douce cocooning Canadian....png"
+  }
+]
