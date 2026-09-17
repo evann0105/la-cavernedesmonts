@@ -16,9 +16,25 @@
 <div class="promise-strip wrap"><span>01 <b>Le goût du grand air</b></span><span>02 <b>La douceur du retour</b></span><span>03 <b>Des attentions à partager</b></span></div>
 <section id="instants" class="section wrap"><div class="chapter"><span>01 / L’INSPIRATION</span><span>À votre rythme.</span></div><div class="section-heading"><div><p class="eyebrow">À CHAQUE ENVIE, SON ÉCHAPPÉE</p><h2>Et si on prenait<br>un peu l’air ?</h2></div><p>Pas besoin de partir loin pour retrouver<br>ce qui fait du bien.</p></div><div class="moments"><a class="moment landscape" href="{% url 'core:product_list' %}?categorie=hommes"><img src="{% static 'core/img/slide2.png' %}" alt="Une invitation à vivre dehors" loading="lazy"><div><p class="eyebrow">L’APPEL DU DEHORS</p><h3>Suivre son envie<br>d’ailleurs.</h3><span>Explorer la collection homme ↗</span></div></a><a class="moment cozy" href="{% url 'core:product_list' %}?categorie=femmes"><img src="{% static 'core/img/best_product/veste-polaire-de-montagne-beige/6-Veste polaire de montagne Beige.png' %}" alt="Veste polaire beige" loading="lazy"><div><p class="eyebrow">LES HEURES DOUCES</p><h3>Se sentir<br>bien, simplement.</h3><span>Découvrir la collection femme ↗</span></div></a></div></section>
 <section class="selection"><div class="wrap section"><div class="chapter"><span>02 / LA SÉLECTION</span><span>À aimer longtemps.</span></div><div class="section-heading"><div><p class="eyebrow">LES COMPLICES DE VOS BEAUX JOURS</p><h2>Vos prochains<br><em>bons moments.</em></h2></div><a class="underlined" href="{% url 'core:product_list' %}">Toute la collection ↗</a></div><div class="product-grid">{% for product in products %}{% include 'partials/product_card.html' %}{% endfor %}</div></div></section>
-<section class="section wrap story"><nav class="collection-links" aria-label="Nos collections bébé et offres">
-<a href="{% url 'core:product_list' %}?categorie=accessoires-bebe" aria-label="Accessoires bébé"><img src="{% static 'core/img/bb/image.png' %}" alt="Accessoires bébé" loading="lazy"><span>Accessoires bébé <b aria-hidden="true">↗</b></span></a>
-<a href="{% url 'core:product_list' %}?categorie=polaires-bebe" aria-label="Polaires bébé"><img src="{% static 'core/img/bb/image copy.png' %}" alt="Polaires bébé" loading="lazy"><span>Polaires bébé <b aria-hidden="true">↗</b></span></a>
-<a href="{% url 'core:product_list' %}?categorie=offres-speciales" aria-label="Offres spéciales"><img src="{% static 'core/img/bb/image copy 2.png' %}" alt="Offres spéciales" loading="lazy"><span>Offres spéciales <b aria-hidden="true">↗</b></span></a>
-</nav><div class="story-copy"><p class="eyebrow">03 / UNE BOUTIQUE, UN ESPRIT</p><h2>Un esprit de famille.<br>Une envie de <em>partager.</em></h2><p>Une polaire qu’on enfile au petit matin. Une petite attention rapportée à ceux qu’on aime. Et cette sensation de prolonger les vacances encore un peu.</p><p>C’est cet esprit que nous aimons faire vivre : des choses simples, de la douceur et le plaisir de vous conseiller.</p><a class="underlined" href="{% url 'core:location' %}">Faisons connaissance ↗</a></div></section>
+<section id="petites-attentions" class="section wrap family-collections" aria-labelledby="family-title">
+  <div class="chapter"><span>03 / LES PETITES ATTENTIONS</span><span>Le bonheur se partage.</span></div>
+  <div class="family-heading">
+    <h2 id="family-title">De la douceur.<br><em>Et beaucoup d’amour.</em></h2>
+    <div class="family-intro"><p>Les premières escapades, les petits cadeaux, les grands câlins. Des attentions pour ceux qui comptent.</p><a class="underlined" href="{% url 'core:location' %}">Un conseil ? Parlons-en <span aria-hidden="true">↗</span></a></div>
+  </div>
+  <nav class="family-grid" aria-label="Nos collections bébé et offres">
+    <a class="family-card" href="{% url 'core:product_list' %}?categorie=accessoires-bebe" aria-label="Accessoires bébé">
+      <div class="family-photo"><img src="{% static 'core/img/bb/image.png' %}" alt="Accessoires bébé" loading="lazy" width="383" height="267"></div>
+      <div class="family-caption"><div><p class="eyebrow">LES PREMIERS SOUVENIRS</p><h3>Petits détails, grands câlins.</h3></div><span class="family-arrow" aria-hidden="true">↗</span></div>
+    </a>
+    <a class="family-card" href="{% url 'core:product_list' %}?categorie=polaires-bebe" aria-label="Polaires bébé">
+      <div class="family-photo"><img src="{% static 'core/img/bb/image copy.png' %}" alt="Polaires bébé" loading="lazy" width="383" height="267"></div>
+      <div class="family-caption"><div><p class="eyebrow">TOUT CONTRE SOI</p><h3>Ses premiers cocons.</h3></div><span class="family-arrow" aria-hidden="true">↗</span></div>
+    </a>
+    <a class="family-card" href="{% url 'core:product_list' %}?categorie=offres-speciales" aria-label="Offres spéciales">
+      <div class="family-photo"><img src="{% static 'core/img/bb/image copy 2.png' %}" alt="Offres spéciales" loading="lazy" width="383" height="267"></div>
+      <div class="family-caption"><div><p class="eyebrow">AU FIL DES ENVIES</p><h3>Une occasion de faire plaisir.</h3></div><span class="family-arrow" aria-hidden="true">↗</span></div>
+    </a>
+  </nav>
+</section>
 <section class="contact-band"><div class="wrap"><p class="eyebrow">UN CONSEIL, UNE ENVIE, UNE QUESTION ?</p><h2>Les belles histoires<br>commencent par <em>un bonjour.</em></h2><a href="tel:+33450404617">Parlons-en au 04 50 40 46 17 ↗</a></div></section>{% endblock %}

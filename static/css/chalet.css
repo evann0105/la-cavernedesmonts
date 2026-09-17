@@ -835,3 +835,39 @@ h2 {
 }
 
 }
+
+/* Family collections: equal image sizes, concise copy and explicit link names. */
+.family-heading {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  align-items: end;
+  gap: 60px;
+  margin-bottom: 42px;
+}
+.family-heading h2 { margin: 0; font-size: clamp(38px, 4.1vw, 60px); }
+.family-intro { max-width: 350px; justify-self: end; }
+.family-intro p { color: #657060; font-size: 14px; line-height: 1.9; margin-bottom: 20px; }
+.family-intro .underlined { display: inline-block; }
+.family-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; }
+.family-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 7px; background: #f1ece2; }
+.family-photo { overflow: hidden; border-radius: 6px 6px 0 0; background: #eee9de; }
+.family-photo img { width: 100%; height: auto; aspect-ratio: 383 / 267; object-fit: contain; }
+.family-caption { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 25px 22px; flex: 1; }
+.family-caption .eyebrow { font-size: 8px; letter-spacing: 1.5px; color: var(--earth); margin-bottom: 10px; }
+.family-caption h3 { font-size: 24px; line-height: 1.15; letter-spacing: -.6px; margin: 0; }
+.family-arrow { flex-shrink: 0; display: grid; place-items: center; width: 37px; height: 37px; border: 1px solid #b9bfae; border-radius: 50%; font-size: 19px; }
+.family-card:hover .family-arrow, .family-card:focus-visible .family-arrow { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+@media (max-width: 1000px) {
+  .family-heading { gap: 30px; }
+  .family-grid { gap: 16px; }
+  .family-caption { padding: 20px 16px; gap: 10px; }
+  .family-caption h3 { font-size: 22px; }
+}
+@media (max-width: 700px) {
+  .family-heading { grid-template-columns: 1fr; gap: 22px; margin-bottom: 30px; }
+  .family-intro { max-width: 420px; justify-self: start; }
+  .family-grid { grid-template-columns: 1fr; gap: 24px; }
+  .family-caption { padding: 23px; }
+  .family-caption h3 { font-size: 27px; }
+  .family-heading h2 { font-size: clamp(35px, 7vw, 48px); }
+}
