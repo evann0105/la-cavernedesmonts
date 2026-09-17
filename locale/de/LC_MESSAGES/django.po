@@ -642,3 +642,66 @@ msgstr "← Weiter stöbern"
 
 msgid "← Revenir à mon panier"
 msgstr "← Zurück zum Warenkorb"
+
+msgid "La façade de notre boutique à Lélex"
+msgstr "Unser Geschäft in Lélex"
+
+msgid "Notre magasin à Lélex — La Caverne des Monts"
+msgstr "Unser Geschäft in Lélex — La Caverne des Monts"
+
+msgid "Entrez, vous êtes chez nous."
+msgstr "Kommen Sie herein und fühlen Sie sich wohl."
+
+msgid "Une vitrine, des découvertes et le plaisir de prendre le temps. À Lélex, notre boutique prolonge vos moments au grand air."
+msgstr "Ein Schaufenster, neue Entdeckungen und Zeit zum Genießen. In Lélex verlängert unser Geschäft Ihre schönen Momente im Freien."
+
+msgid "Préparer ma visite"
+msgstr "Meinen Besuch planen"
+
+msgid "Une vraie boutique. Une rencontre."
+msgstr "Ein echtes Geschäft. Eine Begegnung."
+
+msgid "LE PLAISIR DE SE RENCONTRER"
+msgstr "DIE FREUDE DER BEGEGNUNG"
+
+msgid "Les belles trouvailles commencent par un échange."
+msgstr "Schöne Entdeckungen beginnen mit einem Gespräch."
+
+msgid "Toucher une matière, essayer une coupe, hésiter entre deux couleurs. Ici, on prend le temps de trouver ce qui vous ressemble."
+msgstr "Einen Stoff fühlen, einen Schnitt anprobieren, zwischen zwei Farben wählen. Hier nehmen wir uns Zeit, das Passende für Sie zu finden."
+
+msgid "Des vêtements pour les petits et les grands, et des attentions à partager."
+msgstr "Kleidung für Groß und Klein und kleine Geschenke zum Teilen."
+
+msgid "Un conseil, simplement"
+msgstr "Einfach gut beraten"
+
+msgid "Une question sur une taille ou une envie de cadeau ? Parlons-en ensemble."
+msgstr "Eine Frage zur Größe oder eine Geschenkidee? Sprechen wir darüber."
+
+msgid "ON SE RETROUVE À LÉLEX"
+msgstr "WIR SEHEN UNS IN LÉLEX"
+
+msgid "Votre prochaine halte."
+msgstr "Ihr nächster Halt."
+
+msgid "Ouvrir l’itinéraire"
+msgstr "Route öffnen"
+
+msgid "Avant de venir"
+msgstr "Vor Ihrem Besuch"
+
+msgid "Appelez-nous pour connaître les horaires du moment et préparer votre passage en boutique."
+msgstr "Rufen Sie uns an, um die aktuellen Öffnungszeiten zu erfahren und Ihren Besuch zu planen."
+
+msgid "Une question à nous poser ?"
+msgstr "Haben Sie eine Frage?"
+
+msgid "RENDEZ-VOUS À LÉLEX"
+msgstr "BESUCHEN SIE UNS IN LÉLEX"
+
+msgid "Derrière cette vitrine, des découvertes et le plaisir de vous conseiller. Poussez la porte, prenez votre temps."
+msgstr "Hinter diesem Schaufenster warten Entdeckungen und persönliche Beratung. Kommen Sie herein und nehmen Sie sich Zeit."
+
+msgid "Découvrir notre magasin"
+msgstr "Unser Geschäft entdecken"
