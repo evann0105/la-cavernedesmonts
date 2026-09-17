@@ -1,3 +1,5 @@
+from connexion.test_helpers import verify_test_user
+from connexion.models import EmailVerification
 from django.test import TestCase, Client
 from django.contrib.auth.models import User, Group
 from django.urls import reverse
@@ -50,6 +52,7 @@ class LanguageTests(TestCase):
     def verified_manager(self):
         manager=User.objects.create_user('language-manager',is_staff=True)
         manager.groups.add(Group.objects.get(name='Gestion du catalogue'))
+        verify_test_user(manager)
         device=TOTPDevice.objects.create(user=manager,name='default',confirmed=True)
         self.client.force_login(manager,backend='connexion.backends.EmailOrUsernameBackend')
         session=self.client.session;session['otp_device_id']=device.persistent_id;session.save()
@@ -59,7 +62,7 @@ class LanguageTests(TestCase):
         self.assertNotContains(self.client.get('/'),'Exemples fictifs')
         manager=self.verified_manager()
         self.assertContains(self.client.get('/'),'Exemples fictifs, non publiés aux visiteurs')
-        session=self.client.session;session.pop('otp_device_id');session.save()
+        EmailVerification.objects.filter(user=manager).delete()
         self.assertNotContains(self.client.get('/'),'Exemples fictifs')
 
     def test_manager_edits_product_translations(self):

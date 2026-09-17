@@ -3,9 +3,9 @@
 ## Accès
 
 Connectez-vous puis choisissez **Gérer les produits** (dans le menu sur mobile), ou ouvrez `/gestion/produits/`.
-Le compte local **evannTest** est déjà superadministrateur. Il dispose donc de l’accès, après vérification de sa double authentification.
+Le compte local **evannTest** est déjà superadministrateur. Il dispose donc de l’accès, après confirmation unique de son adresse e-mail.
 
-Pour la gérante, utiliser son propre compte. Depuis l’administration Django, ouvrir son utilisateur, activer **Statut équipe** et lui attribuer le groupe **Gestion du catalogue**. Il n’est pas nécessaire de lui donner le statut superutilisateur. Elle configure ensuite sa double authentification à la connexion. Le groupe donne uniquement accès à cet espace catalogue, pas à la gestion des comptes, des paiements ni des réglages du site.
+Pour la gérante, utiliser son propre compte. Depuis l’administration Django, ouvrir son utilisateur, activer **Statut équipe** et lui attribuer le groupe **Gestion du catalogue**. Il n’est pas nécessaire de lui donner le statut superutilisateur. Elle confirme ensuite son adresse e-mail une seule fois. Le groupe donne uniquement accès à cet espace catalogue, pas à la gestion des comptes, des paiements ni des réglages du site.
 
 ## Ajouter ou modifier
 
@@ -26,7 +26,7 @@ Le prix et les rubriques sont ceux utilisés par le catalogue, le panier et le p
 Ce module gère le catalogue et les tailles disponibles, pas un stock quantitatif par taille ni des réservations de stock. Les paiements restent soumis aux conditions de configuration déjà présentes.
 Les photos téléversées sont stockées dans `media/`, qui est volontairement exclu de Git. En production, prévoir un stockage persistant, son service HTTP et des sauvegardes de `media/` et de la base de données. Le serveur local les sert déjà. Les migrations s’appliquent via `./start`.
 
-Références techniques : [sécurité des fichiers Django](https://docs.djangoproject.com/en/5.2/topics/security/#user-uploaded-content) et [authentification OTP](https://django-otp-official.readthedocs.io/en/latest/auth.html).
+Références techniques : [sécurité des fichiers Django](https://docs.djangoproject.com/en/5.2/topics/security/#user-uploaded-content).
 
 ## Choisir les trois cartes « Votre envie du moment »
 
@@ -48,7 +48,7 @@ Les traductions d’interface sont dans `locale/<langue>/LC_MESSAGES/django.po`.
 
 ## Zone d’avis en préparation
 
-Une maquette discrète apparaît uniquement sur l’accueil pour un gestionnaire connecté avec une double authentification validée. Elle porte la mention **Exemples fictifs, non publiés aux visiteurs**. Les exemples ne sont associés à aucun client, aucune note ni aucune source réelle. Les visiteurs et comptes clients ne voient pas cette zone. Avant toute publication, les remplacer par des témoignages authentiques avec leur source et l’autorisation nécessaire.
+Une maquette discrète apparaît uniquement sur l’accueil pour un gestionnaire connecté avec son adresse e-mail confirmée. Elle porte la mention **Exemples fictifs, non publiés aux visiteurs**. Les exemples ne sont associés à aucun client, aucune note ni aucune source réelle. Les visiteurs et comptes clients ne voient pas cette zone. Avant toute publication, les remplacer par des témoignages authentiques avec leur source et l’autorisation nécessaire.
 
 ### Protection des données locales
 
@@ -62,7 +62,7 @@ Le pied de page regroupe les collections, les informations et les liens « Mon c
 
 Les nouvelles commandes passées en étant connecté sont rattachées au compte côté serveur. Aucun historique n’est attribué à partir d’une simple correspondance d’adresse e-mail. Les commandes anciennes ou invitées nécessitent un traitement séparé, et les anciennes données du site PrestaShop ne sont pas importées par cette fonctionnalité.
 
-Le client peut ajouter, modifier et supprimer ses adresses, modifier ses nom/prénom/e-mail après confirmation de son mot de passe, retrouver ses commandes et consulter ses avoirs et bons. Le carnet d’adresses ne préremplit pas Stripe : le client confirme l’adresse de livraison sur la page de paiement. Les pages privées sont protégées contre la consultation par un autre client et ne sont pas mises en cache. La double authentification reste obligatoire pour l’administration.
+Le client peut ajouter, modifier et supprimer ses adresses, modifier ses nom/prénom/e-mail après confirmation de son mot de passe, retrouver ses commandes et consulter ses avoirs et bons. Le carnet d’adresses ne préremplit pas Stripe : le client confirme l’adresse de livraison sur la page de paiement. Les pages privées sont protégées contre la consultation par un autre client et ne sont pas mises en cache. La confirmation de l’adresse e-mail est obligatoire pour l’administration ; les connexions suivantes utilisent le mot de passe.
 
 Dans l’administration Django sécurisée, la rubrique Espace permet de consigner un **avoir déjà émis**, lié à une commande payée et à son propriétaire. Cette saisie ne déclenche aucun remboursement et ne constitue pas à elle seule une facture d’avoir comptable. Les remboursements et documents comptables doivent être traités par la gérante dans ses outils habituels.
 
@@ -73,3 +73,14 @@ Pour les **bons de réduction**, créer et configurer d’abord le code promotio
 Source lue le 18 septembre 2026 : https://la-cavernedesmonts.fr/content/3-conditions-utilisation. Le texte français est repris dans une page avec sommaire. Il mentionne notamment CIC, le paiement par chèque, des e-mails automatiques et des modalités qui ne correspondent pas toutes au nouveau parcours. Ce n’est pas une validation juridique ni une nouvelle rédaction des CGV. Faire valider une version adaptée avant de passer SHOP_READY et PAYMENTS_ENABLED à True. Les traductions concernent l’interface ; le texte contractuel reste identifié comme la version originale française.
 
 Adresse et horaires repris de https://la-cavernedesmonts.fr/content/4-a-propos : 225 rue des Monts-Jura, Résidence Les Gentianes, 01410 Lélex ; mercredi–samedi 9h30–12h et 14h30–18h30, dimanche 9h30–12h, ouverture quotidienne annoncée en haute saison. Le site invite à confirmer par téléphone avant la visite.
+
+
+### Vérification unique de l’adresse e-mail
+
+La confirmation de l’adresse e-mail remplace l’ancien assistant OTP pour les clients et les administrateurs. Après validation, la connexion utilise uniquement le mot de passe. Aucun compte existant n’est marqué comme confirmé automatiquement. Une modification de l’adresse exige une nouvelle confirmation avant de rouvrir l’espace client ou l’administration.
+
+Configurer dans `.env` les variables `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `DEFAULT_FROM_EMAIL`, `EMAIL_USE_TLS` / `EMAIL_USE_SSL`, puis `EMAIL_DELIVERY_ENABLED=True`. Utiliser l’expéditeur validé chez le prestataire et renseigner les secrets uniquement dans `.env`, jamais dans Git. Un port SMTP 587 utilise généralement TLS ; ne pas activer TLS et SSL ensemble. `SITE_URL` doit être l’adresse publique HTTPS en production ; `./start` la règle sur le port local utilisé.
+
+Sans prestataire configuré, le site indique que l’envoi est indisponible et ne confirme aucun compte. Pour le moment, aucun prestataire n’est configuré. Les tests utilisent une boîte mémoire isolée ; aucun mail réel n’est envoyé par les tests.
+
+Le lien est signé, valable une heure, à usage unique, associé au compte, à l’adresse et au mot de passe actuel. Le navigateur demande une connexion au même compte et un clic de confirmation protégé par CSRF. Le simple chargement par un scanner de messagerie ne confirme rien. Un renvoi invalide le lien précédent ; une minute minimum sépare deux envois et cinq demandes maximum sont autorisées par compte et par heure. Seule une empreinte du jeton est stockée en base. Ne pas conserver les URL de confirmation complètes dans les journaux du serveur de production.

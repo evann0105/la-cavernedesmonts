@@ -19,14 +19,17 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-from two_factor.urls import urlpatterns as two_factor_urls
 from connexion.views import SecureLoginView, change_language
+from connexion.email_views import verify_email
 from connexion.admin_site import BoutiqueAdminSite
 
 admin.site.__class__ = BoutiqueAdminSite
-# Both public and package login URLs use the same complete 2FA flow.
-secure_urls = ([path('account/login/', SecureLoginView.as_view(), name='login')] +
-               [entry for entry in two_factor_urls[0] if entry.name != 'login'], 'two_factor')
+# Retain historical links without exposing the former OTP setup wizard.
+secure_urls = ([
+    path('account/login/', SecureLoginView.as_view(), name='login'),
+    path('account/two_factor/', verify_email, name='profile'),
+    path('account/two_factor/setup/', verify_email, name='setup'),
+], 'two_factor')
 
 urlpatterns = [
     path('i18n/setlang/', change_language, name='set_language'),

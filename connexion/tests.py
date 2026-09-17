@@ -22,103 +22,29 @@ class SecurityTests(TestCase):
         self.staff = User.objects.create_superuser('admin-test', email='admin@example.test', password=self.password)
 
     def authenticate(self, username, password=None, url='/accounts/login/', client=None, **extra):
-        client = client or self.client
-        page = client.get(url)
-        management = page.context['wizard']['management_form']
-        return client.post(url, {management.add_prefix('current_step'): 'auth', 'auth-username': username, 'auth-password': password or self.password}, **extra)
-
-    def submit_step(self, response, step, token, client=None, url='/accounts/login/'):
-        management = response.context['wizard']['management_form']
-        return (client or self.client).post(url, {management.add_prefix('current_step'): step, f'{step}-otp_token': token})
-
-    def device(self, user=None):
-        return TOTPDevice.objects.create(user=user or self.staff, name='default', confirmed=True)
-
-    def token(self, device):
-        return str(totp(device.bin_key, step=device.step, t0=device.t0, digits=device.digits)).zfill(device.digits)
-
-    def test_admin_enrollment_and_recovery_code_generation(self):
-        import base64
-        self.authenticate('admin-test')
-        page = self.client.get(reverse('two_factor:setup'))
-        management = page.context['wizard']['management_form']
-        page = self.client.post(reverse('two_factor:setup'), {management.add_prefix('current_step'): 'welcome'})
-        self.assertEqual(page.context['wizard']['steps'].current, 'generator')
-        self.assertEqual(self.client.get(reverse('two_factor:qr')).status_code, 200)
-        key = base64.b32decode(self.client.session['django_two_factor-qr_secret_key'])
-        code = str(totp(key)).zfill(6)
-        management = page.context['wizard']['management_form']
-        response = self.client.post(reverse('two_factor:setup'), {management.add_prefix('current_step'): 'generator', 'generator-token': code})
-        self.assertEqual(response.status_code, 302)
-        self.assertTrue(TOTPDevice.objects.filter(user=self.staff, confirmed=True).exists())
-        self.assertEqual(self.client.get('/admin/').status_code, 200)
-        self.assertRedirects(self.client.post(reverse('two_factor:backup_tokens')), reverse('two_factor:backup_tokens'))
-        self.assertGreater(StaticToken.objects.filter(device__user=self.staff).count(), 0)
+        return (client or self.client).post(url, {'username':username,'password':password or self.password}, **extra)
 
     def test_customer_email_login_still_works(self):
-        self.assertRedirects(self.authenticate('client@example.test'), '/')
+        from .test_helpers import verify_test_user
+        verify_test_user(self.user)
+        self.assertRedirects(self.authenticate('client@example.test'), reverse('espace:account'))
 
-    def test_no_password_only_admin_access(self):
+    def test_unverified_admin_cannot_access_admin_or_catalog(self):
         self.client.force_login(self.staff, backend='connexion.backends.EmailOrUsernameBackend')
-        for path in ('/admin/', '/admin/auth/user/', '/admin/login/'):
-            response = self.client.get(path)
-            self.assertEqual(response.status_code, 302)
-        self.assertNotIn('otp_device_id', self.client.session)
+        for path in ('/admin/', '/admin/auth/user/', '/admin/login/', '/gestion/produits/'):
+            self.assertEqual(self.client.get(path).status_code, 302)
 
-    def test_admin_without_device_must_enroll(self):
-        self.assertRedirects(self.authenticate('admin-test'), reverse('two_factor:setup'))
-        self.assertEqual(self.client.get('/admin/').status_code, 302)
+    def test_verified_admin_uses_password_only_even_with_old_otp_device(self):
+        from .test_helpers import verify_test_user
+        verify_test_user(self.staff)
+        TOTPDevice.objects.create(user=self.staff,name='default',confirmed=True)
+        self.assertRedirects(self.authenticate('admin-test'),reverse('espace:account'))
+        self.assertEqual(self.client.get('/admin/').status_code,200)
+        self.assertEqual(self.client.get('/gestion/produits/').status_code,200)
 
-    def test_correct_password_waits_for_code_and_correct_code_opens_admin(self):
-        device = self.device()
-        response = self.authenticate('admin-test')
-        self.assertEqual(response.context['wizard']['steps'].current, 'token')
-        self.assertNotIn('_auth_user_id', self.client.session)
-        self.assertEqual(self.client.get('/admin/').status_code, 302)
-        response = self.submit_step(response, 'token', self.token(device))
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(self.client.get('/admin/').status_code, 200)
-        self.assertEqual(self.client.session['otp_device_id'], device.persistent_id)
-
-    def test_invalid_otp_never_authenticates(self):
-        device = self.device()
-        response = self.authenticate('admin-test')
-        wrong = '000000' if self.token(device) != '000000' else '111111'
-        for _ in range(3):
-            response = self.submit_step(response, 'token', wrong)
-            self.assertEqual(response.status_code, 200)
-        self.assertNotIn('_auth_user_id', self.client.session)
-        self.assertEqual(self.client.get('/admin/').status_code, 302)
-        device.refresh_from_db()
-        self.assertGreater(device.throttling_failure_count, 0)
-
-    def test_valid_otp_cannot_be_replayed(self):
-        device = self.device()
-        code = self.token(device)
-        response = self.authenticate('admin-test')
-        self.submit_step(response, 'token', code)
-        self.client.post('/accounts/logout/')
-        response = self.authenticate('admin-test')
-        response = self.submit_step(response, 'token', code)
-        self.assertEqual(response.status_code, 200)
-        self.assertNotIn('_auth_user_id', self.client.session)
-
-    def test_backup_token_single_use(self):
-        self.device()
-        backup = StaticDevice.objects.create(user=self.staff, name='backup')
-        token = StaticToken.objects.create(device=backup, token='test-recovery')
-        response = self.authenticate('admin-test')
-        response = self.client.post('/accounts/login/', {'wizard_goto_step': 'backup'})
-        response = self.submit_step(response, 'backup', token.token)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(self.client.get('/admin/').status_code, 200)
-        self.assertFalse(StaticToken.objects.filter(pk=token.pk).exists())
-
-    def test_package_login_also_requires_otp(self):
-        self.device()
-        response = self.authenticate('admin-test', url=reverse('two_factor:login'))
-        self.assertEqual(response.context['wizard']['steps'].current, 'token')
-        self.assertNotIn('_auth_user_id', self.client.session)
+    def test_login_alias_and_legacy_setup_use_email_verification(self):
+        self.assertRedirects(self.authenticate('admin-test',url=reverse('two_factor:login')),reverse('connexion:verify_email'))
+        self.assertNotContains(self.client.get(reverse('two_factor:setup')),'Activer l’authentification')
 
     def test_password_lockout_persists_with_new_session_and_spoofed_header(self):
         for n in range(5):

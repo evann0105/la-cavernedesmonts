@@ -963,3 +963,63 @@ msgstr "Domenica"
 
 msgid "Ouvert tous les jours en haute saison. Appelez-nous pour confirmer les horaires avant votre visite."
 msgstr "Aperto tutti i giorni in alta stagione. Chiamate per confermare gli orari prima della visita."
+
+msgid "Confirmez votre adresse e-mail — La Caverne des Monts"
+msgstr "Confermate il vostro indirizzo e-mail — La Caverne des Monts"
+
+msgid "Pour confirmer votre adresse e-mail, ouvrez ce lien puis confirmez sur la page. Il expire dans une heure et ne peut être utilisé qu’une fois."
+msgstr "Per verificare l’indirizzo e-mail, aprite questo link e confermate sulla pagina. Scade tra un’ora ed è utilizzabile una sola volta."
+
+msgid "Si vous n’êtes pas à l’origine de cette demande, ignorez ce message."
+msgstr "Se non avete richiesto questa verifica, ignorate il messaggio."
+
+msgid "Le lien de confirmation a été envoyé. Consultez votre boîte mail et vos courriers indésirables."
+msgstr "Il link di conferma è stato inviato. Controllate la posta in arrivo e lo spam."
+
+msgid "Veuillez patienter avant de demander un nouveau lien. Maximum cinq demandes par heure."
+msgstr "Attendete prima di richiedere un nuovo link. Massimo cinque richieste all’ora."
+
+msgid "L’envoi des e-mails est momentanément indisponible. Contactez la boutique."
+msgstr "L’invio delle e-mail non è attualmente disponibile. Contattate il negozio."
+
+msgid "Votre adresse e-mail est déjà confirmée."
+msgstr "Il vostro indirizzo e-mail è già confermato."
+
+msgid "Adresse e-mail confirmée. Bienvenue dans votre compte !"
+msgstr "Indirizzo e-mail confermato. Benvenuti nel vostro account!"
+
+msgid "Vérifier mon adresse e-mail"
+msgstr "Verificare il mio indirizzo e-mail"
+
+msgid "Votre adresse e-mail est confirmée."
+msgstr "Il vostro indirizzo e-mail è confermato."
+
+msgid "Vous pouvez désormais vous connecter avec votre mot de passe, sans nouvelle vérification par e-mail."
+msgstr "Ora potete accedere con la password, senza una nuova verifica via e-mail."
+
+msgid "Accéder à mon compte"
+msgstr "Accedere al mio account"
+
+msgid "Juste une confirmation."
+msgstr "Solo una conferma."
+
+msgid "Confirmez votre adresse e-mail une seule fois pour accéder à votre compte. Aucun code d’application à configurer."
+msgstr "Confermate una sola volta il vostro indirizzo e-mail per accedere al conto. Nessuna app di autenticazione da configurare."
+
+msgid "Recevoir un lien de confirmation"
+msgstr "Ricevere un link di conferma"
+
+msgid "Le lien expire après une heure. Consultez aussi vos courriers indésirables."
+msgstr "Il link scade dopo un’ora. Controllate anche lo spam."
+
+msgid "Confirmer mon adresse e-mail"
+msgstr "Confermare il mio indirizzo e-mail"
+
+msgid "Ce lien n’est plus valable."
+msgstr "Questo link non è più valido."
+
+msgid "Il a expiré, a déjà été utilisé ou correspond à un autre compte."
+msgstr "È scaduto, è già stato utilizzato o appartiene a un altro account."
+
+msgid "Recevoir un nouveau lien"
+msgstr "Ricevere un nuovo link"
