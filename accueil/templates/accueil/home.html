@@ -1,6 +1,7 @@
 {% extends 'base.html' %}{% load i18n shop_i18n %}
 {% load static %}
 {% block body_class %}summit-home{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'core/css/store.css' %}">{% endblock %}
 {% block content %}
 <section class="summit-hero" aria-labelledby="summit-title">
   <img class="summit-landscape" src="{% static 'core/img/hero/montagne-1536.webp' %}" srcset="{% static 'core/img/hero/montagne-960.webp' %} 960w, {% static 'core/img/hero/montagne-1536.webp' %} 1536w, {% static 'core/img/hero/montagne-2400.webp' %} 2400w, {% static 'core/img/hero/montagne-3840.webp' %} 3840w" sizes="(max-width: 600px) 1110px, (max-width: 900px) 1140px, (max-width: 1322px) 1290px, calc(100vw - 32px)" alt="{% translate 'Des randonneurs au pied des montagnes, sur un sentier fleuri' %}" fetchpriority="high" decoding="async" width="3840" height="2560">
@@ -46,6 +47,7 @@
     <a class="family-card" href="{% url 'core:product_list' %}?categorie=offres-speciales" aria-label="{% translate 'Offres spéciales' %}"><div class="family-photo"><img src="{% static 'core/img/bb/chalet/attentions-768.webp' %}" srcset="{% static 'core/img/bb/chalet/attentions-768.webp' %} 768w, {% static 'core/img/bb/chalet/attentions-1536.webp' %} 1536w" sizes="(max-width: 760px) calc(100vw - 40px), (max-width: 1440px) 33vw, 440px" alt="{% translate 'Un bébé et sa maman découvrent un cadeau dans une ambiance chalet' %}" loading="lazy" decoding="async" width="1536" height="1024"></div><div class="family-caption"><div><p class="eyebrow">{% translate 'OFFRES SPÉCIALES' %}</p><h3>{% translate 'Une occasion de faire plaisir.' %}</h3></div><span class="family-arrow" aria-hidden="true">↗</span></div></a>
   </nav>
 </section>
+<section class="store-teaser wrap" aria-labelledby="store-teaser-title"><div class="store-teaser-photo">{% include 'partials/store_photo.html' %}</div><div class="store-teaser-copy"><p class="eyebrow">{% translate 'RENDEZ-VOUS À LÉLEX' %}</p><h2 id="store-teaser-title">{% translate 'La montagne nous rassemble.' %}</h2><p>{% translate 'Derrière cette vitrine, des découvertes et le plaisir de vous conseiller. Poussez la porte, prenez votre temps.' %}</p><a class="button" href="{% url 'core:location' %}">{% translate 'Découvrir notre magasin' %} <span aria-hidden="true">↗</span></a></div></section>
 {% include 'partials/review_preview.html' %}
 <section class="summit-contact wrap"><div><p class="eyebrow">LA CAVERNE DES MONTS · LÉLEX</p><h2>{% translate 'De vraies personnes.' %}<br><span>{% translate 'De bons conseils.' %}</span></h2></div><div><p>{% translate 'Une hésitation sur une taille ? Une idée cadeau ?' %}<br>{% translate 'On prend le temps de vous répondre.' %}</p><a class="button" href="tel:+33450404617">04 50 40 46 17 <span aria-hidden="true">↗</span></a></div></section>
 {% endblock %}

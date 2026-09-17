@@ -642,3 +642,66 @@ msgstr "← Keep exploring"
 
 msgid "← Revenir à mon panier"
 msgstr "← Back to my basket"
+
+msgid "La façade de notre boutique à Lélex"
+msgstr "Our shopfront in Lélex"
+
+msgid "Notre magasin à Lélex — La Caverne des Monts"
+msgstr "Our shop in Lélex — La Caverne des Monts"
+
+msgid "Entrez, vous êtes chez nous."
+msgstr "Come in and feel at home."
+
+msgid "Une vitrine, des découvertes et le plaisir de prendre le temps. À Lélex, notre boutique prolonge vos moments au grand air."
+msgstr "A shopfront, new discoveries and time to enjoy them. In Lélex, our shop keeps that outdoor feeling alive."
+
+msgid "Préparer ma visite"
+msgstr "Plan my visit"
+
+msgid "Une vraie boutique. Une rencontre."
+msgstr "A real shop. A warm welcome."
+
+msgid "LE PLAISIR DE SE RENCONTRER"
+msgstr "THE JOY OF MEETING"
+
+msgid "Les belles trouvailles commencent par un échange."
+msgstr "Great finds start with a conversation."
+
+msgid "Toucher une matière, essayer une coupe, hésiter entre deux couleurs. Ici, on prend le temps de trouver ce qui vous ressemble."
+msgstr "Feel a fabric, try a fit, choose between two colours. Here, we take the time to find what feels right for you."
+
+msgid "Des vêtements pour les petits et les grands, et des attentions à partager."
+msgstr "Clothes for little ones and grown-ups, and thoughtful gifts to share."
+
+msgid "Un conseil, simplement"
+msgstr "Friendly advice"
+
+msgid "Une question sur une taille ou une envie de cadeau ? Parlons-en ensemble."
+msgstr "Need help with a size or a gift idea? Let’s talk."
+
+msgid "ON SE RETROUVE À LÉLEX"
+msgstr "SEE YOU IN LÉLEX"
+
+msgid "Votre prochaine halte."
+msgstr "Your next stop."
+
+msgid "Ouvrir l’itinéraire"
+msgstr "Get directions"
+
+msgid "Avant de venir"
+msgstr "Before your visit"
+
+msgid "Appelez-nous pour connaître les horaires du moment et préparer votre passage en boutique."
+msgstr "Call us for current opening hours and to plan your visit."
+
+msgid "Une question à nous poser ?"
+msgstr "Have a question?"
+
+msgid "RENDEZ-VOUS À LÉLEX"
+msgstr "MEET US IN LÉLEX"
+
+msgid "Derrière cette vitrine, des découvertes et le plaisir de vous conseiller. Poussez la porte, prenez votre temps."
+msgstr "Behind this window, new discoveries and a friendly helping hand. Come in and take your time."
+
+msgid "Découvrir notre magasin"
+msgstr "Discover our shop"
