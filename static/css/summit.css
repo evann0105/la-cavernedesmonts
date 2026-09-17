@@ -203,3 +203,10 @@ input, select { border-radius: 10px; }.filters .button { min-height: 46px; }
 }
 
 @media (max-width: 1100px) { .header-actions .manage-link { display: none; } }
+
+/* A consistent, touch-friendly return link on all interior pages. */
+.page-back { padding-top:22px; padding-bottom:0; }
+.page-back-link { display:inline-flex; align-items:center; gap:9px; min-height:44px; padding:9px 16px; border:1px solid #ccd5c5; border-radius:30px; color:#243e36; background:#f5f7ef; font-size:14px; text-decoration:none; }
+.page-back-link:hover { background:#e5ecdc; border-color:#8b9b80; }
+.page-back-link:focus-visible { outline:3px solid #809867; outline-offset:4px; }
+@media(max-width:600px) { .page-back { padding-top:14px; } }
