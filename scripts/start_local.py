@@ -13,6 +13,7 @@ import time
 import urllib.error
 import urllib.request
 import webbrowser
+from local_database import prepare_database
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -81,6 +82,10 @@ import django, environ, PIL, stripe
             os.chmod(env_file, 0o600)
             handle.write('DEBUG=True\nSECRET_KEY=' + secrets.token_urlsafe(64) + '\n')
         print('Clé locale forte créée dans .env (fichier privé).', flush=True)
+
+    database = prepare_database(ROOT)
+    env['DATABASE_PATH'] = str(database)
+    print(f'Base locale protégée hors Git : {database}', flush=True)
 
     print('Vérification du site et préparation de la base de données…', flush=True)
     for command in ('check', 'migrate', 'import_catalogue'):
