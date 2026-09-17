@@ -25,4 +25,5 @@ class Command(BaseCommand):
         call_command('import_collections', verbosity=options.get('verbosity', 1))
         call_command('import_femmes', verbosity=options.get('verbosity', 1))
         call_command('import_hommes', verbosity=options.get('verbosity', 1))
+        call_command('import_enfants', verbosity=options.get('verbosity', 1))
         self.stdout.write(self.style.SUCCESS('Catalogue importé ; tailles et disponibilités à valider dans l’administration.'))

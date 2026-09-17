@@ -12,7 +12,7 @@ class ShopTests(TestCase):
         call_command('import_catalogue', verbosity=0)
 
     def test_catalog_images_and_pages(self):
-        self.assertEqual(Product.objects.count(), 94)
+        self.assertEqual(Product.objects.count(), 110)
         for product in Product.objects.all():
             self.assertIsNotNone(finders.find(product.static_image))
             self.assertEqual(self.client.get(f'/produits/{product.slug}/').status_code, 200)
@@ -91,7 +91,7 @@ class ShopTests(TestCase):
         self.assertEqual(product.category.slug, 'accessoires')
         self.assertTrue(product.collections.filter(slug='accessoires-bebe').exists())
         call_command('import_catalogue', verbosity=0)
-        self.assertEqual(Product.objects.count(), 94)
+        self.assertEqual(Product.objects.count(), 110)
         self.assertEqual(product.collections.filter(slug='accessoires-bebe').count(), 1)
 
     def test_merchant_can_manage_special_offers(self):
@@ -151,7 +151,7 @@ class WomenImportTests(TestCase):
         self.assertEqual(product.description, 'Conseils personnalisés')
         self.assertEqual(product.price, Decimal('41.50'))
         self.assertEqual(product.sizes, 'M')
-        self.assertEqual(Product.objects.count(), 94)
+        self.assertEqual(Product.objects.count(), 110)
 
     def test_first_enrichment_preserves_existing_custom_fields(self):
         product = Product.objects.get(slug='veste-polaire-femme-anapurna-utern-violet')
@@ -204,7 +204,7 @@ class MenImportTests(TestCase):
         call_command('import_catalogue', verbosity=0)
         product.refresh_from_db()
         self.assertEqual(product.pk, original_id)
-        self.assertEqual(Product.objects.count(), 94)
+        self.assertEqual(Product.objects.count(), 110)
 
     def test_reimport_preserves_merchant_edits_and_category(self):
         from .models import Category
@@ -222,4 +222,63 @@ class MenImportTests(TestCase):
         self.assertEqual(product.description, 'Conseils de la boutique')
         self.assertEqual(product.sizes, 'L')
         self.assertEqual(product.category.slug, 'femmes')
-        self.assertEqual(Product.objects.count(), 94)
+        self.assertEqual(Product.objects.count(), 110)
+
+
+class ChildrenImportTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        call_command('import_catalogue', verbosity=0)
+
+    def test_complete_child_catalog_and_source_galleries(self):
+        import json
+        from pathlib import Path
+        from django.conf import settings
+        data = json.loads((Path(settings.BASE_DIR) / 'core/enfants_seed.json').read_text())
+        self.assertEqual(len(data['products']), 32)
+        self.assertEqual(sum(len(p['images']) for p in data['products']), 97)
+        response = self.client.get('/produits/', {'categorie': 'enfants'})
+        displayed = {p.pk for p in response.context['products']}
+        self.assertEqual(len(displayed), 32)
+        for item in data['products']:
+            product = Product.objects.get(source_url=item['source_url'])
+            self.assertIn(product.pk, displayed)
+            self.assertEqual(product.name, item['name'])
+            self.assertEqual(product.price, Decimal(item['price']))
+            self.assertEqual(product.description, item['description'])
+            self.assertFalse(product.sizes)
+            page = self.client.get(f'/produits/{product.slug}/')
+            self.assertEqual(page.status_code, 200)
+            for image in item['images']:
+                self.assertIsNotNone(finders.find(image))
+                self.assertIn('/static/' + image, page.context['images'])
+
+    def test_baby_and_accessory_membership_preserved_without_duplicates(self):
+        sock = Product.objects.get(slug='chaussettes-antiderapantes-marmottes-blanches')
+        self.assertEqual(sock.category.slug, 'accessoires')
+        self.assertEqual(set(sock.collections.values_list('slug', flat=True)), {'accessoires-bebe', 'enfants'})
+        baby = Product.objects.get(slug='bebe-101-echarpe-bebe')
+        self.assertEqual(baby.category.slug, 'accessoires-bebe')
+        self.assertTrue(baby.collections.filter(slug='enfants').exists())
+        original_ids = set(Product.objects.values_list('pk', flat=True))
+        call_command('import_catalogue', verbosity=0)
+        self.assertEqual(set(Product.objects.values_list('pk', flat=True)), original_ids)
+        self.assertEqual(Product.objects.count(), 110)
+        for slug, expected in [('accessoires-bebe', 10), ('polaires-bebe', 5), ('enfants', 32)]:
+            self.assertEqual(len(self.client.get('/produits/', {'categorie': slug}).context['products']), expected)
+
+    def test_enriched_baby_keeps_later_merchant_edits(self):
+        product = Product.objects.get(slug='bebe-101-echarpe-bebe')
+        product.name = 'Écharpe personnalisée'
+        product.price = Decimal('19.00')
+        product.description = 'Nouveaux conseils'
+        product.sizes = 'Taille unique'
+        product.save()
+        product.collections.clear()
+        call_command('import_catalogue', verbosity=0)
+        product.refresh_from_db()
+        self.assertEqual(product.name, 'Écharpe personnalisée')
+        self.assertEqual(product.price, Decimal('19.00'))
+        self.assertEqual(product.description, 'Nouveaux conseils')
+        self.assertEqual(product.sizes, 'Taille unique')
+        self.assertFalse(product.collections.exists())

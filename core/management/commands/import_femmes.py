@@ -15,12 +15,18 @@ class Command(BaseCommand):
     category_slug = 'femmes'
     category_name = 'Femmes'
     corrected_categories = {}
+    include_baby_originals = False
+    share_collection = False
 
     @transaction.atomic
     def handle(self, *args, **options):
         root = Path(settings.BASE_DIR)
         data = json.loads((root / 'core' / self.seed_file).read_text())
         originals = {p['slug']: p for p in json.loads((root / 'core/catalog_seed.json').read_text())}
+        if self.include_baby_originals:
+            baby = json.loads((root / 'core/collection_seed.json').read_text())
+            for original in baby['products']:
+                originals.setdefault(original['slug'], original)
         category, _ = Category.objects.get_or_create(slug=self.category_slug, defaults={'name': self.category_name})
         created_count = updated_count = 0
         for item in data['products']:
@@ -43,6 +49,11 @@ class Command(BaseCommand):
                 initial_description = 'L’air frais sur le visage, le plaisir de prendre son temps. Une pièce à emporter pour retrouver un peu de l’esprit montagne au fil des jours.'
                 if 'softshell-homme' in product.slug:
                     initial_description += '\nBlouson Peak Mountain avec doublure intérieure en polaire. Coloris bleu marine, zips contrastants orange.'
+                if 'urbaine' in product.slug:
+                    initial_description += '\nVeste polaire garçon, 100 % polyester. Deux poches zippées, zip intégral avec protection du menton, finitions élastiques contrastantes.'
+                if 'chaussettes' in product.slug:
+                    initial_description = 'Les petits plaisirs font les beaux souvenirs. Une touche de douceur pour prolonger les journées à la montagne jusque chez vous.'
+                initial_description = original.get('description', initial_description)
                 if not product.description or product.description == initial_description:
                     product.description = item['description']
                 previous_category = self.corrected_categories.get(product.slug)
@@ -50,6 +61,8 @@ class Command(BaseCommand):
                     product.category = category
                 product.source_url = item['source_url']
                 product.save(update_fields=['name', 'price', 'description', 'source_url', 'category'])
+                if self.share_collection and product.category_id != category.pk:
+                    product.collections.add(category)
                 updated_count += 1
             else:
                 Product.objects.create(
