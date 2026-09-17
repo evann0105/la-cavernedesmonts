@@ -32,7 +32,7 @@ Créer son accès administrateur avec `manage.py createsuperuser` si nécessaire
 
 ## Catalogue
 
-Les 16 articles initiaux, prix et images proviennent de la version locale initiale. Le catalogue a ensuite été enrichi des collections bébé et Femme du site public. Aucune image n’a été remplacée. `import_catalogue` est relançable sans écraser les changements faits en administration. Les anciennes URL locales de fiches redirigent vers les fiches canoniques. Les données de prix envoyées dans une URL ou un formulaire ne font jamais autorité.
+Les 16 articles initiaux, prix et images proviennent de la version locale initiale. Le catalogue a ensuite été enrichi des collections bébé, Femme et Homme du site public. Aucune image n’a été remplacée. `import_catalogue` est relançable sans écraser les changements faits en administration. Les anciennes URL locales de fiches redirigent vers les fiches canoniques. Les données de prix envoyées dans une URL ou un formulaire ne font jamais autorité.
 
 Dans l’administration, renseigner les tailles réellement vendables (séparées par des virgules) et vérifier les prix, descriptions, catégories et disponibilités. Une taille vide laisse préparer le panier mais bloque son encaissement. La seule plage de tailles initialisée provient de la fiche softshell homme existante. Les articles sans genre explicite ont une catégorie provisoire à vérifier. Les photos secondaires existantes sont conservées dans les galeries.
 
@@ -53,7 +53,7 @@ Les commandes ne deviennent payées qu’après réception d’un webhook signé
 
 Les commandes, coordonnées client et adresses sont visibles dans l’administration. La préparation/expédition, les remboursements et la disponibilité par taille restent à gérer par la boutique ; il n’y a pas de réservation de stock automatique. Activer les reçus dans Stripe si souhaité : aucun e-mail de commande n’est envoyé directement par Django. Les taxes sont incluses dans les prix saisis, sans calcul fiscal automatique. La récupération automatique du mot de passe et l’historique de commandes client restent à prévoir si souhaités. Prévoir sauvegardes et surveillance sur le serveur de production ; la limitation des connexions est décrite ci-dessous.
 
-Aucun déploiement ni changement du site public n’a été effectué. Les collections bébé et les 50 références Femme du site public sont importées ; les autres rubriques et les clients ne sont pas migrés. Prévoir une correspondance des anciennes URL publiques avant bascule du domaine.
+Aucun déploiement ni changement du site public n’a été effectué. Les collections bébé, les 50 références Femme et les 25 références Homme du site public sont importées ; les autres rubriques et les clients ne sont pas migrés. Prévoir une correspondance des anciennes URL publiques avant bascule du domaine.
 
 ## Vérifier
 
@@ -119,8 +119,17 @@ Le contrôle de déploiement conserve l’avertissement HSTS : son activation d�
 
 Relevé du 17 septembre 2026 : les **50 références** de [la catégorie Femme](https://la-cavernedesmonts.fr/3-femmes) sont enregistrées dans `core/femmes_seed.json`, avec leurs adresses source, prix, descriptions, tailles proposées et **175 photos locales**. Les identifiants source permettent de conserver les références distinctes même lorsqu’elles ont le même titre.
 
-L’import ajoute 44 fiches et enrichit 6 fiches initiales identifiées par leurs photos et coloris, en conservant leur identifiant, leur URL locale et leur image initiale. Les 4 autres anciennes fiches classées Femme sont conservées : **54 fiches dans la rubrique, 72 dans la boutique**. Les galeries source complètent les images locales.
+L’import ajoute 44 fiches et enrichit 6 fiches initiales identifiées par leurs photos et coloris, en conservant leur identifiant, leur URL locale et leur image initiale. Les autres anciennes fiches sont conservées. Après l’import Homme et le reclassement de la polaire rouge, la rubrique Femme comporte **53 fiches** (dont les 50 références source). Les galeries source complètent les images locales.
 
 `import_catalogue` appelle désormais `import_femmes`, également exécutable seul après `migrate`. La première association enrichit uniquement les valeurs issues du catalogue initial ; les modifications personnalisées sont conservées. Les imports suivants ne modifient pas les fiches déjà associées. Aucun accès réseau n’est nécessaire au démarrage.
 
 Il s’agit d’un instantané, pas d’une synchronisation de stock. Les tailles source figurent dans la description ; le champ des tailles vendables reste vide pour les nouvelles fiches jusqu’à validation par la boutique. Les fichiers HTML source ne sont ni servis ni exécutés : seules les descriptions en texte et les photos sont intégrées.
+
+
+## Collection Homme
+
+Relevé du 17 septembre 2026 : **25 références et 105 photos** depuis [la catégorie Homme](https://la-cavernedesmonts.fr/12-hommes). Le fichier `core/hommes_seed.json` conserve les adresses et identifiants source, prix, descriptions, tailles proposées et liens des photos. Les images sont stockées localement dans `core/static/core/img/hommes`.
+
+`import_hommes` ajoute 22 fiches et enrichit les 3 références initiales reconnues (softshell marine/orange, veste outdoor Anapurna et polaire rouge), sans changer leurs identifiants, URL locales ni images initiales. La polaire rouge est reclassée de Femme vers Homme lors de sa première association à la source. Les modifications ultérieures de la boutique restent préservées. Le catalogue compte désormais **94 articles**, dont **25 dans Homme**.
+
+`import_catalogue`, et donc `./start`, exécutent cet import sans connexion réseau. Le moteur d’import est commun aux collections Femme et Homme. Les tailles source restent informatives ; les nouvelles fiches n’ont aucune taille vendable activée avant confirmation par la boutique. Les tailles déjà renseignées sur les anciens articles sont conservées. Aucun stock n’est synchronisé avec le site d’origine.

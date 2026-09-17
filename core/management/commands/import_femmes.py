@@ -11,12 +11,17 @@ from core.models import Category, Product
 class Command(BaseCommand):
     help = 'Importe les 50 références Femme relevées sur le site d’origine le 17/09/2026.'
 
+    seed_file = 'femmes_seed.json'
+    category_slug = 'femmes'
+    category_name = 'Femmes'
+    corrected_categories = {}
+
     @transaction.atomic
     def handle(self, *args, **options):
         root = Path(settings.BASE_DIR)
-        data = json.loads((root / 'core/femmes_seed.json').read_text())
+        data = json.loads((root / 'core' / self.seed_file).read_text())
         originals = {p['slug']: p for p in json.loads((root / 'core/catalog_seed.json').read_text())}
-        category, _ = Category.objects.get_or_create(slug='femmes', defaults={'name': 'Femmes'})
+        category, _ = Category.objects.get_or_create(slug=self.category_slug, defaults={'name': self.category_name})
         created_count = updated_count = 0
         for item in data['products']:
             # Public source IDs, rather than names, distinguish different references/colorways.
@@ -36,10 +41,15 @@ class Command(BaseCommand):
                 if str(product.price) == original['price']:
                     product.price = item['price']
                 initial_description = 'L’air frais sur le visage, le plaisir de prendre son temps. Une pièce à emporter pour retrouver un peu de l’esprit montagne au fil des jours.'
+                if 'softshell-homme' in product.slug:
+                    initial_description += '\nBlouson Peak Mountain avec doublure intérieure en polaire. Coloris bleu marine, zips contrastants orange.'
                 if not product.description or product.description == initial_description:
                     product.description = item['description']
+                previous_category = self.corrected_categories.get(product.slug)
+                if previous_category and product.category and product.category.slug == previous_category:
+                    product.category = category
                 product.source_url = item['source_url']
-                product.save(update_fields=['name', 'price', 'description', 'source_url'])
+                product.save(update_fields=['name', 'price', 'description', 'source_url', 'category'])
                 updated_count += 1
             else:
                 Product.objects.create(
@@ -49,5 +59,5 @@ class Command(BaseCommand):
                 )
                 created_count += 1
         self.stdout.write(self.style.SUCCESS(
-            f'Collection Femme : {created_count} articles ajoutés, {updated_count} fiches enrichies.'
+            f'Collection {self.category_name} : {created_count} articles ajoutés, {updated_count} fiches enrichies.'
         ))

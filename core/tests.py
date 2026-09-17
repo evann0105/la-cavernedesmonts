@@ -12,7 +12,7 @@ class ShopTests(TestCase):
         call_command('import_catalogue', verbosity=0)
 
     def test_catalog_images_and_pages(self):
-        self.assertEqual(Product.objects.count(), 72)
+        self.assertEqual(Product.objects.count(), 94)
         for product in Product.objects.all():
             self.assertIsNotNone(finders.find(product.static_image))
             self.assertEqual(self.client.get(f'/produits/{product.slug}/').status_code, 200)
@@ -91,7 +91,7 @@ class ShopTests(TestCase):
         self.assertEqual(product.category.slug, 'accessoires')
         self.assertTrue(product.collections.filter(slug='accessoires-bebe').exists())
         call_command('import_catalogue', verbosity=0)
-        self.assertEqual(Product.objects.count(), 72)
+        self.assertEqual(Product.objects.count(), 94)
         self.assertEqual(product.collections.filter(slug='accessoires-bebe').count(), 1)
 
     def test_merchant_can_manage_special_offers(self):
@@ -121,7 +121,7 @@ class WomenImportTests(TestCase):
         from django.conf import settings
         data = json.loads((Path(settings.BASE_DIR) / 'core/femmes_seed.json').read_text())
         self.assertEqual(len(data['products']), 50)
-        self.assertEqual(Product.objects.exclude(source_url=None).count(), 50)
+        self.assertEqual(Product.objects.filter(source_url__in=[i['source_url'] for i in data['products']]).count(), 50)
         for item in data['products']:
             product = Product.objects.get(source_url=item['source_url'])
             self.assertEqual(product.category.slug, 'femmes')
@@ -134,7 +134,7 @@ class WomenImportTests(TestCase):
                 self.assertIsNotNone(finders.find(image))
                 self.assertIn('/static/' + image, page.context['images'])
         response = self.client.get('/produits/', {'categorie': 'femmes'})
-        self.assertEqual(len(response.context['products']), 54)
+        self.assertEqual(len(response.context['products']), 53)
 
     def test_restart_preserves_merchant_edits_and_product_identity(self):
         product = Product.objects.get(slug='veste-polaire-femme-anapurna-utern-violet')
@@ -151,7 +151,7 @@ class WomenImportTests(TestCase):
         self.assertEqual(product.description, 'Conseils personnalisés')
         self.assertEqual(product.price, Decimal('41.50'))
         self.assertEqual(product.sizes, 'M')
-        self.assertEqual(Product.objects.count(), 72)
+        self.assertEqual(Product.objects.count(), 94)
 
     def test_first_enrichment_preserves_existing_custom_fields(self):
         product = Product.objects.get(slug='veste-polaire-femme-anapurna-utern-violet')
@@ -164,3 +164,62 @@ class WomenImportTests(TestCase):
         self.assertEqual(product.description, 'Mon texte original')
         self.assertEqual(product.price, Decimal('51.00'))
         self.assertIsNotNone(product.source_url)
+
+
+class MenImportTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        call_command('import_catalogue', verbosity=0)
+
+    def test_complete_mens_catalog_prices_descriptions_and_galleries(self):
+        import json
+        from pathlib import Path
+        from django.conf import settings
+        data = json.loads((Path(settings.BASE_DIR) / 'core/hommes_seed.json').read_text())
+        self.assertEqual(len(data['products']), 25)
+        self.assertEqual(sum(len(i['images']) for i in data['products']), 105)
+        response = self.client.get('/produits/', {'categorie': 'hommes'})
+        self.assertEqual(len(response.context['products']), 25)
+        for item in data['products']:
+            product = Product.objects.get(source_url=item['source_url'])
+            self.assertEqual(product.category.slug, 'hommes')
+            self.assertEqual(product.name, item['name'])
+            self.assertEqual(product.price, Decimal(item['price']))
+            self.assertEqual(product.description, item['description'])
+            if not item['existing']:
+                self.assertFalse(product.sizes)
+            page = self.client.get(f'/produits/{product.slug}/')
+            self.assertEqual(page.status_code, 200)
+            for image in item['images']:
+                self.assertIsNotNone(finders.find(image))
+                self.assertIn('/static/' + image, page.context['images'])
+
+    def test_existing_red_fleece_is_reclassified_without_duplication(self):
+        product = Product.objects.get(slug='veste-polaire-de-montagne-rouge')
+        self.assertEqual(product.category.slug, 'hommes')
+        self.assertIn('/443-', product.source_url)
+        self.assertRedirects(self.client.get(f'/page-produit/{product.slug}/'),
+                            f'/produits/{product.slug}/', status_code=301)
+        original_id = product.pk
+        call_command('import_catalogue', verbosity=0)
+        product.refresh_from_db()
+        self.assertEqual(product.pk, original_id)
+        self.assertEqual(Product.objects.count(), 94)
+
+    def test_reimport_preserves_merchant_edits_and_category(self):
+        from .models import Category
+        product = Product.objects.get(slug='veste-polaire-de-montagne-rouge')
+        product.price = Decimal('49.00')
+        product.name = 'Nom de la boutique'
+        product.description = 'Conseils de la boutique'
+        product.sizes = 'L'
+        product.category = Category.objects.get(slug='femmes')
+        product.save()
+        call_command('import_catalogue', verbosity=0)
+        product.refresh_from_db()
+        self.assertEqual(product.price, Decimal('49.00'))
+        self.assertEqual(product.name, 'Nom de la boutique')
+        self.assertEqual(product.description, 'Conseils de la boutique')
+        self.assertEqual(product.sizes, 'L')
+        self.assertEqual(product.category.slug, 'femmes')
+        self.assertEqual(Product.objects.count(), 94)

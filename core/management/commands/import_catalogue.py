@@ -24,4 +24,5 @@ class Command(BaseCommand):
             Product.objects.get_or_create(slug=slug, defaults={'name': item['name'], 'price': item['price'], 'static_image': item['image'], 'description': description, 'category': category, 'is_featured': slug in ('veste-hybride-multi-matieres-femme', 'blouson-softshell-homme-impermeable', 'veste-polaire-de-montagne-beige', 'chaussettes-antiderapantes-marmottes-blanches'), 'sizes': 'S,M,L,XL,XXL,3XL' if 'softshell-homme' in slug else ''})
         call_command('import_collections', verbosity=options.get('verbosity', 1))
         call_command('import_femmes', verbosity=options.get('verbosity', 1))
+        call_command('import_hommes', verbosity=options.get('verbosity', 1))
         self.stdout.write(self.style.SUCCESS('Catalogue importé ; tailles et disponibilités à valider dans l’administration.'))
