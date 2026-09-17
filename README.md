@@ -32,7 +32,7 @@ Créer son accès administrateur avec `manage.py createsuperuser` si nécessaire
 
 ## Catalogue
 
-Les 16 articles, prix et images proviennent de la version locale initiale. Aucune image n’a été remplacée. `import_catalogue` est relançable sans écraser les changements faits en administration. Les anciennes URL locales de fiches redirigent vers les fiches canoniques. Les données de prix envoyées dans une URL ou un formulaire ne font jamais autorité.
+Les 16 articles initiaux, prix et images proviennent de la version locale initiale. Le catalogue a ensuite été enrichi des collections bébé et Femme du site public. Aucune image n’a été remplacée. `import_catalogue` est relançable sans écraser les changements faits en administration. Les anciennes URL locales de fiches redirigent vers les fiches canoniques. Les données de prix envoyées dans une URL ou un formulaire ne font jamais autorité.
 
 Dans l’administration, renseigner les tailles réellement vendables (séparées par des virgules) et vérifier les prix, descriptions, catégories et disponibilités. Une taille vide laisse préparer le panier mais bloque son encaissement. La seule plage de tailles initialisée provient de la fiche softshell homme existante. Les articles sans genre explicite ont une catégorie provisoire à vérifier. Les photos secondaires existantes sont conservées dans les galeries.
 
@@ -53,7 +53,7 @@ Les commandes ne deviennent payées qu’après réception d’un webhook signé
 
 Les commandes, coordonnées client et adresses sont visibles dans l’administration. La préparation/expédition, les remboursements et la disponibilité par taille restent à gérer par la boutique ; il n’y a pas de réservation de stock automatique. Activer les reçus dans Stripe si souhaité : aucun e-mail de commande n’est envoyé directement par Django. Les taxes sont incluses dans les prix saisis, sans calcul fiscal automatique. La récupération automatique du mot de passe et l’historique de commandes client restent à prévoir si souhaités. Prévoir sauvegardes et surveillance sur le serveur de production ; la limitation des connexions est décrite ci-dessous.
 
-Aucun déploiement ni changement du site public n’a été effectué. Le catalogue et les clients de l’ancien site public ne sont pas migrés au-delà des 16 articles fournis localement. Prévoir une correspondance des anciennes URL publiques avant bascule du domaine.
+Aucun déploiement ni changement du site public n’a été effectué. Les collections bébé et les 50 références Femme du site public sont importées ; les autres rubriques et les clients ne sont pas migrés. Prévoir une correspondance des anciennes URL publiques avant bascule du domaine.
 
 ## Vérifier
 
@@ -67,7 +67,7 @@ Documentation Stripe : https://docs.stripe.com/checkout/fulfillment
 
 ## Accessoires bébé, polaires bébé et offres spéciales
 
-Les trois bannières de l’accueil ouvrent les collections locales correspondantes. Le relevé du 17 septembre 2026 comprend 10 accessoires bébé et 5 polaires bébé ; les 3 modèles de chaussettes existants sont partagés sans duplication, soit 28 articles au total. Les 12 nouveaux articles et leurs photos sont disponibles localement, sans appel au site d’origine lors du démarrage. Les tailles et disponibilités restent à confirmer avant encaissement.
+Les trois bannières de l’accueil ouvrent les collections locales correspondantes. Le relevé du 17 septembre 2026 comprend 10 accessoires bébé et 5 polaires bébé ; les 3 modèles de chaussettes existants sont partagés sans duplication, soit 28 articles avant l’import Femme. Les 12 nouveaux articles et leurs photos sont disponibles localement, sans appel au site d’origine lors du démarrage. Les tailles et disponibilités restent à confirmer avant encaissement.
 
 La bannière originale « Offres spéciales » pointe vers une catégorie supprimée (404) ; la page Promotions ne propose aucune offre à la date du relevé. La rubrique locale affiche donc un état vide explicite. Dans l’administration d’un produit, le champ **Collections** permet de l’associer à « Offres spéciales » (ou à une collection bébé) tout en conservant sa catégorie principale. Aucune réduction fictive n’est appliquée.
 
@@ -113,3 +113,14 @@ DEBUG=False .venv/bin/python manage.py check --deploy
 ```
 
 Le contrôle de déploiement conserve l’avertissement HSTS : son activation dépend de la configuration HTTPS finale (hors de ces quatre corrections). Le paiement réel, les stocks, sauvegardes et alertes restent les étapes suivantes déjà identifiées.
+
+
+## Collection Femme
+
+Relevé du 17 septembre 2026 : les **50 références** de [la catégorie Femme](https://la-cavernedesmonts.fr/3-femmes) sont enregistrées dans `core/femmes_seed.json`, avec leurs adresses source, prix, descriptions, tailles proposées et **175 photos locales**. Les identifiants source permettent de conserver les références distinctes même lorsqu’elles ont le même titre.
+
+L’import ajoute 44 fiches et enrichit 6 fiches initiales identifiées par leurs photos et coloris, en conservant leur identifiant, leur URL locale et leur image initiale. Les 4 autres anciennes fiches classées Femme sont conservées : **54 fiches dans la rubrique, 72 dans la boutique**. Les galeries source complètent les images locales.
+
+`import_catalogue` appelle désormais `import_femmes`, également exécutable seul après `migrate`. La première association enrichit uniquement les valeurs issues du catalogue initial ; les modifications personnalisées sont conservées. Les imports suivants ne modifient pas les fiches déjà associées. Aucun accès réseau n’est nécessaire au démarrage.
+
+Il s’agit d’un instantané, pas d’une synchronisation de stock. Les tailles source figurent dans la description ; le champ des tailles vendables reste vide pour les nouvelles fiches jusqu’à validation par la boutique. Les fichiers HTML source ne sont ni servis ni exécutés : seules les descriptions en texte et les photos sont intégrées.

@@ -28,7 +28,7 @@ def product_detail(request, slug):
     product = get_object_or_404(Product.objects.select_related('category'), slug=slug)
     images = [product.image_url] if product.image_url else []
     images += [i.image.url for i in product.images.all()]
-    for folder in ('products', 'best_product'):
+    for folder in ('products', 'best_product', 'femmes'):
         directory = Path(settings.BASE_DIR) / 'core/static/core/img' / folder / slug
         if directory.is_dir():
             for p in sorted(directory.iterdir()):

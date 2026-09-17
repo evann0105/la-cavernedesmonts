@@ -16,6 +16,7 @@ class Category(models.Model):
 class Product(models.Model):
 	category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL, related_name='products')
 	collections = models.ManyToManyField(Category, blank=True, related_name='collection_products', help_text='Rubriques complémentaires : bébé, offres spéciales…')
+	source_url = models.URLField(max_length=500, unique=True, null=True, blank=True, editable=False)
 	name = models.CharField(max_length=200)
 	slug = models.SlugField(max_length=220, unique=True)
 	price = models.DecimalField(max_digits=10, decimal_places=2)
