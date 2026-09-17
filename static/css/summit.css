@@ -152,3 +152,51 @@ input, select { border-radius: 10px; }.filters .button { min-height: 46px; }
 @media (max-width: 370px) {
   .header-inner { gap: 7px; }.header-actions { gap: 4px; }.brand-name { font-size: 12px; }.brand-mountain { width: 20px; height: 22px; }.bag { padding: 7px; }.bag span { font-size: 8px; }.menu-toggle { padding: 7px; }.summit-hero { padding-inline: 18px; }.summit-hero h1 { font-size: 33px; }
 }
+
+/* Small finishing movements, once on entry and only on deliberate interaction. */
+@media (prefers-reduced-motion: no-preference) {
+  .summit-hero-copy > div:first-child {
+    animation: summit-title-arrival 650ms cubic-bezier(.2, .65, .3, 1) both;
+  }
+  .summit-hero-side {
+    animation: summit-detail-arrival 550ms 90ms ease-out both;
+  }
+  @keyframes summit-title-arrival {
+    from { transform: translateY(10px); }
+    to { transform: translateY(0); }
+  }
+  @keyframes summit-detail-arrival {
+    from { opacity: .7; transform: translateY(7px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .mobile-nav:not([hidden]) {
+    animation: summit-menu-arrival 180ms ease-out both;
+  }
+  @keyframes summit-menu-arrival {
+    from { opacity: .7; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .world-card, .family-card {
+    transition: transform 250ms ease, box-shadow 250ms ease;
+  }
+  .desktop-nav a, .account-link, .bag {
+    transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+  }
+  .world-arrow, .reassurance-icon, .underlined > span {
+    transition: transform 220ms ease, background-color 180ms ease, color 180ms ease;
+  }
+  .underlined > span { display: inline-block; }
+  .underlined:focus-visible > span { transform: translate(2px, -2px); }
+  .summit-hero-copy:focus-within > div { animation: none; }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .world-card:hover, .family-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px #203c320b;
+  }
+  .world-card:hover .world-arrow, .underlined:hover > span { transform: translate(2px, -2px); }
+  .summit-reassurance a:hover .reassurance-icon { transform: translateY(-2px); background: #e4edd7; }
+}
+@media (max-width: 600px) and (prefers-reduced-motion: no-preference) {
+  .summit-hero-copy > div:first-child, .summit-hero-side { animation-duration: 350ms; animation-delay: 0ms; }
+}
