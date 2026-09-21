@@ -33,7 +33,7 @@ em {
   width:min(1400px,calc(100% - 112px))
 }
 .eyebrow {
-  font-size:10px;
+  font-size:14px;
   letter-spacing:2px;
   font-weight:600
 }
@@ -41,7 +41,7 @@ em {
 .announcement {
   background:var(--ink);
   padding:9px 20px;
-  font-size:10px;
+  font-size:14px;
   letter-spacing:2px
 }
 
@@ -56,7 +56,7 @@ em {
   gap:32px
 }
 .desktop-nav a {
-  font-size:12px
+  font-size:16px
 }
 .brand img {
   width:120px
@@ -68,7 +68,7 @@ em {
   border-radius:3px;
   padding:18px 25px;
   min-height:56px;
-  font-size:12px;
+  font-size:16px;
   letter-spacing:.2px
 }
 .button span {
@@ -79,7 +79,7 @@ em {
 }
 .underlined {
   padding-bottom:9px;
-  font-size:12px
+  font-size:16px
 }
 
 .hero {
@@ -104,7 +104,7 @@ em {
   align-items:center;
   gap:12px;
   margin-bottom:31px;
-  font-size:9px
+  font-size:13px
 }
 .little-line {
   height:1px;
@@ -135,7 +135,7 @@ em {
   align-items:center;
   gap:30px;
   margin-top:25px;
-  font-size:11px;
+  font-size:16px;
   color:#5f6a5c
 }
 .hero-discover span {
@@ -182,7 +182,7 @@ em {
   gap:6px
 }
 .hero-visual figcaption span:first-child {
-  font-size:9px;
+  font-size:13px;
   letter-spacing:2px
 }
 .hero-visual figcaption span:last-child {
@@ -242,7 +242,7 @@ em {
   border-bottom:1px solid var(--line);
   padding-bottom:16px;
   margin-bottom:36px;
-  font-size:9px;
+  font-size:13px;
   letter-spacing:1.5px;
   color:#68715f
 }
@@ -281,7 +281,7 @@ em {
   line-height:1.04
 }
 .moment .eyebrow {
-  font-size:9px
+  font-size:13px
 }
 .cozy {
   height:420px;
@@ -324,7 +324,7 @@ em {
 }
 .product-meta h3 {
   letter-spacing:0;
-  font-size:13px;
+  font-size:16px;
   line-height:1.55;
   max-width:30ch
 }
@@ -385,7 +385,7 @@ em {
   max-height:150px
 }
 .collection-links span {
-  font-size:12px;
+  font-size:16px;
   padding:16px
 }
 .collection-links img {
@@ -407,7 +407,7 @@ em {
   color:#526347
 }
 .contact-band a {
-  font-size:13px;
+  font-size:16px;
   padding-bottom:8px
 }
 
@@ -430,7 +430,7 @@ footer {
   padding-block:24px
 }
 footer h2 {
-  font-size:10px;
+  font-size:14px;
   letter-spacing:1.6px
 }
 
@@ -529,11 +529,11 @@ input,select {
   font-size:64px
 }
 .hero-content .eyebrow {
-  font-size:8px;
+  font-size:12px;
   letter-spacing:1px
 }
 .hero-content>p:not(.eyebrow) {
-  font-size:12px
+  font-size:16px
 }
 .hero-visual {
   min-height:500px
@@ -600,7 +600,7 @@ input,select {
   width:calc(100% - 40px)
 }
 .announcement {
-  font-size:8px;
+  font-size:12px;
   letter-spacing:1.2px
 }
 .header-inner {
@@ -623,7 +623,7 @@ input,select {
 }
 .hero-content .eyebrow {
   margin-bottom:22px;
-  font-size:8px;
+  font-size:12px;
   letter-spacing:1.4px
 }
 .hero h1 {
@@ -632,7 +632,7 @@ input,select {
   margin-bottom:20px
 }
 .hero-content>p:not(.eyebrow) {
-  font-size:13px;
+  font-size:16px;
   margin-bottom:23px;
   max-width:32ch
 }
@@ -644,7 +644,7 @@ input,select {
   display:inline-flex;
   margin:20px 0 0 18px;
   gap:12px;
-  font-size:10px
+  font-size:14px
 }
 .hero-visual {
   min-height:360px;
@@ -681,14 +681,14 @@ input,select {
   flex:1
 }
 .promise-strip b {
-  font-size:9px;
+  font-size:13px;
   line-height:1.6
 }
 .section {
   padding-block:56px
 }
 .chapter {
-  font-size:8px;
+  font-size:12px;
   letter-spacing:1px;
   margin-bottom:28px;
   padding-bottom:12px
@@ -703,7 +703,7 @@ h2 {
   font-size:42px
 }
 .section-heading>p {
-  font-size:12px;
+  font-size:16px;
   margin-top:16px
 }
 .moments {
@@ -731,17 +731,17 @@ h2 {
   padding:5px
 }
 .product-meta h3 {
-  font-size:12px
+  font-size:16px
 }
 .product-meta .eyebrow {
-  font-size:8px;
+  font-size:12px;
   letter-spacing:1px
 }
 .product-meta {
   padding-top:14px
 }
 .price {
-  font-size:13px
+  font-size:16px
 }
 .card-arrow {
   width:30px;
@@ -769,7 +769,7 @@ h2 {
   grid-column:1/-1
 }
 .collection-links span {
-  font-size:11px;
+  font-size:16px;
   padding:12px
 }
 .story-copy h2 {
@@ -782,7 +782,7 @@ h2 {
   font-size:39px
 }
 .contact-band a {
-  font-size:12px
+  font-size:16px
 }
 .footer-grid {
   grid-template-columns:1fr
@@ -792,7 +792,7 @@ h2 {
 }
 .footer-bottom {
   margin-top:38px;
-  font-size:9px;
+  font-size:13px;
   gap:16px
 }
 .page-title {
@@ -805,10 +805,10 @@ h2 {
   max-width:100%
 }
 .header-actions form .text-button {
-  font-size:10px
+  font-size:14px
 }
 .header-actions>a {
-  font-size:10px
+  font-size:14px
 }
 
 }
@@ -825,10 +825,10 @@ h2 {
   gap:8px
 }
 .bag span {
-  font-size:9px
+  font-size:13px
 }
 .menu-toggle {
-  font-size:10px
+  font-size:14px
 }
 .brand img {
   width:76px
@@ -853,7 +853,7 @@ h2 {
 .family-photo { overflow: hidden; border-radius: 6px 6px 0 0; background: #eee9de; }
 .family-photo img { width: 100%; height: auto; aspect-ratio: 383 / 267; object-fit: contain; }
 .family-caption { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 25px 22px; flex: 1; }
-.family-caption .eyebrow { font-size: 8px; letter-spacing: 1.5px; color: var(--earth); margin-bottom: 10px; }
+.family-caption .eyebrow { font-size: 12px; letter-spacing: 1.5px; color: var(--earth); margin-bottom: 10px; }
 .family-caption h3 { font-size: 24px; line-height: 1.15; letter-spacing: -.6px; margin: 0; }
 .family-arrow { flex-shrink: 0; display: grid; place-items: center; width: 37px; height: 37px; border: 1px solid #b9bfae; border-radius: 50%; font-size: 19px; }
 .family-card:hover .family-arrow, .family-card:focus-visible .family-arrow { background: var(--ink); border-color: var(--ink); color: var(--paper); }
