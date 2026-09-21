@@ -1023,3 +1023,39 @@ msgstr "It has expired, has already been used or belongs to another account."
 
 msgid "Recevoir un nouveau lien"
 msgstr "Get a new link"
+
+msgid "Agrandir la photo"
+msgstr "Enlarge photo"
+
+msgid "Voir de plus près"
+msgstr "Take a closer look"
+
+msgid "Photos du produit"
+msgstr "Product photos"
+
+msgid "Photo"
+msgstr "Photo"
+
+msgid "Photo à venir"
+msgstr "Photo coming soon"
+
+msgid "Parlons de votre prochain coup de cœur."
+msgstr "Let’s find your next favourite."
+
+msgid "Les détails qui comptent"
+msgstr "The details that matter"
+
+msgid "Contactez-nous pour en savoir plus sur cet article."
+msgstr "Contact us to learn more about this item."
+
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "Fermer"
+msgstr "Close"
+
+msgid "Photo précédente"
+msgstr "Previous photo"
+
+msgid "Photo suivante"
+msgstr "Next photo"

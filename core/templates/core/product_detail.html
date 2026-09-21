@@ -1,1 +1,47 @@
-{% extends 'base.html' %}{% load i18n shop_i18n %}{% block title %}{{ product.localized_name }} — La Caverne des Monts{% endblock %}{% block content %}<div class="wrap section"><nav class="breadcrumb" aria-label="{% translate 'Fil d’Ariane' %}"><a href="{% url 'accueil:home' %}">{% translate 'Accueil' %}</a> / <a href="{% url 'core:product_list' %}">{% translate 'La collection' %}</a> / {{ product.category.name|shop_text }}</nav>{% if can_manage_catalog %}<p class="notice">{% if catalog_preview %}{% translate 'Aperçu privé ·' %} {% endif %}<a href="{% url 'core:catalog_edit' product.pk %}">{% translate 'Modifier ce produit' %}</a></p>{% endif %}<article class="product-detail"><div class="gallery">{% if images %}<img id="main-product-image" class="main-product-image" src="{{ images.0 }}" alt="{{ product.localized_name }}"><div class="thumbnails">{% for img in gallery %}<a href="{{ img.url }}" data-gallery aria-label="Voir la photo {{ forloop.counter }} de {{ product.localized_name }}"><img src="{{ img.url }}" alt="{{ img.alt }}" loading="lazy"></a>{% endfor %}</div>{% endif %}</div><div class="product-summary"><p class="eyebrow">{{ product.category.name|shop_text }} {% translate '· L’ESPRIT MONTAGNE' %}</p><h1>{{ product.localized_name }}</h1><p class="detail-price">{{ product.price|floatformat:2 }} €</p>{% get_current_language as CURRENT_LANGUAGE %}{% if CURRENT_LANGUAGE != product.description_language %}<p class="small">{% translate "Description disponible en français." %}</p>{% endif %}<div class="description" lang="{{ product.description_language }}">{{ product.localized_description|linebreaks }}</div>{% if product.is_published %}<form method="post" action="{% url 'core:cart_add' product.slug %}" class="add-form">{% csrf_token %}{% if product.size_options %}<label for="size">{% translate 'Votre taille' %}</label><select name="size" id="size" required><option value="">{% translate 'Choisissez votre taille' %}</option>{% for size in product.size_options %}<option value="{{ size }}">{{ size|shop_text }}</option>{% endfor %}</select>{% else %}<p class="notice">{% translate 'La taille et la disponibilité sont à confirmer avec la boutique avant de commander.' %}</p>{% endif %}<label for="quantity">{% translate 'Quantité' %}</label><input type="number" id="quantity" name="quantity" value="1" min="1" max="10" required><button class="button">{% translate 'Ajouter à mon panier' %} <span>→</span></button></form>{% else %}<p class="notice">{% translate 'Brouillon : ce produit n’est pas proposé à la vente.' %}</p>{% endif %}<p class="small">{% translate 'Besoin d’un conseil ?' %} <a href="tel:+33450404617">04 50 40 46 17</a></p><details><summary>{% translate 'Bien choisir sa taille' %}</summary><p>{% translate 'Une hésitation ? Contactez-nous pour vérifier les mesures et la disponibilité du modèle qui vous plaît.' %}</p></details><details><summary>{% translate 'Livraison & retours' %}</summary><p>{% translate 'Contactez la boutique pour connaître les modalités applicables à votre commande. Les frais de livraison seront indiqués avant tout paiement.' %}</p></details></div></article>{% if related %}<div class="section-heading related-heading"><div><p class="eyebrow">{% translate 'PROLONGER L’ÉCHAPPÉE' %}</p><h2>{% translate 'Dans le même esprit.' %}</h2></div></div><div class="product-grid">{% for product in related %}{% include 'partials/product_card.html' %}{% endfor %}</div>{% endif %}</div>{% endblock %}
+{% extends 'base.html' %}{% load i18n shop_i18n static %}
+{% block title %}{{ product.localized_name }} — La Caverne des Monts{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'core/css/product-story.css' %}">{% endblock %}
+{% block scripts %}<script src="{% static 'core/js/product-story.js' %}?v=1" defer></script>{% endblock %}
+{% block content %}
+<div class="wrap section product-page">
+  <nav class="breadcrumb" aria-label="{% translate 'Fil d’Ariane' %}"><a href="{% url 'accueil:home' %}">{% translate 'Accueil' %}</a><span>/</span><a href="{% url 'core:product_list' %}{% if product.category %}?categorie={{ product.category.slug }}{% endif %}">{{ product.category.name|default:'La collection'|shop_text }}</a><span>/</span><span>{{ product.localized_name }}</span></nav>
+  {% if can_manage_catalog %}<p class="notice">{% if catalog_preview %}{% translate 'Aperçu privé ·' %} {% endif %}<a href="{% url 'core:catalog_edit' product.pk %}">{% translate 'Modifier ce produit' %}</a></p>{% endif %}
+  <article class="product-detail">
+    <div class="product-gallery">
+      {% if gallery %}
+      <a class="product-stage" href="{{ gallery.0.url }}" data-open-photo aria-label="{% translate 'Agrandir la photo' %}">
+        <img id="main-product-image" src="{{ gallery.0.url }}" alt="{{ gallery.0.alt }}" fetchpriority="high">
+        <span class="photo-hint">{% translate 'Voir de plus près' %} <span aria-hidden="true">↗</span></span>
+      </a>
+      <div class="photo-strip" aria-label="{% translate 'Photos du produit' %}">{% for photo in gallery %}<a href="{{ photo.url }}" data-product-photo {% if forloop.first %}aria-current="true"{% endif %} aria-label="{% translate 'Photo' %} {{ forloop.counter }}"><img src="{{ photo.url }}" alt="{{ photo.alt }}" loading="lazy"></a>{% endfor %}</div>
+      {% else %}<div class="product-stage photo-empty">{% translate 'Photo à venir' %}</div>{% endif %}
+      <p class="gallery-note">La Caverne des Monts <span>·</span> Lélex, Jura</p>
+    </div>
+    <div class="product-summary">
+      <p class="eyebrow">{{ product.category.name|shop_text }} {% translate '· L’ESPRIT MONTAGNE' %}</p>
+      <h1>{{ product.localized_name }}</h1>
+      <p class="detail-price">{{ product.price|floatformat:2 }} €</p>
+      {% if product.is_published %}
+      <form method="post" action="{% url 'core:cart_add' product.slug %}" class="product-purchase">{% csrf_token %}
+        {% if product.size_options %}
+        <fieldset class="size-picker"><legend>{% translate 'Votre taille' %}</legend><div class="size-options">{% for size in product.size_options %}<label><input type="radio" name="size" value="{{ size }}" required><span>{{ size|shop_text }}</span></label>{% endfor %}</div></fieldset>
+        <a class="size-advice" href="#size-help">{% translate 'Bien choisir sa taille' %} <span aria-hidden="true">↗</span></a>
+        {% else %}<p class="notice">{% translate 'La taille et la disponibilité sont à confirmer avec la boutique avant de commander.' %}</p>{% endif %}
+        <div class="purchase-row"><div class="quantity-field"><label for="quantity">{% translate 'Quantité' %}</label><input type="number" id="quantity" name="quantity" value="1" min="1" max="10" required></div><button class="button">{% translate 'Ajouter à mon panier' %} <span aria-hidden="true">↗</span></button></div>
+      </form>
+      {% else %}<p class="notice">{% translate 'Brouillon : ce produit n’est pas proposé à la vente.' %}</p>{% endif %}
+      <a class="product-advice" href="tel:+33450404617"><span class="advice-icon" aria-hidden="true">↗</span><span><strong>{% translate 'Besoin d’un conseil ?' %}</strong><span>{% translate 'Parlons de votre prochain coup de cœur.' %}</span><b>04 50 40 46 17</b></span></a>
+      <div class="product-information">
+        <details open><summary>{% translate 'Les détails qui comptent' %}</summary>
+          {% get_current_language as CURRENT_LANGUAGE %}{% if CURRENT_LANGUAGE != product.description_language %}<p class="small">{% translate 'Description disponible en français.' %}</p>{% endif %}
+          <div class="description" lang="{{ product.description_language }}">{% if product.localized_description %}{{ product.localized_description|linebreaks }}{% else %}<p>{% translate 'Contactez-nous pour en savoir plus sur cet article.' %}</p>{% endif %}</div>
+        </details>
+        <details id="size-help"><summary>{% translate 'Bien choisir sa taille' %}</summary><p>{% translate 'Une hésitation ? Contactez-nous pour vérifier les mesures et la disponibilité du modèle qui vous plaît.' %}</p></details>
+        <details><summary>{% translate 'Livraison & retours' %}</summary><p>{% translate 'Contactez la boutique pour connaître les modalités applicables à votre commande. Les frais de livraison seront indiqués avant tout paiement.' %}</p></details>
+      </div>
+    </div>
+  </article>
+  {% if related %}<div class="section-heading related-heading"><div><p class="eyebrow">{% translate 'PROLONGER L’ÉCHAPPÉE' %}</p><h2>{% translate 'Dans le même esprit.' %}</h2></div></div><div class="product-grid">{% for product in related %}{% include 'partials/product_card.html' %}{% endfor %}</div>{% endif %}
+</div>
+{% if gallery %}<dialog class="product-lightbox" aria-label="{% translate 'Photos du produit' %}"><div class="lightbox-toolbar"><span class="photo-counter" aria-live="polite"></span><button type="button" data-photo-zoom aria-pressed="false">{% translate 'Zoom' %} <span data-zoom-symbol aria-hidden="true">+</span></button><button type="button" data-photo-close aria-label="{% translate 'Fermer' %}">✕</button></div><div class="lightbox-canvas"><img alt=""></div><div class="lightbox-navigation"><button type="button" data-photo-prev aria-label="{% translate 'Photo précédente' %}">←</button><span>{{ product.localized_name }}</span><button type="button" data-photo-next aria-label="{% translate 'Photo suivante' %}">→</button></div></dialog>{% endif %}
+{% endblock %}
