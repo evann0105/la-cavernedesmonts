@@ -13,6 +13,7 @@ from core.models import Product, Category
 from paiement.models import Order
 from .models import Address, CreditNote, Voucher
 from .forms import AddressForm, PersonalForm
+from connexion.security import PasswordCheckLimited, lockout
 
 
 def private(view):
@@ -88,7 +89,11 @@ def address_delete(request, pk):
 @private
 def personal(request):
     form=PersonalForm(request.POST if request.method=='POST' else None,instance=request.user)
-    if request.method=='POST' and form.is_valid():
+    try:
+        valid = request.method=='POST' and form.is_valid()
+    except PasswordCheckLimited:
+        return lockout(request)
+    if valid:
         form.save()
         if not email_verified(request.user):
             from connexion.email_verification import send_verification
