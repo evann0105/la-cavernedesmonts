@@ -1023,3 +1023,39 @@ msgstr "Ha caducado, ya se ha usado o corresponde a otra cuenta."
 
 msgid "Recevoir un nouveau lien"
 msgstr "Recibir un nuevo enlace"
+
+msgid "Agrandir la photo"
+msgstr "Ampliar foto"
+
+msgid "Voir de plus près"
+msgstr "Ver de cerca"
+
+msgid "Photos du produit"
+msgstr "Fotos del producto"
+
+msgid "Photo"
+msgstr "Foto"
+
+msgid "Photo à venir"
+msgstr "Foto próximamente"
+
+msgid "Parlons de votre prochain coup de cœur."
+msgstr "Encuentra tu próximo flechazo."
+
+msgid "Les détails qui comptent"
+msgstr "Los detalles que importan"
+
+msgid "Contactez-nous pour en savoir plus sur cet article."
+msgstr "Contáctanos para saber más sobre este artículo."
+
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "Fermer"
+msgstr "Cerrar"
+
+msgid "Photo précédente"
+msgstr "Foto anterior"
+
+msgid "Photo suivante"
+msgstr "Foto siguiente"

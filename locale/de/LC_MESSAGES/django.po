@@ -1023,3 +1023,39 @@ msgstr "Er ist abgelaufen, wurde bereits verwendet oder gehört zu einem anderen
 
 msgid "Recevoir un nouveau lien"
 msgstr "Neuen Link erhalten"
+
+msgid "Agrandir la photo"
+msgstr "Foto vergrößern"
+
+msgid "Voir de plus près"
+msgstr "Genauer ansehen"
+
+msgid "Photos du produit"
+msgstr "Produktfotos"
+
+msgid "Photo"
+msgstr "Foto"
+
+msgid "Photo à venir"
+msgstr "Foto folgt"
+
+msgid "Parlons de votre prochain coup de cœur."
+msgstr "Finden wir Ihr nächstes Lieblingsstück."
+
+msgid "Les détails qui comptent"
+msgstr "Die Details, die zählen"
+
+msgid "Contactez-nous pour en savoir plus sur cet article."
+msgstr "Kontaktieren Sie uns, um mehr über diesen Artikel zu erfahren."
+
+msgid "Zoom"
+msgstr "Zoom"
+
+msgid "Fermer"
+msgstr "Schließen"
+
+msgid "Photo précédente"
+msgstr "Vorheriges Foto"
+
+msgid "Photo suivante"
+msgstr "Nächstes Foto"
