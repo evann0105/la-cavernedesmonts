@@ -179,7 +179,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 AXES_FAILURE_LIMIT = 5
 AXES_COOLOFF_TIME = timedelta(minutes=15)
-AXES_LOCKOUT_PARAMETERS = ['ip_address']
+AXES_LOCKOUT_PARAMETERS = ['ip_address', 'username']
+AXES_USERNAME_CALLABLE = 'connexion.security.login_account_key'
 AXES_RESET_ON_SUCCESS = False
 AXES_CLIENT_IP_CALLABLE = 'connexion.security.client_ip'
 AXES_LOCKOUT_CALLABLE = 'connexion.security.lockout'

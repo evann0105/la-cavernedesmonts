@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from .models import Address
+from connexion.security import check_current_password
 
 class AddressForm(forms.ModelForm):
     class Meta:
@@ -18,7 +19,7 @@ class PersonalForm(forms.ModelForm):
         labels = {'first_name':_('Prénom'), 'last_name':_('Nom')}
     def clean_current_password(self):
         value = self.cleaned_data['current_password']
-        if not self.instance.check_password(value):
+        if not check_current_password(self.instance, value):
             raise forms.ValidationError(_('Mot de passe incorrect.'))
         return value
     def clean_email(self):

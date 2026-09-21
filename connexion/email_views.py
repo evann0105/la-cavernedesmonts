@@ -6,6 +6,7 @@ from django.shortcuts import render,redirect
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods
 from django.utils.translation import gettext_lazy as _
+from .security import check_current_password, PasswordCheckLimited, lockout
 from .email_verification import email_verified,email_ready,send_verification,token_matches,confirm_token
 
 
@@ -17,7 +18,7 @@ class VerificationEmailForm(forms.Form):
         super().__init__(*args,**kwargs)
     def clean(self):
         data=super().clean()
-        if not self.user.check_password(data.get('password','')):
+        if not check_current_password(self.user, data.get('password','')):
             raise forms.ValidationError(_('Mot de passe incorrect.'))
         email=data.get('email','').strip().lower()
         if get_user_model().objects.filter(email__iexact=email).exclude(pk=self.user.pk).exists():
@@ -34,7 +35,11 @@ def verify_email(request):
     form=VerificationEmailForm(request.POST if request.method=='POST' and not request.user.email else None,user=request.user)
     if request.method=='POST' and not verified:
         if not request.user.email:
-            if not form.is_valid():
+            try:
+                valid = form.is_valid()
+            except PasswordCheckLimited:
+                return lockout(request)
+            if not valid:
                 return render(request,'connexion/verify_email.html',{'form':form,'ready':email_ready()})
             request.user.email=form.cleaned_data['email'];request.user.save(update_fields=['email'])
         result=send_verification(request.user)
