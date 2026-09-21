@@ -251,3 +251,16 @@ input, select { border-radius: 10px; }.filters .button { min-height: 46px; }
 @media (max-width: 600px) {
   .header .brand { width: 172px; }
 }
+
+/* Tight display headings: highlight the glyphs, never overlapping line boxes. */
+:is(h1, h2, h3, .footer-brand)::selection,
+:is(h1, h2, h3, .footer-brand) *::selection {
+  background: transparent;
+  color: #975229;
+  text-shadow: none;
+}
+:is(.summit-hero, .summit-feature, footer) ::selection {
+  background: transparent;
+  color: #ffdda0;
+  text-shadow: none;
+}
