@@ -14,8 +14,10 @@ body {
 }
 
 ::selection {
-  background:#d7dfcc;
-  color:#233b33
+  /* Translucent highlight keeps overlapping glyphs and partial selections readable. */
+  background:rgba(155, 181, 125, .38);
+  color:inherit;
+  text-shadow:none
 }
 
 h1,h2,h3 {
