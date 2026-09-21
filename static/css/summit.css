@@ -243,3 +243,11 @@ input, select { border-radius: 10px; }.filters .button { min-height: 46px; }
   .summit-reassurance strong { font-size: 16px; }
   .summit-reassurance small { font-size: 14px; }
 }
+
+/* Preserve the original signature while removing its white background. */
+.header .brand { display: block; width: 240px; padding: 0; background: transparent; }
+.header .brand-logo { display: block; width: 100%; height: auto; }
+.summit-home .brand-logo { filter: invert(1); }
+@media (max-width: 600px) {
+  .header .brand { width: 172px; }
+}
