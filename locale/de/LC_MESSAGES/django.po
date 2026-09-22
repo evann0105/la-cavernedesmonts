@@ -1059,3 +1059,6 @@ msgstr "Vorheriges Foto"
 
 msgid "Photo suivante"
 msgstr "Nächstes Foto"
+
+msgid "Vêtements, accessoires & essentiels outdoor pour toute la famille — à Lélex et en ligne."
+msgstr "Kleidung, Accessoires & Outdoor-Essentials für die ganze Familie — in Lélex und online."
