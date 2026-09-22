@@ -14,7 +14,17 @@ Le script prépare `.venv` au besoin, installe uniquement les dépendances manqu
 
 Adresse locale : **http://127.0.0.1:8000/** (HTTP, sans « s »). Une URL commençant par `https://` provoque `ERR_SSL_PROTOCOL_ERROR`, car ce serveur de développement ne fournit pas de TLS. Le lanceur force uniquement son environnement local en mode développement, sans modifier `.env` ni les réglages de production.
 
-Options : `./start --no-browser` et `./start --port 8001`. Un port occupé est signalé sans arrêter le processus existant. Le serveur écoute uniquement sur votre ordinateur.
+Options : `./start --no-browser` et `./start --port 8001`. Un port occupé est signalé sans arrêter le processus existant. Le serveur écoute uniquement sur votre ordinateur par défaut.
+
+Pour voir le site depuis un téléphone ou un autre appareil connecté au même réseau :
+
+```sh
+./start --lan
+# Ou pour choisir le port :
+./start --lan --port 8001
+```
+
+L’adresse IPv4 du réseau actif est détectée à chaque lancement, en Wi-Fi, Ethernet ou partage de connexion. Le terminal affiche le lien HTTP à ouvrir et le navigateur l’utilise également. Le serveur écoute uniquement sur cette adresse réseau. Si vous changez de réseau pendant son fonctionnement, arrêtez-le avec Ctrl+C puis relancez la commande. Sans réseau détectable, le mode `--lan` affiche une explication ; `./start` reste disponible hors ligne une fois les dépendances installées. Le pare-feu du Mac doit autoriser Python ; certains réseaux invités ou partages isolent les appareils, et un VPN peut changer l’interface détectée. Ce mode partage le serveur de développement sur le réseau local, ce n’est pas un hébergement public.
 
 ## Installation manuelle
 

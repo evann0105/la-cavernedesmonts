@@ -2,6 +2,7 @@
 """Prepare and run the local shop; never change the production .env file."""
 import argparse
 import errno
+import ipaddress
 import os
 from pathlib import Path
 import signal
@@ -22,30 +23,53 @@ def run(command, env):
     subprocess.run(command, cwd=ROOT, env=env, check=True)
 
 
+def detect_network_address():
+    """Ask the OS which IPv4 interface owns its current outgoing route.
+
+    UDP connect selects a route locally; no packet or internet request is sent.
+    Bind only that interface, never all interfaces via 0.0.0.0.
+    """
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as probe:
+        probe.connect(('192.0.2.1', 9))
+        address = probe.getsockname()[0]
+    ip = ipaddress.ip_address(address)
+    if ip.is_loopback or ip.is_unspecified or ip.is_multicast:
+        raise OSError('Aucune adresse IPv4 réseau utilisable.')
+    return address
+
+
 def main():
     parser = argparse.ArgumentParser(description='Démarrer La Caverne des Monts en local (HTTP).')
     parser.add_argument('--no-browser', action='store_true', help='Ne pas ouvrir le navigateur automatiquement.')
     parser.add_argument('--port', type=int, default=8000, help='Port local (8000 par défaut).')
+    parser.add_argument('--lan', action='store_true', help='Détecter le réseau actif et partager le site sur ce réseau.')
     args = parser.parse_args()
     if not 1024 <= args.port <= 65535:
         parser.error('Le port doit être compris entre 1024 et 65535.')
     if sys.version_info < (3, 10):
         parser.error('Python 3.10 ou plus récent est nécessaire.')
 
-    url = f'http://127.0.0.1:{args.port}/'
+    host = '127.0.0.1'
+    if args.lan:
+        try:
+            host = detect_network_address()
+        except OSError:
+            print('Aucun réseau détecté. Connectez le Wi-Fi ou le partage de connexion, puis relancez ./start --lan. Pour cet ordinateur uniquement : ./start.', file=sys.stderr)
+            return 1
+    url = f'http://{host}:{args.port}/'
     with socket.socket() as probe:
         try:
-            probe.bind(('127.0.0.1', args.port))
+            probe.bind((host, args.port))
         except OSError as error:
             if error.errno != errno.EADDRINUSE:
                 print(f'Impossible d’ouvrir le port local : {error}', file=sys.stderr)
                 return 1
             print(f'Le port {args.port} est déjà utilisé. Si le site tourne déjà, ouvrez {url}', flush=True)
-            print(f'Sinon, lancez ./start --port {args.port + 1 if args.port < 65535 else 8000}. Aucun processus existant n’a été arrêté.', flush=True)
+            print(f"Sinon, lancez ./start{' --lan' if args.lan else ''} --port {args.port + 1 if args.port < 65535 else 8000}. Aucun processus existant n’a été arrêté.", flush=True)
             return 1
 
     env = os.environ.copy()
-    env.update(DEBUG='True', ALLOWED_HOSTS='localhost,127.0.0.1,[::1]', SITE_URL=url.rstrip('/'),
+    env.update(DEBUG='True', ALLOWED_HOSTS=f'localhost,127.0.0.1,[::1],{host}', SITE_URL=url.rstrip('/'),
                DJANGO_SETTINGS_MODULE='config.settings', PYTHONUNBUFFERED='1')
     python = ROOT / '.venv/bin/python'
     if not python.exists():
@@ -91,7 +115,7 @@ import django, environ, PIL, stripe
     for command in ('check', 'migrate', 'import_catalogue'):
         run([str(python), 'manage.py', command], env)
 
-    server = subprocess.Popen([str(python), 'manage.py', 'runserver', f'127.0.0.1:{args.port}'],
+    server = subprocess.Popen([str(python), 'manage.py', 'runserver', f'{host}:{args.port}'],
                               cwd=ROOT, env=env, start_new_session=True)
     try:
         # Bypass system proxies for loopback readiness checks. Do not open a failed server.
@@ -111,6 +135,9 @@ import django, environ, PIL, stripe
             print('Le serveur ne répond pas. Consultez les erreurs affichées ci-dessus.', flush=True)
             return 1
         print(f'\nSite prêt : {url}', flush=True)
+        if args.lan:
+            print('Lien réseau : ouvrez cette adresse sur un appareil connecté au même Wi-Fi ou partage de connexion.', flush=True)
+            print('Si vous changez de réseau : Ctrl+C, puis relancez ./start --lan pour détecter la nouvelle adresse.', flush=True)
         print('Utilisez http:// (sans s). Le serveur local ne fournit pas de certificat HTTPS.', flush=True)
         print('Gardez ce terminal ouvert. Pour arrêter le site : Ctrl+C.\n', flush=True)
         if not args.no_browser:
