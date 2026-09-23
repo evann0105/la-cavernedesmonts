@@ -1,14 +1,17 @@
 {% extends 'base.html' %}{% load i18n shop_i18n %}
 {% load static %}
 {% block body_class %}summit-home{% endblock %}
-{% block styles %}<link rel="stylesheet" href="{% static 'core/css/store.css' %}">{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'core/css/store.css' %}"><link rel="stylesheet" href="{% static 'accueil/css/hero-intro.css' %}?v=20260923">{% endblock %}
 {% block content %}
 <section class="summit-hero" aria-labelledby="summit-title">
   <img class="summit-landscape" src="{% static 'core/img/hero/montagne-1536.webp' %}" srcset="{% static 'core/img/hero/montagne-960.webp' %} 960w, {% static 'core/img/hero/montagne-1536.webp' %} 1536w, {% static 'core/img/hero/montagne-2400.webp' %} 2400w, {% static 'core/img/hero/montagne-3840.webp' %} 3840w" sizes="(max-width: 600px) 1110px, (max-width: 900px) 1140px, (max-width: 1322px) 1290px, calc(100vw - 32px)" alt="{% translate 'Des randonneurs au pied des montagnes, sur un sentier fleuri' %}" fetchpriority="high" decoding="async" width="3840" height="2560">
   <div class="summit-overlay"></div>
   <div class="summit-hero-copy">
-    <div><p class="summit-kicker">LA CAVERNE DES MONTS · LÉLEX</p><h1 id="summit-title">{% translate 'Un peu plus dehors.' %}<br>{% translate 'Un peu plus' %} <em>{% translate 'vivant.' %}</em></h1></div>
-    <div class="summit-hero-side"><p>{% translate 'Vêtements, accessoires & essentiels outdoor pour toute la famille — à Lélex et en ligne.' %}</p><a class="button summit-cta" href="{% url 'core:product_list' %}">{% translate 'Trouver mon bonheur' %} <span aria-hidden="true">↗</span></a></div>
+    <div><p class="summit-kicker">LA CAVERNE DES MONTS · LÉLEX</p><h1 id="summit-title">{% translate 'Un peu plus dehors.' %}<br>{% translate 'Un peu plus' %} <em>{% translate 'vivant.' %}</em></h1>
+      <p class="hero-description">{% translate 'Vêtements, accessoires & essentiels outdoor pour toute la famille, à Lélex.' %}</p>
+      <p class="hero-advice">{% translate 'Une taille, une matière, un cadeau : nous vous aidons à faire le bon choix.' %}</p>
+    </div>
+    <div class="summit-hero-side"><a class="button summit-cta" href="{% url 'core:product_list' %}">{% translate 'Trouver mon bonheur' %} <span aria-hidden="true">↗</span></a></div>
   </div>
   <div class="summit-hero-bottom"><a href="#instants">{% translate 'Laissez-vous inspirer' %} <span aria-hidden="true">↓</span></a></div>
 </section>
