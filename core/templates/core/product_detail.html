@@ -1,6 +1,6 @@
 {% extends 'base.html' %}{% load i18n shop_i18n static %}
 {% block title %}{{ product.localized_name }} — La Caverne des Monts{% endblock %}
-{% block styles %}<link rel="stylesheet" href="{% static 'core/css/product-story.css' %}">{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'core/css/product-story.css' %}?v=20260923-benefits">{% endblock %}
 {% block scripts %}<script src="{% static 'core/js/product-story.js' %}?v=1" defer></script>{% endblock %}
 {% block content %}
 <div class="wrap section product-page">
@@ -21,6 +21,12 @@
       <p class="eyebrow">{{ product.category.name|shop_text }} {% translate '· L’ESPRIT MONTAGNE' %}</p>
       <h1>{{ product.localized_name }}</h1>
       <p class="detail-price">{{ product.price|floatformat:2 }} €</p>
+      {% with benefits=product.benefit_lines %}{% if benefits %}
+      <section class="product-benefits" aria-labelledby="benefits-title">
+        <h2 id="benefits-title">{% translate 'Pourquoi le choisir ?' %}</h2>
+        <ul lang="{{ product.benefits_language }}">{% for benefit in benefits %}<li>{{ benefit }}</li>{% endfor %}</ul>
+      </section>
+      {% endif %}{% endwith %}
       {% if product.is_published %}
       <form method="post" action="{% url 'core:cart_add' product.slug %}" class="product-purchase">{% csrf_token %}
         {% if product.size_options %}

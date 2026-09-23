@@ -1,0 +1,723 @@
+{
+  "veste-polaire-urbaine-noire-peak-mountain": {
+    "description_sha256": "ea4d562417638df9357569eb4cf68c73a7d68274dec21b228b11c649bda5f34c",
+    "benefits": [
+      "warm",
+      "pockets"
+    ]
+  },
+  "enfant-74-polaire-garcon-ceven": {
+    "description_sha256": "f01ea8d352acd42738938872e708c826d6bbfedb7967157d3af347efaf901258",
+    "benefits": [
+      "warm",
+      "pockets"
+    ]
+  },
+  "enfant-75-polaire-garcon-ceven": {
+    "description_sha256": "e1fbbc0ce4219a4b9a83a7079a949f19bf638a0ee936e34666b815c74bec6720",
+    "benefits": [
+      "warm",
+      "pockets"
+    ]
+  },
+  "enfant-76-polaire-garcon-ceven": {
+    "description_sha256": "0674d5550c237088179aad1e24d2ac0ff163d8302654a23cf6066843c616a909",
+    "benefits": [
+      "warm",
+      "pockets"
+    ]
+  },
+  "enfant-579-veste-polaire-urbaine-gris-peak-mountain": {
+    "description_sha256": "677bf6aac05f452bf1ebddc79ac285ee72a22cbb1f27c70db9ade92a3f0bea1f",
+    "benefits": [
+      "warm",
+      "pockets"
+    ]
+  },
+  "blouson-softshell-homme-impermeable": {
+    "description_sha256": "fc2c6cd29885f991b4e384ba4d121b708e546008c58cec2397687c2b41612ddb",
+    "benefits": [
+      "stretch",
+      "hood"
+    ]
+  },
+  "blouson-softshell-impermeable-femme-bordeaux": {
+    "description_sha256": "fc2d3ed6c2fcc80df4e7e0050d6a8fa39aae48945f13ac0e2ddfe33219ea1a67",
+    "benefits": [
+      "stretch",
+      "hood"
+    ]
+  },
+  "blouson-softshell-impermeable-femme-gris": {
+    "description_sha256": "3e73b414a9b48a2e1fc7c7d5482d8dd323371831d85c0a6c39c755e074593fe8",
+    "benefits": [
+      "stretch",
+      "hood"
+    ]
+  },
+  "femme-820-veste-technique-softshell-bordeaux-lie-de-vin": {
+    "description_sha256": "4b00c7497fcd4ecfea5098cd93287f0db8a5bb6fdbb00bdb2c3bac1c1061145c",
+    "benefits": [
+      "stretch",
+      "hood"
+    ]
+  },
+  "femme-996-veste-technique-softshell-noir-bleu-canard": {
+    "description_sha256": "512bbc84c20eab7a22c324a5d7c81aea01d86e85fb36ffede19c6fd42c9de5d7",
+    "benefits": [
+      "stretch",
+      "hood"
+    ]
+  },
+  "femme-998-veste-technique-softshell-bleu-bleu-canard-bleu-ciel": {
+    "description_sha256": "2767d814daf48285e7924198c18f6bacbc7aa6fc87b16be384b129d5e256316e",
+    "benefits": [
+      "stretch",
+      "hood"
+    ]
+  },
+  "homme-984-veste-outdoor-chinee-geonorway-homme-urval-homme": {
+    "description_sha256": "fb9019ec6f4644e59b9759841778c1b1b650de1c2e78c1f8c78a7a74a020bb54",
+    "benefits": [
+      "stretch",
+      "hood"
+    ]
+  },
+  "homme-986-veste-technique-homme-impermeable-en-softshell": {
+    "description_sha256": "b517b0878952a9cf0bd358f7ff5204a5d9648f5ba8fd42dee9242947103ed072",
+    "benefits": [
+      "stretch",
+      "hood"
+    ]
+  },
+  "homme-990-veste-technique-homme-impermeable-en-softshell": {
+    "description_sha256": "862920320dc97e7a22e09e1e3cca63aee1ef58905ac70f6cff92096fb4d964ab",
+    "benefits": [
+      "stretch",
+      "hood"
+    ]
+  },
+  "homme-1038-veste-technique-homme-impermeable-en-softshell-peak-mountain-cafe": {
+    "description_sha256": "65e3db3b0773a4611f050494ad2b2c29a9237b948ce955f4922ded3f390b1dba",
+    "benefits": [
+      "stretch",
+      "hood"
+    ]
+  },
+  "homme-1040-blouson-softshell-elgon-homme-aulp-impermeable-et-deperlant": {
+    "description_sha256": "eac4fd32d0ff492322bcf0b018b849bcc3db02ad75bb9253667737a0915a347b",
+    "benefits": [
+      "stretch",
+      "hood"
+    ]
+  },
+  "homme-1044-blouson-softshell-elgon-homme-aulp-impermeable-et-deperlant": {
+    "description_sha256": "81cbf8929e20a61d36faaa49c7d2a28909dd0b517e05dce61d8370c4eef1c6a6",
+    "benefits": [
+      "stretch",
+      "hood"
+    ]
+  },
+  "veste-tri-matieres-femme-blanche-capuche": {
+    "description_sha256": "71b1e55e57c32751befc926720ee9445aed4aa3fd0bc0ded356067d47af391ea",
+    "benefits": [
+      "hood",
+      "pockets"
+    ]
+  },
+  "veste-outdoor-anapurna-homme": {
+    "description_sha256": "e39db3ee3d66ca10218c15058dd270359243eb23ce5940d7bd2bed4886262f8b",
+    "benefits": [
+      "pockets"
+    ]
+  },
+  "chaussettes-antiderapantes-mouton-fuchsia": {
+    "description_sha256": "887d678f4fe23f41a622621682826178701816c8f91a0caf5071dd25152e8b03",
+    "benefits": [
+      "socks"
+    ]
+  },
+  "chaussettes-antiderapantes-marmottes-blanches": {
+    "description_sha256": "4c45808e25f189262ad815614ec78e14b1855589091aaa4db0992d1431ecebf6",
+    "benefits": [
+      "socks"
+    ]
+  },
+  "chaussettes-antiderapantes-vache-taupe": {
+    "description_sha256": "4c45808e25f189262ad815614ec78e14b1855589091aaa4db0992d1431ecebf6",
+    "benefits": [
+      "socks"
+    ]
+  },
+  "veste-polaire-de-montagne-rouge": {
+    "description_sha256": "b0b2633fa1ca4dd55a70505f9443696b84abd4baa3e16dbc127f37c931f2bd20",
+    "benefits": [
+      "warm",
+      "pockets"
+    ]
+  },
+  "veste-polaire-femme-anapurna-utern-violet": {
+    "description_sha256": "f2aa24187240c1827b13c32eb29671500cf6d4517fd51009e5fcdc881ff1d7e4",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "veste-polaire-douce-cocooning-canadian": {
+    "description_sha256": "c430fda2e407cf92b69e4401cb6c5b1312e7e92122ddf59e4bb101a3fca9d646",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "veste-polaire-douce-cocooning-canadian-2": {
+    "description_sha256": "68a54bdff17af6c7523194462e4c88b432bce6e56f68647a53bb2952caac75a5",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-734-veste-polaire-udilas-canadian-peak": {
+    "description_sha256": "e2cc455a35c05827027b72ec0a505b003857cb60b2515480362a65e676f3af3f",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-736-veste-polaire-udilas-canadian-peak": {
+    "description_sha256": "4613d86d8441ee6dced5c55b91f33930bc2d1fe1f69c1d909a5a73319085f5b4",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-940-veste-polaire-udilas-canadian-peak": {
+    "description_sha256": "78746e9cafe191796b5f65a28156cd8c06be5353b94f4629cd2d801f55a456bf",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-944-veste-polaire-udilas-canadian-peak": {
+    "description_sha256": "f65ca482cedb69f348ec7c18d20d32da4d43a055a628907ea7151c55121f6ea3",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-946-veste-polaire-unif-violine-lie-de-vin": {
+    "description_sha256": "2d6f6ceea79aac9091f2bae2aff1922fa6096225b463799ca7dd482890cfc90d",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-948-veste-polaire-anapurna-femme": {
+    "description_sha256": "751749cfe0dedfad9049ffa7c636072940de85ed6798bb1730ae3888b7be45f2",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-954-veste-polaire-upzlinr-canadian-peak": {
+    "description_sha256": "9a6f1d6afd7ba37eed825a002f9b90894543583c9230709e6727e2e1a73b82fc",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-956-veste-polaire-douce-femme-uternel-geographical-norway": {
+    "description_sha256": "abeb26ecc82609409c46c41e9fbc8d53e8ae09d6823248c1b13fd97aa50a5ed7",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-960-veste-polaire-udilas-canadian-peak": {
+    "description_sha256": "c430fda2e407cf92b69e4401cb6c5b1312e7e92122ddf59e4bb101a3fca9d646",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-962-veste-polaire-femme-anapurna-bleu-turquoise": {
+    "description_sha256": "b81bda3c4504427f9ddf933bb6ba577f49335339cd19edb1cb5355f74e1ff34e",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-964-veste-polaire-femme-anapurna-vert-fonce": {
+    "description_sha256": "b81bda3c4504427f9ddf933bb6ba577f49335339cd19edb1cb5355f74e1ff34e",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-966-veste-polaire-femme-anapurna-bleu-lavande": {
+    "description_sha256": "b81bda3c4504427f9ddf933bb6ba577f49335339cd19edb1cb5355f74e1ff34e",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-968-veste-polaire-femme-geographical-norway-bleu-marine": {
+    "description_sha256": "cdc5a8fcab7ea190eecfcea22fa43ad6d578efd1232f48fba5f3701acf5627df",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-974-veste-polaire-femme-geographical-norway-gris-clair": {
+    "description_sha256": "f3c09d02d71fef69920dfa3f95fe509441df36cdd5c5ac2cb7e59d818a9605d5",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-978-veste-polaire-femme-geographical-norway-noir": {
+    "description_sha256": "cdc5a8fcab7ea190eecfcea22fa43ad6d578efd1232f48fba5f3701acf5627df",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "bebe-101-echarpe-bebe": {
+    "description_sha256": "4f8b61c1eaa682c0e719223b01f0056e34bce07bd03eb447bc9d27ed0b029315",
+    "benefits": [
+      "soft"
+    ]
+  },
+  "bebe-868-body-bebe-montagne-manches-longue-coton": {
+    "description_sha256": "d722a6f1716eda66105a936679d92905de7debb3215f2e274abe9f16928ac994",
+    "benefits": [
+      "snaps"
+    ]
+  },
+  "bebe-870-body-bebe-montagne-manches-longue-coton": {
+    "description_sha256": "dfe1ccbc8bf75c0f98e6b403510e9b6b26d1d6bf69c1037c0e4d96c7f578588c",
+    "benefits": [
+      "snaps"
+    ]
+  },
+  "bebe-872-body-bebe-montagne-manches-longue-coton": {
+    "description_sha256": "d8c950126253b014c481e87fec72373afafed58fdcdd02d5b84c29f4350a1b81",
+    "benefits": [
+      "snaps"
+    ]
+  },
+  "bebe-874-body-bebe-montagne-manches-longue-coton": {
+    "description_sha256": "2c0ddb03a381372b4b3ec7fe8877e56f505c90cf20442ea6f768f1e8b8e6dbc4",
+    "benefits": [
+      "snaps"
+    ]
+  },
+  "bebe-876-body-bebe-montagne-manches-longue-coton": {
+    "description_sha256": "2c0ddb03a381372b4b3ec7fe8877e56f505c90cf20442ea6f768f1e8b8e6dbc4",
+    "benefits": [
+      "snaps"
+    ]
+  },
+  "bebe-878-body-bebe-montagne-manches-longue-coton": {
+    "description_sha256": "59981bce9f18fb622062fc0aa37bc728a7cac3ee1f65f3b856c5fcc24044c102",
+    "benefits": [
+      "snaps"
+    ]
+  },
+  "bebe-806-veste-polaire-bebe-sans-manche-rose-fushia": {
+    "description_sha256": "302ea345de27c8178ca938aef6899f643c9d4a6d047e3991bbef786bbc777d41",
+    "benefits": [
+      "soft",
+      "wash"
+    ]
+  },
+  "bebe-808-veste-polaire-bebe-sans-manche-rose-fushia": {
+    "description_sha256": "0f6d9b6ca18119c7cfb2fa77e6749476421b8fa9935e34738e70d1d624f597e8",
+    "benefits": [
+      "soft",
+      "wash"
+    ]
+  },
+  "bebe-810-veste-polaire-bebe-sans-manche-a-pois-couleur-rose-poudre-fabrique-en-france": {
+    "description_sha256": "4be6525e4dd6cb59f73a65e9f89ed84f6ef5fbeba29a8b8e20503d70308710a2",
+    "benefits": [
+      "soft",
+      "wash"
+    ]
+  },
+  "bebe-812-veste-polaire-bebe-sans-manche-mixte-fille-garcon-blanc-ecru-beige": {
+    "description_sha256": "12d93e878a75abbd3f9650baf64c28655ebb3b814063239c0efe181a8b45efb7",
+    "benefits": [
+      "soft",
+      "wash"
+    ]
+  },
+  "bebe-816-veste-polaire-bebe-chorges-blanc-ecru": {
+    "description_sha256": "a0fbe388201dc678f94f61538a1bb83001eace92f32656ba6a78a5d193b0b7e9",
+    "benefits": [
+      "soft",
+      "wash"
+    ]
+  },
+  "femme-623-veste-polaire-sans-manche-anapurna-noire": {
+    "description_sha256": "4b55057baaec5011af7e57a41ddfd494c17c41fb4b30e055ea4c5be063604974",
+    "benefits": [
+      "soft",
+      "pockets"
+    ]
+  },
+  "femme-728-veste-bi-matiere-femme-a-capuche-avec-doudoune-et-polaire": {
+    "description_sha256": "f1058e8491d7ef99c720773bf57f9d6b8c88df9d75fc0a191a33a2253ce4ce67",
+    "benefits": [
+      "soft",
+      "wash",
+      "pockets"
+    ]
+  },
+  "femme-854-veste-bi-matiere-femme-a-capuche-avec-doudoune-et-polaire": {
+    "description_sha256": "e5f1421b929b93ae0d1436998ca2bb9b38195cb09debc934e3c0167970866f3e",
+    "benefits": [
+      "soft",
+      "wash",
+      "pockets"
+    ]
+  },
+  "femme-884-veste-polaire-cocoon-femme-blanc-chine-gris-et-bleu-avec-grosse-fermeture": {
+    "description_sha256": "bd66a8e285b2f408d564ef3e93119a2d9f8499e1efeaea6c1f30698bb552bf84",
+    "benefits": [
+      "soft"
+    ]
+  },
+  "femme-888-veste-polaire-cocoon-femme-gris-chinee-et-noire-avec-grosse-fermeture": {
+    "description_sha256": "8e587b47fd0f1d50aee08ae5f5425c2493896ef42872a86f496059df99e29407",
+    "benefits": [
+      "soft"
+    ]
+  },
+  "femme-892-pull-polaire-femme-noire-maille-gaufree-vertigo": {
+    "description_sha256": "42803d8a956375e1cff163a2cf1434c21febe34690b83a50ce34deacd3d4093a",
+    "benefits": [
+      "soft"
+    ]
+  },
+  "femme-896-veste-polaire-unie-noire-bi-matiere-aulp": {
+    "description_sha256": "19b5269c4044e79030228fdf363870bf19c430bb5b936fdf26dcd66db9d589e6",
+    "benefits": [
+      "zip"
+    ]
+  },
+  "femme-900-veste-polaire-femme-blanche-et-noire-molletonnee-avec-fermeture-asymetrique": {
+    "description_sha256": "1f732653a7859fd0e4437b656681aac23dacada7ce0f69d0ee9c1f79df48a675",
+    "benefits": [
+      "warm",
+      "pockets"
+    ]
+  },
+  "femme-1016-gilet-sans-manche-hybride-femme-aulp": {
+    "description_sha256": "41c8cec557c8a180002ab6af23f3abb22e789a510bf1d3eef0af5bd9266c3117",
+    "benefits": [
+      "zip"
+    ]
+  },
+  "femme-1024-veste-polaire-sans-manche-lhotse": {
+    "description_sha256": "cd36563ee91164a6eb08dce84648a3f0fe0f50ded8fefb00dfbcbec4ec01eff7",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-1046-veste-polaire-sans-manche-lhotse": {
+    "description_sha256": "ff95b19f4848c6e50ef2874eb49f30d454d4873336829dcf590e62147a33f262",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-1048-veste-polaire-sans-manche-noir-lhotse": {
+    "description_sha256": "481202b0f0a97eab7d2813ec88156dd6c298f8a9f7decfca2ba44f05807f2f34",
+    "benefits": [
+      "soft",
+      "zip"
+    ]
+  },
+  "femme-1026-veste-tri-matieres-femme-outdoor-noir-et-blanc-anaples": {
+    "description_sha256": "8a315ce1885486ec1755a1c7e7e8d97040d228baae0cbc323a5f55e58e22cda5",
+    "benefits": [
+      "pockets"
+    ]
+  },
+  "femme-1032-veste-hybride-nexus-femme-aulp": {
+    "description_sha256": "bde9479db591f5f473cc3e904639637003eb4c93bcf8eb04d3cdc8020e2051a4",
+    "benefits": [
+      "pockets"
+    ]
+  },
+  "femme-1012-veste-bi-matieres-femme-outdoor-noir-et-blanc": {
+    "description_sha256": "39c8ee115aa1336668c0be09a583c785c2adba4621e937e046cb168d584b2710",
+    "benefits": [
+      "pockets"
+    ]
+  },
+  "femme-1054-veste-tri-matieres-femme-outdoor-noir-et-blanc-geonorway": {
+    "description_sha256": "c8c896fd47e15696dcfce2405255395a75d3f9be1f099ae2da48bcd48cfe5b62",
+    "benefits": [
+      "pockets"
+    ]
+  },
+  "femme-1050-veste-outdoor-multi-matiere-femme-geonorway": {
+    "description_sha256": "394febfc84da349cf61891308988d47c5ea434d95087575823d5d96091208f20",
+    "benefits": [
+      "cuffs"
+    ]
+  },
+  "femme-1052-veste-outdoor-multi-matiere-femme-geonorway": {
+    "description_sha256": "b6b9725d6c3f7cb912fe47e715e692e4996f2dd8b17c738762d022a7b9d2e472",
+    "benefits": [
+      "cuffs"
+    ]
+  },
+  "femme-1056-veste-outdoor-a-capuche-effet-hybride-anapurna": {
+    "description_sha256": "ae7d884b8b59caf288cb2f9efd0b86ebe7a9025b4977956dda5d5a02605b4b80",
+    "benefits": [
+      "cuffs"
+    ]
+  },
+  "femme-1070-gilet-sans-manche-hybride-femme-aulp": {
+    "description_sha256": "91dcd100253b44a81cc663c166839097b9ee1c86d4f150c6df5808f2dd54232c",
+    "benefits": [
+      "soft",
+      "pockets"
+    ]
+  },
+  "femme-1072-gilet-sans-manche-corda-hybride-femme-aulp": {
+    "description_sha256": "85e5f90323b2a7edecdfc09fb3ee1b9dfbf4a735b15672abd3333d9489324f1f",
+    "benefits": [
+      "soft",
+      "pockets"
+    ]
+  },
+  "femme-1074-gilet-bi-matiere-sans-manche-femme-peak-mountain-bleu-marine": {
+    "description_sha256": "f90c2e3e259ff4202fc0f7aa9c8fbbdab67c6337d8f196d798fa895291fed8e4",
+    "benefits": [
+      "stretch",
+      "pockets"
+    ]
+  },
+  "femme-1075-veste-sans-manche-femme-en-fausse-fourrure-toute-douce-coloris-vert-kaki": {
+    "description_sha256": "9c660eb869022bfbdc01f8e4c028e8ea144654c0d4fdacbc42eff11367d784c2",
+    "benefits": [
+      "stretch",
+      "pockets"
+    ]
+  },
+  "femme-1076-veste-sans-manche-matelassee-femme-bi-matiere-coloris-noir": {
+    "description_sha256": "4f6b8533cd825141e5798efbab75edc79509f0587b15ba47626fd3d6b72937a5",
+    "benefits": [
+      "warm",
+      "pockets"
+    ]
+  },
+  "femme-1077-veste-sans-manche-matelassee-femme-bi-matiere-coloris-blanc": {
+    "description_sha256": "4f6b8533cd825141e5798efbab75edc79509f0587b15ba47626fd3d6b72937a5",
+    "benefits": [
+      "warm",
+      "pockets"
+    ]
+  },
+  "femme-1078-veste-sans-manche-matelassee-femme-bi-matiere-coloris-bleu-marine": {
+    "description_sha256": "4f6b8533cd825141e5798efbab75edc79509f0587b15ba47626fd3d6b72937a5",
+    "benefits": [
+      "warm",
+      "pockets"
+    ]
+  },
+  "homme-692-veste-bi-matiere-homme-peak-mountain": {
+    "description_sha256": "7ba57f86c1f0c303bbf809ef09faf4a8d68ac59d1984bb8811d1b3aa2f6689ba",
+    "benefits": [
+      "pockets"
+    ]
+  },
+  "homme-796-veste-bi-matiere-homme-peak-mountain-modele-curtis": {
+    "description_sha256": "2a28c7bd75393e1ce217ae823f4f901bf3714b53f5495b58983d9b8f39ad1869",
+    "benefits": [
+      "pockets"
+    ]
+  },
+  "homme-880-veste-chinee-homme-matelassee-": {
+    "description_sha256": "1c451fc7c0ef86fb0630b233665abcb55256a70ce030a83e4b70911a37c9c9aa",
+    "benefits": [
+      "pockets"
+    ]
+  },
+  "homme-906-veste-outdoor-chinee-anapurna-homme": {
+    "description_sha256": "34e4b52dc1972e1172939d8e94b8b343360c7d2e5b84a6b68b4d58a26a28b7e9",
+    "benefits": [
+      "pockets",
+      "wash"
+    ]
+  },
+  "homme-912-veste-outdoor-chinee-anapurna-homme": {
+    "description_sha256": "421c3e17136e0fe6cccb685cc82dc79cb2d8e9d77b9d58972ef32396520e47a3",
+    "benefits": [
+      "pockets",
+      "wash"
+    ]
+  },
+  "homme-982-veste-outdoor-chinee-geonorway-homme-urval-homme": {
+    "description_sha256": "a5d53a9443155f78d8e4886bb30ea513f152de9ea7951c7344967b148f5023e0",
+    "benefits": [
+      "pockets",
+      "wash"
+    ]
+  },
+  "homme-930-sweat-homme-a-fermeture-marine-et-camel": {
+    "description_sha256": "f750ba60ac6046492d27b3580a83240d55582a4c7cab13e83e9b86b8fd085337",
+    "benefits": [
+      "zip"
+    ]
+  },
+  "homme-932-sweat-homme-zippe-club-ju": {
+    "description_sha256": "866c3ae87fc343add123a80c974b79f7f418fcd66e3460dffc294b2839ff7827",
+    "benefits": [
+      "zip"
+    ]
+  },
+  "homme-1061-veste-polaire-chinee-home-geonorway": {
+    "description_sha256": "4fc39d815374d17769cce2482410a8eedb436ecdf4b0c499beb7a744dc456ea9",
+    "benefits": [
+      "stretch",
+      "pockets"
+    ]
+  },
+  "homme-1062-veste-polaire-chinee-home-geonorway": {
+    "description_sha256": "4fc39d815374d17769cce2482410a8eedb436ecdf4b0c499beb7a744dc456ea9",
+    "benefits": [
+      "stretch",
+      "pockets"
+    ]
+  },
+  "homme-1064-veste-polaire-effet-matelasse-homme-couleur-gris-anthracite-geonorway": {
+    "description_sha256": "5e4e714e8341fd06225c4af29ac4afa67af9956e3c9773caae99520fe09677c4",
+    "benefits": [
+      "stretch",
+      "pockets"
+    ]
+  },
+  "homme-1065-veste-polaire-aspect-matelasse-gris-homme-geonorway": {
+    "description_sha256": "d5c31fddadb89a3c19e941dda43915fa053770b02ebc45ad913f839b1da252cc",
+    "benefits": [
+      "stretch",
+      "pockets"
+    ]
+  },
+  "homme-1066-veste-polaire-aspect-matelasse-bleu-marine-homme-geonorway": {
+    "description_sha256": "d73a880669d5c79219fbab54cc68f3401d354f963bcee13cbcfd724b872f3a2c",
+    "benefits": [
+      "stretch",
+      "pockets"
+    ]
+  },
+  "homme-1067-veste-polaire-hybride-aulp-milor-homme": {
+    "description_sha256": "5566616444dec8af4f5e119bd07dc98aded2aea08edb1b856d28bd7966586f55",
+    "benefits": [
+      "warm",
+      "pockets"
+    ]
+  },
+  "homme-1068-veste-polaire-hybride-aulp-milor-homme": {
+    "description_sha256": "b2e002a3edfe9d054bb5bc7e391210bc78d505ab51de35c17002773fa649d024",
+    "benefits": [
+      "warm",
+      "pockets"
+    ]
+  },
+  "homme-1069-veste-polaire-hybride-aulp-milor-homme": {
+    "description_sha256": "1b6482ab9779a916120998e6f5661a35182e4a86525167207c521e075eefdec5",
+    "benefits": [
+      "warm",
+      "pockets"
+    ]
+  },
+  "enfant-71-polaire-fille-ursula-geographical-norway": {
+    "description_sha256": "cc7dcf1f99b5c2fe17fb2f47a27b83f4d980f8a033eaeebc8e03678d8f5e9657",
+    "benefits": [
+      "soft",
+      "collar"
+    ]
+  },
+  "enfant-72-polaire-fille-ursula-geographical-norway": {
+    "description_sha256": "a2675f764558cfb58d7ebbcb5daa18fa0a374c442e682327402880cdba6b1c33",
+    "benefits": [
+      "soft",
+      "collar"
+    ]
+  },
+  "enfant-77-blouson-polaire-peak-mountain": {
+    "description_sha256": "4309baf56e2e65cfd9bea36a07b68e325f61211d0c4270d3da11103d84621fd3",
+    "benefits": [
+      "layer",
+      "pockets"
+    ]
+  },
+  "enfant-79-blouson-polaire-peak-mountain-garcon": {
+    "description_sha256": "40e029fe5e0bcd77a8d381ab4b8a89e476046c3985b048fa8c67f5b32bb86da7",
+    "benefits": [
+      "layer",
+      "pockets"
+    ]
+  },
+  "enfant-80-blouson-polaire-peak-mountain-garcon": {
+    "description_sha256": "9339153ad51ca0168d411e83a01e7ad929e228d87a4da0d15c81df2f79869b4b",
+    "benefits": [
+      "layer",
+      "pockets"
+    ]
+  },
+  "enfant-81-blouson-polaire-peak-mountain": {
+    "description_sha256": "e4833b6bc9d4adbd0780021f52a400941a9f8ecc11eaa9aae7d6fb98eb07a3a7",
+    "benefits": [
+      "layer",
+      "pockets"
+    ]
+  },
+  "enfant-90-polaire-fille-genepy-taupe-nirvana": {
+    "description_sha256": "7643ef8ac19595997adad590b2aaa93af0b6a993821fc989bf30160747e73fdf",
+    "benefits": [
+      "pockets"
+    ]
+  },
+  "enfant-93-polaire-fille-genepy-turquoise-nirvana": {
+    "description_sha256": "81b46a2e107d0dc4cafd85d3b39bed4be788924a9db92fbf052779f285300942",
+    "benefits": [
+      "pockets"
+    ]
+  },
+  "enfant-319-polaire-douce-taupe-peak-mountain": {
+    "description_sha256": "4808452b635c23d717aca51c9c12a663e0f9c22fdaf983bcd2ca291da6f9a1c7",
+    "benefits": [
+      "soft",
+      "pockets"
+    ]
+  },
+  "enfant-321-polaire-douce-noire-peak-mountain": {
+    "description_sha256": "b12b0d080d64888eaba96730db4a796f5b4a05dd27a6aea3f0da622dab7b21e9",
+    "benefits": [
+      "soft",
+      "pockets"
+    ]
+  },
+  "enfant-790-veste-polaire-peak-mountain-enfant-en-maille-coloris-rose-fuchsia-peak-mountain": {
+    "description_sha256": "1cb6d29ec170437cdefdb79e952209192e58622995e1f90d07712d9b5ce61ff7",
+    "benefits": [
+      "soft",
+      "pockets"
+    ]
+  },
+  "enfant-792-veste-polaire-peak-mountain-enfant-en-maille-coloris-gris-peak-mountain": {
+    "description_sha256": "93851d5715ddd00c903ada06ae55e45edd241c5f894d50062b3178a7ae5c3a8a",
+    "benefits": [
+      "soft",
+      "pockets"
+    ]
+  }
+}

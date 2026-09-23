@@ -1074,3 +1074,55 @@ msgstr "Eine Größe, ein Material, ein Geschenk: Wir helfen Ihnen bei der richt
 #: accueil/templates/accueil/home.html
 msgid "Voir la collection"
 msgstr "Kollektion entdecken"
+
+#: core/benefits.py core/templates/core/product_detail.html
+msgid "Une polaire chaude pour ajouter une couche de confort lors des journées fraîches."
+msgstr "Ein warmes Fleece für eine zusätzliche Wohlfühlschicht an kühleren Tagen."
+
+#: core/benefits.py core/templates/core/product_detail.html
+msgid "Une texture douce et moelleuse pour les moments de détente au quotidien."
+msgstr "Eine weiche, flauschige Textur für entspannte Momente im Alltag."
+
+#: core/benefits.py core/templates/core/product_detail.html
+msgid "Un tissu souple et extensible pour accompagner vos mouvements au quotidien."
+msgstr "Ein geschmeidiger, dehnbarer Stoff, der Ihre Bewegungen im Alltag begleitet."
+
+#: core/benefits.py core/templates/core/product_detail.html
+msgid "Des poches zippées pour garder vos petits essentiels à portée de main."
+msgstr "Reißverschlusstaschen halten kleine Alltagsbegleiter griffbereit."
+
+#: core/benefits.py core/templates/core/product_detail.html
+msgid "Une capuche amovible pour adapter la veste à vos envies."
+msgstr "Eine abnehmbare Kapuze, mit der Sie die Jacke nach Wunsch anpassen können."
+
+#: core/benefits.py core/templates/core/product_detail.html
+msgid "Une ouverture zippée pour enfiler et retirer facilement la veste."
+msgstr "Ein Reißverschluss erleichtert das An- und Ausziehen der Jacke."
+
+#: core/benefits.py core/templates/core/product_detail.html
+msgid "Une maille à bouclettes souple et extensible pour envelopper les petits pieds."
+msgstr "Weiches, dehnbares Frottee umhüllt kleine Füße."
+
+#: core/benefits.py core/templates/core/product_detail.html
+msgid "Des boutons-pression à l’entrejambe pour faciliter le change de bébé."
+msgstr "Druckknöpfe im Schritt erleichtern das Wickeln Ihres Babys."
+
+#: core/benefits.py core/templates/core/product_detail.html
+msgid "Lavable en machine pour simplifier le quotidien ; suivez les consignes de l’étiquette."
+msgstr "Maschinenwaschbar für einen unkomplizierten Alltag; beachten Sie das Pflegeetikett."
+
+#: core/benefits.py core/templates/core/product_detail.html
+msgid "Des finitions élastiques aux manches pour un ajustement confortable aux poignets."
+msgstr "Elastische Ärmelabschlüsse für einen bequemen Sitz an den Handgelenken."
+
+#: core/benefits.py core/templates/core/product_detail.html
+msgid "Un col montant pour couvrir le cou lors des sorties au frais."
+msgstr "Ein Stehkragen bedeckt den Hals bei Ausflügen an kühleren Tagen."
+
+#: core/benefits.py core/templates/core/product_detail.html
+msgid "À porter en veste à la mi-saison ou sous un manteau quand il fait plus frais."
+msgstr "In der Übergangszeit als Jacke oder bei kühlerem Wetter unter einem Mantel tragbar."
+
+#: core/benefits.py core/templates/core/product_detail.html
+msgid "Pourquoi le choisir ?"
+msgstr "Warum dieses Modell?"

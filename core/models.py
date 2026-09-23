@@ -21,6 +21,7 @@ class Product(models.Model):
 	slug = models.SlugField(max_length=220, unique=True)
 	price = models.DecimalField(max_digits=10, decimal_places=2)
 	description = models.TextField(blank=True)
+	benefits = models.TextField(blank=True, null=True, default=None, verbose_name='Pourquoi le choisir ?', help_text='Un bénéfice vérifié par ligne, fondé sur les caractéristiques de cet article.')
 	translations = models.JSONField(default=dict, blank=True)
 	main_image = models.ImageField(upload_to='products/', blank=True, null=True)
 	is_featured = models.BooleanField(default=False)
@@ -51,6 +52,21 @@ class Product(models.Model):
 		from django.utils.translation import get_language
 		language = (get_language() or 'fr').split('-')[0]
 		return language if self.translations.get(language, {}).get('description') else 'fr'
+
+	@property
+	def benefit_lines(self):
+		from .benefits import catalog_benefits
+		if self.benefits is None:
+			return catalog_benefits(self)
+		if not self.benefits.strip():
+			return []
+		return [line.strip() for line in self.translated_value('benefits').splitlines() if line.strip()]
+
+	@property
+	def benefits_language(self):
+		from django.utils.translation import get_language
+		language = (get_language() or 'fr').split('-')[0]
+		return language if self.benefits is None or self.translations.get(language, {}).get('benefits') else 'fr'
 
 	@property
 	def size_options(self):
