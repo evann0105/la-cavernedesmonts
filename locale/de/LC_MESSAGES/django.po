@@ -1070,3 +1070,7 @@ msgstr "Kleidung, Accessoires & Outdoor-Essentials für die ganze Familie in Lé
 #: accueil/templates/accueil/home.html
 msgid "Une taille, une matière, un cadeau : nous vous aidons à faire le bon choix."
 msgstr "Eine Größe, ein Material, ein Geschenk: Wir helfen Ihnen bei der richtigen Wahl."
+
+#: accueil/templates/accueil/home.html
+msgid "Voir la collection"
+msgstr "Kollektion entdecken"

@@ -1070,3 +1070,7 @@ msgstr "Ropa, accesorios y artículos para disfrutar al aire libre en familia, e
 #: accueil/templates/accueil/home.html
 msgid "Une taille, une matière, un cadeau : nous vous aidons à faire le bon choix."
 msgstr "Una talla, un tejido, un regalo: te ayudamos a elegir bien."
+
+#: accueil/templates/accueil/home.html
+msgid "Voir la collection"
+msgstr "Ver la colección"

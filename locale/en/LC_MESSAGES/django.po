@@ -1070,3 +1070,7 @@ msgstr "Clothing, accessories & outdoor essentials for the whole family, in Lél
 #: accueil/templates/accueil/home.html
 msgid "Une taille, une matière, un cadeau : nous vous aidons à faire le bon choix."
 msgstr "A size, a fabric, a gift: we help you make the right choice."
+
+#: accueil/templates/accueil/home.html
+msgid "Voir la collection"
+msgstr "View the collection"
