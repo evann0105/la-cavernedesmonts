@@ -1,6 +1,6 @@
-{% extends 'base.html' %}{% load i18n shop_i18n static %}
+{% extends 'base.html' %}{% load i18n shop_reviews shop_i18n static %}
 {% block title %}{{ product.localized_name }} — La Caverne des Monts{% endblock %}
-{% block styles %}<link rel="stylesheet" href="{% static 'core/css/product-story.css' %}?v=20260923-benefits">{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'core/css/shop-reviews.css' %}?v=20260923"><link rel="stylesheet" href="{% static 'core/css/product-story.css' %}?v=20260923-benefits">{% endblock %}
 {% block scripts %}<script src="{% static 'core/js/product-story.js' %}?v=1" defer></script>{% endblock %}
 {% block content %}
 <div class="wrap section product-page">
@@ -37,6 +37,7 @@
       </form>
       {% else %}<p class="notice">{% translate 'Brouillon : ce produit n’est pas proposé à la vente.' %}</p>{% endif %}
       <a class="product-advice" href="tel:+33450404617"><span class="advice-icon" aria-hidden="true">↗</span><span><strong>{% translate 'Besoin d’un conseil ?' %}</strong><span>{% translate 'Parlons de votre prochain coup de cœur.' %}</span><b>04 50 40 46 17</b></span></a>
+      {% shop_reviews compact=True %}
       <div class="product-information">
         <details open><summary>{% translate 'Les détails qui comptent' %}</summary>
           {% get_current_language as CURRENT_LANGUAGE %}{% if CURRENT_LANGUAGE != product.description_language %}<p class="small">{% translate 'Description disponible en français.' %}</p>{% endif %}

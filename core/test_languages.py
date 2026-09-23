@@ -58,12 +58,17 @@ class LanguageTests(TestCase):
         session=self.client.session;session['otp_device_id']=device.persistent_id;session.save()
         return manager
 
-    def test_reviews_are_private_labeled_examples(self):
-        self.assertNotContains(self.client.get('/'),'Exemples fictifs')
-        manager=self.verified_manager()
-        self.assertContains(self.client.get('/'),'Exemples fictifs, non publiés aux visiteurs')
-        EmailVerification.objects.filter(user=manager).delete()
-        self.assertNotContains(self.client.get('/'),'Exemples fictifs')
+    def test_real_reviews_are_public_and_replace_examples(self):
+        for authenticated in (False, True):
+            if authenticated:
+                self.verified_manager()
+            response = self.client.get('/')
+            self.assertContains(response, 'Nathalie Largillet')
+            self.assertContains(response, 'Clemence Guillaume')
+            self.assertContains(response, '4/5')
+            self.assertContains(response, 'datetime="2021-10"')
+            self.assertNotContains(response, 'Exemples fictifs')
+            self.assertNotContains(response, 'Exemple fictif')
 
     def test_manager_edits_product_translations(self):
         self.verified_manager()

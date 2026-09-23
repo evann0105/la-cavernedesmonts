@@ -1126,3 +1126,35 @@ msgstr "Para llevar como chaqueta en entretiempo o bajo un abrigo cuando hace m�
 #: core/benefits.py core/templates/core/product_detail.html
 msgid "Pourquoi le choisir ?"
 msgstr "¿Por qué elegirlo?"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Avis sur la boutique"
+msgstr "Opiniones sobre la tienda"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Le conseil, vu par nos clients."
+msgstr "El asesoramiento, según nuestros clientes."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Quelques mots de nos clients."
+msgstr "Unas palabras de nuestros clientes."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Sélection d’avis sur la boutique de Lélex."
+msgstr "Selección de opiniones sobre la tienda de Lélex."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Avis Google"
+msgstr "Reseña de Google"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Visite en"
+msgstr "Visita en"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Avis reproduits dans leur langue d’origine : français."
+msgstr "Opiniones reproducidas en su idioma original: francés."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Consulter les avis Google"
+msgstr "Leer las opiniones de Google"

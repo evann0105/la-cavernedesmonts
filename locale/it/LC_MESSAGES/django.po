@@ -1126,3 +1126,35 @@ msgstr "Da indossare come giacca a mezza stagione o sotto un cappotto quando fa 
 #: core/benefits.py core/templates/core/product_detail.html
 msgid "Pourquoi le choisir ?"
 msgstr "Perché sceglierlo?"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Avis sur la boutique"
+msgstr "Recensioni del negozio"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Le conseil, vu par nos clients."
+msgstr "I consigli, secondo i nostri clienti."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Quelques mots de nos clients."
+msgstr "Qualche parola dei nostri clienti."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Sélection d’avis sur la boutique de Lélex."
+msgstr "Una selezione di recensioni del negozio di Lélex."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Avis Google"
+msgstr "Recensione Google"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Visite en"
+msgstr "Visita a"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Avis reproduits dans leur langue d’origine : français."
+msgstr "Recensioni riportate nella lingua originale: francese."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Consulter les avis Google"
+msgstr "Leggi le recensioni Google"
