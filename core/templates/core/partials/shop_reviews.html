@@ -1,0 +1,12 @@
+{% load i18n %}
+<section class="shop-reviews{% if compact %} shop-reviews-compact{% else %} wrap{% endif %}" aria-label="{% translate 'Avis sur la boutique' %}">
+  <div class="shop-reviews-heading"><h2>{% if compact %}{% translate 'Le conseil, vu par nos clients.' %}{% else %}{% translate 'Quelques mots de nos clients.' %}{% endif %}</h2><p>{% translate 'Sélection d’avis sur la boutique de Lélex.' %}</p></div>
+  <div class="shop-reviews-grid">
+    {% for review in reviews %}<figure>
+      <blockquote lang="fr">« {{ review.quote|linebreaksbr }} »</blockquote>
+      <figcaption><span class="review-author">{{ review.author }}</span><span>{% translate 'Avis Google' %} · {{ review.rating }}/5</span><span>{% translate 'Visite en' %} <time datetime="{{ review.visited|date:'Y-m' }}">{{ review.visited|date:'F Y' }}</time></span></figcaption>
+    </figure>{% endfor %}
+  </div>
+  {% get_current_language as review_language %}{% if review_language != 'fr' %}<p class="review-original-language">{% translate 'Avis reproduits dans leur langue d’origine : français.' %}</p>{% endif %}
+  <a class="shop-reviews-source" href="{{ reviews_url }}" target="_blank" rel="noopener noreferrer">{% translate 'Consulter les avis Google' %} <span aria-hidden="true">↗</span></a>
+</section>

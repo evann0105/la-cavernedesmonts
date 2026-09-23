@@ -1126,3 +1126,35 @@ msgstr "Wear it as a jacket between seasons or under a coat in cooler weather."
 #: core/benefits.py core/templates/core/product_detail.html
 msgid "Pourquoi le choisir ?"
 msgstr "Why choose it?"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Avis sur la boutique"
+msgstr "Shop reviews"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Le conseil, vu par nos clients."
+msgstr "Advice, in our customers’ words."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Quelques mots de nos clients."
+msgstr "A few words from our customers."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Sélection d’avis sur la boutique de Lélex."
+msgstr "Selected reviews of our shop in Lélex."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Avis Google"
+msgstr "Google review"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Visite en"
+msgstr "Visited in"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Avis reproduits dans leur langue d’origine : français."
+msgstr "Reviews shown in their original language: French."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Consulter les avis Google"
+msgstr "Read the Google reviews"

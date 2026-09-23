@@ -1126,3 +1126,35 @@ msgstr "In der Übergangszeit als Jacke oder bei kühlerem Wetter unter einem Ma
 #: core/benefits.py core/templates/core/product_detail.html
 msgid "Pourquoi le choisir ?"
 msgstr "Warum dieses Modell?"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Avis sur la boutique"
+msgstr "Bewertungen der Boutique"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Le conseil, vu par nos clients."
+msgstr "Beratung aus Kundensicht."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Quelques mots de nos clients."
+msgstr "Ein paar Worte unserer Kunden."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Sélection d’avis sur la boutique de Lélex."
+msgstr "Ausgewählte Bewertungen unserer Boutique in Lélex."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Avis Google"
+msgstr "Google-Bewertung"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Visite en"
+msgstr "Besuch im"
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Avis reproduits dans leur langue d’origine : français."
+msgstr "Bewertungen in der Originalsprache: Französisch."
+
+#: core/templates/core/partials/shop_reviews.html
+msgid "Consulter les avis Google"
+msgstr "Google-Bewertungen lesen"
