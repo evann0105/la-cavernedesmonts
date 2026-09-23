@@ -13,7 +13,7 @@ class LanguageTests(TestCase):
         self.product = Product.objects.create(name='Veste de montagne', price=40, description='Douce et chaude.', category=self.category, static_image='core/img/slide1.png', sizes='Taille unique', translations={'en':{'name':'Mountain jacket','description':'Soft and warm.'}})
 
     def test_five_languages_and_preference_persistence(self):
-        labels={'fr':'Trouver mon bonheur','en':'Find my little joy','de':'Mein Lieblingsstück finden','it':'Trova la tua gioia','es':'Encuentra tu alegría'}
+        labels={'fr':'Voir la collection','en':'View the collection','de':'Kollektion entdecken','it':'Scopri la collezione','es':'Ver la colección'}
         for code,label in labels.items():
             response=self.client.post(reverse('set_language'), {'language':code,'next':'/produits/?categorie=femmes'})
             self.assertRedirects(response, '/produits/?categorie=femmes')
