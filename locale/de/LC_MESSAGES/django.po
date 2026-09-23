@@ -262,8 +262,8 @@ msgstr "Schöne Tage beginnen mit einfachen Dingen."
 msgid "Les belles occasions de retrouver l’esprit montagne."
 msgstr "Schöne Gelegenheiten, das Berggefühl wiederzufinden."
 
-msgid "Les complices des beaux jours."
-msgstr "Begleiter für schöne Tage."
+msgid "Les essentiels de la montagne."
+msgstr "Alles für die Berge."
 
 msgid "Les joues fraîches, les petites mains au chaud, les câlins au retour. L’esprit montagne se partage dès les premiers instants."
 msgstr "Frische Wangen, warme kleine Hände, Kuscheln beim Heimkommen. Das Berggefühl begleitet uns von Anfang an."

@@ -262,8 +262,8 @@ msgstr "Beautiful days begin with simple things."
 msgid "Les belles occasions de retrouver l’esprit montagne."
 msgstr "Lovely opportunities to rediscover the mountain spirit."
 
-msgid "Les complices des beaux jours."
-msgstr "Companions for beautiful days."
+msgid "Les essentiels de la montagne."
+msgstr "Mountain essentials."
 
 msgid "Les joues fraîches, les petites mains au chaud, les câlins au retour. L’esprit montagne se partage dès les premiers instants."
 msgstr "Rosy cheeks, warm little hands, cuddles on returning home. Share the mountain spirit from the very first moments."
