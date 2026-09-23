@@ -1,6 +1,8 @@
 from django.utils.translation import gettext as _, get_language
 from pathlib import Path
 from django.conf import settings
+from django.core.paginator import Paginator
+from .product_images import thumbnail_url
 from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
@@ -11,7 +13,7 @@ from .cart import lines, total
 
 
 def product_list(request):
-    products = Product.objects.filter(is_published=True).select_related('category').order_by('-is_featured', 'name')
+    products = Product.objects.filter(is_published=True).select_related('category').order_by('-is_featured', 'name', 'pk')
     category = request.GET.get('categorie', '')
     query = request.GET.get('q', '').strip()[:100]
     if category:
@@ -22,14 +24,17 @@ def product_list(request):
         products = products.filter(Q(name__icontains=query) | Q(description__icontains=query) | localized)
     sort = request.GET.get('tri', '')
     if sort in ('prix', '-prix'):
-        products = products.order_by('price' if sort == 'prix' else '-price')
+        products = products.order_by('price' if sort == 'prix' else '-price', 'pk')
     selected_category = Category.objects.filter(slug=category).first() if category else None
-    return render(request, 'core/product_list.html', {'products': products, 'categories': Category.objects.all(), 'selected': category, 'selected_category': selected_category, 'query': query, 'sort': sort})
+    page = Paginator(products, 24).get_page(request.GET.get('page'))
+    params = request.GET.copy()
+    params.pop('page', None)
+    return render(request, 'core/product_list.html', {'products': page, 'page_obj': page, 'pagination_query': params.urlencode(), 'categories': Category.objects.all(), 'selected': category, 'selected_category': selected_category, 'query': query, 'sort': sort})
 
 
 def product_detail(request, slug, catalog_preview=False):
     products = Product.objects.all() if catalog_preview else Product.objects.filter(is_published=True)
-    product = get_object_or_404(products.select_related('category'), slug=slug)
+    product = get_object_or_404(products.select_related('category').prefetch_related('images'), slug=slug)
     images = [product.image_url] if product.image_url else []
     images += [i.image.url for i in product.images.all()]
     for folder in (('products', 'best_product', 'femmes', 'hommes', 'enfants') if product.include_imported_gallery else ()):
@@ -41,8 +46,8 @@ def product_detail(request, slug, catalog_preview=False):
                     if url not in images:
                         images.append(url)
     photo_alts = {photo.image.url: photo.alt for photo in product.images.all()}
-    gallery = [{'url': url, 'alt': photo_alts.get(url) or product.localized_name} for url in images]
-    related = Product.objects.filter(category=product.category, is_published=True).exclude(pk=product.pk)[:4]
+    gallery = [{'url': url, 'thumbnail': thumbnail_url(url), 'alt': photo_alts.get(url) or product.localized_name} for url in images]
+    related = Product.objects.filter(category=product.category, is_published=True).select_related('category').exclude(pk=product.pk)[:4]
     return render(request, 'core/product_detail.html', {'product': product, 'images': images, 'gallery': gallery, 'related': related, 'catalog_preview': catalog_preview})
 
 

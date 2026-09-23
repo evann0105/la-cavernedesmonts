@@ -1158,3 +1158,16 @@ msgstr "Opiniones reproducidas en su idioma original: francés."
 #: core/templates/core/partials/shop_reviews.html
 msgid "Consulter les avis Google"
 msgstr "Leer las opiniones de Google"
+
+msgid "Pagination"
+msgstr "Paginación"
+
+msgid "Précédent"
+msgstr "Anterior"
+
+msgid "Suivant"
+msgstr "Siguiente"
+
+#, python-format
+msgid "Page %(current)s sur %(total)s"
+msgstr "Página %(current)s de %(total)s"
