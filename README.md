@@ -152,3 +152,18 @@ Relevé du 17 septembre 2026 : **32 références et 97 photos** depuis [la caté
 `import_enfants` ajoute **16 nouvelles fiches** et enrichit **16 fiches existantes** : la polaire urbaine noire et les 15 articles des rubriques bébé, dont les chaussettes. Les identifiants et URL locales sont conservés. Les articles bébé et accessoires reçoivent l’association complémentaire Enfant sans perdre leur catégorie ni leurs collections actuelles. La rubrique Enfant contient donc exactement **32 références**, sans duplication des produits. Le catalogue total compte **110 articles**.
 
 `import_catalogue`, et donc `./start`, appellent cet import sans réseau. Les modifications de prix, textes, tailles et associations effectuées après l’import sont préservées. Les tailles source sont informatives ; les nouvelles fiches attendent la validation des tailles vendables et de la disponibilité par la boutique. Aucun stock n’est synchronisé avec le site d’origine.
+
+
+## Images et performance du catalogue
+
+Le catalogue affiche 24 articles par page et conserve les filtres et le tri dans la pagination. Les cartes utilisent des variantes WebP adaptées à leur taille d’affichage ; les originaux restent disponibles sur les fiches et pour le zoom. Les vignettes de galerie utilisent une petite version dédiée.
+
+Après ajout ou remplacement de photos statiques, régénérer les fichiers avec :
+
+```sh
+.venv/bin/python manage.py build_product_images
+```
+
+La commande prépare le manifeste `core/static/core/product-images.json`, les variantes du catalogue et les deux cadrages mobiles de la photo d’accueil. Les fichiers générés sont versionnés, disponibles sans traitement à la volée, et servis par `collectstatic` en production. Redémarrer le serveur après une régénération pour recharger le manifeste en mémoire. Les photos téléversées depuis la gestion gardent leur traitement WebP existant ; elles ne sont pas couvertes par ce manifeste statique.
+
+Mesure sur les 402 photos statiques : 29,57 Mo d’originaux contre 15,58 Mo pour leurs plus grandes variantes WebP (environ 47 % de moins). Il s’agit du poids des fichiers, pas d’une mesure des Core Web Vitals. Les performances réseau et les caches devront être contrôlés sur l’hébergement final.

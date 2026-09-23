@@ -133,7 +133,7 @@ class WomenImportTests(TestCase):
                 self.assertIsNotNone(finders.find(image))
                 self.assertIn('/static/' + image, page.context['images'])
         response = self.client.get('/produits/', {'categorie': 'femmes'})
-        self.assertEqual(len(response.context['products']), 53)
+        self.assertEqual(response.context['page_obj'].paginator.count, 53)
 
     def test_restart_preserves_merchant_edits_and_product_identity(self):
         product = Product.objects.get(slug='veste-polaire-femme-anapurna-utern-violet')
@@ -178,7 +178,7 @@ class MenImportTests(TestCase):
         self.assertEqual(len(data['products']), 25)
         self.assertEqual(sum(len(i['images']) for i in data['products']), 105)
         response = self.client.get('/produits/', {'categorie': 'hommes'})
-        self.assertEqual(len(response.context['products']), 25)
+        self.assertEqual(response.context['page_obj'].paginator.count, 25)
         for item in data['products']:
             product = Product.objects.get(source_url=item['source_url'])
             self.assertEqual(product.category.slug, 'hommes')
@@ -238,6 +238,9 @@ class ChildrenImportTests(TestCase):
         self.assertEqual(sum(len(p['images']) for p in data['products']), 97)
         response = self.client.get('/produits/', {'categorie': 'enfants'})
         displayed = {p.pk for p in response.context['products']}
+        for number in range(2, response.context['page_obj'].paginator.num_pages + 1):
+            page = self.client.get('/produits/', {'categorie':'enfants','page':number})
+            displayed.update(p.pk for p in page.context['products'])
         self.assertEqual(len(displayed), 32)
         for item in data['products']:
             product = Product.objects.get(source_url=item['source_url'])
@@ -264,7 +267,7 @@ class ChildrenImportTests(TestCase):
         self.assertEqual(set(Product.objects.values_list('pk', flat=True)), original_ids)
         self.assertEqual(Product.objects.count(), 110)
         for slug, expected in [('accessoires-bebe', 10), ('polaires-bebe', 5), ('enfants', 32)]:
-            self.assertEqual(len(self.client.get('/produits/', {'categorie': slug}).context['products']), expected)
+            self.assertEqual(self.client.get('/produits/', {'categorie': slug}).context['page_obj'].paginator.count, expected)
 
     def test_enriched_baby_keeps_later_merchant_edits(self):
         product = Product.objects.get(slug='bebe-101-echarpe-bebe')

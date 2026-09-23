@@ -1,10 +1,10 @@
-{% extends 'base.html' %}{% load i18n shop_reviews shop_i18n %}
+{% extends 'base.html' %}{% load i18n product_images shop_reviews shop_i18n %}
 {% load static %}
 {% block body_class %}summit-home{% endblock %}
 {% block styles %}<link rel="stylesheet" href="{% static 'core/css/shop-reviews.css' %}?v=20260923"><link rel="stylesheet" href="{% static 'core/css/store.css' %}"><link rel="stylesheet" href="{% static 'accueil/css/hero-intro.css' %}?v=20260923">{% endblock %}
 {% block content %}
 <section class="summit-hero" aria-labelledby="summit-title">
-  <img class="summit-landscape" src="{% static 'core/img/hero/montagne-1536.webp' %}" srcset="{% static 'core/img/hero/montagne-960.webp' %} 960w, {% static 'core/img/hero/montagne-1536.webp' %} 1536w, {% static 'core/img/hero/montagne-2400.webp' %} 2400w, {% static 'core/img/hero/montagne-3840.webp' %} 3840w" sizes="(max-width: 600px) 1110px, (max-width: 900px) 1140px, (max-width: 1322px) 1290px, calc(100vw - 32px)" alt="{% translate 'Des randonneurs au pied des montagnes, sur un sentier fleuri' %}" fetchpriority="high" decoding="async" width="3840" height="2560">
+  <picture><source media="(max-width: 600px)" srcset="{% static 'core/img/hero/montagne-mobile-600.webp' %} 600w, {% static 'core/img/hero/montagne-mobile-960.webp' %} 960w" sizes="calc(100vw - 16px)"><img class="summit-landscape" src="{% static 'core/img/hero/montagne-1536.webp' %}" srcset="{% static 'core/img/hero/montagne-960.webp' %} 960w, {% static 'core/img/hero/montagne-1536.webp' %} 1536w, {% static 'core/img/hero/montagne-2400.webp' %} 2400w, {% static 'core/img/hero/montagne-3840.webp' %} 3840w" sizes="(max-width: 600px) 1110px, (max-width: 900px) 1140px, (max-width: 1322px) 1290px, calc(100vw - 32px)" alt="{% translate 'Des randonneurs au pied des montagnes, sur un sentier fleuri' %}" fetchpriority="high" decoding="async" width="3840" height="2560"></picture>
   <div class="summit-overlay"></div>
   <div class="summit-hero-copy">
     <div><p class="summit-kicker">LA CAVERNE DES MONTS · LÉLEX</p><h1 id="summit-title">{% translate 'Un peu plus dehors.' %}<br>{% translate 'Un peu plus' %} <em>{% translate 'vivant.' %}</em></h1>
@@ -30,7 +30,7 @@
   <div class="section-heading"><div><p class="eyebrow">{% translate 'À CHACUN SON ÉCHAPPÉE' %}</p><h2 id="worlds-title">{% translate 'Votre envie du moment.' %}</h2></div><span class="quiet-note">{% translate 'Trois univers. Le même esprit.' %}</span></div>
   <div class="world-grid">
     {% for card in world_cards %}
-    <a class="world-card world-{{ card.style }}" href="{% url 'core:product_list' %}?categorie={{ card.slot }}"><div class="world-top"><span>0{{ forloop.counter }} / {{ card.label|shop_text|upper }}</span><span class="world-arrow" aria-hidden="true">↗</span></div>{% if card.product %}<img src="{{ card.product.image_url }}" alt="{{ card.product.localized_name }}" loading="lazy" width="1000" height="1333">{% endif %}<div class="world-copy"><h3>{{ card.title|shop_text }}</h3><span>{% translate 'Explorer la collection' %} {{ card.label|shop_text }}</span></div></a>
+    <a class="world-card world-{{ card.style }}" href="{% url 'core:product_list' %}?categorie={{ card.slot }}"><div class="world-top"><span>0{{ forloop.counter }} / {{ card.label|shop_text|upper }}</span><span class="world-arrow" aria-hidden="true">↗</span></div>{% if card.product %}{% product_image card.product sizes='(max-width: 760px) calc(100vw - 80px), 33vw' %}{% endif %}<div class="world-copy"><h3>{{ card.title|shop_text }}</h3><span>{% translate 'Explorer la collection' %} {{ card.label|shop_text }}</span></div></a>
     {% endfor %}
   </div>
 </section>

@@ -1158,3 +1158,16 @@ msgstr "Reviews shown in their original language: French."
 #: core/templates/core/partials/shop_reviews.html
 msgid "Consulter les avis Google"
 msgstr "Read the Google reviews"
+
+msgid "Pagination"
+msgstr "Pagination"
+
+msgid "Précédent"
+msgstr "Previous"
+
+msgid "Suivant"
+msgstr "Next"
+
+#, python-format
+msgid "Page %(current)s sur %(total)s"
+msgstr "Page %(current)s of %(total)s"

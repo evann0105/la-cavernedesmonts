@@ -13,7 +13,7 @@
         <img id="main-product-image" src="{{ gallery.0.url }}" alt="{{ gallery.0.alt }}" fetchpriority="high">
         <span class="photo-hint">{% translate 'Voir de plus près' %} <span aria-hidden="true">↗</span></span>
       </a>
-      <div class="photo-strip" aria-label="{% translate 'Photos du produit' %}">{% for photo in gallery %}<a href="{{ photo.url }}" data-product-photo {% if forloop.first %}aria-current="true"{% endif %} aria-label="{% translate 'Photo' %} {{ forloop.counter }}"><img src="{{ photo.url }}" alt="{{ photo.alt }}" loading="lazy"></a>{% endfor %}</div>
+      <div class="photo-strip" aria-label="{% translate 'Photos du produit' %}">{% for photo in gallery %}<a href="{{ photo.url }}" data-product-photo {% if forloop.first %}aria-current="true"{% endif %} aria-label="{% translate 'Photo' %} {{ forloop.counter }}"><img src="{{ photo.thumbnail }}" alt="{{ photo.alt }}" loading="lazy" decoding="async" width="72" height="88"></a>{% endfor %}</div>
       {% else %}<div class="product-stage photo-empty">{% translate 'Photo à venir' %}</div>{% endif %}
       <p class="gallery-note">La Caverne des Monts <span>·</span> Lélex, Jura</p>
     </div>

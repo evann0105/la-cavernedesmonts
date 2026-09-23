@@ -1,0 +1,5 @@
+{% load i18n %}{% if page_obj.has_other_pages %}<nav class="catalog-pagination" aria-label="{% translate 'Pagination' %}">
+{% if page_obj.has_previous %}<a class="button button-outline" rel="prev" href="?{{ pagination_query }}{% if pagination_query %}&amp;{% endif %}page={{ page_obj.previous_page_number }}">← {% translate 'Précédent' %}</a>{% endif %}
+<span>{% blocktranslate with current=page_obj.number total=page_obj.paginator.num_pages %}Page {{ current }} sur {{ total }}{% endblocktranslate %}</span>
+{% if page_obj.has_next %}<a class="button button-outline" rel="next" href="?{{ pagination_query }}{% if pagination_query %}&amp;{% endif %}page={{ page_obj.next_page_number }}">{% translate 'Suivant' %} →</a>{% endif %}
+</nav>{% endif %}
