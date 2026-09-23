@@ -36,7 +36,7 @@
   <div class="feature-visual"><img src="{% static 'core/img/feature/randonnee-1536.webp' %}" srcset="{% static 'core/img/feature/randonnee-960.webp' %} 960w, {% static 'core/img/feature/randonnee-1536.webp' %} 1536w, {% static 'core/img/feature/randonnee-2400.webp' %} 2400w, {% static 'core/img/feature/randonnee-3840.webp' %} 3840w" sizes="(max-width: 520px) 480px, (max-width: 600px) calc(100vw - 40px), (max-width: 900px) 720px, (max-width: 1100px) 690px, (max-width: 1660px) 780px, calc(50vw - 51px)" alt="{% translate 'Une randonnée en montagne sous un ciel bleu' %}" loading="lazy" decoding="async" width="3840" height="2560"><span class="feature-photo-note">{% translate 'Le bonheur n’est jamais très loin.' %}</span></div>
 </section>
 <section class="section wrap summit-selection" aria-labelledby="selection-title">
-  <div class="section-heading"><div><p class="eyebrow">{% translate 'À EMPORTER AVEC SOI' %}</p><h2 id="selection-title">{% translate 'Les complices des beaux jours.' %}</h2></div><a class="button button-outline" href="{% url 'core:product_list' %}">{% translate 'Tout découvrir' %} <span aria-hidden="true">↗</span></a></div>
+  <div class="section-heading"><div><p class="eyebrow">{% translate 'À EMPORTER AVEC SOI' %}</p><h2 id="selection-title">{% translate 'Les essentiels de la montagne.' %}</h2></div><a class="button button-outline" href="{% url 'core:product_list' %}">{% translate 'Tout découvrir' %} <span aria-hidden="true">↗</span></a></div>
   <div class="product-grid">{% for product in products %}{% include 'partials/product_card.html' %}{% endfor %}</div>
 </section>
 <section id="petites-attentions" class="section wrap family-collections" aria-labelledby="family-title">

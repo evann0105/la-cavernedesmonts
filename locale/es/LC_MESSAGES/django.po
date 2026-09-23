@@ -262,8 +262,8 @@ msgstr "Los días bonitos empiezan por las cosas sencillas."
 msgid "Les belles occasions de retrouver l’esprit montagne."
 msgstr "Buenas ocasiones para reencontrar el espíritu de la montaña."
 
-msgid "Les complices des beaux jours."
-msgstr "Compañeros de los días bonitos."
+msgid "Les essentiels de la montagne."
+msgstr "Los esenciales de la montaña."
 
 msgid "Les joues fraîches, les petites mains au chaud, les câlins au retour. L’esprit montagne se partage dès les premiers instants."
 msgstr "Mejillas frescas, manitas calientes y abrazos al volver. El espíritu de la montaña se comparte desde el primer instante."
