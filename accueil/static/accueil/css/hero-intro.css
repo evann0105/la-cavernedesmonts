@@ -1,0 +1,21 @@
+/* Keep the offer and the human advice next to the headline. */
+.summit-hero-copy > div:first-child { min-width: 0; }
+.summit-hero .hero-description {
+  max-width: 760px;
+  margin: 24px 0 8px;
+  font-size: clamp(18px, 1.5vw, 22px);
+  line-height: 1.5;
+  font-weight: 500;
+  color: #fff;
+}
+.summit-hero .hero-advice {
+  max-width: 720px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #e8efe0;
+}
+@media (max-width: 600px) {
+  .summit-hero .hero-description { margin-top: 20px; font-size: 18px; }
+  .summit-hero .hero-advice { font-size: 16px; }
+}

@@ -1062,3 +1062,11 @@ msgstr "Nächstes Foto"
 
 msgid "Vêtements, accessoires & essentiels outdoor pour toute la famille — à Lélex et en ligne."
 msgstr "Kleidung, Accessoires & Outdoor-Essentials für die ganze Familie — in Lélex und online."
+
+#: accueil/templates/accueil/home.html
+msgid "Vêtements, accessoires & essentiels outdoor pour toute la famille, à Lélex."
+msgstr "Kleidung, Accessoires & Outdoor-Essentials für die ganze Familie in Lélex."
+
+#: accueil/templates/accueil/home.html
+msgid "Une taille, une matière, un cadeau : nous vous aidons à faire le bon choix."
+msgstr "Eine Größe, ein Material, ein Geschenk: Wir helfen Ihnen bei der richtigen Wahl."
