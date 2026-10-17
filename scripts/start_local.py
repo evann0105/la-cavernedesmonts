@@ -2,6 +2,7 @@
 """Prepare and run the local shop; never change the production .env file."""
 import argparse
 import errno
+import http.client
 import ipaddress
 import os
 from pathlib import Path
@@ -14,7 +15,8 @@ import time
 import urllib.error
 import urllib.request
 import webbrowser
-from local_database import prepare_database
+from postgres_local import ensure_started, backup, grant_runtime
+from local_browser import open_local_browser
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -36,6 +38,45 @@ def detect_network_address():
     if ip.is_loopback or ip.is_unspecified or ip.is_multicast:
         raise OSError('Aucune adresse IPv4 réseau utilisable.')
     return address
+
+
+def local_environment(host, port):
+    env = os.environ.copy()
+    env.update(DEBUG='True', ALLOWED_HOSTS=f'localhost,127.0.0.1,[::1],{host}',
+               SITE_URL=f'http://{host}:{port}', LOCAL_DEVELOPMENT_HTTP='1',
+               DJANGO_SETTINGS_MODULE='config.local_settings', PYTHONUNBUFFERED='1')
+    return env
+
+
+class HttpOnlyRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, request, fp, code, msg, headers, newurl):
+        if not newurl.startswith('http://'):
+            raise urllib.error.URLError('Redirection HTTPS inattendue dans le serveur local HTTP.')
+        return super().redirect_request(request, fp, code, msg, headers, newurl)
+
+
+def local_server_ready(url):
+    # Do not mistake a different service, a HTTPS redirect, or a production
+    # instance for this development server when a port is already occupied.
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), HttpOnlyRedirectHandler())
+    try:
+        with opener.open(url, timeout=2) as response:
+            return (response.status == 200 and response.geturl() == url
+                    and response.headers.get('X-Caverne-Local') == 'http'
+                    and not response.headers.get('Strict-Transport-Security'))
+    except (OSError, urllib.error.URLError, http.client.HTTPException):
+        return False
+
+
+def open_browser(url, disabled=False):
+    if disabled:
+        return
+    try:
+        if not open_local_browser(ROOT, url):
+            print(f'Ouvrez ce lien dans votre navigateur : {url}', flush=True)
+    except (OSError, ValueError, webbrowser.Error, subprocess.CalledProcessError) as error:
+        print(f'Le site fonctionne mais le navigateur n’a pas pu être ouvert : {error}', flush=True)
+        print(f'Adresse HTTP : {url}', flush=True)
 
 
 def main():
@@ -64,13 +105,15 @@ def main():
             if error.errno != errno.EADDRINUSE:
                 print(f'Impossible d’ouvrir le port local : {error}', file=sys.stderr)
                 return 1
+            if local_server_ready(url):
+                print(f'Le site est déjà démarré et vérifié en HTTP : {url}', flush=True)
+                open_browser(url, args.no_browser)
+                return 0
             print(f'Le port {args.port} est déjà utilisé. Si le site tourne déjà, ouvrez {url}', flush=True)
             print(f"Sinon, lancez ./start{' --lan' if args.lan else ''} --port {args.port + 1 if args.port < 65535 else 8000}. Aucun processus existant n’a été arrêté.", flush=True)
             return 1
 
-    env = os.environ.copy()
-    env.update(DEBUG='True', ALLOWED_HOSTS=f'localhost,127.0.0.1,[::1],{host}', SITE_URL=url.rstrip('/'),
-               DJANGO_SETTINGS_MODULE='config.settings', PYTHONUNBUFFERED='1')
+    env = local_environment(host, args.port)
     python = ROOT / '.venv/bin/python'
     if not python.exists():
         print('Préparation de l’environnement Python…', flush=True)
@@ -107,50 +150,50 @@ import django, environ, PIL, stripe
             handle.write('DEBUG=True\nSECRET_KEY=' + secrets.token_urlsafe(64) + '\n')
         print('Clé locale forte créée dans .env (fichier privé).', flush=True)
 
-    database = prepare_database(ROOT)
-    env['DATABASE_PATH'] = str(database)
-    print(f'Base locale protégée hors Git : {database}', flush=True)
+    # PostgreSQL stays on loopback even when the website is shared with --lan.
+    config = ensure_started(ROOT)
+    print('Sauvegarde PostgreSQL chiffrée…', flush=True)
+    backup(ROOT)
+    maintenance_env = dict(env, DB_MAINTENANCE='1')
+    run([str(python), 'manage.py', 'migrate'], maintenance_env)
+    grant_runtime(ROOT)
+    env.pop('DB_MAINTENANCE', None)
+    run([str(python), 'manage.py', 'check'], env)
+    print('PostgreSQL prêt : connexion TLS vérifiée, compte applicatif limité.', flush=True)
 
-    print('Vérification du site et préparation de la base de données…', flush=True)
-    for command in ('check', 'migrate', 'import_catalogue'):
-        run([str(python), 'manage.py', command], env)
-
+    worker = None
     server = subprocess.Popen([str(python), 'manage.py', 'runserver', f'{host}:{args.port}'],
                               cwd=ROOT, env=env, start_new_session=True)
     try:
+        worker = subprocess.Popen([str(python), 'manage.py', 'reconcile_reservations', '--loop'], cwd=ROOT, env=env)
         # Bypass system proxies for loopback readiness checks. Do not open a failed server.
-        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
         deadline = time.monotonic() + 30
         while time.monotonic() < deadline:
             if server.poll() is not None:
                 return server.returncode or 1
-            try:
-                with opener.open(url, timeout=1) as response:
-                    if response.status == 200:
-                        break
-            except (OSError, urllib.error.URLError):
-                pass
+            if local_server_ready(url):
+                break
             time.sleep(0.2)
         else:
-            print('Le serveur ne répond pas. Consultez les erreurs affichées ci-dessus.', flush=True)
+            print('Le serveur n’a pas confirmé son mode HTTP local. Consultez les erreurs affichées ci-dessus.', flush=True)
             return 1
         print(f'\nSite prêt : {url}', flush=True)
         if args.lan:
             print('Lien réseau : ouvrez cette adresse sur un appareil connecté au même Wi-Fi ou partage de connexion.', flush=True)
             print('Si vous changez de réseau : Ctrl+C, puis relancez ./start --lan pour détecter la nouvelle adresse.', flush=True)
-        print('Utilisez http:// (sans s). Le serveur local ne fournit pas de certificat HTTPS.', flush=True)
+        print('Mode HTTP local explicite : aucune redirection HTTPS, aucun HSTS, aucun proxy HTTPS.', flush=True)
         print('Gardez ce terminal ouvert. Pour arrêter le site : Ctrl+C.\n', flush=True)
-        if not args.no_browser:
-            try:
-                if not webbrowser.open(url):
-                    print(f'Ouvrez ce lien dans votre navigateur : {url}', flush=True)
-            except webbrowser.Error:
-                print(f'Ouvrez ce lien dans votre navigateur : {url}', flush=True)
+        open_browser(url, args.no_browser)
         return server.wait()
     except KeyboardInterrupt:
         print('\nArrêt du site local…', flush=True)
         return 0
     finally:
+        if worker is not None and worker.poll() is None:
+            worker.terminate()
+            try:worker.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                worker.kill();worker.wait()
         if server.poll() is None:
             os.killpg(server.pid, signal.SIGTERM)
             try:
@@ -163,6 +206,9 @@ import django, environ, PIL, stripe
 if __name__ == '__main__':
     try:
         sys.exit(main())
+    except (RuntimeError, FileNotFoundError) as error:
+        print(f'Démarrage impossible : {error}', file=sys.stderr)
+        sys.exit(1)
     except subprocess.CalledProcessError:
         print('Le démarrage a échoué. Corrigez l’erreur affichée puis relancez ./start.', file=sys.stderr)
         sys.exit(1)

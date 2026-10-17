@@ -1,7 +1,18 @@
 from django.urls import path
-from . import views
+from . import views, legal_views, privacy_views
 app_name='espace'
 urlpatterns=[
+ path('mes-donnees/',privacy_views.account,name='privacy_account'),
+ path('mes-donnees/exporter/',privacy_views.download,name='privacy_export'),
+ path('presentation-des-avis/',legal_views.document,{'page':'reviews'},name='review_policy'),
+ path('mentions-legales/',legal_views.document,{'page':'notice'},name='legal_notice'),
+ path('conditions-generales-de-vente/',legal_views.document,{'page':'terms'},name='sales_terms'),
+ path('confidentialite/',legal_views.document,{'page':'privacy'},name='privacy'),
+ path('cookies/',legal_views.document,{'page':'cookies'},name='cookies'),
+ path('retractation-et-garanties/',legal_views.document,{'page':'withdrawal'},name='withdrawal'),
+ path('retractation/formulaire.txt',legal_views.withdrawal_form,name='withdrawal_form'),
+ path('accessibilite/',legal_views.document,{'page':'accessibility'},name='accessibility'),
+ path('gestion/conformite/',legal_views.readiness,name='legal_readiness'),
  path('promotions/',views.collection,{'kind':'promotions'},name='promotions'),
  path('nouveaux-produits/',views.collection,{'kind':'new'},name='new'),
  path('meilleures-ventes/',views.collection,{'kind':'best'},name='best'),

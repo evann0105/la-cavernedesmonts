@@ -877,29 +877,27 @@ h2 {
 /* Animate only opacity and transforms; no scroll handlers or animation library. */
 @media (prefers-reduced-motion: no-preference) {
   .reveal-enter {
-    animation: gentle-arrival 480ms cubic-bezier(.2, .65, .3, 1) both;
+    animation: gentle-arrival 240ms cubic-bezier(.23, 1, .32, 1) both;
   }
   @keyframes gentle-arrival {
-    from { opacity: .35; transform: translateY(12px); }
+    from { opacity: .6; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
   }
   .button, .auth .btn {
-    transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+    transition: background-color 180ms ease, border-color 180ms ease, transform 160ms cubic-bezier(.23, 1, .32, 1);
   }
   .button:active, .auth .btn:active { transform: scale(.98); }
   .button > span, .family-arrow, .card-arrow {
     transition: transform 200ms ease, background-color 200ms ease, color 200ms ease;
   }
   .family-photo img, .product-image img, .moment > img {
-    transition: transform 450ms cubic-bezier(.2, .65, .3, 1);
+    transition: transform 240ms cubic-bezier(.23, 1, .32, 1);
   }
-  .button:focus-visible > span { transform: translateX(3px); }
 }
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .family-card:hover .family-photo img,
   .product-image:hover img,
   .moment:hover > img { transform: scale(1.025); }
-  .button:hover, .auth .btn:hover { transform: translateY(-2px); }
   .button:hover > span { transform: translateX(3px); }
   .family-card:hover .family-arrow, .product-image:hover .card-arrow { transform: translate(1px, -1px); }
   .button:active, .auth .btn:active { transform: scale(.98); }
@@ -908,7 +906,7 @@ h2 {
   .product-image:hover img, .moment:hover > img, .family-card:hover .family-photo img { transform: none; }
 }
 @media (max-width: 600px) and (prefers-reduced-motion: no-preference) {
-  .reveal-enter { animation-duration: 320ms; }
+  .reveal-enter { animation-duration: 200ms; }
   @keyframes gentle-arrival {
     from { opacity: .6; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }

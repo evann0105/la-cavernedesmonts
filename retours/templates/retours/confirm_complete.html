@@ -1,0 +1,13 @@
+{% extends 'core/catalog/base.html' %}{% load static %}
+{% block title %}Confirmer la clôture — {{ record.short_reference }}{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'retours/returns.css' %}?v=20261015-cloture">{% endblock %}
+{% block catalog_content %}<header class="catalog-heading"><div><p class="eyebrow">RETOUR {{ record.short_reference }}</p><h1>Vérifier avant de terminer.</h1><p>Le dossier n’est pas encore clôturé. Vérifiez les montants et les quantités ci-dessous.</p></div></header>
+{% if record.order.is_demo %}<p class="return-demo">Simulation : aucun transfert d’argent ni mouvement de stock réel ne sera effectué.</p>{% endif %}
+<section class="return-record"><h2>Récapitulatif de clôture</h2><p class="return-closure-summary"><strong>Remboursement confirmé : {{ record.display_amount|floatformat:2 }} € · {{ review.received_total }} article{{ review.received_total|pluralize }} reçu{{ review.received_total|pluralize }} · {{ review.restock_total }} article{{ review.restock_total|pluralize }} remis en stock</strong></p>
+<ul>{% for row in review.rows %}<li>{{ row.line.name }} — {{ row.line.size }} {{ row.line.color }}<br>{{ row.received }} reçu{{ row.received|pluralize }} · {{ row.restock }} à remettre en stock</li>{% endfor %}</ul>
+{% if review.not_restocked %}<p class="return-amount-alert">Quantité reçue qui ne sera pas remise en stock : {{ review.not_restocked }}. Vérifiez que ce choix est volontaire.</p>{% endif %}
+{% include 'retours/amounts.html' with summary_only=True %}
+<p>La validation termine le dossier et ajoute uniquement les quantités revendables ci-dessus au stock. Elle ne déclenche aucun nouveau remboursement. Un e-mail de clôture sera préparé pour le client.</p>
+<form method="post" class="return-form">{% csrf_token %}<input type="hidden" name="action" value="complete"><input type="hidden" name="completion_token" value="{{ review.token }}"><label><input type="checkbox" name="confirm_completion" value="yes" required> Je confirme ce récapitulatif et la clôture du dossier.</label><button class="button" type="submit">Terminé · confirmer la clôture et le stock</button></form>
+<form method="post" class="return-action-spaced">{% csrf_token %}<input type="hidden" name="action" value="edit_complete"><input type="hidden" name="confirm" value="on">{% for field in review.correction_fields %}<input type="hidden" name="{{ field.name }}" value="{{ field.value }}">{% endfor %}<button class="button button-outline" type="submit">Corriger les quantités</button></form>
+</section>{% endblock %}

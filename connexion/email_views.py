@@ -7,7 +7,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods
 from django.utils.translation import gettext_lazy as _
 from .security import check_current_password, PasswordCheckLimited, lockout
-from .email_verification import email_verified,email_ready,send_verification,token_matches,confirm_token
+from .email_verification import local_email_bypass,email_verified,email_ready,send_verification,token_matches,confirm_token
 
 
 class VerificationEmailForm(forms.Form):
@@ -31,6 +31,8 @@ class VerificationEmailForm(forms.Form):
 @login_required
 @require_http_methods(['GET','POST'])
 def verify_email(request):
+    if local_email_bypass():
+        return redirect('espace:account')
     verified=email_verified(request.user)
     form=VerificationEmailForm(request.POST if request.method=='POST' and not request.user.email else None,user=request.user)
     if request.method=='POST' and not verified:

@@ -1,0 +1,8 @@
+<div class="return-tracking" aria-label="Les deux suivis du dossier">
+<section class="return-track"><h3>Retour des articles</h3><p class="return-track-status">{{ record.get_return_state_display }}</p>
+<ol class="return-progress" aria-label="Étapes du retour">{% for step in record.return_steps %}<li class="return-progress-{{ step.state }}"{% if step.state == 'current' %} aria-current="step"{% endif %}><span>{{ step.label }}</span><small>{% if step.state == 'current' %}Étape actuelle{% elif step.state == 'done' %}Effectué{% elif step.state == 'unknown' %}Non renseigné{% else %}À venir{% endif %}</small>{% if step.date %}<time datetime="{{ step.date|date:'c' }}">{{ step.date|date:'d/m/Y' }}</time>{% endif %}</li>{% endfor %}</ol>
+<p class="return-track-note">{{ record.return_tracking_note }}</p></section>
+<section class="return-track{% if record.refund_state == 'failed' or record.refund_state == 'review' %} return-track-alert{% endif %}"><h3>Remboursement</h3><p class="return-track-status">{{ record.get_refund_state_display }}</p>
+<ol class="return-progress" aria-label="Étapes du remboursement">{% for step in record.refund_steps %}<li class="return-progress-{{ step.state }}"{% if step.state == 'current' or step.state == 'error' %} aria-current="step"{% endif %}><span>{{ step.label }}</span><small>{% if step.state == 'current' %}Étape actuelle{% elif step.state == 'error' %}Action nécessaire{% elif step.state == 'done' %}Effectué{% else %}À venir{% endif %}</small></li>{% endfor %}</ol>
+<p class="return-track-note">{{ record.refund_tracking_note }}</p></section>
+</div>

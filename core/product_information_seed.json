@@ -1,0 +1,1270 @@
+{
+  "checked_on": "2026-10-16",
+  "sources": {
+    "peak": {
+      "label": "Peak Mountain — coordonnées officielles de Somotex",
+      "url": "https://peak-mountain.fr/content/2-mentions-legales"
+    },
+    "peak_contact": {
+      "label": "Peak Mountain — contact officiel",
+      "url": "https://peak-mountain.fr/"
+    },
+    "amateis": {
+      "label": "Aulp — coordonnées officielles d’Amateis",
+      "url": "https://www.aulp.fr/mentions-legales-et-donnees-personnelles"
+    },
+    "vertigo": {
+      "label": "Amateis — marque Vertigo Alpes",
+      "url": "https://www.amateis.fr/vertigo"
+    },
+    "artextyl": {
+      "label": "Artextyl — coordonnées officielles",
+      "url": "https://artextyl.com/mentions-legales/"
+    },
+    "artextyl_brands": {
+      "label": "Artextyl — marques du groupe",
+      "url": "https://artextyl.com/en/nos-marques-en/"
+    },
+    "milor": {
+      "label": "Aulp — fiche technique MILOR",
+      "url": "https://www.aulp.fr/products/milor"
+    },
+    "corda": {
+      "label": "Aulp — fiche technique CORDA",
+      "url": "https://www.aulp.fr/products/veste-sans-manches-femme-corda"
+    },
+    "adagio": {
+      "label": "Peak Mountain — fiche technique ADAGIO/YU",
+      "url": "https://peak-mountain.fr/blouson-polaire/1475-14694-blouson-polaire-femme-adagio-yu.html"
+    },
+    "antilope": {
+      "label": "Peak Mountain — fiche technique ANTILOPE",
+      "url": "https://peak-mountain.fr/doudoune-sans-manches/1726-16469-blouson-polaire-antilope-xi-1-bm.html"
+    },
+    "antemos": {
+      "label": "Peak Mountain — fiche technique ANTEMOS/SP",
+      "url": "https://peak-mountain.fr/blouson-polaire/1436-14216-blouson-polaire-femme-antemos-sp.html"
+    },
+    "anaples": {
+      "label": "E.Leclerc — fiche ANAPLES/YU, EAN 3430890061121",
+      "url": "https://www.e.leclerc/fp/blouson-polaire-femme-anaples-3430890061121"
+    },
+    "anaples_cross": {
+      "label": "Decathlon — fiche technique ANAPLES",
+      "url": "https://www.decathlon.pt/p/mp/peak-mountain/camisola-peak-mountain-anaples-mulher/_/R-p-900224cd-8fef-4e7d-945a-f88bd61574f7"
+    },
+    "origin_5": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1010-veste-tri-matieres-femme-blanche-capuche-amovible-peak-mountain.html"
+    },
+    "origin_17": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/101-echarpe-bebe-.html"
+    },
+    "origin_35": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/884-veste-polaire-cocoon-femme-blanc-chine-gris-et-bleu-avec-grosse-fermeture.html"
+    },
+    "origin_36": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/888-veste-polaire-cocoon-femme-gris-chinee-et-noire-avec-grosse-fermeture.html"
+    },
+    "origin_39": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/900-veste-polaire-femme-blanche-et-noire-molletonnee-avec-fermeture-asymetrique.html"
+    },
+    "origin_57": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1026-veste-tri-matieres-femme-outdoor-noir-et-blanc-anaples.html"
+    },
+    "origin_59": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1012-veste-bi-matieres-femme-outdoor-noir-et-blanc.html"
+    },
+    "origin_64": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1054-veste-tri-matieres-femme-outdoor-noir-et-blanc-geonorway.html"
+    },
+    "origin_65": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1056-veste-outdoor-a-capuche-effet-hybride-anapurna.html"
+    },
+    "origin_67": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1072-gilet-sans-manche-corda-hybride-femme-aulp.html"
+    },
+    "origin_68": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1074-gilet-bi-matiere-sans-manche-femme-peak-mountain-bleu-marine.html"
+    },
+    "origin_69": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1075-veste-sans-manche-femme-en-fausse-fourrure-toute-douce-coloris-vert-kaki.html"
+    },
+    "origin_70": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1076-veste-sans-manche-matelassee-femme-bi-matiere-coloris-noir.html"
+    },
+    "origin_71": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1077-veste-sans-manche-matelassee-femme-bi-matiere-coloris-blanc.html"
+    },
+    "origin_72": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1078-veste-sans-manche-matelassee-femme-bi-matiere-coloris-bleu-marine.html"
+    },
+    "origin_87": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1061-veste-polaire-chinee-home-geonorway.html"
+    },
+    "origin_88": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1062-veste-polaire-chinee-home-geonorway.html"
+    },
+    "origin_92": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1067-veste-polaire-hybride-aulp-milor-homme.html"
+    },
+    "origin_93": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1068-veste-polaire-hybride-aulp-milor-homme.html"
+    },
+    "origin_94": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/1069-veste-polaire-hybride-aulp-milor-homme.html"
+    },
+    "origin_96": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/75-polaire-garcon-ceven.html"
+    },
+    "origin_97": {
+      "label": "La Caverne des Monts — fiche d’origine de cet article",
+      "url": "https://la-cavernedesmonts.fr/accueil/76-polaire-garcon-ceven.html"
+    }
+  },
+  "products": [
+    {
+      "slug": "veste-hybride-multi-matieres-femme",
+      "source_url": null,
+      "facts": {
+        "brand": "Peak Mountain",
+        "brand_contact": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+        "composition": "100 % polyester.",
+        "model_reference": "ANTEMOS/SP"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Peak Mountain",
+          "sources": [
+            {
+              "label": "Peak Mountain — contact officiel",
+              "url": "https://peak-mountain.fr/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+          "sources": [
+            {
+              "label": "Peak Mountain — coordonnées officielles de Somotex",
+              "url": "https://peak-mountain.fr/content/2-mentions-legales"
+            },
+            {
+              "label": "Peak Mountain — contact officiel",
+              "url": "https://peak-mountain.fr/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "composition": {
+          "value": "100 % polyester.",
+          "sources": [
+            {
+              "label": "Peak Mountain — fiche technique ANTEMOS/SP",
+              "url": "https://peak-mountain.fr/blouson-polaire/1436-14216-blouson-polaire-femme-antemos-sp.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "model_reference": {
+          "value": "ANTEMOS/SP",
+          "sources": [
+            {
+              "label": "Peak Mountain — fiche technique ANTEMOS/SP",
+              "url": "https://peak-mountain.fr/blouson-polaire/1436-14216-blouson-polaire-femme-antemos-sp.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Coordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "documented"
+    },
+    {
+      "slug": "veste-multi-matieres-femme-avec-doudoune",
+      "source_url": null,
+      "facts": {
+        "brand": "Peak Mountain",
+        "brand_contact": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Peak Mountain",
+          "sources": [
+            {
+              "label": "Peak Mountain — contact officiel",
+              "url": "https://peak-mountain.fr/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+          "sources": [
+            {
+              "label": "Peak Mountain — coordonnées officielles de Somotex",
+              "url": "https://peak-mountain.fr/content/2-mentions-legales"
+            },
+            {
+              "label": "Peak Mountain — contact officiel",
+              "url": "https://peak-mountain.fr/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition chiffrée non confirmée pour cette référence exacte. Photo de l’étiquette de composition ou fiche fournisseur nécessaire ; ne pas extrapoler depuis un autre modèle.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "unconfirmed"
+    },
+    {
+      "slug": "veste-tri-matieres-femme-blanche-capuche",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1010-veste-tri-matieres-femme-blanche-capuche-amovible-peak-mountain.html",
+      "facts": {
+        "brand": "Peak Mountain",
+        "brand_contact": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Peak Mountain",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1010-veste-tri-matieres-femme-blanche-capuche-amovible-peak-mountain.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+          "sources": [
+            {
+              "label": "Peak Mountain — coordonnées officielles de Somotex",
+              "url": "https://peak-mountain.fr/content/2-mentions-legales"
+            },
+            {
+              "label": "Peak Mountain — contact officiel",
+              "url": "https://peak-mountain.fr/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition chiffrée non confirmée pour cette référence exacte. Photo de l’étiquette de composition ou fiche fournisseur nécessaire ; ne pas extrapoler depuis un autre modèle.\nLe modèle ANDOMO actuel n’a pas permis de confirmer la version exacte de cette pièce.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "unconfirmed"
+    },
+    {
+      "slug": "veste-polaire-de-montagne-beige",
+      "source_url": null,
+      "facts": {},
+      "evidence": {},
+      "review_notes": "Composition chiffrée non confirmée pour cette référence exacte. Photo de l’étiquette de composition ou fiche fournisseur nécessaire ; ne pas extrapoler depuis un autre modèle.\nMarque et identité du fabricant non confirmées : relever l’étiquette de marque et l’opérateur indiqué sur le produit.",
+      "composition_status": "unconfirmed"
+    },
+    {
+      "slug": "bebe-101-echarpe-bebe",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/101-echarpe-bebe-.html",
+      "facts": {
+        "composition": "Polaire : polyester.\nDoublure : coton.\nLes pourcentages ne sont pas précisés sur la fiche d’origine."
+      },
+      "evidence": {
+        "composition": {
+          "value": "Polaire : polyester.\nDoublure : coton.\nLes pourcentages ne sont pas précisés sur la fiche d’origine.",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/101-echarpe-bebe-.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition seulement partielle : obtenir les pourcentages et la répartition par partie sur l’étiquette ou la fiche fournisseur.\nMarque et identité du fabricant non confirmées : relever l’étiquette de marque et l’opérateur indiqué sur le produit.",
+      "composition_status": "partial"
+    },
+    {
+      "slug": "femme-884-veste-polaire-cocoon-femme-blanc-chine-gris-et-bleu-avec-grosse-fermeture",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/884-veste-polaire-cocoon-femme-blanc-chine-gris-et-bleu-avec-grosse-fermeture.html",
+      "facts": {
+        "brand": "Vertigo Alpes",
+        "brand_contact": "AMATEIS — responsable de la marque Vertigo Alpes\n18 rue des Prés Riants\n74150 Rumilly, France\ncontact@amateis.fr\n04 50 64 09 88"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Vertigo Alpes",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/884-veste-polaire-cocoon-femme-blanc-chine-gris-et-bleu-avec-grosse-fermeture.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "AMATEIS — responsable de la marque Vertigo Alpes\n18 rue des Prés Riants\n74150 Rumilly, France\ncontact@amateis.fr\n04 50 64 09 88",
+          "sources": [
+            {
+              "label": "Aulp — coordonnées officielles d’Amateis",
+              "url": "https://www.aulp.fr/mentions-legales-et-donnees-personnelles"
+            },
+            {
+              "label": "Amateis — marque Vertigo Alpes",
+              "url": "https://www.amateis.fr/vertigo"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition chiffrée non confirmée pour cette référence exacte. Photo de l’étiquette de composition ou fiche fournisseur nécessaire ; ne pas extrapoler depuis un autre modèle.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "unconfirmed"
+    },
+    {
+      "slug": "femme-888-veste-polaire-cocoon-femme-gris-chinee-et-noire-avec-grosse-fermeture",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/888-veste-polaire-cocoon-femme-gris-chinee-et-noire-avec-grosse-fermeture.html",
+      "facts": {
+        "brand": "Vertigo Alpes",
+        "brand_contact": "AMATEIS — responsable de la marque Vertigo Alpes\n18 rue des Prés Riants\n74150 Rumilly, France\ncontact@amateis.fr\n04 50 64 09 88"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Vertigo Alpes",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/888-veste-polaire-cocoon-femme-gris-chinee-et-noire-avec-grosse-fermeture.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "AMATEIS — responsable de la marque Vertigo Alpes\n18 rue des Prés Riants\n74150 Rumilly, France\ncontact@amateis.fr\n04 50 64 09 88",
+          "sources": [
+            {
+              "label": "Aulp — coordonnées officielles d’Amateis",
+              "url": "https://www.aulp.fr/mentions-legales-et-donnees-personnelles"
+            },
+            {
+              "label": "Amateis — marque Vertigo Alpes",
+              "url": "https://www.amateis.fr/vertigo"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition chiffrée non confirmée pour cette référence exacte. Photo de l’étiquette de composition ou fiche fournisseur nécessaire ; ne pas extrapoler depuis un autre modèle.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "unconfirmed"
+    },
+    {
+      "slug": "femme-900-veste-polaire-femme-blanche-et-noire-molletonnee-avec-fermeture-asymetrique",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/900-veste-polaire-femme-blanche-et-noire-molletonnee-avec-fermeture-asymetrique.html",
+      "facts": {
+        "brand": "Aulp",
+        "brand_contact": "AMATEIS — responsable de la marque Aulp\n18 rue des Prés Riants\n74150 Rumilly, France\ncontact@aulp.fr\n04 50 64 09 88"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Aulp",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/900-veste-polaire-femme-blanche-et-noire-molletonnee-avec-fermeture-asymetrique.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "AMATEIS — responsable de la marque Aulp\n18 rue des Prés Riants\n74150 Rumilly, France\ncontact@aulp.fr\n04 50 64 09 88",
+          "sources": [
+            {
+              "label": "Aulp — coordonnées officielles d’Amateis",
+              "url": "https://www.aulp.fr/mentions-legales-et-donnees-personnelles"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition chiffrée non confirmée pour cette référence exacte. Photo de l’étiquette de composition ou fiche fournisseur nécessaire ; ne pas extrapoler depuis un autre modèle.\nLe gilet sans manches UNIMA actuel est différent de cette veste à manches longues : sa composition n’a pas été reprise.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "unconfirmed"
+    },
+    {
+      "slug": "femme-1026-veste-tri-matieres-femme-outdoor-noir-et-blanc-anaples",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1026-veste-tri-matieres-femme-outdoor-noir-et-blanc-anaples.html",
+      "facts": {
+        "brand": "Peak Mountain",
+        "brand_contact": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+        "composition": "Matière 1 : 100 % polyamide.\nMatière 2 : 100 % polyester.\nMatière 3 : 95 % polyester, 5 % élasthanne.\nGarnissage : 100 % polyester.",
+        "model_reference": "ANAPLES"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Peak Mountain",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1026-veste-tri-matieres-femme-outdoor-noir-et-blanc-anaples.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+          "sources": [
+            {
+              "label": "Peak Mountain — coordonnées officielles de Somotex",
+              "url": "https://peak-mountain.fr/content/2-mentions-legales"
+            },
+            {
+              "label": "Peak Mountain — contact officiel",
+              "url": "https://peak-mountain.fr/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "composition": {
+          "value": "Matière 1 : 100 % polyamide.\nMatière 2 : 100 % polyester.\nMatière 3 : 95 % polyester, 5 % élasthanne.\nGarnissage : 100 % polyester.",
+          "sources": [
+            {
+              "label": "E.Leclerc — fiche ANAPLES/YU, EAN 3430890061121",
+              "url": "https://www.e.leclerc/fp/blouson-polaire-femme-anaples-3430890061121"
+            },
+            {
+              "label": "Decathlon — fiche technique ANAPLES",
+              "url": "https://www.decathlon.pt/p/mp/peak-mountain/camisola-peak-mountain-anaples-mulher/_/R-p-900224cd-8fef-4e7d-945a-f88bd61574f7"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "model_reference": {
+          "value": "ANAPLES",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1026-veste-tri-matieres-femme-outdoor-noir-et-blanc-anaples.html"
+            },
+            {
+              "label": "E.Leclerc — fiche ANAPLES/YU, EAN 3430890061121",
+              "url": "https://www.e.leclerc/fp/blouson-polaire-femme-anaples-3430890061121"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition issue de fiches distributeurs pour ANAPLES/YU, recoupées avec la référence et le visuel d’origine. Attribution précise des trois matières par empiècement à confirmer sur l’étiquette.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "documented"
+    },
+    {
+      "slug": "femme-1012-veste-bi-matieres-femme-outdoor-noir-et-blanc",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1012-veste-bi-matieres-femme-outdoor-noir-et-blanc.html",
+      "facts": {
+        "brand": "Peak Mountain",
+        "brand_contact": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+        "composition": "100 % polyester.",
+        "model_reference": "ADAGIO/YU"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Peak Mountain",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1012-veste-bi-matieres-femme-outdoor-noir-et-blanc.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+          "sources": [
+            {
+              "label": "Peak Mountain — coordonnées officielles de Somotex",
+              "url": "https://peak-mountain.fr/content/2-mentions-legales"
+            },
+            {
+              "label": "Peak Mountain — contact officiel",
+              "url": "https://peak-mountain.fr/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "composition": {
+          "value": "100 % polyester.",
+          "sources": [
+            {
+              "label": "Peak Mountain — fiche technique ADAGIO/YU",
+              "url": "https://peak-mountain.fr/blouson-polaire/1475-14694-blouson-polaire-femme-adagio-yu.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "model_reference": {
+          "value": "ADAGIO/YU",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1012-veste-bi-matieres-femme-outdoor-noir-et-blanc.html"
+            },
+            {
+              "label": "Peak Mountain — fiche technique ADAGIO/YU",
+              "url": "https://peak-mountain.fr/blouson-polaire/1475-14694-blouson-polaire-femme-adagio-yu.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Coordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "documented"
+    },
+    {
+      "slug": "femme-1054-veste-tri-matieres-femme-outdoor-noir-et-blanc-geonorway",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1054-veste-tri-matieres-femme-outdoor-noir-et-blanc-geonorway.html",
+      "facts": {
+        "brand": "Geographical Norway",
+        "brand_contact": "ARTEXTYL SAS — groupe de la marque Geographical Norway\n87-89 rue Magenta\n69100 Villeurbanne, France\ncontact@artextyl.fr\n04 78 68 02 14",
+        "composition": "Polyester et polyamide ; répartition non précisée sur la fiche d’origine."
+      },
+      "evidence": {
+        "brand": {
+          "value": "Geographical Norway",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1054-veste-tri-matieres-femme-outdoor-noir-et-blanc-geonorway.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "ARTEXTYL SAS — groupe de la marque Geographical Norway\n87-89 rue Magenta\n69100 Villeurbanne, France\ncontact@artextyl.fr\n04 78 68 02 14",
+          "sources": [
+            {
+              "label": "Artextyl — coordonnées officielles",
+              "url": "https://artextyl.com/mentions-legales/"
+            },
+            {
+              "label": "Artextyl — marques du groupe",
+              "url": "https://artextyl.com/en/nos-marques-en/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "composition": {
+          "value": "Polyester et polyamide ; répartition non précisée sur la fiche d’origine.",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1054-veste-tri-matieres-femme-outdoor-noir-et-blanc-geonorway.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition seulement partielle : obtenir les pourcentages et la répartition par partie sur l’étiquette ou la fiche fournisseur.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "partial"
+    },
+    {
+      "slug": "femme-1056-veste-outdoor-a-capuche-effet-hybride-anapurna",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1056-veste-outdoor-a-capuche-effet-hybride-anapurna.html",
+      "facts": {
+        "brand": "Geographical Norway",
+        "brand_contact": "ARTEXTYL SAS — groupe de la marque Geographical Norway\n87-89 rue Magenta\n69100 Villeurbanne, France\ncontact@artextyl.fr\n04 78 68 02 14",
+        "composition": "Polyamide et polyester ; répartition non précisée sur la fiche d’origine."
+      },
+      "evidence": {
+        "brand": {
+          "value": "Geographical Norway",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1056-veste-outdoor-a-capuche-effet-hybride-anapurna.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "ARTEXTYL SAS — groupe de la marque Geographical Norway\n87-89 rue Magenta\n69100 Villeurbanne, France\ncontact@artextyl.fr\n04 78 68 02 14",
+          "sources": [
+            {
+              "label": "Artextyl — coordonnées officielles",
+              "url": "https://artextyl.com/mentions-legales/"
+            },
+            {
+              "label": "Artextyl — marques du groupe",
+              "url": "https://artextyl.com/en/nos-marques-en/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "composition": {
+          "value": "Polyamide et polyester ; répartition non précisée sur la fiche d’origine.",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1056-veste-outdoor-a-capuche-effet-hybride-anapurna.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition seulement partielle : obtenir les pourcentages et la répartition par partie sur l’étiquette ou la fiche fournisseur.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "partial"
+    },
+    {
+      "slug": "femme-1072-gilet-sans-manche-corda-hybride-femme-aulp",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1072-gilet-sans-manche-corda-hybride-femme-aulp.html",
+      "facts": {
+        "brand": "Aulp",
+        "brand_contact": "AMATEIS — responsable de la marque Aulp\n18 rue des Prés Riants\n74150 Rumilly, France\ncontact@aulp.fr\n04 50 64 09 88",
+        "composition": "Polaire double face : 100 % polyester.\nTissu matelassé 380T : 100 % polyamide (nylon).\nGarnissage : 100 % polyester.",
+        "model_reference": "CORDA"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Aulp",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1072-gilet-sans-manche-corda-hybride-femme-aulp.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "AMATEIS — responsable de la marque Aulp\n18 rue des Prés Riants\n74150 Rumilly, France\ncontact@aulp.fr\n04 50 64 09 88",
+          "sources": [
+            {
+              "label": "Aulp — coordonnées officielles d’Amateis",
+              "url": "https://www.aulp.fr/mentions-legales-et-donnees-personnelles"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "composition": {
+          "value": "Polaire double face : 100 % polyester.\nTissu matelassé 380T : 100 % polyamide (nylon).\nGarnissage : 100 % polyester.",
+          "sources": [
+            {
+              "label": "Aulp — fiche technique CORDA",
+              "url": "https://www.aulp.fr/products/veste-sans-manches-femme-corda"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "model_reference": {
+          "value": "CORDA",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1072-gilet-sans-manche-corda-hybride-femme-aulp.html"
+            },
+            {
+              "label": "Aulp — fiche technique CORDA",
+              "url": "https://www.aulp.fr/products/veste-sans-manches-femme-corda"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Coordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "documented"
+    },
+    {
+      "slug": "femme-1074-gilet-bi-matiere-sans-manche-femme-peak-mountain-bleu-marine",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1074-gilet-bi-matiere-sans-manche-femme-peak-mountain-bleu-marine.html",
+      "facts": {
+        "brand": "Peak Mountain",
+        "brand_contact": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Peak Mountain",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1074-gilet-bi-matiere-sans-manche-femme-peak-mountain-bleu-marine.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+          "sources": [
+            {
+              "label": "Peak Mountain — coordonnées officielles de Somotex",
+              "url": "https://peak-mountain.fr/content/2-mentions-legales"
+            },
+            {
+              "label": "Peak Mountain — contact officiel",
+              "url": "https://peak-mountain.fr/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition chiffrée non confirmée pour cette référence exacte. Photo de l’étiquette de composition ou fiche fournisseur nécessaire ; ne pas extrapoler depuis un autre modèle.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "unconfirmed"
+    },
+    {
+      "slug": "femme-1075-veste-sans-manche-femme-en-fausse-fourrure-toute-douce-coloris-vert-kaki",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1075-veste-sans-manche-femme-en-fausse-fourrure-toute-douce-coloris-vert-kaki.html",
+      "facts": {
+        "brand": "Peak Mountain",
+        "brand_contact": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Peak Mountain",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1075-veste-sans-manche-femme-en-fausse-fourrure-toute-douce-coloris-vert-kaki.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+          "sources": [
+            {
+              "label": "Peak Mountain — coordonnées officielles de Somotex",
+              "url": "https://peak-mountain.fr/content/2-mentions-legales"
+            },
+            {
+              "label": "Peak Mountain — contact officiel",
+              "url": "https://peak-mountain.fr/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition chiffrée non confirmée pour cette référence exacte. Photo de l’étiquette de composition ou fiche fournisseur nécessaire ; ne pas extrapoler depuis un autre modèle.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "unconfirmed"
+    },
+    {
+      "slug": "femme-1076-veste-sans-manche-matelassee-femme-bi-matiere-coloris-noir",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1076-veste-sans-manche-matelassee-femme-bi-matiere-coloris-noir.html",
+      "facts": {
+        "brand": "Peak Mountain",
+        "brand_contact": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+        "composition": "100 % polyester.",
+        "model_reference": "ANTILOPE"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Peak Mountain",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1076-veste-sans-manche-matelassee-femme-bi-matiere-coloris-noir.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+          "sources": [
+            {
+              "label": "Peak Mountain — coordonnées officielles de Somotex",
+              "url": "https://peak-mountain.fr/content/2-mentions-legales"
+            },
+            {
+              "label": "Peak Mountain — contact officiel",
+              "url": "https://peak-mountain.fr/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "composition": {
+          "value": "100 % polyester.",
+          "sources": [
+            {
+              "label": "Peak Mountain — fiche technique ANTILOPE",
+              "url": "https://peak-mountain.fr/doudoune-sans-manches/1726-16469-blouson-polaire-antilope-xi-1-bm.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "model_reference": {
+          "value": "ANTILOPE",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1076-veste-sans-manche-matelassee-femme-bi-matiere-coloris-noir.html"
+            },
+            {
+              "label": "Peak Mountain — fiche technique ANTILOPE",
+              "url": "https://peak-mountain.fr/doudoune-sans-manches/1726-16469-blouson-polaire-antilope-xi-1-bm.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Coordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "documented"
+    },
+    {
+      "slug": "femme-1077-veste-sans-manche-matelassee-femme-bi-matiere-coloris-blanc",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1077-veste-sans-manche-matelassee-femme-bi-matiere-coloris-blanc.html",
+      "facts": {
+        "brand": "Peak Mountain",
+        "brand_contact": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+        "composition": "100 % polyester.",
+        "model_reference": "ANTILOPE"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Peak Mountain",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1077-veste-sans-manche-matelassee-femme-bi-matiere-coloris-blanc.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+          "sources": [
+            {
+              "label": "Peak Mountain — coordonnées officielles de Somotex",
+              "url": "https://peak-mountain.fr/content/2-mentions-legales"
+            },
+            {
+              "label": "Peak Mountain — contact officiel",
+              "url": "https://peak-mountain.fr/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "composition": {
+          "value": "100 % polyester.",
+          "sources": [
+            {
+              "label": "Peak Mountain — fiche technique ANTILOPE",
+              "url": "https://peak-mountain.fr/doudoune-sans-manches/1726-16469-blouson-polaire-antilope-xi-1-bm.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "model_reference": {
+          "value": "ANTILOPE",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1077-veste-sans-manche-matelassee-femme-bi-matiere-coloris-blanc.html"
+            },
+            {
+              "label": "Peak Mountain — fiche technique ANTILOPE",
+              "url": "https://peak-mountain.fr/doudoune-sans-manches/1726-16469-blouson-polaire-antilope-xi-1-bm.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Coordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "documented"
+    },
+    {
+      "slug": "femme-1078-veste-sans-manche-matelassee-femme-bi-matiere-coloris-bleu-marine",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1078-veste-sans-manche-matelassee-femme-bi-matiere-coloris-bleu-marine.html",
+      "facts": {
+        "brand": "Peak Mountain",
+        "brand_contact": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+        "composition": "100 % polyester.",
+        "model_reference": "ANTILOPE"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Peak Mountain",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1078-veste-sans-manche-matelassee-femme-bi-matiere-coloris-bleu-marine.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+          "sources": [
+            {
+              "label": "Peak Mountain — coordonnées officielles de Somotex",
+              "url": "https://peak-mountain.fr/content/2-mentions-legales"
+            },
+            {
+              "label": "Peak Mountain — contact officiel",
+              "url": "https://peak-mountain.fr/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "composition": {
+          "value": "100 % polyester.",
+          "sources": [
+            {
+              "label": "Peak Mountain — fiche technique ANTILOPE",
+              "url": "https://peak-mountain.fr/doudoune-sans-manches/1726-16469-blouson-polaire-antilope-xi-1-bm.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "model_reference": {
+          "value": "ANTILOPE",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1078-veste-sans-manche-matelassee-femme-bi-matiere-coloris-bleu-marine.html"
+            },
+            {
+              "label": "Peak Mountain — fiche technique ANTILOPE",
+              "url": "https://peak-mountain.fr/doudoune-sans-manches/1726-16469-blouson-polaire-antilope-xi-1-bm.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Coordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "documented"
+    },
+    {
+      "slug": "homme-1061-veste-polaire-chinee-home-geonorway",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1061-veste-polaire-chinee-home-geonorway.html",
+      "facts": {
+        "brand": "Geographical Norway",
+        "brand_contact": "ARTEXTYL SAS — groupe de la marque Geographical Norway\n87-89 rue Magenta\n69100 Villeurbanne, France\ncontact@artextyl.fr\n04 78 68 02 14"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Geographical Norway",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1061-veste-polaire-chinee-home-geonorway.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "ARTEXTYL SAS — groupe de la marque Geographical Norway\n87-89 rue Magenta\n69100 Villeurbanne, France\ncontact@artextyl.fr\n04 78 68 02 14",
+          "sources": [
+            {
+              "label": "Artextyl — coordonnées officielles",
+              "url": "https://artextyl.com/mentions-legales/"
+            },
+            {
+              "label": "Artextyl — marques du groupe",
+              "url": "https://artextyl.com/en/nos-marques-en/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition chiffrée non confirmée pour cette référence exacte. Photo de l’étiquette de composition ou fiche fournisseur nécessaire ; ne pas extrapoler depuis un autre modèle.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "unconfirmed"
+    },
+    {
+      "slug": "homme-1062-veste-polaire-chinee-home-geonorway",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1062-veste-polaire-chinee-home-geonorway.html",
+      "facts": {
+        "brand": "Geographical Norway",
+        "brand_contact": "ARTEXTYL SAS — groupe de la marque Geographical Norway\n87-89 rue Magenta\n69100 Villeurbanne, France\ncontact@artextyl.fr\n04 78 68 02 14"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Geographical Norway",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1062-veste-polaire-chinee-home-geonorway.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "ARTEXTYL SAS — groupe de la marque Geographical Norway\n87-89 rue Magenta\n69100 Villeurbanne, France\ncontact@artextyl.fr\n04 78 68 02 14",
+          "sources": [
+            {
+              "label": "Artextyl — coordonnées officielles",
+              "url": "https://artextyl.com/mentions-legales/"
+            },
+            {
+              "label": "Artextyl — marques du groupe",
+              "url": "https://artextyl.com/en/nos-marques-en/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition chiffrée non confirmée pour cette référence exacte. Photo de l’étiquette de composition ou fiche fournisseur nécessaire ; ne pas extrapoler depuis un autre modèle.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "unconfirmed"
+    },
+    {
+      "slug": "homme-1067-veste-polaire-hybride-aulp-milor-homme",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1067-veste-polaire-hybride-aulp-milor-homme.html",
+      "facts": {
+        "brand": "Aulp",
+        "brand_contact": "AMATEIS — responsable de la marque Aulp\n18 rue des Prés Riants\n74150 Rumilly, France\ncontact@aulp.fr\n04 50 64 09 88",
+        "composition": "Polaire chinée : 100 % polyester.\nDeuxième tissu : 100 % polyamide (nylon).",
+        "model_reference": "MILOR"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Aulp",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1067-veste-polaire-hybride-aulp-milor-homme.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "AMATEIS — responsable de la marque Aulp\n18 rue des Prés Riants\n74150 Rumilly, France\ncontact@aulp.fr\n04 50 64 09 88",
+          "sources": [
+            {
+              "label": "Aulp — coordonnées officielles d’Amateis",
+              "url": "https://www.aulp.fr/mentions-legales-et-donnees-personnelles"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "composition": {
+          "value": "Polaire chinée : 100 % polyester.\nDeuxième tissu : 100 % polyamide (nylon).",
+          "sources": [
+            {
+              "label": "Aulp — fiche technique MILOR",
+              "url": "https://www.aulp.fr/products/milor"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "model_reference": {
+          "value": "MILOR",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1067-veste-polaire-hybride-aulp-milor-homme.html"
+            },
+            {
+              "label": "Aulp — fiche technique MILOR",
+              "url": "https://www.aulp.fr/products/milor"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Coordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "documented"
+    },
+    {
+      "slug": "homme-1068-veste-polaire-hybride-aulp-milor-homme",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1068-veste-polaire-hybride-aulp-milor-homme.html",
+      "facts": {
+        "brand": "Aulp",
+        "brand_contact": "AMATEIS — responsable de la marque Aulp\n18 rue des Prés Riants\n74150 Rumilly, France\ncontact@aulp.fr\n04 50 64 09 88",
+        "composition": "Polaire chinée : 100 % polyester.\nDeuxième tissu : 100 % polyamide (nylon).",
+        "model_reference": "MILOR"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Aulp",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1068-veste-polaire-hybride-aulp-milor-homme.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "AMATEIS — responsable de la marque Aulp\n18 rue des Prés Riants\n74150 Rumilly, France\ncontact@aulp.fr\n04 50 64 09 88",
+          "sources": [
+            {
+              "label": "Aulp — coordonnées officielles d’Amateis",
+              "url": "https://www.aulp.fr/mentions-legales-et-donnees-personnelles"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "composition": {
+          "value": "Polaire chinée : 100 % polyester.\nDeuxième tissu : 100 % polyamide (nylon).",
+          "sources": [
+            {
+              "label": "Aulp — fiche technique MILOR",
+              "url": "https://www.aulp.fr/products/milor"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "model_reference": {
+          "value": "MILOR",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1068-veste-polaire-hybride-aulp-milor-homme.html"
+            },
+            {
+              "label": "Aulp — fiche technique MILOR",
+              "url": "https://www.aulp.fr/products/milor"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Coordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "documented"
+    },
+    {
+      "slug": "homme-1069-veste-polaire-hybride-aulp-milor-homme",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1069-veste-polaire-hybride-aulp-milor-homme.html",
+      "facts": {
+        "brand": "Aulp",
+        "brand_contact": "AMATEIS — responsable de la marque Aulp\n18 rue des Prés Riants\n74150 Rumilly, France\ncontact@aulp.fr\n04 50 64 09 88"
+      },
+      "evidence": {
+        "brand": {
+          "value": "Aulp",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/1069-veste-polaire-hybride-aulp-milor-homme.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "AMATEIS — responsable de la marque Aulp\n18 rue des Prés Riants\n74150 Rumilly, France\ncontact@aulp.fr\n04 50 64 09 88",
+          "sources": [
+            {
+              "label": "Aulp — coordonnées officielles d’Amateis",
+              "url": "https://www.aulp.fr/mentions-legales-et-donnees-personnelles"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition chiffrée non confirmée pour cette référence exacte. Photo de l’étiquette de composition ou fiche fournisseur nécessaire ; ne pas extrapoler depuis un autre modèle.\nLa fiche MILOR sans capuche ne suffit pas à attester la composition du modèle à capuche.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "unconfirmed"
+    },
+    {
+      "slug": "enfant-75-polaire-garcon-ceven",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/75-polaire-garcon-ceven.html",
+      "facts": {
+        "brand": "Peak Mountain",
+        "brand_contact": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+        "composition": "Polyester ; proportion non précisée sur la fiche d’origine."
+      },
+      "evidence": {
+        "brand": {
+          "value": "Peak Mountain",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/75-polaire-garcon-ceven.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+          "sources": [
+            {
+              "label": "Peak Mountain — coordonnées officielles de Somotex",
+              "url": "https://peak-mountain.fr/content/2-mentions-legales"
+            },
+            {
+              "label": "Peak Mountain — contact officiel",
+              "url": "https://peak-mountain.fr/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "composition": {
+          "value": "Polyester ; proportion non précisée sur la fiche d’origine.",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/75-polaire-garcon-ceven.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition seulement partielle : obtenir les pourcentages et la répartition par partie sur l’étiquette ou la fiche fournisseur.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "partial"
+    },
+    {
+      "slug": "enfant-76-polaire-garcon-ceven",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/76-polaire-garcon-ceven.html",
+      "facts": {
+        "brand": "Peak Mountain",
+        "brand_contact": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+        "composition": "Polyester ; proportion non précisée sur la fiche d’origine."
+      },
+      "evidence": {
+        "brand": {
+          "value": "Peak Mountain",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/76-polaire-garcon-ceven.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "brand_contact": {
+          "value": "SOMOTEX — responsable de la marque Peak Mountain\n72 avenue des Bruyères\n69150 Décines-Charpieu, France\ncontact@peak-mountain.fr\n04 72 65 39 39",
+          "sources": [
+            {
+              "label": "Peak Mountain — coordonnées officielles de Somotex",
+              "url": "https://peak-mountain.fr/content/2-mentions-legales"
+            },
+            {
+              "label": "Peak Mountain — contact officiel",
+              "url": "https://peak-mountain.fr/"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        },
+        "composition": {
+          "value": "Polyester ; proportion non précisée sur la fiche d’origine.",
+          "sources": [
+            {
+              "label": "La Caverne des Monts — fiche d’origine de cet article",
+              "url": "https://la-cavernedesmonts.fr/accueil/76-polaire-garcon-ceven.html"
+            }
+          ],
+          "checked_on": "2026-10-16"
+        }
+      },
+      "review_notes": "Composition seulement partielle : obtenir les pourcentages et la répartition par partie sur l’étiquette ou la fiche fournisseur.\nCoordonnées du responsable de marque vérifiées. Confirmer le fabricant, le responsable UE applicable au lot et les avertissements éventuels sur les documents fournisseur ; ce contact de marque ne remplace pas cette vérification.",
+      "composition_status": "partial"
+    },
+    {
+      "slug": "test",
+      "source_url": null,
+      "facts": {},
+      "evidence": {},
+      "review_notes": "Fiche nommée « test », sans identification fiable du produit. Aucun fabricant ou composition ajouté. Identifier l’article réel avant toute publication commerciale.",
+      "composition_status": "unconfirmed"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}{% load i18n shop_reviews shop_i18n static %}
 {% block title %}{{ product.localized_name }} — La Caverne des Monts{% endblock %}
-{% block styles %}<link rel="stylesheet" href="{% static 'core/css/shop-reviews.css' %}?v=20260923"><link rel="stylesheet" href="{% static 'core/css/product-story.css' %}?v=20260923-benefits">{% endblock %}
-{% block scripts %}<script src="{% static 'core/js/product-story.js' %}?v=1" defer></script>{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'core/css/shop-reviews.css' %}?v=20260923"><link rel="stylesheet" href="{% static 'core/css/product-story.css' %}?v=20261015-colors">{% endblock %}
+{% block scripts %}<script src="{% static 'core/js/product-story.js' %}?v=20261015-colors" defer></script>{% endblock %}
 {% block content %}
 <div class="wrap section product-page">
   <nav class="breadcrumb" aria-label="{% translate 'Fil d’Ariane' %}"><a href="{% url 'accueil:home' %}">{% translate 'Accueil' %}</a><span>/</span><a href="{% url 'core:product_list' %}{% if product.category %}?categorie={{ product.category.slug }}{% endif %}">{{ product.category.name|default:'La collection'|shop_text }}</a><span>/</span><span>{{ product.localized_name }}</span></nav>
@@ -27,18 +27,27 @@
         <ul lang="{{ product.benefits_language }}">{% for benefit in benefits %}<li>{{ benefit }}</li>{% endfor %}</ul>
       </section>
       {% endif %}{% endwith %}
-      {% if product.is_published %}
+      <p class="notice">{% if product.availability == 'unavailable' or not variants %}{{ product.get_availability_display }}{% elif has_available_variant %}En stock{% elif has_unknown_stock %}Stock à confirmer avec la boutique{% else %}Rupture de stock{% endif %}</p>{% if product.is_published and product.availability != 'unavailable' %}
       <form method="post" action="{% url 'core:cart_add' product.slug %}" class="product-purchase">{% csrf_token %}
-        {% if product.size_options %}
+        {% if product_colors %}<fieldset class="product-colors" data-product-colors hidden><legend>Couleur</legend><div class="product-color-options">{% for color in product_colors %}<button type="button" class="product-color-option" data-product-color="{{ color.key }}" data-color-image="{{ color.image }}" aria-pressed="false">{% if color.image %}<img src="{{ color.image }}" alt="" width="48" height="54" loading="lazy">{% endif %}<span>{{ color.name }}</span></button>{% endfor %}</div><p class="small" role="status" data-color-feedback></p></fieldset>{% endif %}
+        {% if variants %}
+        <fieldset class="size-picker"><legend>Taille et couleur</legend><div class="size-options">{% for variant in variants %}<label data-variant-row><input type="radio" name="variant" data-variant-color="{{ variant.color_key }}" value="{{ variant.pk }}" required {% if not variant.available %}disabled{% endif %}><span>{{ variant.size }} · {{ variant.color }}{% if variant.quantity == None %} — À confirmer{% elif not variant.available %} — Indisponible{% endif %}</span></label>{% endfor %}</div></fieldset>
+        {% elif product.size_options %}
         <fieldset class="size-picker"><legend>{% translate 'Votre taille' %}</legend><div class="size-options">{% for size in product.size_options %}<label><input type="radio" name="size" value="{{ size }}" required><span>{{ size|shop_text }}</span></label>{% endfor %}</div></fieldset>
         <a class="size-advice" href="#size-help">{% translate 'Bien choisir sa taille' %} <span aria-hidden="true">↗</span></a>
         {% else %}<p class="notice">{% translate 'La taille et la disponibilité sont à confirmer avec la boutique avant de commander.' %}</p>{% endif %}
-        <div class="purchase-row"><div class="quantity-field"><label for="quantity">{% translate 'Quantité' %}</label><input type="number" id="quantity" name="quantity" value="1" min="1" max="10" required></div><button class="button">{% translate 'Ajouter à mon panier' %} <span aria-hidden="true">↗</span></button></div>
+        <div class="purchase-row"><div class="quantity-field"><label for="quantity">{% translate 'Quantité' %}</label><input type="number" id="quantity" name="quantity" value="1" min="1" max="10" required></div><button type="submit" class="button"{% if variants and not has_available_variant %} disabled{% endif %}>{% translate 'Ajouter à mon panier' %} <span aria-hidden="true">↗</span></button></div>
       </form>
-      {% else %}<p class="notice">{% translate 'Brouillon : ce produit n’est pas proposé à la vente.' %}</p>{% endif %}
+      {% elif product.availability == 'unavailable' %}<p>{% translate 'Contactez la boutique pour connaître les prochaines disponibilités.' %}</p>{% else %}<p class="notice">{% translate 'Brouillon : ce produit n’est pas proposé à la vente.' %}</p>{% endif %}
       <a class="product-advice" href="tel:+33450404617"><span class="advice-icon" aria-hidden="true">↗</span><span><strong>{% translate 'Besoin d’un conseil ?' %}</strong><span>{% translate 'Parlons de votre prochain coup de cœur.' %}</span><b>04 50 40 46 17</b></span></a>
       {% shop_reviews compact=True %}
       <div class="product-information">
+        {% if product.brand or product.composition or product.brand_contact %}<details open class="product-technical"><summary>Composition et marque</summary>
+          {% if product.brand %}<p><strong>Marque :</strong> {{ product.brand }}{% if product.model_reference %}<br><strong>Modèle :</strong> {{ product.model_reference }}{% endif %}</p>{% endif %}
+          {% if product.composition %}<h3>Composition</h3><div>{{ product.composition|linebreaks }}</div>{% endif %}
+          {% if product.brand_contact %}<h3>Contact du responsable de la marque</h3><p>{{ product.brand_contact|linebreaksbr }}</p><p class="small">Pour une commande ou un retour, contactez La Caverne des Monts.</p>{% endif %}
+          {% with sources=product.information_source_links %}{% if sources %}<details class="product-information-sources"><summary>Sources des informations</summary><p class="small">Vérification documentaire : {{ product.information_checked_on }}.</p><ul>{% for source in sources %}<li><a href="{{ source.url }}" target="_blank" rel="noopener noreferrer">{{ source.label }} ↗</a></li>{% endfor %}</ul></details>{% endif %}{% endwith %}
+        </details>{% endif %}
         <details open><summary>{% translate 'Les détails qui comptent' %}</summary>
           {% get_current_language as CURRENT_LANGUAGE %}{% if CURRENT_LANGUAGE != product.description_language %}<p class="small">{% translate 'Description disponible en français.' %}</p>{% endif %}
           <div class="description" lang="{{ product.description_language }}">{% if product.localized_description %}{{ product.localized_description|linebreaks }}{% else %}<p>{% translate 'Contactez-nous pour en savoir plus sur cet article.' %}</p>{% endif %}</div>
@@ -50,5 +59,5 @@
   </article>
   {% if related %}<div class="section-heading related-heading"><div><p class="eyebrow">{% translate 'PROLONGER L’ÉCHAPPÉE' %}</p><h2>{% translate 'Dans le même esprit.' %}</h2></div></div><div class="product-grid">{% for product in related %}{% include 'partials/product_card.html' %}{% endfor %}</div>{% endif %}
 </div>
-{% if gallery %}<dialog class="product-lightbox" aria-label="{% translate 'Photos du produit' %}"><div class="lightbox-toolbar"><span class="photo-counter" aria-live="polite"></span><button type="button" data-photo-zoom aria-pressed="false">{% translate 'Zoom' %} <span data-zoom-symbol aria-hidden="true">+</span></button><button type="button" data-photo-close aria-label="{% translate 'Fermer' %}">✕</button></div><div class="lightbox-canvas"><img alt=""></div><div class="lightbox-navigation"><button type="button" data-photo-prev aria-label="{% translate 'Photo précédente' %}">←</button><span>{{ product.localized_name }}</span><button type="button" data-photo-next aria-label="{% translate 'Photo suivante' %}">→</button></div></dialog>{% endif %}
+{% if gallery %}<dialog class="product-lightbox" aria-label="{% translate 'Photos du produit' %}"><div class="lightbox-toolbar"><span class="photo-counter" aria-live="polite"></span><button type="button" data-photo-zoom aria-pressed="false">{% translate 'Zoom' %} <span data-zoom-symbol aria-hidden="true">+</span></button><button type="button" data-photo-close aria-label="{% translate 'Fermer' %}">✕</button></div><div class="lightbox-canvas" tabindex="0" role="region" aria-label="{% translate 'Photos du produit' %}"><img alt=""></div><div class="lightbox-navigation"><button type="button" data-photo-prev aria-label="{% translate 'Photo précédente' %}">←</button><span>{{ product.localized_name }}</span><button type="button" data-photo-next aria-label="{% translate 'Photo suivante' %}">→</button></div></dialog>{% endif %}
 {% endblock %}

@@ -1,0 +1,3 @@
+{% extends 'espace/private.html' %}{% load static %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'retours/returns.css' %}?v=20261015-cloture">{% endblock %}
+{% block account_content %}<div class="return-record"><h2>Vos retours, en toute clarté.</h2><p>Suivez chaque dossier, son remboursement et son historique.</p><a class="button" href="{% url 'espace:orders' %}">Déclarer un retour depuis une commande ↗</a></div>{% for record in records %}{% include 'retours/history.html' %}<p><a href="{% url 'retours:order' record.order_id %}" class="underlined">Voir cette commande et ses retours ↗</a></p>{% empty %}<p class="hub-note">Vous n’avez pas encore de dossier de retour.</p>{% endfor %}{% endblock %}

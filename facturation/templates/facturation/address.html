@@ -1,0 +1,6 @@
+{% if address.name %}<strong>{{ address.name }}</strong><br>{% endif %}
+{% if address.address.line1 %}{{ address.address.line1 }}<br>{% endif %}
+{% if address.address.line2 %}{{ address.address.line2 }}<br>{% endif %}
+{% if address.address.postal_code or address.address.city %}{{ address.address.postal_code }} {{ address.address.city }}<br>{% endif %}
+{% if address.address.country %}{{ address.address.country }}{% endif %}
+{% if not address.name and not address.address.line1 %}Non renseignée dans cette commande.{% endif %}

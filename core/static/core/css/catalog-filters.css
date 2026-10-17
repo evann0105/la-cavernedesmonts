@@ -1,0 +1,43 @@
+/* A compact collection introduction, with space reserved for the products. */
+.collection-page .page-back { padding-top: 14px; }
+.collection-page .page-back-link { border: 0; background: transparent; padding: 5px 0; min-height: 36px; font-size: 13px; }
+.collection-content.section { padding-top: 30px; }
+.collection-heading { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: end; padding-bottom: 30px; }
+.collection-heading .eyebrow { margin: 0 0 13px; font-size: 11px; letter-spacing: 1.7px; color: #76826d; }
+.collection-heading .page-title { margin: 0; font-size: clamp(42px, 4.7vw, 64px); line-height: 1.08; letter-spacing: -2.2px; text-wrap: balance; }
+.collection-heading .intro { justify-self: end; max-width: 380px; margin: 0 0 3px; font-size: 16px; line-height: 1.65; color: #687565; text-wrap: pretty; }
+.catalog-shortcuts { display: flex; gap: 28px; flex-wrap: wrap; border-bottom: 1px solid #dce1d5; margin: 0 0 24px; }
+.catalog-shortcuts a { display: inline-flex; align-items: center; position: relative; min-height: 48px; padding: 10px 0 14px; font-size: 14px; color: #6c7865; white-space: nowrap; }
+.catalog-shortcuts a[aria-current="true"] { color: #243e36; font-weight: 600; }
+.catalog-shortcuts a[aria-current="true"]::after { content: ""; position: absolute; bottom: -1px; inset-inline: 0; height: 2px; background: #243e36; }
+.collection-content .catalog-facets { display: grid; grid-template-columns: 1.8fr 1.2fr 1.2fr .9fr 1.2fr 1.2fr auto; align-items: end; gap: 12px; padding: 20px; margin: 0; border: 1px solid #e0e5d9; border-radius: 16px; background: #f0f2eb; }
+.catalog-facets > div { min-width: 0; }
+.catalog-facets label { display: block; margin-bottom: 7px; font-size: 11px; font-weight: 500; color: #62705d; letter-spacing: .15px; }
+.catalog-facets input, .catalog-facets select { display: block; width: 100%; min-width: 0; min-height: 44px; height: 44px; padding: 10px 12px; border: 1px solid #d6dccf; border-radius: 8px; background-color: #fcfcf8; color: #243e36; font-size: 13px; }
+.catalog-facets input::placeholder { color: #889080; opacity: 1; }
+.catalog-facets .catalog-apply { min-height: 44px; height: 44px; padding: 10px 17px; border-radius: 8px; font-size: 13px; gap: 12px; white-space: nowrap; transition: background-color 160ms ease, transform 120ms ease; }
+.catalog-apply:active { transform: scale(.97); }
+.catalog-results-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px 24px; padding: 22px 0 20px; }
+.catalog-results-bar .result-count { margin: 0; font-size: 13px; color: #74806b; }
+.catalog-results-bar .result-count strong { font-weight: 600; color: #243e36; font-variant-numeric: tabular-nums; }
+.catalog-help, .catalog-reset { margin: 0; font-size: 12px; color: #74806b; }
+.catalog-help a { color: #243e36; text-decoration: underline; text-underline-offset: 4px; }
+.catalog-reset { display: inline-flex; gap: 9px; align-items: center; min-height: 32px; text-decoration: underline; text-underline-offset: 4px; }
+@media (hover: hover) and (pointer: fine) { .catalog-shortcuts a:hover, .catalog-reset:hover { color: #243e36; } }
+@media (max-width: 1100px) {
+  .collection-content .catalog-facets { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .catalog-search { grid-column: span 2; }
+}
+@media (max-width: 700px) {
+  .collection-content.section { padding-top: 22px; }
+  .collection-heading { grid-template-columns: 1fr; gap: 14px; padding-bottom: 22px; }
+  .collection-heading .page-title { font-size: 42px; letter-spacing: -1.5px; }
+  .collection-heading .intro { justify-self: start; max-width: 440px; font-size: 14px; }
+  .catalog-shortcuts { gap: 4px 22px; margin-bottom: 20px; }
+  .catalog-shortcuts a { min-height: 44px; font-size: 13px; padding-bottom: 10px; }
+  .collection-content .catalog-facets { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 16px; gap: 12px; }
+  .catalog-search { grid-column: 1 / -1; }
+  .catalog-facets input, .catalog-facets select { font-size: 16px; }
+  .catalog-results-bar { padding-block: 18px; }
+  .catalog-help { display: none; }
+}

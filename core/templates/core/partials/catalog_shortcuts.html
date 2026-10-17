@@ -1,0 +1,20 @@
+{% load i18n %}
+<nav class="catalog-shortcuts" aria-label="{% translate 'Envies à explorer' %}">
+  {% if selected == 'femmes' or selected == 'hommes' or selected == 'enfants' %}
+  <a href="{% url 'core:product_list' %}?categorie={{ selected }}" {% if not article_type %}aria-current="true"{% endif %}>{% translate 'Tout découvrir' %}</a>
+  {% for value,label in type_choices %}<a href="{% url 'core:product_list' %}?categorie={{ selected }}&amp;type={{ value }}" {% if article_type == value %}aria-current="true"{% endif %}>{{ label }}</a>{% endfor %}
+  {% elif selected == 'accessoires' %}
+  <a href="{% url 'core:product_list' %}?categorie=accessoires" aria-current="true">{% translate 'Tous les petits bonheurs' %}</a>
+  <a href="{% url 'core:product_list' %}?categorie=accessoires-bebe">{% translate 'Accessoires bébé' %}</a>
+  <a href="{% url 'core:product_list' %}?categorie=polaires-bebe">{% translate 'Polaires bébé' %}</a>
+  {% elif selected == 'accessoires-bebe' or selected == 'polaires-bebe' or selected == 'cadeaux-bebe' %}
+  <a href="{% url 'core:product_list' %}?categorie=cadeaux-bebe" {% if selected == 'cadeaux-bebe' %}aria-current="true"{% endif %}>{% translate 'Tout pour bébé' %}</a>
+  <a href="{% url 'core:product_list' %}?categorie=polaires-bebe" {% if selected == 'polaires-bebe' %}aria-current="true"{% endif %}>{% translate 'Polaires bébé' %}</a>
+  <a href="{% url 'core:product_list' %}?categorie=accessoires-bebe" {% if selected == 'accessoires-bebe' %}aria-current="true"{% endif %}>{% translate 'Petites attentions' %}</a>
+  {% else %}
+  <a href="{% url 'core:product_list' %}" {% if not selected and not article_type %}aria-current="true"{% endif %}>{% translate 'Tout découvrir' %}</a>
+  <a href="{% url 'core:product_list' %}?categorie=femmes&amp;type=polaires">{% translate 'Polaires femme' %}</a>
+  <a href="{% url 'core:product_list' %}?categorie=hommes&amp;type=vestes">{% translate 'Vestes homme' %}</a>
+  <a href="{% url 'core:product_list' %}?categorie=cadeaux-bebe">{% translate 'Cadeaux bébé' %}</a>
+  {% endif %}
+</nav>

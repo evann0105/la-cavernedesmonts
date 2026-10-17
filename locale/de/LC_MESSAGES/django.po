@@ -1171,3 +1171,72 @@ msgstr "Weiter"
 #, python-format
 msgid "Page %(current)s sur %(total)s"
 msgstr "Seite %(current)s von %(total)s"
+
+msgid "Polaires femme"
+msgstr "Damen-Fleecejacken"
+
+msgid "Vestes homme"
+msgstr "Herrenjacken"
+
+msgid "Cadeaux bébé"
+msgstr "Babygeschenke"
+
+msgid "Polaires"
+msgstr "Fleecebekleidung"
+
+msgid "Vestes et blousons"
+msgstr "Jacken"
+
+msgid "Hauts"
+msgstr "Oberteile"
+
+msgid "Pantalons"
+msgstr "Hosen"
+
+msgid "Accessoires"
+msgstr "Accessoires"
+
+msgid "Indisponible"
+msgstr "Nicht verfügbar"
+
+msgid "Type d’article"
+msgstr "Artikelart"
+
+msgid "Tous les types"
+msgstr "Alle Arten"
+
+msgid "Taille"
+msgstr "Größe"
+
+msgid "Toutes les tailles"
+msgstr "Alle Größen"
+
+msgid "Disponibilité"
+msgstr "Verfügbarkeit"
+
+msgid "Tous les statuts"
+msgstr "Alle Verfügbarkeiten"
+
+msgid "Effacer les filtres"
+msgstr "Filter zurücksetzen"
+
+msgid "Envies à explorer"
+msgstr "Nach Wunsch entdecken"
+
+msgid "Seules les tailles renseignées par la boutique sont proposées. Une disponibilité à confirmer ne signifie pas une rupture de stock."
+msgstr "Nur vom Geschäft eingetragene Größen werden angezeigt. Eine zu bestätigende Verfügbarkeit bedeutet nicht, dass der Artikel ausverkauft ist."
+
+msgid "Contactez la boutique pour connaître les prochaines disponibilités."
+msgstr "Fragen Sie im Geschäft nach der nächsten Verfügbarkeit."
+
+msgid "Pour les moments au chaud. Comparez les coupes et demandez-nous conseil pour choisir votre taille."
+msgstr "Für gemütliche Momente. Vergleichen Sie die Schnitte und lassen Sie sich bei der Größenwahl beraten."
+
+msgid "Trouvez la veste qui accompagne vos sorties. Les caractéristiques de chaque modèle vous aident à choisir."
+msgstr "Finden Sie eine Jacke für Ihre Ausflüge. Die Eigenschaften jedes Modells helfen bei der Auswahl."
+
+msgid "Une petite attention pour les premiers mois. Besoin de choisir une taille ou un cadeau ? Parlons-en."
+msgstr "Eine kleine Aufmerksamkeit für die ersten Monate. Hilfe bei der Größen- oder Geschenkauswahl? Sprechen Sie uns an."
+
+msgid "Sélection d’avis notés 4 ou 5 sur 5 sur la boutique de Lélex."
+msgstr "Ausgewählte Bewertungen mit 4 oder 5 von 5 Sternen für unser Geschäft in Lélex."

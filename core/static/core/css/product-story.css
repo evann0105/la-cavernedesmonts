@@ -10,3 +10,14 @@
 .product-benefits ul{margin:0;padding-left:20px;display:grid;gap:10px}
 .product-benefits li{font-size:16px;line-height:1.6;color:#354e41;overflow-wrap:anywhere}
 .product-benefits li::marker{color:#71865c}
+
+.lightbox-canvas:focus-visible { outline: 3px solid #607252; outline-offset: -4px; }
+
+.product-colors { border: 0; margin: 20px 0; padding: 0; min-width: 0; }
+.product-colors[hidden], .size-options label[hidden] { display: none; }
+.product-colors legend { margin-bottom: 12px; font-weight: 600; }
+.product-color-options { display: flex; flex-wrap: wrap; gap: 12px; }
+.product-color-option { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 14px; border: 1px solid #b8c4ad; border-radius: 14px; background: #fff; color: inherit; font: inherit; cursor: pointer; }
+.product-color-option img { object-fit: contain; border-radius: 6px; }
+.product-color-option[aria-pressed="true"] { background: #e7eddd; border-color: #294b3d; box-shadow: inset 0 0 0 1px #294b3d; }
+.product-color-option:focus-visible { outline: 3px solid #749662; outline-offset: 3px; }

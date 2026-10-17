@@ -6,9 +6,11 @@ from django.db.models import Q, Max
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 from .catalog_access import catalog_required
-from .catalog_forms import CatalogProductForm, GalleryFormSet
+from .catalog_forms import CatalogProductForm, GalleryFormSet, ColorPhotoForms
 from .models import Category, Product, ProductImage
 from .views import product_detail
+from stocks.forms import InitialStockForms
+from stocks.models import Variant
 
 
 @catalog_required
@@ -29,20 +31,35 @@ def catalog_list(request):
 
 @catalog_required
 @require_http_methods(['GET', 'POST'])
+@transaction.atomic
 def catalog_edit(request, pk=None):
-    product = get_object_or_404(Product, pk=pk) if pk else Product(is_published=False)
+    products = Product.objects.select_for_update() if request.method == 'POST' else Product.objects.all()
+    product = get_object_or_404(products, pk=pk) if pk else Product(is_published=False)
     form = CatalogProductForm(request.POST if request.method == 'POST' else None, request.FILES or None, instance=product)
     photos = GalleryFormSet(request.POST if request.method == 'POST' else None, request.FILES or None, instance=product, prefix='photos')
+    initial_stock = InitialStockForms(request.POST if request.method == 'POST' else None, prefix='stock', product=product)
+    colors = ColorPhotoForms(request.POST if request.method == 'POST' else None, request.FILES or None, instance=product, prefix='colors')
     if request.method == 'POST':
+        valid_colors = colors.is_valid()
+        valid_stock = initial_stock.is_valid() if initial_stock is not None else True
         valid_form, valid_photos = form.is_valid(), photos.is_valid()
         if valid_form and valid_photos:
             remaining = sum(1 for photo in photos.forms if not photo.cleaned_data.get('DELETE'))
             if remaining + len(form.cleaned_data['new_photos']) > 50:
                 form.add_error('new_photos', 'La galerie peut contenir au maximum 50 photos.')
                 valid_form = False
-        if valid_form and valid_photos:
+        if valid_form and valid_photos and valid_stock and valid_colors:
             with transaction.atomic():
                 product = form.save()
+                if initial_stock is not None:
+                    for stock_form in initial_stock.forms:
+                        if not stock_form.has_changed() or stock_form.cleaned_data.get('DELETE'):
+                            continue
+                        values = {key: stock_form.cleaned_data[key] for key in ('size', 'color', 'reference', 'quantity')}
+                        variant = Variant.objects.create(product=product, revision=1, **values)
+                        LogEntry.objects.log_actions(user_id=request.user.pk, queryset=Variant.objects.filter(pk=variant.pk), action_flag=ADDITION, change_message=f'Stock initial : {variant.quantity}. Taille : {variant.size}. Couleur : {variant.color}.')
+                colors.instance = product
+                colors.save()
                 photos.instance = product
                 photos.save()
                 order = product.images.aggregate(last=Max('order'))['last'] or 0
@@ -50,9 +67,11 @@ def catalog_edit(request, pk=None):
                     ProductImage.objects.create(product=product, image=image, alt=product.name, order=order+index)
                 LogEntry.objects.log_actions(user_id=request.user.pk, queryset=Product.objects.filter(pk=product.pk), action_flag=CHANGE if pk else ADDITION, change_message='Produit enregistré depuis la gestion de la boutique.')
             messages.success(request, 'Produit enregistré. Il est visible dans la boutique.' if product.is_published else 'Produit enregistré en brouillon. Il reste invisible aux clients.')
-            return redirect('core:catalog_edit', pk=product.pk)
+            if product.is_published:
+                return redirect('core:product_detail', slug=product.slug)
+            return redirect('core:catalog_preview', pk=product.pk)
         messages.error(request, 'Vérifiez les champs signalés. Si vous aviez choisi des fichiers, sélectionnez-les à nouveau avant d’enregistrer.')
-    return render(request, 'core/catalog/edit.html', {'form':form, 'photos':photos, 'product':product})
+    return render(request, 'core/catalog/edit.html', {'form':form, 'photos':photos, 'product':product, 'initial_stock':initial_stock, 'colors':colors})
 
 
 @catalog_required

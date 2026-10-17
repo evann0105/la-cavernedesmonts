@@ -4,7 +4,7 @@ from .models import CreditNote, Voucher
 @admin.register(CreditNote)
 class CreditAdmin(admin.ModelAdmin):
     list_display=('reference','order','amount','issued_at')
-    search_fields=('reference','order__customer_email')
+    search_fields=('reference','order__user__username')
 
 @admin.register(Voucher)
 class VoucherAdmin(admin.ModelAdmin):

@@ -1,0 +1,15 @@
+FORMULAIRE TYPE DE RÉTRACTATION
+À compléter et renvoyer uniquement si vous souhaitez vous rétracter du contrat.
+À l’attention de {{ legal.business_name }} · La Caverne des Monts
+{{ legal.address }}
+{{ legal.email }}
+
+Je/Nous (*) vous notifie/notifions (*) par la présente ma/notre (*) rétractation du contrat portant sur la vente du bien (*) ci-dessous :
+Commandé le (*) / reçu le (*) :
+Référence de commande (si disponible) :
+Bien(s) concerné(s) :
+Nom du/des consommateur(s) :
+Adresse du/des consommateur(s) :
+Signature du/des consommateur(s) (uniquement en cas de notification sur papier) :
+Date :
+(*) Rayez la mention inutile.

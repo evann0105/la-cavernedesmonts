@@ -1,3 +1,4 @@
+from courriels.views import inbox as test_email_inbox, preview as test_email_preview
 """
 URL configuration for config project.
 
@@ -19,7 +20,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-from connexion.views import SecureLoginView, change_language
+from connexion.views import SecureLoginView
 from connexion.email_views import verify_email
 from connexion.admin_site import BoutiqueAdminSite
 
@@ -32,10 +33,15 @@ secure_urls = ([
 ], 'two_factor')
 
 urlpatterns = [
-    path('i18n/setlang/', change_language, name='set_language'),
+    path('gestion/emails-test/<uuid:message_id>/', test_email_preview, name='test_email_preview'),
+    path('gestion/emails-test/', test_email_inbox, name='test_email_inbox'),
+    path('gestion/tableau-de-bord/', include('tableau.urls')),
+    path('gestion/stocks/', include('stocks.urls')),
     path('', include(secure_urls)),
     path('paiement/', include('paiement.urls')),
+    path('', include('facturation.urls')),
     path('admin/', admin.site.urls),
+    path('', include('retours.urls')),
     path('', include('espace.urls')),
     path('', include('accueil.urls')),  # Accueil homepage
     path('', include('core.urls')),     # Core routes

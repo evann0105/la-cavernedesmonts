@@ -1,6 +1,8 @@
 from connexion.test_helpers import verify_test_user
 from connexion.models import EmailVerification
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
+from django.contrib.auth import get_user_model
+User = get_user_model()
 from django.test import TestCase, Client
 from django.urls import reverse
 from django_otp.plugins.otp_totp.models import TOTPDevice

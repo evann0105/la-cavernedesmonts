@@ -29,3 +29,19 @@ backups/
 .env.*
 !.env.example
 work/
+
+.env-gmail-*
+
+.gmail-*
+*client_secret*.json
+gmail-oauth.json
+credentials.json
+
+# Local, pending PostgreSQL upgrade package and original source snapshots.
+.postgres-upgrade/
+
+# Private local test mail (may contain verification links)
+.emails-test/
+
+# Dedicated development browser (cookies and local account sessions).
+.local-browser/

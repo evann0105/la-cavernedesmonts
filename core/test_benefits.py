@@ -39,7 +39,8 @@ class ProductBenefitsTests(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
         saved = form.save()
         self.assertEqual(saved.benefits, 'Conseil vérifié\nAutre conseil')
-        self.assertEqual(saved.translations['en']['benefits'], 'Verified advice')
+        self.assertNotIn('benefits_en', form.fields)
+        self.assertEqual(saved.translations, self.product.translations)
         data['benefits'] = 'a\nb\nc\nd'
         form = CatalogProductForm(data, instance=saved)
         self.assertFalse(form.is_valid())
@@ -49,11 +50,11 @@ class ProductBenefitsTests(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
         self.assertEqual(form.save().benefits, '')
 
-    def test_form_prefills_reviewed_copy_in_all_languages(self):
+    def test_form_prefills_reviewed_french_copy_without_translation_fields(self):
         with patch('core.benefits.reviewed_catalog', return_value=self.reviewed):
             form = CatalogProductForm(instance=self.product)
             self.assertIn('douce', form.initial['benefits'])
-            self.assertIn('soft', form['benefits_en'].value())
+            self.assertNotIn('benefits_en', form.fields)
 
     def test_render_escapes_copy_and_hides_empty_block(self):
         self.product.benefits = '<script>alert(1)</script>'

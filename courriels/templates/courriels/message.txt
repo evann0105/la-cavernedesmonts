@@ -1,0 +1,18 @@
+LA CAVERNE DES MONTS · LÉLEX
+{% if test %}EXEMPLE DE TEST — aucune commande ni opération réelle.{% endif %}
+{{ title }}
+
+{{ intro }}
+{% if details %}
+{{ details }}
+{% endif %}
+{{ action }} : {{ url }}
+{% if security %}
+Si vous n’êtes pas à l’origine de cette demande, ignorez ce message. Ne partagez pas ce lien.
+{% endif %}
+{% if withdrawal_url %}
+Besoin de retourner un article ? Déclarer ma rétractation : {{ withdrawal_url }}
+Pour un achat de biens à distance, vous disposez généralement de 14 jours après réception pour déclarer votre rétractation. Consultez les conditions de vente.
+{% endif %}
+La Caverne des Monts
+Votre boutique à Lélex, au cœur du Jura.

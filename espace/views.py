@@ -2,13 +2,15 @@ from collections import Counter
 from functools import wraps
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+from django.db import IntegrityError, transaction
 from django.contrib.auth.views import redirect_to_login
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 from django.utils.translation import gettext as _
 from django.db.models import Q
-from connexion.email_verification import email_verified
+from connexion.email_verification import email_access_allowed
 from core.models import Product, Category
 from paiement.models import Order
 from .models import Address, CreditNote, Voucher
@@ -19,7 +21,7 @@ from connexion.security import PasswordCheckLimited, lockout
 def private(view):
     @wraps(view)
     def guarded(request, *args, **kwargs):
-        if not email_verified(request.user):
+        if not email_access_allowed(request.user):
             return redirect('connexion:verify_email')
         return view(request, *args, **kwargs)
     return never_cache(login_required(guarded))
@@ -44,6 +46,9 @@ def collection(request, kind):
 
 
 def info(request, page):
+    if page == 'terms':
+        from .legal_views import document
+        return document(request, 'terms')
     titles = {'contact':_('Contactez-nous'), 'about':_('À propos'), 'terms':_('Conditions d’utilisation'), 'sitemap':_('Plan du site')}
     return render(request, 'espace/'+page+'.html', {'title':titles[page], 'categories':Category.objects.all()})
 
@@ -94,8 +99,15 @@ def personal(request):
     except PasswordCheckLimited:
         return lockout(request)
     if valid:
-        form.save()
-        if not email_verified(request.user):
+        try:
+            with transaction.atomic():
+                form.save()
+        except IntegrityError:
+            if not get_user_model().objects.filter(email__iexact=form.cleaned_data['email']).exclude(pk=request.user.pk).exists():
+                raise
+            form.add_error('email', _('Cette adresse e-mail est déjà utilisée.'))
+            return render(request,'espace/form.html',{'title':_('Mes informations personnelles'),'form':form})
+        if not email_access_allowed(request.user):
             from connexion.email_verification import send_verification
             send_verification(request.user)
             return redirect('connexion:verify_email')

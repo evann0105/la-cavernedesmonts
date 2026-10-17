@@ -1,5 +1,6 @@
 from connexion.test_helpers import verify_test_user
 from connexion.models import EmailVerification
+from espace.legal_test_helpers import APPROVED_LEGAL_SETTINGS
 from django.test import TestCase, Client, override_settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -98,12 +99,15 @@ class CustomerPagesTests(TestCase):
             self.assertEqual(self.client.get(reverse('espace:'+name)).status_code,200)
         self.assertNotContains(self.client.get(reverse('espace:new')),'Hidden product')
 
-    @override_settings(PAYMENTS_ENABLED=True,SHOP_READY=True,STRIPE_SECRET_KEY='test',STRIPE_WEBHOOK_SECRET='test',STRIPE_SHIPPING_RATE='test',DEBUG=True)
+    @override_settings(**APPROVED_LEGAL_SETTINGS,EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',PAYMENTS_ENABLED=True,SHOP_READY=True,STRIPE_SECRET_KEY='test',STRIPE_WEBHOOK_SECRET='test',STRIPE_SHIPPING_RATE='test',DEBUG=True)
     @patch('paiement.views.stripe.checkout.Session.create')
     def test_checkout_binds_owner_on_server(self,create):
-        create.return_value=SimpleNamespace(id='cs_test_owner',url='https://checkout.stripe.com/test')
+        import stripe
+        create.return_value=stripe.StripeObject.construct_from({'id':'cs_test_owner','url':'https://checkout.stripe.com/test'},'test')
         product=Product.objects.create(name='Veste',price=10,sizes='M')
-        session=self.client.session;session['cart']={f'{product.pk}:M':{'product':product.pk,'size':'M','quantity':1}};session.save()
+        from stocks.models import Variant
+        variant=Variant.objects.create(product=product,size='M',color='Bleu',quantity=1)
+        session=self.client.session;session['cart']={f'variant:{variant.pk}':{'product':product.pk,'variant':variant.pk,'size':'M','quantity':1}};session.save()
         response=self.client.post(reverse('paiement:checkout'),{'user':self.other.pk})
         self.assertEqual(response.status_code,302)
         order=Order.objects.get(stripe_session_id='cs_test_owner')

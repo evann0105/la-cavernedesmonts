@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings
+from config.encrypted_fields import EncryptedEmailField
 
 
 class SignupQuota(models.Model):
@@ -9,8 +11,8 @@ class SignupQuota(models.Model):
 
 
 class EmailVerification(models.Model):
-    user = models.OneToOneField('auth.User', on_delete=models.CASCADE, related_name='email_verification')
-    verified_email = models.EmailField(blank=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='email_verification')
+    verified_email = EncryptedEmailField(blank=True)
     verified_at = models.DateTimeField(null=True, blank=True)
     token_digest = models.CharField(max_length=64, blank=True)
     sent_at = models.DateTimeField(null=True, blank=True)

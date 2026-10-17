@@ -3,7 +3,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.views.decorators.cache import never_cache
-from connexion.email_verification import email_verified
+from connexion.email_verification import email_access_allowed
 
 
 def can_manage_catalog(user):
@@ -18,7 +18,7 @@ def catalog_required(view):
             return redirect_to_login(request.get_full_path())
         if not can_manage_catalog(request.user):
             raise PermissionDenied
-        if not email_verified(request.user):
+        if not email_access_allowed(request.user):
             return redirect('connexion:verify_email')
         return view(request, *args, **kwargs)
     return protected

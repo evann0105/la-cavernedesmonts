@@ -1,0 +1,9 @@
+<section class="catalog-panel" data-color-editor>
+<h2>Couleurs et photos</h2><p>Ajoutez une photo du produit pour chaque couleur. Elle apparaîtra quand le client choisira ce coloris, quelle que soit la taille.</p>
+<p class="help">Utilisez les mêmes noms de couleurs dans les stocks ci-dessous. Ajouter une photo ne crée pas de quantité disponible à la vente.</p>
+{{ colors.management_form }}{{ colors.non_form_errors }}
+<div data-color-rows>{% for color_form in colors %}{% include 'core/catalog/color_row.html' %}{% endfor %}</div>
+<template data-color-template>{% include 'core/catalog/color_row.html' with color_form=colors.empty_form %}</template>
+<button class="button button-outline" type="button" data-add-color hidden>Ajouter une couleur +</button>
+<p class="help" role="status" data-color-status></p>
+</section>

@@ -22,3 +22,9 @@ stripe==14.4.1
 typing_extensions==4.16.0
 urllib3==2.8.0
 wheel==0.48.0
+
+google-auth==2.58.0
+google-auth-oauthlib==1.4.1
+
+psycopg[binary]==3.3.6
+cryptography==50.0.1

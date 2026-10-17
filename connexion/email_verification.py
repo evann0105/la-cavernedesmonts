@@ -18,7 +18,19 @@ SALT = 'boutique-email-verification-v1'
 def email_verified(user):
     if not user.is_authenticated or not user.is_active or not user.email:
         return False
-    return EmailVerification.objects.filter(user=user, verified_email=user.email.strip().lower(), verified_at__isnull=False).exists()
+    record = EmailVerification.objects.filter(user=user, verified_at__isnull=False).first()
+    return bool(record and constant_time_compare(record.verified_email, user.email.strip().lower()))
+
+
+def local_email_bypass():
+    return settings.DEBUG and settings.LOCAL_SKIP_EMAIL_VERIFICATION
+
+
+def email_access_allowed(user):
+    # Access in development never marks an address as genuinely verified.
+    if not user.is_authenticated or not user.is_active:
+        return False
+    return local_email_bypass() or email_verified(user)
 
 
 def email_ready():
@@ -43,7 +55,10 @@ def send_verification(user):
         return 'limited'
     url = settings.SITE_URL + reverse('connexion:confirm_email', args=[token])
     try:
-        sent=send_mail(_('Confirmez votre adresse e-mail — La Caverne des Monts'), _('Pour confirmer votre adresse e-mail, ouvrez ce lien puis confirmez sur la page. Il expire dans une heure et ne peut être utilisé qu’une fois.')+'\n\n'+url+'\n\n'+_('Si vous n’êtes pas à l’origine de cette demande, ignorez ce message.'),settings.DEFAULT_FROM_EMAIL,[user.email],fail_silently=False)
+        from courriels.messages import context_for, render_message
+        context = context_for('verification', url)
+        text, html = render_message(context)
+        sent=send_mail(_('Confirmez votre adresse e-mail — La Caverne des Monts'), text, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False, html_message=html)
         if sent != 1:
             raise RuntimeError('Email not accepted')
     except Exception:

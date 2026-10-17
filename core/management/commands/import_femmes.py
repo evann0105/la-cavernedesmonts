@@ -23,10 +23,12 @@ class Command(BaseCommand):
         root = Path(settings.BASE_DIR)
         data = json.loads((root / 'core' / self.seed_file).read_text())
         originals = {p['slug']: p for p in json.loads((root / 'core/catalog_seed.json').read_text())}
+        baby_categories = {}
         if self.include_baby_originals:
             baby = json.loads((root / 'core/collection_seed.json').read_text())
             for original in baby['products']:
                 originals.setdefault(original['slug'], original)
+                baby_categories[original['slug']] = original['collection']
         category, _ = Category.objects.get_or_create(slug=self.category_slug, defaults={'name': self.category_name})
         created_count = updated_count = 0
         for item in data['products']:
@@ -65,11 +67,18 @@ class Command(BaseCommand):
                     product.collections.add(category)
                 updated_count += 1
             else:
-                Product.objects.create(
-                    slug=item['slug'], source_url=item['source_url'], category=category,
+                initial_category = category
+                if item['slug'] in baby_categories:
+                    initial_category, _ = Category.objects.get_or_create(slug='accessoires', defaults={'name':'Petits bonheurs'})
+                created_product = Product.objects.create(
+                    slug=item['slug'], source_url=item['source_url'], category=initial_category,
                     name=item['name'], price=item['price'], description=item['description'],
                     static_image=item['image'], sizes='',
                 )
+                if item['slug'] in baby_categories:
+                    baby_slug = baby_categories[item['slug']]
+                    baby_category, _ = Category.objects.get_or_create(slug=baby_slug, defaults={'name':'Polaires bébé' if baby_slug == 'polaires-bebe' else 'Accessoires bébé'})
+                    created_product.collections.add(baby_category)
                 created_count += 1
         self.stdout.write(self.style.SUCCESS(
             f'Collection {self.category_name} : {created_count} articles ajoutés, {updated_count} fiches enrichies.'

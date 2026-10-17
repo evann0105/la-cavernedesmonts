@@ -1,1 +1,2 @@
 {% load i18n %}<a href="{% url 'espace:promotions' %}">{% translate 'Promotions' %}</a><a href="{% url 'espace:new' %}">{% translate 'Nouveaux produits' %}</a><a href="{% url 'espace:best' %}">{% translate 'Meilleures ventes' %}</a>
+<a href="{% url 'core:product_list' %}?categorie=femmes&amp;type=polaires">{% translate 'Polaires femme' %}</a><a href="{% url 'core:product_list' %}?categorie=hommes&amp;type=vestes">{% translate 'Vestes homme' %}</a><a href="{% url 'core:product_list' %}?categorie=cadeaux-bebe">{% translate 'Cadeaux bébé' %}</a>

@@ -1,4 +1,5 @@
 from decimal import Decimal
+from config.encrypted_fields import EncryptedCharField, EncryptedTextField
 from django.conf import settings
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -8,22 +9,22 @@ from django.utils import timezone
 
 class Address(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    label = models.CharField('Nom de cette adresse', max_length=80, default='Maison')
-    recipient = models.CharField('Destinataire', max_length=150)
-    line1 = models.CharField('Adresse', max_length=200)
-    line2 = models.CharField('Complément', max_length=200, blank=True)
-    postal_code = models.CharField('Code postal', max_length=20)
-    city = models.CharField('Ville', max_length=100)
-    country = models.CharField('Pays', max_length=2, choices=[('FR','France')], default='FR')
+    label = EncryptedCharField('Nom de cette adresse', max_length=80, default='Maison')
+    recipient = EncryptedCharField('Destinataire', max_length=150)
+    line1 = EncryptedCharField('Adresse', max_length=200)
+    line2 = EncryptedCharField('Complément', max_length=200, blank=True)
+    postal_code = EncryptedCharField('Code postal', max_length=20)
+    city = EncryptedCharField('Ville', max_length=100)
+    country = EncryptedCharField('Pays', max_length=2, choices=[('FR','France')], default='FR')
     class Meta:
-        ordering = ['label', 'pk']
+        ordering = ['pk']
 
 
 class CreditNote(models.Model):
     order = models.ForeignKey('paiement.Order', on_delete=models.PROTECT, related_name='credit_notes')
     reference = models.CharField('Référence de l’avoir émis', max_length=100, unique=True, help_text='Référence du document déjà émis. Cet enregistrement ne déclenche pas de remboursement.')
     amount = models.DecimalField('Montant (€)', max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
-    reason = models.TextField('Motif')
+    reason = EncryptedTextField('Motif')
     issued_at = models.DateField('Date d’émission', default=timezone.localdate)
     class Meta:
         ordering = ['-issued_at', '-pk']

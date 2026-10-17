@@ -19,11 +19,12 @@ class Command(BaseCommand):
             categories[entry['slug']] = category
             if new_category:
                 initialized.add(category.pk)
+        gifts, _ = Category.objects.get_or_create(slug='accessoires', defaults={'name':'Petits bonheurs'})
         for item in data['products']:
             category = categories[item['collection']]
             product, created = Product.objects.get_or_create(slug=item['slug'], defaults={
                 'name': item['name'], 'price': item['price'], 'description': item['description'],
-                'static_image': item['image'], 'category': category,
+                'static_image': item['image'], 'category': gifts if item['collection'] in ('accessoires-bebe', 'polaires-bebe') else category,
             })
             # Associate an existing sock with the baby collection, preserving its original category.
             # Only initialize membership once; merchant edits survive subsequent starts.

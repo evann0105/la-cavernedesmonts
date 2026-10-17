@@ -1171,3 +1171,72 @@ msgstr "Successivo"
 #, python-format
 msgid "Page %(current)s sur %(total)s"
 msgstr "Pagina %(current)s di %(total)s"
+
+msgid "Polaires femme"
+msgstr "Pile donna"
+
+msgid "Vestes homme"
+msgstr "Giacche uomo"
+
+msgid "Cadeaux bébé"
+msgstr "Regali per neonati"
+
+msgid "Polaires"
+msgstr "Pile"
+
+msgid "Vestes et blousons"
+msgstr "Giacche e giubbotti"
+
+msgid "Hauts"
+msgstr "Maglie"
+
+msgid "Pantalons"
+msgstr "Pantaloni"
+
+msgid "Accessoires"
+msgstr "Accessori"
+
+msgid "Indisponible"
+msgstr "Non disponibile"
+
+msgid "Type d’article"
+msgstr "Tipo di articolo"
+
+msgid "Tous les types"
+msgstr "Tutti i tipi"
+
+msgid "Taille"
+msgstr "Taglia"
+
+msgid "Toutes les tailles"
+msgstr "Tutte le taglie"
+
+msgid "Disponibilité"
+msgstr "Disponibilità"
+
+msgid "Tous les statuts"
+msgstr "Tutti gli stati"
+
+msgid "Effacer les filtres"
+msgstr "Rimuovi filtri"
+
+msgid "Envies à explorer"
+msgstr "Esplora per interesse"
+
+msgid "Seules les tailles renseignées par la boutique sont proposées. Une disponibilité à confirmer ne signifie pas une rupture de stock."
+msgstr "Sono indicate solo le taglie inserite dal negozio. Una disponibilità da confermare non significa che il prodotto sia esaurito."
+
+msgid "Contactez la boutique pour connaître les prochaines disponibilités."
+msgstr "Contatta il negozio per le prossime disponibilità."
+
+msgid "Pour les moments au chaud. Comparez les coupes et demandez-nous conseil pour choisir votre taille."
+msgstr "Per i momenti al caldo. Confronta i tagli e chiedici consiglio per scegliere la taglia."
+
+msgid "Trouvez la veste qui accompagne vos sorties. Les caractéristiques de chaque modèle vous aident à choisir."
+msgstr "Trova la giacca per le tue uscite. Le caratteristiche di ogni modello ti aiutano a scegliere."
+
+msgid "Une petite attention pour les premiers mois. Besoin de choisir une taille ou un cadeau ? Parlons-en."
+msgstr "Un piccolo pensiero per i primi mesi. Hai bisogno di scegliere una taglia o un regalo? Parliamone."
+
+msgid "Sélection d’avis notés 4 ou 5 sur 5 sur la boutique de Lélex."
+msgstr "Una selezione di recensioni da 4 o 5 stelle su 5 del nostro negozio a Lélex."

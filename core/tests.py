@@ -1,6 +1,7 @@
 from decimal import Decimal
 from django.test import TestCase, Client
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 from django.core.management import call_command
 from django.contrib.staticfiles import finders
 from .models import Product
@@ -10,6 +11,33 @@ class ShopTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         call_command('import_catalogue', verbosity=0)
+
+    def test_beige_fleece_is_in_men_and_not_women_after_reimport(self):
+        product = Product.objects.get(slug='veste-polaire-de-montagne-beige')
+        self.assertEqual(product.category.slug, 'hommes')
+        call_command('import_catalogue', verbosity=0)
+        product.refresh_from_db()
+        self.assertEqual(product.category.slug, 'hommes')
+        women = self.client.get('/produits/', {'categorie':'femmes', 'type':'polaires'})
+        self.assertNotIn(product.pk, {p.pk for p in women.context['products']})
+        men = self.client.get('/produits/', {'categorie':'hommes', 'type':'polaires'})
+        self.assertIn(product.pk, {p.pk for p in men.context['products']})
+
+    def test_original_categories_match_the_detailed_source_collections(self):
+        import json
+        from pathlib import Path
+        from django.conf import settings
+        root = Path(settings.BASE_DIR) / 'core'
+        originals = json.loads((root / 'catalog_seed.json').read_text())
+        detailed = {}
+        for filename, category in [('femmes_seed.json', 'femmes'), ('hommes_seed.json', 'hommes'), ('enfants_seed.json', 'enfants')]:
+            for item in json.loads((root / filename).read_text())['products']:
+                detailed[item['slug']] = category
+        for item in originals:
+            if item['slug'] in detailed and item['category'] in ('hommes', 'femmes', 'enfants'):
+                self.assertEqual(item['category'], detailed[item['slug']], item['slug'])
+            product = Product.objects.get(slug=item['slug'])
+            self.assertEqual(product.category.slug, item['category'], item['slug'])
 
     def test_catalog_images_and_pages(self):
         self.assertEqual(Product.objects.count(), 110)
@@ -133,7 +161,7 @@ class WomenImportTests(TestCase):
                 self.assertIsNotNone(finders.find(image))
                 self.assertIn('/static/' + image, page.context['images'])
         response = self.client.get('/produits/', {'categorie': 'femmes'})
-        self.assertEqual(response.context['page_obj'].paginator.count, 53)
+        self.assertEqual(response.context['page_obj'].paginator.count, 52)
 
     def test_restart_preserves_merchant_edits_and_product_identity(self):
         product = Product.objects.get(slug='veste-polaire-femme-anapurna-utern-violet')
@@ -178,7 +206,7 @@ class MenImportTests(TestCase):
         self.assertEqual(len(data['products']), 25)
         self.assertEqual(sum(len(i['images']) for i in data['products']), 105)
         response = self.client.get('/produits/', {'categorie': 'hommes'})
-        self.assertEqual(response.context['page_obj'].paginator.count, 25)
+        self.assertEqual(response.context['page_obj'].paginator.count, 26)
         for item in data['products']:
             product = Product.objects.get(source_url=item['source_url'])
             self.assertEqual(product.category.slug, 'hommes')
@@ -241,10 +269,14 @@ class ChildrenImportTests(TestCase):
         for number in range(2, response.context['page_obj'].paginator.num_pages + 1):
             page = self.client.get('/produits/', {'categorie':'enfants','page':number})
             displayed.update(p.pk for p in page.context['products'])
-        self.assertEqual(len(displayed), 32)
+        self.assertEqual(len(displayed), 17)
         for item in data['products']:
             product = Product.objects.get(source_url=item['source_url'])
-            self.assertIn(product.pk, displayed)
+            if item['slug'].startswith('bebe-') or item['slug'].startswith('chaussettes-'):
+                self.assertNotIn(product.pk, displayed)
+                self.assertEqual(product.category.slug, 'accessoires')
+            else:
+                self.assertIn(product.pk, displayed)
             self.assertEqual(product.name, item['name'])
             self.assertEqual(product.price, Decimal(item['price']))
             self.assertEqual(product.description, item['description'])
@@ -258,15 +290,15 @@ class ChildrenImportTests(TestCase):
     def test_baby_and_accessory_membership_preserved_without_duplicates(self):
         sock = Product.objects.get(slug='chaussettes-antiderapantes-marmottes-blanches')
         self.assertEqual(sock.category.slug, 'accessoires')
-        self.assertEqual(set(sock.collections.values_list('slug', flat=True)), {'accessoires-bebe', 'enfants'})
+        self.assertEqual(set(sock.collections.values_list('slug', flat=True)), {'accessoires-bebe'})
         baby = Product.objects.get(slug='bebe-101-echarpe-bebe')
-        self.assertEqual(baby.category.slug, 'accessoires-bebe')
-        self.assertTrue(baby.collections.filter(slug='enfants').exists())
+        self.assertEqual(baby.category.slug, 'accessoires')
+        self.assertFalse(baby.collections.filter(slug='enfants').exists())
         original_ids = set(Product.objects.values_list('pk', flat=True))
         call_command('import_catalogue', verbosity=0)
         self.assertEqual(set(Product.objects.values_list('pk', flat=True)), original_ids)
         self.assertEqual(Product.objects.count(), 110)
-        for slug, expected in [('accessoires-bebe', 10), ('polaires-bebe', 5), ('enfants', 32)]:
+        for slug, expected in [('accessoires-bebe', 10), ('polaires-bebe', 5), ('enfants', 17), ('accessoires', 15)]:
             self.assertEqual(self.client.get('/produits/', {'categorie': slug}).context['page_obj'].paginator.count, expected)
 
     def test_enriched_baby_keeps_later_merchant_edits(self):
@@ -284,3 +316,31 @@ class ChildrenImportTests(TestCase):
         self.assertEqual(product.description, 'Nouveaux conseils')
         self.assertEqual(product.sizes, 'Taille unique')
         self.assertFalse(product.collections.exists())
+
+
+    def test_existing_baby_category_upgrade_preserves_stock_and_subcategory(self):
+        from importlib import import_module
+        from types import SimpleNamespace
+        from django.apps import apps
+        from django.db import connection
+        from .models import Category
+        from stocks.models import Variant
+        product = Product.objects.get(slug='bebe-868-body-bebe-montagne-manches-longue-coton')
+        baby = Category.objects.get(slug='accessoires-bebe')
+        children = Category.objects.get(slug='enfants')
+        product.category = baby; product.save(update_fields=['category'])
+        product.collections.add(children)
+        variant = Variant.objects.create(product=product, size='6 mois', color='Blanc', quantity=4)
+        original_id, original_price, original_source = product.pk, product.price, product.source_url
+        upgrade = import_module('core.migrations.0013_baby_products_in_gifts')
+        upgrade.move_baby_products(apps, SimpleNamespace(connection=connection))
+        product.refresh_from_db(); variant.refresh_from_db()
+        self.assertEqual(product.pk, original_id)
+        self.assertEqual(product.price, original_price)
+        self.assertEqual(product.source_url, original_source)
+        self.assertEqual(variant.quantity, 4)
+        self.assertEqual(product.category.slug, 'accessoires')
+        self.assertTrue(product.collections.filter(pk=baby.pk).exists())
+        self.assertFalse(product.collections.filter(pk=children.pk).exists())
+        call_command('import_catalogue', verbosity=0)
+        self.assertFalse(product.collections.filter(pk=children.pk).exists())

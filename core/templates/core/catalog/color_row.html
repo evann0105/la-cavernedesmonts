@@ -1,0 +1,6 @@
+<fieldset class="initial-stock-row" data-color-row><legend>Photo du coloris</legend>
+{% for field in color_form.hidden_fields %}{{ field }}{% endfor %}{{ color_form.non_field_errors }}
+{% if color_form.instance.image %}<img class="catalog-main-preview" src="{{ color_form.instance.image.url }}" alt="{{ color_form.instance.name }}" width="160" height="160" loading="lazy">{% endif %}
+{% include 'core/catalog/field.html' with field=color_form.name %}{% include 'core/catalog/field.html' with field=color_form.image %}
+<label class="catalog-check">{{ color_form.DELETE }} Retirer cette photo de couleur</label>
+</fieldset>

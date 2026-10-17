@@ -1,0 +1,24 @@
+{% extends 'espace/private.html' %}
+{% block account_content %}
+<section class="hub-paper">
+  <p class="eyebrow">Vos informations, vos droits</p>
+  <h2>Télécharger mes données</h2>
+  <p>Obtenez une copie de votre profil, de vos adresses, des commandes et factures rattachées à votre compte, des retours, des avoirs enregistrés et des bons de réduction. Le fichier est au format JSON, lisible et réutilisable.</p>
+  <p class="hub-note">Conservez ce fichier dans un endroit privé : il contient des informations personnelles. Les achats réalisés sans rattachement à votre compte ne sont pas ajoutés automatiquement, même si vous avez utilisé la même adresse e-mail.</p>
+  <form class="hub-form" method="post" action="{% url 'espace:privacy_export' %}">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}<div class="hub-field">{{ field.label_tag }}{{ field }}{% if field.help_text %}<p class="hub-note" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</p>{% endif %}{{ field.errors }}</div>{% endfor %}
+    <button class="button" type="submit">Télécharger mes données</button>
+  </form>
+</section>
+<section class="hub-paper">
+  <h2>Corriger mes informations</h2>
+  <p>Vous pouvez mettre à jour <a href="{% url 'espace:personal' %}">vos informations personnelles</a> et <a href="{% url 'espace:addresses' %}">vos adresses enregistrées</a>. La modification du carnet d’adresses ne réécrit pas les documents d’une commande déjà passée. Pour une erreur sur une commande ou une facture, contactez la boutique.</p>
+  <h2>Demander une fermeture de compte ou exercer un autre droit</h2>
+  <p>Écrivez à <a href="mailto:{{ privacy_contact }}?subject=Donn%C3%A9es%20personnelles">{{ privacy_contact }}</a> en précisant votre demande. Ne transmettez pas de pièce d’identité spontanément. Une vérification supplémentaire peut être nécessaire en cas de doute raisonnable.</p>
+  <p>Une fermeture de compte n’efface pas les pièces que la boutique doit conserver pour respecter ses obligations comptables, les garanties ou la défense d’un droit. Nous vous indiquons les données supprimées et celles conservées, ainsi que leur motif et leur durée.</p>
+  <p>Ce téléchargement couvre les données disponibles dans votre espace. Vous pouvez demander les justificatifs ou données complémentaires, les achats invités et les informations détenues par les prestataires ; votre demande sera examinée après vérification.</p>
+  <p class="hub-note"><a href="{% url 'espace:privacy' %}">Consulter la politique de confidentialité et les délais de réponse</a>.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,5 @@
+.initial-stock-row { border: 1px solid var(--line, #d8dfd0); border-radius: 16px; padding: 20px; margin: 0 0 20px; min-width: 0; }
+.initial-stock-row legend { padding: 0 8px; font-weight: 600; }
+.initial-stock-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; }
+.initial-stock-fields input { width: 100%; min-width: 0; box-sizing: border-box; }
+@media (max-width: 600px) { .initial-stock-fields { grid-template-columns: minmax(0, 1fr); } .initial-stock-row { padding: 16px; } }

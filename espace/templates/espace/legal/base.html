@@ -1,0 +1,8 @@
+{% extends 'espace/base.html' %}{% load static %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'espace/legal.css' %}">{% endblock %}
+{% block introduction %}<p>Les informations pour acheter et nous contacter en confiance.</p>{% endblock %}
+{% block page %}
+{% if legal_draft %}<div class="legal-preparation" role="status"><strong>Préparation de l’ouverture des ventes.</strong> Certaines informations sont en cours de validation. Le paiement en ligne reste indisponible.</div>{% endif %}
+<div class="legal-page-layout"><nav class="legal-navigation" aria-label="Informations légales">
+<a href="{% url 'espace:legal_notice' %}">Mentions légales</a><a href="{% url 'espace:sales_terms' %}">Conditions de vente</a><a href="{% url 'espace:withdrawal' %}">Rétractation et garanties</a><a href="{% url 'espace:privacy' %}">Confidentialité</a><a href="{% url 'espace:cookies' %}">Cookies</a><a href="{% url 'espace:accessibility' %}">Accessibilité</a></nav>
+<div class="legal-document"><p class="legal-version">{{ legal.business_name }} · {{ legal.legal_form }}<br>Version du {{ legal_version }}</p>{% block document %}{% endblock %}</div></div>{% endblock %}

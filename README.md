@@ -10,11 +10,13 @@ Depuis le dossier du projet :
 ./start
 ```
 
-Le script prépare `.venv` au besoin, installe uniquement les dépendances manquantes ou incompatibles, vérifie Django, applique les migrations et importe le catalogue sans écraser les modifications existantes. Il lance ensuite le serveur et ouvre le navigateur quand la page répond. Garder le terminal ouvert ; **Ctrl+C** arrête le serveur et ses sous-processus.
+Le script prépare `.venv` au besoin, installe uniquement les dépendances manquantes ou incompatibles, sauvegarde PostgreSQL, applique les migrations et vérifie Django. Il lance ensuite le serveur et ouvre le navigateur quand la page répond en HTTP local. Garder le terminal ouvert ; **Ctrl+C** arrête le serveur et ses sous-processus.
 
 Adresse locale : **http://127.0.0.1:8000/** (HTTP, sans « s »). Une URL commençant par `https://` provoque `ERR_SSL_PROTOCOL_ERROR`, car ce serveur de développement ne fournit pas de TLS. Le lanceur force uniquement son environnement local en mode développement, sans modifier `.env` ni les réglages de production.
 
-Options : `./start --no-browser` et `./start --port 8001`. Un port occupé est signalé sans arrêter le processus existant. Le serveur écoute uniquement sur votre ordinateur par défaut.
+Pour les démonstrations, le lanceur ouvre Chrome, Chromium ou Edge avec un **profil local séparé**, stocké dans `.local-browser/` (privé et ignoré par Git). Ce profil conserve les connexions au site entre les démarrages, sans reprendre le cache, les extensions ou les réglages du navigateur personnel. L'exception aux mises à niveau HTTPS est limitée à l'adresse locale utilisée ; la vérification des certificats et les protections des autres sites restent actives. Utiliser la fenêtre ouverte par `./start`, plutôt qu'un ancien onglet `https://`. Le serveur ajoute `Cache-Control: no-store` à ses réponses locales pour ne pas mémoriser de redirections de développement.
+
+Options : `./start --no-browser` et `./start --port 8001`. Si le port héberge déjà ce site en mode HTTP local vérifié, le lanceur rouvre simplement la fenêtre de démonstration. Un autre service sur ce port est signalé sans être arrêté. Le serveur écoute uniquement sur votre ordinateur par défaut. Sans Chrome, Chromium ou Edge, le navigateur habituel est utilisé avec un avertissement : ses réglages HTTPS peuvent nécessiter une intervention manuelle.
 
 Pour voir le site depuis un téléphone ou un autre appareil connecté au même réseau :
 
@@ -167,3 +169,33 @@ Après ajout ou remplacement de photos statiques, régénérer les fichiers avec
 La commande prépare le manifeste `core/static/core/product-images.json`, les variantes du catalogue et les deux cadrages mobiles de la photo d’accueil. Les fichiers générés sont versionnés, disponibles sans traitement à la volée, et servis par `collectstatic` en production. Redémarrer le serveur après une régénération pour recharger le manifeste en mémoire. Les photos téléversées depuis la gestion gardent leur traitement WebP existant ; elles ne sont pas couvertes par ce manifeste statique.
 
 Mesure sur les 402 photos statiques : 29,57 Mo d’originaux contre 15,58 Mo pour leurs plus grandes variantes WebP (environ 47 % de moins). Il s’agit du poids des fichiers, pas d’une mesure des Core Web Vitals. Les performances réseau et les caches devront être contrôlés sur l’hébergement final.
+
+## Envoi Gmail en développement
+
+Le serveur local peut envoyer de vrais e-mails, mais une connexion SMTP autorisée est nécessaire. Avec un compte Gmail personnel, activez la validation en deux étapes Google puis créez un [mot de passe d’application](https://myaccount.google.com/apppasswords). Ne partagez pas ce secret dans une conversation.
+
+```sh
+.venv/bin/python scripts/configure_gmail.py
+```
+
+La commande demande l’adresse et le secret en saisie masquée, utilise `smtp.gmail.com:587` avec TLS vérifié, envoie un test à cette même adresse et enregistre la configuration dans `.env` (permissions 600, exclu de Git). Elle ne modifie pas les réglages en cas d’échec SMTP. Relancez `./start`, puis demandez un lien depuis Mon compte. Un lien local doit être ouvert sur l’ordinateur qui héberge le site, ou sur le même réseau en mode `--lan`. L’acceptation par SMTP ne garantit pas le classement en boîte principale : vérifier aussi les indésirables.
+
+## Filtres du catalogue
+
+Les entrées Polaires femme, Vestes homme et Cadeaux bébé combinent les rubriques et le type d’article. Le type est déduit uniquement du nom lorsque le champ est vide ; la gérante peut le corriger depuis la fiche de gestion. Les tailles sont comparées comme des valeurs complètes, uniquement à partir des tailles vendables renseignées. La disponibilité est un statut manuel, initialement « À confirmer avec la boutique », et non une quantité de stock. Un article marqué indisponible ne peut plus être ajouté au panier ni payé depuis un ancien panier.
+
+### Gmail sans mot de passe d’application (OAuth)
+
+Alternative compatible avec le développement local : dans Google Cloud, créer un projet, activer Gmail API, configurer Google Auth Platform avec une audience externe et ajouter son adresse aux utilisateurs de test. Créer un client OAuth **Application de bureau** et télécharger le JSON en dehors du dépôt.
+
+```sh
+.venv/bin/python scripts/connect_gmail.py
+```
+
+Indiquer le chemin du JSON et son adresse, puis autoriser l’envoi dans la fenêtre Google. La commande demande uniquement `gmail.send`, utilise OAuth avec PKCE et un retour sur 127.0.0.1, puis envoie un test à l’adresse saisie. Le jeton est enregistré avec permissions 600 dans le dossier de données externe, jamais dans Git. Relancer `./start` pour activer ce transport. Vérifier la réception réelle avant de considérer l’intégration opérationnelle. En audience de test, l’autorisation peut expirer après sept jours : relancer la commande. Pour la production, prévoir un service d’envoi adapté ou finaliser la publication/validation Google ; ne pas traiter ce mode de test comme une configuration définitive.
+
+## PostgreSQL et chiffrement Django
+
+La migration contrôlée et ses limites sont documentées dans `docs/postgresql.md`.
+Le chiffrement des données personnelles ne remplace pas HTTPS ni le chiffrement du disque.
+Les clés privées et les sauvegardes sont conservées hors du dépôt.

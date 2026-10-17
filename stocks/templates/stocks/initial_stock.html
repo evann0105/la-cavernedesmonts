@@ -1,0 +1,10 @@
+<section class="catalog-panel initial-stock" data-initial-stock>
+<h2>{% if product.pk %}Ajouter des tailles et du stock{% else %}Stock initial{% endif %}</h2>{% if product.pk %}<p><a href="{% url 'stocks:product' product.pk %}">Consulter ou corriger les stocks existants ↗</a></p><p class="help">Les lignes ci-dessous ajoutent de nouvelles variantes. Les stocks déjà enregistrés sont conservés.</p>{% endif %}
+<p>Indiquez la quantité réellement comptée en boutique pour chaque taille et couleur. Sans variante, renseignez simplement la quantité : « Taille unique » et « Coloris unique » seront utilisés.</p>
+<p class="help">Zéro signifie rupture de stock. {% if product.pk %}Laissez les nouvelles lignes vides pour conserver uniquement les stocks existants.{% else %}Si vous laissez toutes les lignes vides, le stock restera à renseigner dans l’inventaire.{% endif %} Les ventes en magasin devront aussi y être décomptées.</p>
+{{ initial_stock.management_form }}{{ initial_stock.non_form_errors }}
+<div data-stock-rows>{% for stock_form in initial_stock %}{% include 'stocks/initial_stock_row.html' %}{% endfor %}</div>
+<template data-stock-template>{% include 'stocks/initial_stock_row.html' with stock_form=initial_stock.empty_form %}</template>
+<button class="button button-outline" type="button" data-add-stock hidden>Ajouter une taille / couleur +</button>
+<p class="help" role="status" data-stock-status></p>
+</section>

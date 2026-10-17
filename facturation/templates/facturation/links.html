@@ -1,0 +1,5 @@
+<nav class="document-links" aria-label="Documents de la commande">
+  <a class="button outline" href="{% url 'facturation:purchase_order' order.pk %}{% if request.GET.token %}?token={{ request.GET.token|urlencode }}{% endif %}">Bon de commande · imprimer</a>
+  <a class="button outline" href="{% url 'facturation:invoice' order.pk %}{% if request.GET.token %}?token={{ request.GET.token|urlencode }}{% endif %}">Facture · consulter et imprimer</a>
+  {% if order.status == 'paid' or order.is_demo %}<a class="button outline" href="{% url 'facturation:delivery_slip' order.pk %}{% if request.GET.token %}?token={{ request.GET.token|urlencode }}{% endif %}">Bon de livraison · imprimer</a>{% endif %}
+</nav>

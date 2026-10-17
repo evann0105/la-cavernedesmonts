@@ -1171,3 +1171,72 @@ msgstr "Next"
 #, python-format
 msgid "Page %(current)s sur %(total)s"
 msgstr "Page %(current)s of %(total)s"
+
+msgid "Polaires femme"
+msgstr "Women’s fleeces"
+
+msgid "Vestes homme"
+msgstr "Men’s jackets"
+
+msgid "Cadeaux bébé"
+msgstr "Baby gifts"
+
+msgid "Polaires"
+msgstr "Fleeces"
+
+msgid "Vestes et blousons"
+msgstr "Jackets"
+
+msgid "Hauts"
+msgstr "Tops"
+
+msgid "Pantalons"
+msgstr "Trousers"
+
+msgid "Accessoires"
+msgstr "Accessories"
+
+msgid "Indisponible"
+msgstr "Unavailable"
+
+msgid "Type d’article"
+msgstr "Product type"
+
+msgid "Tous les types"
+msgstr "All types"
+
+msgid "Taille"
+msgstr "Size"
+
+msgid "Toutes les tailles"
+msgstr "All sizes"
+
+msgid "Disponibilité"
+msgstr "Availability"
+
+msgid "Tous les statuts"
+msgstr "All availability statuses"
+
+msgid "Effacer les filtres"
+msgstr "Clear filters"
+
+msgid "Envies à explorer"
+msgstr "Explore by interest"
+
+msgid "Seules les tailles renseignées par la boutique sont proposées. Une disponibilité à confirmer ne signifie pas une rupture de stock."
+msgstr "Only sizes entered by the shop are listed. Availability to be confirmed does not mean out of stock."
+
+msgid "Contactez la boutique pour connaître les prochaines disponibilités."
+msgstr "Contact the shop for future availability."
+
+msgid "Pour les moments au chaud. Comparez les coupes et demandez-nous conseil pour choisir votre taille."
+msgstr "For cosy moments. Compare the fits and ask us for help choosing your size."
+
+msgid "Trouvez la veste qui accompagne vos sorties. Les caractéristiques de chaque modèle vous aident à choisir."
+msgstr "Find a jacket for your outings. Each model’s features help you choose."
+
+msgid "Une petite attention pour les premiers mois. Besoin de choisir une taille ou un cadeau ? Parlons-en."
+msgstr "A little gift for their first months. Need help choosing a size or a gift? Let’s talk."
+
+msgid "Sélection d’avis notés 4 ou 5 sur 5 sur la boutique de Lélex."
+msgstr "Selected 4- and 5-star reviews of our shop in Lélex."

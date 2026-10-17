@@ -1,0 +1,6 @@
+<section class="return-shipment-list"><h3>Expéditions et justificatifs</h3>
+{% for shipment in record.shipments.all %}<article class="return-shipment"><p><strong>Envoi enregistré le {{ shipment.created_at|date:'d/m/Y à H:i' }}</strong>{% if is_management and not shipment.seen_at %} <span class="return-badge">Nouveau</span>{% endif %}</p>
+{% if shipment.carrier %}<p>Transporteur : {{ shipment.carrier }}</p>{% endif %}{% if shipment.tracking_number %}<p>Numéro de suivi : <strong>{{ shipment.tracking_number }}</strong></p>{% endif %}
+{% if shipment.has_proof %}<p><a href="{% url 'retours:proof' shipment.pk %}{% if request.GET.token %}?token={{ request.GET.token|urlencode }}{% endif %}">Télécharger le justificatif privé ↧</a></p>{% else %}<p class="help">Aucun justificatif joint à cet envoi.</p>{% endif %}</article>{% empty %}<p>Aucune information d’expédition ajoutée par le client pour le moment.</p>{% endfor %}
+{% if not is_management and record.state != 'completed' %}<p><a class="button outline" href="{% url 'retours:shipment' record.pk %}{% if request.GET.token %}?token={{ request.GET.token|urlencode }}{% endif %}">Ajouter un suivi ou un justificatif ↗</a></p>{% endif %}
+</section>

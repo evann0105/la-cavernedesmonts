@@ -1,0 +1,4 @@
+{% extends 'core/catalog/base.html' %}{% load static %}
+{% block title %}Stocks — La Caverne des Monts{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Navigation de gestion"><a href="{% url 'espace:account' %}">Mon compte</a> / <a href="{% url 'stocks:overview' %}">Stock</a></nav>{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'stocks/stocks.css' %}?v=20261017-manual">{% endblock %}

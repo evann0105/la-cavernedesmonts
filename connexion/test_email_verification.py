@@ -1,7 +1,8 @@
 import re
 from datetime import timedelta
 from unittest.mock import patch
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 from django.core import mail
 from django.test import TestCase,Client,override_settings
 from django.urls import reverse
@@ -9,7 +10,7 @@ from django.utils import timezone
 from .email_verification import send_verification, email_verified, token_matches, confirm_token
 from .models import EmailVerification
 
-@override_settings(EMAIL_DELIVERY_ENABLED=True,EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',DEFAULT_FROM_EMAIL='boutique@example.test',SITE_URL='http://localhost:8001',DEBUG=True)
+@override_settings(LOCAL_SKIP_EMAIL_VERIFICATION=False,EMAIL_DELIVERY_ENABLED=True,EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',DEFAULT_FROM_EMAIL='boutique@example.test',SITE_URL='http://localhost:8001',DEBUG=True)
 class EmailVerificationTests(TestCase):
     def setUp(self):
         self.user=User.objects.create_user('customer',email='customer@example.test',password='Test-pass-123')
@@ -76,3 +77,39 @@ class EmailVerificationTests(TestCase):
         self.assertRedirects(response,url)
         self.assertEqual(len(mail.outbox),1)
         self.assertRedirects(other.post(url),reverse('espace:account'))
+
+
+@override_settings(DEBUG=True, LOCAL_SKIP_EMAIL_VERIFICATION=True)
+class LocalEmailBypassTests(TestCase):
+    def test_signup_opens_account_without_sending_or_marking_verified(self):
+        with patch('connexion.views.send_verification') as send:
+            response=self.client.post(reverse('connexion:signup'), {
+                'username':'local-test', 'email':'local@example.test',
+                'password1':'Strong-test-pass-1947', 'password2':'Strong-test-pass-1947',
+            })
+        self.assertRedirects(response, reverse('espace:account'))
+        send.assert_not_called()
+        user=User.objects.get(username='local-test')
+        self.assertFalse(email_verified(user))
+        self.assertFalse(EmailVerification.objects.filter(user=user).exists())
+        self.assertEqual(self.client.get(reverse('espace:personal')).status_code,200)
+        self.assertRedirects(self.client.get(reverse('connexion:verify_email')),reverse('espace:account'))
+        self.assertEqual(self.client.get('/gestion/produits/').status_code,403)
+        with override_settings(DEBUG=False):
+            self.assertRedirects(self.client.get(reverse('espace:account')),reverse('connexion:verify_email'))
+        with override_settings(LOCAL_SKIP_EMAIL_VERIFICATION=False):
+            self.assertRedirects(self.client.get(reverse('espace:account')),reverse('connexion:verify_email'))
+
+    def test_existing_account_login_and_admin_permissions(self):
+        from .email_verification import email_access_allowed
+        from django.contrib.auth.models import AnonymousUser
+        user=User.objects.create_user('local-existing',email='existing@example.test',password='Test-pass-123')
+        with patch('connexion.views.send_verification') as send:
+            self.assertRedirects(self.client.post('/accounts/login/',{'username':user.username,'password':'Test-pass-123'}),reverse('espace:account'))
+        send.assert_not_called()
+        self.assertFalse(email_access_allowed(AnonymousUser()))
+        user.is_active=False
+        self.assertFalse(email_access_allowed(user))
+        user.is_active=True;user.is_staff=True;user.is_superuser=True;user.save()
+        self.assertEqual(self.client.get('/gestion/produits/').status_code,200)
+        self.assertFalse(email_verified(user))

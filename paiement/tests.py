@@ -2,20 +2,27 @@ import hashlib
 import hmac
 import json
 import time
-from types import SimpleNamespace
+class SimpleNamespace(dict):
+    def __getattr__(self, name):
+        return self.get(name)
+
 from unittest.mock import patch
 from django.test import TestCase, override_settings, Client
 from core.models import Product
 from .models import Order
 
-CONFIG = dict(PAYMENTS_ENABLED=True, SHOP_READY=True, STRIPE_SECRET_KEY='sk_test_placeholder', STRIPE_WEBHOOK_SECRET='whsec_test', STRIPE_SHIPPING_RATE='shr_test', SITE_URL='http://testserver', DEBUG=True)
+from espace.legal_test_helpers import APPROVED_LEGAL_SETTINGS
+
+CONFIG = dict(**APPROVED_LEGAL_SETTINGS, EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend', PAYMENTS_ENABLED=True, SHOP_READY=True, STRIPE_SECRET_KEY='sk_test_placeholder', STRIPE_WEBHOOK_SECRET='whsec_test', STRIPE_SHIPPING_RATE='shr_test', SITE_URL='http://testserver', DEBUG=True)
 
 
 @override_settings(**CONFIG)
 class PaymentTests(TestCase):
     def setUp(self):
         self.product = Product.objects.create(name='Polaire', slug='polaire', price='36.00', sizes='S,M')
-        self.client.post('/panier/ajouter/polaire/', {'size':'M','quantity':2})
+        from stocks.models import Variant
+        self.variant=Variant.objects.create(product=self.product,size='M',color='Bleu',quantity=5)
+        self.client.post('/panier/ajouter/polaire/', {'variant':self.variant.pk,'quantity':2})
 
     @patch('paiement.views.stripe.checkout.Session.create')
     def start(self, create):
@@ -26,7 +33,7 @@ class PaymentTests(TestCase):
         return Order.objects.get()
 
     def payload(self, order, **changes):
-        data = dict(id='cs_test', payment_status='paid', currency='eur', amount_subtotal=7200, amount_total=7800, client_reference_id=str(order.id), metadata={'order_id':str(order.id)}, customer_details={'email':'acheteur@example.test'}, collected_information={'shipping_details':{'name':'Test', 'address':{'country':'FR'}}})
+        data = dict(id='cs_test', payment_status='paid', currency='eur', amount_subtotal=7200, amount_total=7800, total_details={'amount_shipping':600,'amount_discount':0}, client_reference_id=str(order.id), metadata={'order_id':str(order.id)}, customer_details={'email':'acheteur@example.test'}, collected_information={'shipping_details':{'name':'Test', 'address':{'country':'FR'}}})
         data.update(changes)
         return data
 
@@ -48,7 +55,7 @@ class PaymentTests(TestCase):
 
     @patch('paiement.views.stripe.checkout.Session.create')
     def test_unconfirmed_sizes_block_payment(self, create):
-        self.product.sizes = ''; self.product.save()
+        self.variant.quantity=None; self.variant.save()
         self.client.post('/paiement/')
         create.assert_not_called()
 

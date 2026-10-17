@@ -1,0 +1,37 @@
+from django.db import models
+from django.db.models.functions import Lower
+
+
+class Variant(models.Model):
+    product = models.ForeignKey('core.Product', on_delete=models.CASCADE, related_name='stock_variants')
+    size = models.CharField('Taille', max_length=50)
+    color = models.CharField('Couleur', max_length=80)
+    reference = models.CharField('Référence interne', max_length=80, blank=True)
+    quantity = models.PositiveIntegerField('Quantité en stock', null=True, blank=True)
+    reserved = models.PositiveIntegerField(default=0, editable=False)
+    revision = models.PositiveIntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['size', 'color', 'pk']
+        constraints = [
+            models.CheckConstraint(condition=models.Q(reserved=0) | (models.Q(quantity__isnull=False) & models.Q(quantity__gte=models.F('reserved'))), name='reserved_within_stock'),
+            models.UniqueConstraint('product', Lower('size'), Lower('color'), name='unique_stock_combination'),
+            models.CheckConstraint(condition=models.Q(quantity__gte=0) | models.Q(quantity__isnull=True), name='nonnegative_stock'),
+        ]
+
+    @property
+    def available(self):
+        return max(0, (self.quantity or 0) - self.reserved)
+
+    def __str__(self):
+        return f'{self.product} — {self.size} · {self.color}'
+
+
+class Reservation(models.Model):
+    order = models.ForeignKey('paiement.Order', on_delete=models.PROTECT, related_name='reservations')
+    variant = models.ForeignKey(Variant, on_delete=models.PROTECT, related_name='reservations')
+    quantity = models.PositiveIntegerField()
+    state = models.CharField(max_length=12, default='held', choices=[('held','Réservé'),('sold','Vendu'),('released','Libéré')])
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['order','variant'],name='one_order_variant_hold'),models.CheckConstraint(condition=models.Q(quantity__gt=0),name='positive_reservation')]

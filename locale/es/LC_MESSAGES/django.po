@@ -1171,3 +1171,72 @@ msgstr "Siguiente"
 #, python-format
 msgid "Page %(current)s sur %(total)s"
 msgstr "Página %(current)s de %(total)s"
+
+msgid "Polaires femme"
+msgstr "Forros polares de mujer"
+
+msgid "Vestes homme"
+msgstr "Chaquetas de hombre"
+
+msgid "Cadeaux bébé"
+msgstr "Regalos para bebés"
+
+msgid "Polaires"
+msgstr "Forros polares"
+
+msgid "Vestes et blousons"
+msgstr "Chaquetas y cazadoras"
+
+msgid "Hauts"
+msgstr "Prendas superiores"
+
+msgid "Pantalons"
+msgstr "Pantalones"
+
+msgid "Accessoires"
+msgstr "Accesorios"
+
+msgid "Indisponible"
+msgstr "No disponible"
+
+msgid "Type d’article"
+msgstr "Tipo de artículo"
+
+msgid "Tous les types"
+msgstr "Todos los tipos"
+
+msgid "Taille"
+msgstr "Talla"
+
+msgid "Toutes les tailles"
+msgstr "Todas las tallas"
+
+msgid "Disponibilité"
+msgstr "Disponibilidad"
+
+msgid "Tous les statuts"
+msgstr "Todos los estados"
+
+msgid "Effacer les filtres"
+msgstr "Borrar filtros"
+
+msgid "Envies à explorer"
+msgstr "Explora tus preferencias"
+
+msgid "Seules les tailles renseignées par la boutique sont proposées. Une disponibilité à confirmer ne signifie pas une rupture de stock."
+msgstr "Solo se muestran las tallas indicadas por la tienda. Una disponibilidad por confirmar no significa que el artículo esté agotado."
+
+msgid "Contactez la boutique pour connaître les prochaines disponibilités."
+msgstr "Contacta con la tienda para consultar futuras disponibilidades."
+
+msgid "Pour les moments au chaud. Comparez les coupes et demandez-nous conseil pour choisir votre taille."
+msgstr "Para los momentos de abrigo. Compara los cortes y pídenos consejo para elegir tu talla."
+
+msgid "Trouvez la veste qui accompagne vos sorties. Les caractéristiques de chaque modèle vous aident à choisir."
+msgstr "Encuentra la chaqueta para tus salidas. Las características de cada modelo te ayudan a elegir."
+
+msgid "Une petite attention pour les premiers mois. Besoin de choisir une taille ou un cadeau ? Parlons-en."
+msgstr "Un detalle para sus primeros meses. ¿Necesitas elegir una talla o un regalo? Hablemos."
+
+msgid "Sélection d’avis notés 4 ou 5 sur 5 sur la boutique de Lélex."
+msgstr "Selección de reseñas de 4 o 5 estrellas sobre 5 de nuestra tienda en Lélex."

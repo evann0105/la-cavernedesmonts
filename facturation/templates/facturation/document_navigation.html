@@ -1,0 +1,5 @@
+<nav class="document-chooser" aria-label="Choisir le document">
+  <a href="{{ order_link }}" {% if kind == 'purchase_order' %}aria-current="page"{% endif %}><strong>Bon de commande</strong><span>Achat, prix et remises</span></a>
+  <a href="{{ invoice_link }}" {% if kind == 'invoice' %}aria-current="page"{% endif %}><strong>Facture</strong><span>Numéro, émission et TVA</span></a>
+  {% if order.status == 'paid' or order.is_demo %}<a href="{{ delivery_link }}" {% if kind == 'delivery_slip' %}aria-current="page"{% endif %}><strong>Bon de livraison</strong><span>Contenu du colis, sans prix</span></a>{% endif %}
+</nav>

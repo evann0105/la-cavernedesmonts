@@ -40,6 +40,8 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1", "[:
 # Application definition
 
 INSTALLED_APPS = [
+    "courriels",
+    "retours",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,12 +49,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Local apps
+    'identite',
     'accueil',
     'espace',
     'core',
+    'stocks',
+    'tableau',
     'pages_products',
     'connexion',
     'paiement',
+    'facturation',
     'axes',
     'django_otp',
     'django_otp.plugins.otp_static',
@@ -99,15 +105,13 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': env('DATABASE_PATH', default=str(
-            BASE_DIR.parent / (BASE_DIR.name + '-data') / 'db.sqlite3'
-            if DEBUG else BASE_DIR / 'db.sqlite3'
-        )),
-    }
-}
+from .database import database_config
+DATABASES = {'default': database_config(BASE_DIR, env)}
+AUTH_USER_MODEL = 'identite.User'
+DATA_ENCRYPTION_KEY_FILE = env('DATA_ENCRYPTION_KEY_FILE', default=str(
+    BASE_DIR.parent / (BASE_DIR.name + '-data') / 'postgres-private' / 'data.key'
+))
+
 
 
 # Password validation
@@ -197,15 +201,20 @@ OTP_STATIC_THROTTLE_FACTOR = 2
 SESSION_COOKIE_AGE = 3600
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-LANGUAGES = [('fr', 'Français'), ('en', 'English'), ('de', 'Deutsch'), ('it', 'Italiano'), ('es', 'Español')]
+# French-only storefront. LocaleMiddleware ignores legacy foreign-language
+# cookies and browser preferences. Keep i18n enabled for Django's French errors.
+LANGUAGES = [('fr', 'Français')]
 LOCALE_PATHS = [BASE_DIR / 'locale']
 LANGUAGE_COOKIE_AGE = 31536000
 LANGUAGE_COOKIE_SAMESITE = 'Lax'
 LANGUAGE_COOKIE_SECURE = not DEBUG
 
 # One-time email ownership confirmation. Never pretend to deliver without a configured provider.
+# Local test convenience only: production always requires confirmation.
+LOCAL_SKIP_EMAIL_VERIFICATION = env.bool('LOCAL_SKIP_EMAIL_VERIFICATION', default=False)
 EMAIL_DELIVERY_ENABLED = env.bool('EMAIL_DELIVERY_ENABLED', default=False)
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = env('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+GMAIL_TOKEN_FILE = env('GMAIL_TOKEN_FILE', default='')
 EMAIL_HOST = env('EMAIL_HOST', default='')
 EMAIL_PORT = env.int('EMAIL_PORT', default=587)
 EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
@@ -214,3 +223,29 @@ EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
 EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', default=False)
 EMAIL_TIMEOUT = 10
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='')
+
+# Local capture is deliberately impossible when DEBUG is disabled.
+EMAIL_TEST_MODE = DEBUG and env.bool('EMAIL_TEST_MODE', default=False)
+EMAIL_TEST_DIRECTORY = BASE_DIR / '.emails-test'
+if EMAIL_TEST_MODE:
+    EMAIL_BACKEND = 'courriels.backend.LocalMailboxBackend'
+    EMAIL_DELIVERY_ENABLED = True
+    DEFAULT_FROM_EMAIL = 'La Caverne des Monts <boutique@example.test>'
+
+# Return instructions must match the shop’s validated sales conditions.
+RETURN_ADDRESS = env("RETURN_ADDRESS", default="La Caverne des Monts\n225 Rue des Monts Jura\n01410 Lélex")
+RETURN_COSTS_TEXT = env("RETURN_COSTS_TEXT", default="Consultez les conditions de vente pour les frais de retour. Pour un défaut ou une erreur de livraison, contactez la boutique avant l’envoi.")
+
+# Optional staff alert; in-app return notifications work without SMTP.
+RETURN_NOTIFICATION_EMAIL = env('RETURN_NOTIFICATION_EMAIL', default='')
+
+RETURN_ACTION_AGE_DAYS = env.int('RETURN_ACTION_AGE_DAYS', default=7)
+
+# Merchant-confirmed public identity; remaining fields must be completed before sales.
+SHOP_LEGAL = env.json('SHOP_LEGAL', default={})
+SHOP_INVOICING = env.json('SHOP_INVOICING', default={})
+LEGAL_DOCUMENTS_APPROVED = env.bool('LEGAL_DOCUMENTS_APPROVED', default=False)
+LEGAL_PRIVACY_OPERATIONS_READY = env.bool('LEGAL_PRIVACY_OPERATIONS_READY', default=False)
+LEGAL_PRODUCT_INFORMATION_READY = env.bool('LEGAL_PRODUCT_INFORMATION_READY', default=False)
+LEGAL_INVOICING_READY = env.bool('LEGAL_INVOICING_READY', default=False)
+LEGAL_ACCESSIBILITY_REVIEWED = env.bool('LEGAL_ACCESSIBILITY_REVIEWED', default=False)
