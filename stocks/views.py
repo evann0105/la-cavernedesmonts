@@ -12,7 +12,7 @@ from core.models import Product
 from .models import Variant
 from .forms import VariantForm, AdjustmentForm
 from .adjustments import adjust_stock, AdjustmentError
-from .identity import identity_change_error, identity_lock_reason
+from .identity import identity_change_error, identity_lock_reason, record_label_correction
 
 
 def stock_history(product):
@@ -61,6 +61,7 @@ def product_stock(request, pk, variant_pk=None):
                     saved.reserved = old.reserved if old else 0
                     saved.revision = (old.revision + 1) if old else 1
                     saved.save()
+                    record_label_correction(old, saved)
                     before = old.quantity if old else 'nouvelle variante'
                     labels = (f'Taille : {old.size} → {saved.size}. Couleur : {old.color} → {saved.color}.'
                         if old else f'Taille : {saved.size}. Couleur : {saved.color}.')

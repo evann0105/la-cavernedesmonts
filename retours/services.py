@@ -4,6 +4,7 @@ from django.db.models import Sum
 from django.utils import timezone
 from paiement.models import Order
 from stocks.models import Variant
+from stocks.identity import matches_historical_label
 from core.models import Product
 from .models import ReturnRequest, ReturnLine, ReturnEvent
 from .mail import return_notice
@@ -152,13 +153,13 @@ def complete(pk, actor, received, restock, expected_snapshot=None):
     if record.state=='completed':return record
     if record.refund_state != 'succeeded':raise ReturnError('Confirmez d’abord le remboursement. Un remboursement en attente ou échoué ne peut pas être clôturé.')
     lines = list(record.lines.select_for_update().order_by('item_index'))
-    if expected_snapshot is not None:
-        from .closure import snapshot
-        if snapshot(record, lines) != expected_snapshot:
-            raise ReturnError('Le dossier a changé depuis le récapitulatif. Vérifiez à nouveau les quantités avant de terminer.')
     products = sorted(set(Variant.objects.filter(pk__in=[i.variant_id for i in lines if i.variant_id]).values_list('product_id',flat=True)))
     list(Product.objects.select_for_update().filter(pk__in=products).order_by('pk'))
     variants = {v.pk:v for v in Variant.objects.select_for_update().filter(pk__in=[i.variant_id for i in lines if i.variant_id]).order_by('pk')}
+    if expected_snapshot is not None:
+        from .closure import snapshot
+        if snapshot(record, lines, variants) != expected_snapshot:
+            raise ReturnError('Le dossier a changé depuis le récapitulatif (quantités ou libellé du stock). Vérifiez à nouveau avant de terminer.')
     if set(received) != {i.pk for i in lines} or set(restock) != set(received):raise ReturnError('Vérifiez les quantités de chaque article.')
     for line in lines:
         got, back = received[line.pk],restock[line.pk]
@@ -167,7 +168,7 @@ def complete(pk, actor, received, restock, expected_snapshot=None):
         if back and not order.is_demo and (variant is None or variant.quantity is None):raise ReturnError('Renseignez d’abord le stock de cette variante. Aucune quantité ne peut être ajoutée à un stock inconnu.')
         if back and not order.is_demo:
             purchased = order.items[line.item_index]
-            if (variant.size, variant.color, variant.product_id) != (line.size, line.color, purchased['product']):
+            if not matches_historical_label(variant, line.size, line.color, purchased['product']):
                 raise ReturnError('Cette variante a changé de taille, de couleur ou de produit depuis l’achat. Vérifiez le stock du produit retourné avant de clôturer ; aucune remise en stock n’a été effectuée.')
             variant.quantity += back;variant.revision += 1
             variant.save(update_fields=['quantity','revision','updated_at'])

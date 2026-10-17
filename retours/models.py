@@ -121,6 +121,27 @@ class ReturnLine(models.Model):
     def display_amount(self):
         return Decimal(self.amount) / 100
 
+    @property
+    def current_stock_label(self):
+        """Explain a corrected catalogue label without changing purchase history."""
+        from django.core.exceptions import ObjectDoesNotExist
+        if self.variant_id is None:
+            return ''
+        try:
+            variant = self.variant
+        except ObjectDoesNotExist:
+            return ''
+        items = self.request.order.items
+        if (not isinstance(items, list) or self.item_index >= len(items)
+                or not isinstance(items[self.item_index], dict)):
+            return ''
+        purchased = items[self.item_index]
+        if (variant.product_id != purchased.get('product')
+                or str(variant.pk) != str(purchased.get('variant'))
+                or (variant.size, variant.color) == (self.size, self.color)):
+            return ''
+        return f'{variant.size} · {variant.color}'
+
 
 class ReturnEvent(models.Model):
     request = models.ForeignKey(ReturnRequest, on_delete=models.PROTECT, related_name='events')

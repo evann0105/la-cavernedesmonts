@@ -95,7 +95,7 @@ def management(request):
 @returns_required
 @require_http_methods(['GET','POST'])
 def manage_detail(request,pk):
-    record=get_object_or_404(ReturnRequest.objects.select_related('order').prefetch_related('lines','events', Prefetch('shipments', queryset=ReturnShipment.objects.defer('proof'))),pk=pk)
+    record=get_object_or_404(ReturnRequest.objects.select_related('order').prefetch_related('lines__variant','events', Prefetch('shipments', queryset=ReturnShipment.objects.defer('proof'))),pk=pk)
     form=CompleteForm(record,request.POST if request.POST.get('action') in ('review_complete','edit_complete') else None)
     if request.method=='POST':
         try:

@@ -35,3 +35,14 @@ class Reservation(models.Model):
     state = models.CharField(max_length=12, default='held', choices=[('held','Réservé'),('sold','Vendu'),('released','Libéré')])
     class Meta:
         constraints = [models.UniqueConstraint(fields=['order','variant'],name='one_order_variant_hold'),models.CheckConstraint(condition=models.Q(quantity__gt=0),name='positive_reservation')]
+
+
+class VariantLabelCorrection(models.Model):
+    """An intentional label correction; purchase snapshots remain untouched."""
+    variant = models.ForeignKey(Variant, on_delete=models.CASCADE, related_name='label_corrections')
+    product_identifier = models.PositiveBigIntegerField()
+    previous_size = models.CharField(max_length=50)
+    previous_color = models.CharField(max_length=80)
+    corrected_size = models.CharField(max_length=50)
+    corrected_color = models.CharField(max_length=80)
+    created_at = models.DateTimeField(auto_now_add=True)
