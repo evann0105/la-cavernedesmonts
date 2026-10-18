@@ -19,3 +19,88 @@
   .summit-hero .hero-description { margin-top: 20px; font-size: 18px; }
   .summit-hero .hero-advice { font-size: 16px; }
 }
+
+/* Equal side columns keep the signature centered, including when signed in. */
+.summit-home .header-inner {
+  --home-logo-width: 440px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--home-logo-width) minmax(0, 1fr);
+  column-gap: 20px;
+  align-items: center;
+}
+.summit-home .header .brand {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: center;
+  width: 100%;
+}
+.summit-home .brand-logo { filter: none; }
+.summit-home .desktop-nav {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+  min-width: 0;
+  max-width: 100%;
+  gap: 0;
+}
+.summit-home .desktop-nav a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 6px;
+  font-size: 14px;
+}
+.summit-home .header-actions {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+  min-width: 0;
+  max-width: 100%;
+  margin-left: 0;
+  color: var(--ink);
+}
+.summit-home .account-link {
+  background: #f5f7eff0;
+  border-color: #fff6;
+}
+@media (max-width: 1439px) {
+  .summit-home .header-inner { --home-logo-width: clamp(300px, 34vw, 440px); }
+  .summit-home .desktop-nav { display: none; }
+  .summit-home .menu-toggle {
+    display: inline-flex;
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    align-items: center;
+    min-height: 44px;
+    padding: 10px 13px;
+    border: 1px solid #fff6;
+    border-radius: 30px;
+    background: #f5f7eff0;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .summit-home .mobile-nav:not([hidden]) {
+    display: block;
+    margin: 12px 24px 0;
+    border-radius: 18px;
+    background: #f5f7f0;
+    color: var(--ink);
+    box-shadow: 0 12px 35px #112b2726;
+    overflow: hidden;
+  }
+}
+@media (max-width: 900px) {
+  .summit-home .header-inner { grid-template-columns: auto minmax(0, 1fr); gap: 12px 16px; }
+  .summit-home .header .brand { grid-column: 1 / -1; width: min(100%, 340px); }
+  .summit-home .menu-toggle { grid-column: 1; grid-row: 2; }
+  .summit-home .header-actions { grid-column: 2; grid-row: 2; }
+  .summit-home .summit-hero { height: auto; padding-top: 280px; }
+}
+@media (max-width: 600px) {
+  .summit-home .header .brand { width: min(100%, 300px); }
+  .summit-home .header-actions { gap: 8px; }
+  .summit-home .header-actions > a,
+  .summit-home .header-actions form .text-button { white-space: nowrap; }
+  .summit-home .summit-hero { padding-top: 250px; }
+}
