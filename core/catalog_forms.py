@@ -68,8 +68,8 @@ class CatalogProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['name', 'price', 'brand', 'model_reference', 'composition', 'brand_contact', 'information_review_notes', 'description', 'benefits', 'category', 'collections', 'sizes', 'article_type', 'availability', 'is_published', 'is_featured', 'main_image', 'include_imported_gallery']
-        labels = {'name':'Nom du produit', 'description':'Description et conseils', 'sizes':'Tailles disponibles', 'is_published':'Visible dans la boutique', 'is_featured':'Afficher dans « Les essentiels de la montagne »', 'include_imported_gallery':'Conserver la galerie de photos d’origine'}
-        help_texts = {'sizes':'Séparez les tailles par des virgules : S, M, L ou 6 mois, 12 mois. Pour un accessoire : Taille unique. Indiquez uniquement les tailles disponibles.', 'is_published':'Décochez pour garder un brouillon ou retirer temporairement cet article de la vente.', 'is_featured':'Les quatre premiers articles mis en avant sont affichés sur l’accueil.'}
+        labels = {'name':'Nom du produit', 'description':'Description et conseils', 'sizes':'Tailles (indication générale, facultatif)', 'is_published':'Visible dans la boutique', 'is_featured':'Afficher dans « Les essentiels de la montagne »', 'include_imported_gallery':'Conserver la galerie de photos d’origine'}
+        help_texts = {'sizes':'Les déclinaisons ci-dessous définissent les tailles et les couleurs réellement commandables, avec leur stock. Ce champ seul ne crée aucun stock. Pour une fiche sans déclinaison : S, M, L ou Taille unique.', 'is_published':'Décochez pour garder un brouillon ou retirer temporairement cet article de la vente.', 'is_featured':'Les quatre premiers articles mis en avant sont affichés sur l’accueil.'}
         widgets = {'information_review_notes':forms.Textarea(attrs={'rows':4}), 'composition':forms.Textarea(attrs={'rows':4}), 'brand_contact':forms.Textarea(attrs={'rows':4}), 'description': forms.Textarea(attrs={'rows':7}), 'sizes':forms.TextInput(attrs={'placeholder':'S, M, L ou Taille unique'})}
 
     def __init__(self, *args, **kwargs):

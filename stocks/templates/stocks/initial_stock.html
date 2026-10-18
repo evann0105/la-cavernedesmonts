@@ -1,10 +1,22 @@
-<section class="catalog-panel initial-stock" data-initial-stock>
-<h2>{% if product.pk %}Ajouter des tailles et du stock{% else %}Stock initial{% endif %}</h2>{% if product.pk %}<p><a href="{% url 'stocks:product' product.pk %}">Consulter ou corriger les stocks existants ↗</a></p><p class="help">Les lignes ci-dessous ajoutent de nouvelles variantes. Les stocks déjà enregistrés sont conservés.</p>{% endif %}
-<p>Indiquez la quantité réellement comptée en boutique pour chaque taille et couleur. Sans variante, renseignez simplement la quantité : « Taille unique » et « Coloris unique » seront utilisés.</p>
-<p class="help">Zéro signifie rupture de stock. {% if product.pk %}Laissez les nouvelles lignes vides pour conserver uniquement les stocks existants.{% else %}Si vous laissez toutes les lignes vides, le stock restera à renseigner dans l’inventaire.{% endif %} Les ventes en magasin devront aussi y être décomptées.</p>
-{{ initial_stock.management_form }}{{ initial_stock.non_form_errors }}
-<div data-stock-rows>{% for stock_form in initial_stock %}{% include 'stocks/initial_stock_row.html' %}{% endfor %}</div>
-<template data-stock-template>{% include 'stocks/initial_stock_row.html' with stock_form=initial_stock.empty_form %}</template>
-<button class="button button-outline" type="button" data-add-stock hidden>Ajouter une taille / couleur +</button>
-<p class="help" role="status" data-stock-status></p>
+<section class="catalog-panel initial-stock" data-initial-stock aria-labelledby="initial-stock-title">
+  <h2 id="initial-stock-title" data-stock-section-title>Tailles et stock</h2>
+  <p class="help" data-stock-manual-intro>Une ligne correspond à une taille, une couleur et sa quantité. Pour une couleur avec photo, reprenez exactement le nom renseigné dans « Couleurs, tailles et stock ».</p>
+  {{ initial_stock.management_form }}{{ initial_stock.non_form_errors }}
+  <details class="initial-stock-fallback" data-stock-fallback open>
+    <summary>Stock sans photo couleur</summary>
+    <p class="help">Utilisez ce bloc pour un produit sans photo par coloris ou pour une combinaison qui n’est liée à aucune photo. Pour un produit sans déclinaison, indiquez seulement la quantité : « Taille unique » et « Coloris unique » seront utilisés.</p>
+    <p class="help" data-stock-detached-note hidden>Une photo de couleur a été retirée. Les lignes de stock ci-dessous sont conservées : vous pouvez les enregistrer sans cette photo ou cocher « Ignorer cette ligne ».</p>
+    <div data-stock-rows>{% for stock_form in initial_stock %}{% include 'stocks/initial_stock_row.html' %}{% endfor %}</div>
+    <button class="button button-outline" type="button" data-add-stock hidden>Ajouter un stock sans photo couleur +</button>
+  </details>
+  <template data-stock-template>{% include 'stocks/initial_stock_row.html' with stock_form=initial_stock.empty_form %}</template>
+  <datalist id="initial-stock-sizes"></datalist>
+  <datalist id="initial-stock-colors"></datalist>
+  <p class="help" role="status" data-stock-status></p>
+  <div class="initial-stock-summary" data-stock-summary hidden>
+    <h3>{% if product.pk %}Nouvelles tailles à ajouter{% else %}Récapitulatif par couleur{% endif %}</h3>
+    <p class="help" data-stock-summary-empty>Les tailles et quantités apparaîtront ici pendant la saisie.</p>
+    <dl class="initial-stock-summary-list" data-stock-summary-list></dl>
+    <p class="help">Stock initial : chaque couleur propose uniquement les tailles enregistrées. Zéro signifie rupture de stock. Les ventes en magasin doivent aussi être décomptées dans l’inventaire.</p>
+  </div>
 </section>

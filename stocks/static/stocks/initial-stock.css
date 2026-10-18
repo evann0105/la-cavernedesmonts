@@ -1,5 +1,57 @@
-.initial-stock-row { border: 1px solid var(--line, #d8dfd0); border-radius: 16px; padding: 20px; margin: 0 0 20px; min-width: 0; }
-.initial-stock-row legend { padding: 0 8px; font-weight: 600; }
-.initial-stock-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; }
-.initial-stock-fields input { width: 100%; min-width: 0; box-sizing: border-box; }
-@media (max-width: 600px) { .initial-stock-fields { grid-template-columns: minmax(0, 1fr); } .initial-stock-row { padding: 16px; } }
+.catalog-shell .catalog-editor > * { min-width: 0; }
+.catalog-shell .catalog-field { min-width: 0; overflow-wrap: anywhere; }
+.catalog-color-card, .initial-stock-row { border: 1px solid var(--line, #d8dfd0); border-radius: 16px; padding: 20px; margin: 0 0 24px; min-width: 0; }
+.catalog-color-card > legend, .initial-stock-row > legend { padding: 0 8px; font-weight: 600; }
+.catalog-color-card > legend { font-size: 18px; }
+.catalog-color-photo-fields { display: grid; grid-template-columns: 140px minmax(0, 1fr); align-items: start; gap: 24px; }
+.catalog-color-visual { width: 140px; aspect-ratio: 1; border-radius: 12px; background: #f4f5ef; display: grid; place-items: center; overflow: hidden; margin-top: 20px; }
+.catalog-color-visual img { width: 100%; height: 100%; object-fit: contain; }
+.catalog-color-placeholder { padding: 18px; text-align: center; color: #6b7564; font-size: 13px; }
+.catalog-color-photo-inputs { min-width: 0; }
+.catalog-shell .catalog-color-card input:not([type=checkbox]), .catalog-shell .initial-stock-fields input:not([type=checkbox]), .catalog-shell .initial-stock-reference input:not([type=checkbox]) { max-width: 100%; min-width: 0; box-sizing: border-box; font-size: 16px; }
+.catalog-shell .catalog-color-card input[type=file] { width: 100%; }
+.catalog-color-photo-inputs .catalog-check { font-size: 14px; }
+.catalog-color-stock { padding-top: 20px; margin-top: 24px; border-top: 1px solid #d8dfd0; }
+.catalog-color-stock h3 { margin: 0 0 8px; font-size: 18px; }
+.catalog-color-stock > .help { margin-bottom: 16px; }
+.catalog-color-stock .initial-stock-row { background: #f8faf5; margin: 20px 0; }
+.catalog-color-stock .initial-stock-row > legend { font-size: 14px; }
+.catalog-color-card.is-removed { border-style: dashed; background: #f8f9f5; }
+.catalog-existing-color-stock { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 12px 0 20px; padding: 0; }
+.catalog-existing-color-stock li { display: flex; align-items: baseline; gap: 8px; border: 1px solid #dbe1d6; border-radius: 8px; padding: 8px 12px; font-size: 14px; }
+.catalog-existing-color-stock li span { color: #5c6c59; }
+.catalog-shell .catalog-color-warning { border-left: 3px solid #b18543; background: #fff8ea; padding: 10px 12px; color: #66502a; }
+.initial-stock-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 16px; }
+.initial-stock-fields > div { min-width: 0; }
+.initial-stock-fields .catalog-field { margin: 12px 0; }
+.catalog-shell .initial-stock-fields input:not([type=checkbox]) { width: 100%; }
+.is-color-linked .initial-stock-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.initial-stock-reference { margin: 10px 0; }
+.initial-stock-reference summary { font-size: 13px; color: #5c6c59; cursor: pointer; }
+.initial-stock-reference .catalog-field { margin: 12px 0; }
+.initial-stock-row-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-top: 16px; }
+.initial-stock-row-actions .catalog-check { margin: 0; font-size: 13px; }
+.is-color-linked .initial-stock-row-actions { justify-content: flex-end; }
+.initial-stock-copy { appearance: none; border: 0; padding: 10px 0; background: transparent; color: #213e33; font: inherit; font-size: 14px; font-weight: 600; text-align: left; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.initial-stock-copy:hover { color: #52664a; }
+.initial-stock-copy:focus-visible, .initial-stock-fallback > summary:focus-visible, .initial-stock-reference > summary:focus-visible { outline: 2px solid #52664a; outline-offset: 4px; border-radius: 3px; }
+.initial-stock-copy:disabled { opacity: .55; cursor: not-allowed; }
+.initial-stock-row.is-ignored { background: #f6f7f2; border-style: dashed; }
+.initial-stock-row.is-ignored .initial-stock-fields { opacity: .6; }
+.initial-stock-duplicate { color: #8c2525; background: #fff0ec; padding: 12px 14px; border-radius: 8px; font-size: 14px; }
+.initial-stock-fallback > summary { font-weight: 600; cursor: pointer; padding-block: 8px; }
+.initial-stock-fallback[open] > summary { margin-bottom: 12px; }
+.initial-stock.is-grouped { padding: 24px 0 0; margin: 24px 0 0; border: 0; border-top: 1px solid #d8dfd0; border-radius: 0; background: transparent; }
+.initial-stock-summary { margin-top: 24px; border-top: 1px solid #d8dfd0; padding-top: 22px; }
+.initial-stock-summary h3 { margin: 0 0 12px; font-size: 18px; }
+.initial-stock-summary-list { display: grid; gap: 12px; margin: 16px 0; }
+.initial-stock-summary-list > div { display: grid; grid-template-columns: minmax(70px, .3fr) minmax(0, 1fr); gap: 16px; }
+.initial-stock-summary-list dt { font-weight: 600; padding-top: 5px; overflow-wrap: anywhere; }
+.initial-stock-summary-list dd { margin: 0; }
+.initial-stock-summary-list ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.initial-stock-summary-list li { padding: 5px 10px; border: 1px solid #dbe1d6; border-radius: 8px; font-size: 14px; overflow-wrap: anywhere; }
+.initial-stock-summary-list li.is-out-of-stock { color: #5c6c59; background: #f6f7f2; }
+.initial-stock-summary-list li.is-duplicate { color: #8c2525; border-color: #d9a9a0; background: #fff0ec; }
+.catalog-shell [data-color-editor] [hidden], .catalog-shell [data-initial-stock] [hidden] { display: none !important; }
+@media (max-width: 720px) { .catalog-color-photo-fields { grid-template-columns: minmax(0, 1fr); gap: 0; } .catalog-color-visual { margin-top: 8px; } }
+@media (max-width: 600px) { .initial-stock-fields, .is-color-linked .initial-stock-fields { grid-template-columns: minmax(0, 1fr); } .catalog-color-card, .initial-stock-row { padding: 16px; } .initial-stock-row-actions { align-items: flex-start; flex-direction: column; gap: 8px; } .initial-stock-summary-list > div { grid-template-columns: minmax(0, 1fr); gap: 6px; } .catalog-color-stock > .button, .catalog-colors > .button { width: 100%; white-space: normal; } }

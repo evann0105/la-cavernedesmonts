@@ -93,7 +93,7 @@ class InitialStockFormSet(forms.BaseFormSet):
             return
         combinations = set()
         if self.product is not None and self.product.pk:
-            combinations = {(size.casefold(), color.casefold()) for size, color in self.product.stock_variants.values_list('size', 'color')}
+            combinations = {(' '.join(size.split()).casefold(), ' '.join(color.split()).casefold()) for size, color in self.product.stock_variants.values_list('size', 'color')}
         for form in self.forms:
             if not form.has_changed() or self._should_delete_form(form):
                 continue

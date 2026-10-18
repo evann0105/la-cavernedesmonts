@@ -39,6 +39,15 @@ def catalog_edit(request, pk=None):
     photos = GalleryFormSet(request.POST if request.method == 'POST' else None, request.FILES or None, instance=product, prefix='photos')
     initial_stock = InitialStockForms(request.POST if request.method == 'POST' else None, prefix='stock', product=product)
     colors = ColorPhotoForms(request.POST if request.method == 'POST' else None, request.FILES or None, instance=product, prefix='colors')
+    existing_stock = {}
+    if product.pk:
+        for variant in product.stock_variants.all():
+            key = ' '.join(variant.color.split()).casefold()
+            existing_stock.setdefault(key, []).append(variant)
+    for color_form in colors.forms:
+        # Keep the original stock identity visible when a photo name is edited.
+        key = ' '.join(color_form.instance.name.split()).casefold()
+        color_form.existing_stock = existing_stock.get(key, []) if color_form.instance.pk else []
     if request.method == 'POST':
         valid_colors = colors.is_valid()
         valid_stock = initial_stock.is_valid() if initial_stock is not None else True

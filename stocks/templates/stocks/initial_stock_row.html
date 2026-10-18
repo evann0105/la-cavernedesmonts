@@ -1,6 +1,18 @@
 <fieldset class="initial-stock-row" data-stock-row>
-<legend>Variante <span data-stock-number>{{ forloop.counter|default:'nouvelle' }}</span></legend>
-{{ stock_form.non_field_errors }}
-<div class="initial-stock-fields">{% for field in stock_form.visible_fields %}{% if field.name != 'DELETE' %}{% include 'core/catalog/field.html' %}{% endif %}{% endfor %}</div>
-<label class="catalog-check">{{ stock_form.DELETE }} Ignorer cette ligne</label>
+  <legend><span data-stock-legend>Déclinaison</span> <span data-stock-number>{{ forloop.counter|default:'nouvelle' }}</span></legend>
+  {{ stock_form.non_field_errors }}
+  <div class="initial-stock-fields">
+    <div data-stock-size-field>{% include 'core/catalog/field.html' with field=stock_form.size %}</div>
+    <div data-stock-color-field>{% include 'core/catalog/field.html' with field=stock_form.color %}</div>
+    <div data-stock-quantity-field>{% include 'core/catalog/field.html' with field=stock_form.quantity %}</div>
+  </div>
+  <details class="initial-stock-reference"{% if stock_form.reference.value or stock_form.reference.errors %} open{% endif %}>
+    <summary>Référence interne (facultatif)</summary>
+    {% include 'core/catalog/field.html' with field=stock_form.reference %}
+  </details>
+  <p class="initial-stock-duplicate" data-stock-duplicate hidden>Cette taille et cette couleur sont déjà saisies sur une autre ligne. Regroupez leurs quantités.</p>
+  <div class="initial-stock-row-actions">
+    <button type="button" class="initial-stock-copy" data-copy-stock-color hidden>Ajouter une taille pour ce coloris +</button>
+    <label class="catalog-check">{{ stock_form.DELETE }} Ignorer cette ligne</label>
+  </div>
 </fieldset>

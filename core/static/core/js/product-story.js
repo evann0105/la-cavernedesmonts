@@ -54,45 +54,125 @@
     });
   }
   const colorPicker = document.querySelector('[data-product-colors]');
-  if (colorPicker) {
-    colorPicker.hidden = false;
-    const buttons = [...colorPicker.querySelectorAll('[data-product-color]')];
-    const form = colorPicker.closest('form');
+  const sizePicker = document.querySelector('[data-product-sizes]');
+  const form = document.querySelector('.product-purchase');
+  if (colorPicker && form) {
+    const colors = [...colorPicker.querySelectorAll('[data-product-color]')];
+    const sizes = [...(sizePicker?.querySelectorAll('[data-product-size]') || [])];
     const variants = [...form.querySelectorAll('input[name="variant"]')];
-    const fallbackSizes = [...form.querySelectorAll('input[name="size"]')];
     const purchase = form.querySelector('button[type="submit"]');
+    const quantity = form.querySelector('input[name="quantity"]');
     const feedback = colorPicker.querySelector('[data-color-feedback]');
     const originalPhoto = opener?.href;
-    const unavailable = new Map(variants.map(input => [input, input.disabled]));
-    function chooseColor(button, reset) {
-      const key = button.dataset.productColor;
-      buttons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
-      if (showColorPhoto && (button.dataset.colorImage || originalPhoto)) {
-        showColorPhoto(button.dataset.colorImage || originalPhoto);
+    const photoFor = button => {
+      const url = button?.dataset.colorImage || originalPhoto;
+      if (showColorPhoto && url) showColorPhoto(url);
+    };
+    const variantFor = (size, color) => {
+      const matching = variants.filter(input =>
+        input.dataset.variantSize === size && input.dataset.variantColor === color);
+      return matching.find(input => !input.disabled && Number(input.dataset.variantAvailable) > 0) || matching[0];
+    };
+
+    colorPicker.hidden = false;
+    if (sizes.length && variants.length) {
+      let selectedSize = null;
+      let selectedColor = null;
+      const fallback = form.querySelector('[data-variant-fallback]');
+      const canOrder = input => Boolean(input && !input.disabled && Number(input.dataset.variantAvailable) > 0);
+
+      function selectSize(button) {
+        const variant = button && variantFor(button.dataset.productSize, selectedColor?.dataset.productColor);
+        selectedSize = canOrder(variant) ? button : null;
+        variants.forEach(input => { input.checked = input === variant && Boolean(selectedSize); });
+        sizes.forEach(item => item.setAttribute('aria-pressed', String(item === selectedSize)));
+        if (purchase) purchase.disabled = !selectedSize;
+        if (quantity) {
+          const limit = selectedSize ? Math.min(10, Number(variant.dataset.variantAvailable)) : 10;
+          quantity.max = String(limit);
+          if (!Number.isFinite(Number(quantity.value)) || Number(quantity.value) < 1) quantity.value = '1';
+          if (Number(quantity.value) > limit) quantity.value = String(limit);
+        }
+        if (!selectedColor) {
+          feedback.textContent = colors.some(item => !item.disabled)
+            ? 'Choisissez d’abord votre couleur pour voir les tailles disponibles.'
+            : 'Ces coloris ne sont pas disponibles à la commande. Contactez la boutique.';
+        } else {
+          feedback.textContent = (selectedSize
+            ? `${selectedColor.dataset.colorName} · ${selectedSize.dataset.sizeName}.`
+            : `Choisissez votre taille pour le coloris ${selectedColor.dataset.colorName}.`) +
+            (selectedColor.dataset.colorImage ? '' : ' Photo générale du produit : la photo de ce coloris n’est pas encore disponible.');
+        }
       }
-      const matching = variants.filter(input => input.dataset.variantColor === key);
-      variants.forEach(input => {
-        const matches = input.dataset.variantColor === key;
-        input.closest('[data-variant-row]').hidden = !matches;
-        input.disabled = !matches || unavailable.get(input);
-        if (reset) input.checked = false;
+
+      function selectColor(button, preferredSize = selectedSize?.dataset.productSize) {
+        selectedColor = button && !button.disabled ? button : null;
+        colors.forEach(item => item.setAttribute('aria-pressed', String(item === selectedColor)));
+        const compatibleSizes = [];
+        sizes.forEach(item => {
+          const variant = selectedColor && variantFor(item.dataset.productSize, selectedColor.dataset.productColor);
+          item.hidden = !variant;
+          item.disabled = !canOrder(variant);
+          const state = item.querySelector('[data-size-state]');
+          const unavailable = variant && !canOrder(variant);
+          if (state) {
+            state.hidden = !unavailable;
+            state.textContent = unavailable
+              ? (variant.dataset.variantStockKnown === 'false' ? 'À confirmer' : 'Épuisé') : '';
+          }
+          if (unavailable) item.title = `${item.dataset.sizeName} : ${state?.textContent || 'indisponible'} en ${selectedColor.dataset.colorName}`;
+          else item.removeAttribute('title');
+          if (canOrder(variant)) compatibleSizes.push(item);
+        });
+        const retained = compatibleSizes.find(item => item.dataset.productSize === preferredSize);
+        selectSize(retained || (compatibleSizes.length === 1 ? compatibleSizes[0] : null));
+        sizePicker.hidden = !selectedColor;
+        photoFor(selectedColor);
+      }
+
+      colors.forEach(button => {
+        const matching = variants.filter(input => input.dataset.variantColor === button.dataset.productColor);
+        button.disabled = !matching.some(canOrder);
+        const state = button.querySelector('[data-color-state]');
+        if (state) {
+          state.hidden = !button.disabled;
+          state.textContent = button.disabled
+            ? (matching.some(input => input.dataset.variantStockKnown === 'false') ? 'À confirmer' : (matching.length ? 'Épuisé' : 'Indisponible')) : '';
+        }
+        if (button.disabled) button.title = `${button.dataset.colorName} : ${state?.textContent || 'indisponible'}`;
+        else button.removeAttribute('title');
+        button.addEventListener('click', () => { if (!button.disabled) selectColor(button); });
       });
-      const available = matching.filter(input => !unavailable.get(input));
-      if (reset && available.length === 1) available[0].checked = true;
-      // A color photograph alone must never invent a purchasable stock variant.
-      fallbackSizes.forEach(input => { input.disabled = true; input.checked = false; });
-      if (purchase) purchase.disabled = available.length === 0;
-      feedback.textContent = available.length === 0
-        ? 'Ce coloris n’est pas disponible à la commande. Contactez la boutique.'
-        : (button.dataset.colorImage ? `Coloris : ${button.textContent.trim()}.` : 'Photo générale du produit : la photo de ce coloris n’est pas encore disponible.');
-    }
-    buttons.forEach(button => button.addEventListener('click', () => chooseColor(button, true)));
-    variants.forEach(input => input.addEventListener('change', () => {
-      const button = buttons.find(item => item.dataset.productColor === input.dataset.variantColor);
-      if (button) chooseColor(button, false);
-    }));
-    if (!variants.some(input => !input.disabled) && purchase) {
-      purchase.disabled = true;
+      sizes.forEach(button => button.addEventListener('click', () => {
+        if (!button.hidden && !button.disabled) selectSize(button);
+      }));
+      form.addEventListener('submit', event => {
+        const variant = selectedSize && variantFor(selectedSize.dataset.productSize, selectedColor?.dataset.productColor);
+        if (canOrder(variant) && variant.checked) return;
+        event.preventDefault();
+        feedback.textContent = 'Choisissez une couleur et une taille disponibles avant d’ajouter le produit.';
+        const target = selectedColor
+          ? sizes.find(button => !button.hidden && !button.disabled)
+          : colors.find(button => !button.disabled);
+        target?.focus();
+      });
+      const restored = variants.find(input => input.checked && canOrder(input));
+      const availableColors = colors.filter(button => !button.disabled);
+      const initialColor = restored
+        ? colors.find(button => button.dataset.productColor === restored.dataset.variantColor)
+        : (availableColors.length === 1 ? availableColors[0] : null);
+      selectColor(initialColor, restored?.dataset.variantSize);
+      // The enhanced controls validate the pair; hidden radios cannot receive native validation focus.
+      variants.forEach(input => { input.required = false; });
+      if (fallback) fallback.hidden = true;
+    } else {
+      // Photos alone do not create a size/color combination that can be ordered.
+      colors.forEach(button => button.addEventListener('click', () => {
+        colors.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        photoFor(button);
+        feedback.textContent = 'Contactez la boutique pour vérifier les tailles et les stocks de ce coloris.';
+      }));
+      if (!variants.length && purchase) purchase.disabled = true;
       feedback.textContent = 'Contactez la boutique pour vérifier les tailles et les stocks de ces coloris.';
     }
   }

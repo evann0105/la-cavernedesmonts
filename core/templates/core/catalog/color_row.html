@@ -1,6 +1,35 @@
-<fieldset class="initial-stock-row" data-color-row><legend>Photo du coloris</legend>
-{% for field in color_form.hidden_fields %}{{ field }}{% endfor %}{{ color_form.non_field_errors }}
-{% if color_form.instance.image %}<img class="catalog-main-preview" src="{{ color_form.instance.image.url }}" alt="{{ color_form.instance.name }}" width="160" height="160" loading="lazy">{% endif %}
-{% include 'core/catalog/field.html' with field=color_form.name %}{% include 'core/catalog/field.html' with field=color_form.image %}
-<label class="catalog-check">{{ color_form.DELETE }} Retirer cette photo de couleur</label>
+<fieldset class="catalog-color-card" data-color-row data-original-color="{{ color_form.instance.name|default:'' }}">
+  <legend>Coloris <span data-color-name-label>{{ color_form.name.value|default:'' }}</span></legend>
+  {% for field in color_form.hidden_fields %}{{ field }}{% endfor %}{{ color_form.non_field_errors }}
+  <div class="catalog-color-photo-fields">
+    <div class="catalog-color-visual">
+      {% if color_form.instance.image %}<img src="{{ color_form.instance.image.url }}" alt="{{ color_form.instance.name }}" width="160" height="160" data-color-preview data-original-image="{{ color_form.instance.image.url }}">{% else %}<img alt="Aperçu du coloris" width="160" height="160" data-color-preview hidden>{% endif %}
+      <span class="catalog-color-placeholder" data-color-placeholder{% if color_form.instance.image %} hidden{% endif %}>Photo du coloris</span>
+    </div>
+    <div class="catalog-color-photo-inputs">
+      {% include 'core/catalog/field.html' with field=color_form.name %}
+      {% include 'core/catalog/field.html' with field=color_form.image %}
+      <label class="catalog-check">{{ color_form.DELETE }} Retirer cette photo de couleur</label>
+      <p class="help" data-color-removal-note hidden>La photo sera retirée. Les stocks déjà enregistrés sont conservés ; les nouvelles lignes restent accessibles dans « Stock sans photo couleur ».</p>
+    </div>
+  </div>
+  <div class="catalog-color-stock" data-color-stock hidden>
+    <h3>Tailles et quantités <span data-color-stock-title></span></h3>
+    <p class="help">Une ligne par taille. La couleur est reprise automatiquement depuis ce bloc. Zéro signifie rupture de stock.</p>
+    <div data-existing-color-stock>
+      {% if color_form.existing_stock %}
+        <p class="help"><strong>Stocks déjà enregistrés</strong> · <a href="{% url 'stocks:product' product.pk %}">Ajuster dans l’inventaire ↗</a></p>
+        <ul class="catalog-existing-color-stock">
+          {% for variant in color_form.existing_stock %}
+            <li data-existing-stock-item><strong>{{ variant.size }}</strong><span>{% if variant.quantity is None %}À compter{% elif variant.available == 0 %}Rupture de stock{% else %}{{ variant.available }} disponible{{ variant.available|pluralize }}{% endif %}</span></li>
+          {% endfor %}
+        </ul>
+        <p class="help catalog-color-warning" data-existing-color-warning hidden>Le nom de cette photo a changé. Les stocks déjà enregistrés conservent leur couleur ; corrigez-les dans l’inventaire si besoin.</p>
+      {% endif %}
+    </div>
+    <p class="help" data-color-stock-empty>Aucune nouvelle taille ajoutée pour ce coloris.</p>
+    <div data-color-stock-rows></div>
+    <button class="button button-outline" type="button" data-add-color-size>Ajouter une taille pour ce coloris +</button>
+    <p class="help" data-color-stock-name-hint hidden>Renseignez d’abord le nom de la couleur.</p>
+  </div>
 </fieldset>

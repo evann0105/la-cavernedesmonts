@@ -1,8 +1,8 @@
 {% extends 'core/catalog/base.html' %}{% load static %}
-{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'stocks/initial-stock.css' %}">{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'stocks/initial-stock.css' %}?v=20261019-color-sizes">{% endblock %}
 {% block catalog_content %}
 <div class="catalog-heading"><div><p class="eyebrow">LE CATALOGUE À VOTRE MAIN</p><h1>{% if product.pk %}Modifier un produit.{% else %}Ajouter un produit.{% endif %}</h1><p>{% if product.pk %}{{ product.name }}{% else %}Préparez votre fiche, ajoutez vos photos, puis choisissez quand la publier.{% endif %}</p></div>{% if product.pk %}<a class="button button-outline" href="{% url 'core:catalog_preview' product.pk %}">Voir l’aperçu enregistré ↗</a>{% endif %}</div>
-{% if product.pk %}<section class="catalog-panel"><h2>Stocks par taille et couleur</h2><p>Gérez chaque combinaison et sa quantité depuis l’inventaire.</p><a class="button button-outline" href="{% url 'stocks:product' product.pk %}">Gérer les variantes et le stock ↗</a></section>{% endif %}
+{% if product.pk %}<section class="catalog-panel"><h2>Déclinaisons et stocks existants</h2><p>Chaque couleur peut proposer ses propres tailles. Modifiez les combinaisons déjà enregistrées et leur quantité depuis l’inventaire.</p><a class="button button-outline" href="{% url 'stocks:product' product.pk %}">Gérer les variantes et le stock ↗</a></section>{% endif %}
 {% if product.information_review_notes %}<section class="catalog-panel"><h2>Informations produit à contrôler</h2><p>{{ product.information_review_notes|linebreaksbr }}</p>{% if product.information_checked_on %}<p>Dernière recherche : {{ product.information_checked_on }}</p>{% endif %}</section>{% endif %}
 <form method="post" enctype="multipart/form-data" class="catalog-form">{% csrf_token %}{{ form.non_field_errors }}
 {% if form.errors or photos.errors or photos.non_form_errors or initial_stock.errors or initial_stock.non_form_errors or colors.errors or colors.non_form_errors %}<div class="catalog-error" role="alert">L’enregistrement n’a pas abouti. Corrigez les champs signalés ci-dessous. Les fichiers choisis doivent être sélectionnés à nouveau.</div>{% endif %}
@@ -16,4 +16,4 @@
 <div class="catalog-save"><a href="{% url 'core:catalog_list' %}">Retour aux produits</a><button class="button" type="submit">Enregistrer le produit ✓</button></div></form>
 {% endblock %}
 
-{% block scripts %}<script src="{% static 'core/js/catalog-colors.js' %}?v=20261015" defer></script><script src="{% static 'js/catalog.js' %}?v=20261015-colors" defer></script>{% if initial_stock %}<script src="{% static 'stocks/initial-stock.js' %}" defer></script>{% endif %}{% endblock %}
+{% block scripts %}<script src="{% static 'core/js/catalog-colors.js' %}?v=20261019-color-sizes" defer></script><script src="{% static 'js/catalog.js' %}?v=20261019-color-sizes" defer></script>{% if initial_stock %}<script src="{% static 'stocks/initial-stock.js' %}?v=20261019-color-sizes" defer></script>{% endif %}{% endblock %}

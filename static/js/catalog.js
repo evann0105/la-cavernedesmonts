@@ -12,6 +12,7 @@
   form.addEventListener('change', event => {
     const input = event.target;
     if (!(input instanceof HTMLInputElement) || input.type !== 'file') return;
+    if (input.closest('[data-color-row]')) return; // Color cards manage their own photo preview.
     let state = previewsByInput.get(input);
     if (!state) {
       const previews = document.createElement('div');

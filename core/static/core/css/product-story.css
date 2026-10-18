@@ -13,11 +13,21 @@
 
 .lightbox-canvas:focus-visible { outline: 3px solid #607252; outline-offset: -4px; }
 
-.product-colors { border: 0; margin: 20px 0; padding: 0; min-width: 0; }
-.product-colors[hidden], .size-options label[hidden] { display: none; }
-.product-colors legend { margin-bottom: 12px; font-weight: 600; }
+.product-sizes, .product-colors { border: 0; margin: 0 0 20px; padding: 0; min-width: 0; }
+.product-sizes { margin-bottom: 0; }
+.product-sizes[hidden], .product-colors[hidden], .size-picker[hidden], .size-options label[hidden], .product-size-option[hidden], .product-color-option[hidden], .product-option-state[hidden] { display: none; }
+.product-sizes legend, .product-colors legend { margin-bottom: 12px; font-size: 16px; font-weight: 600; }
+.product-size-options { display: flex; flex-wrap: wrap; gap: 9px; }
+.product-size-option { min-width: 52px; max-width: 100%; min-height: 46px; padding: 10px 16px; border: 1px solid #b8c4ad; border-radius: 10px; background: #fff; color: inherit; font: inherit; overflow-wrap: anywhere; cursor: pointer; }
+.product-size-option[aria-pressed="true"] { border-color: #203c32; background: #203c32; color: #fff; }
+.product-size-option:focus-visible { outline: 3px solid #749662; outline-offset: 3px; }
+.product-option-state { display: block; margin-top: 3px; font-size: 12px; font-weight: 400; line-height: 1.3; }
+.product-size-option:disabled, .product-color-option:disabled { border-color: #d4dbcd; background: #f2f3ef; color: #64715e; cursor: not-allowed; }
+.size-options input:disabled + span { border-color: #d4dbcd; background: #f2f3ef; color: #64715e; cursor: not-allowed; }
 .product-color-options { display: flex; flex-wrap: wrap; gap: 12px; }
-.product-color-option { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 14px; border: 1px solid #b8c4ad; border-radius: 14px; background: #fff; color: inherit; font: inherit; cursor: pointer; }
-.product-color-option img { object-fit: contain; border-radius: 6px; }
+.product-color-option { display: flex; align-items: center; gap: 10px; max-width: 100%; min-height: 48px; padding: 8px 14px; border: 1px solid #b8c4ad; border-radius: 14px; background: #fff; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.product-color-option > span { min-width: 0; overflow-wrap: anywhere; }
+.product-color-option img { flex: 0 0 auto; object-fit: contain; border-radius: 6px; }
 .product-color-option[aria-pressed="true"] { background: #e7eddd; border-color: #294b3d; box-shadow: inset 0 0 0 1px #294b3d; }
 .product-color-option:focus-visible { outline: 3px solid #749662; outline-offset: 3px; }
+.product-colors [data-color-feedback] { margin: 12px 0 0; color: #536151; line-height: 1.5; }

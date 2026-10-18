@@ -1,25 +1,240 @@
 (() => {
   const section = document.querySelector('[data-initial-stock]');
   if (!section) return;
+  const form = section.closest('form') || document;
   const total = section.querySelector('[name="stock-TOTAL_FORMS"]');
   const maximum = Number(section.querySelector('[name="stock-MAX_NUM_FORMS"]').value);
   const add = section.querySelector('[data-add-stock]');
-  const rows = section.querySelector('[data-stock-rows]');
+  const fallback = section.querySelector('[data-stock-fallback]');
+  const fallbackRows = section.querySelector('[data-stock-rows]');
   const template = section.querySelector('[data-stock-template]');
   const status = section.querySelector('[data-stock-status]');
-  add.hidden = false;
-  add.disabled = Number(total.value) >= maximum;
-  add.addEventListener('click', () => {
+  const summary = section.querySelector('[data-stock-summary]');
+  const summaryList = section.querySelector('[data-stock-summary-list]');
+  const summaryEmpty = section.querySelector('[data-stock-summary-empty]');
+  const detachedNote = section.querySelector('[data-stock-detached-note]');
+  const sizeSuggestions = section.querySelector('#initial-stock-sizes');
+  const colorSuggestions = section.querySelector('#initial-stock-colors');
+  const declaredSizes = document.querySelector('[name="sizes"]');
+  const colorEditor = document.querySelector('[data-color-editor]');
+  const stockRows = new Set(fallbackRows.querySelectorAll('[data-stock-row]'));
+  const colorCards = new Map();
+  const linkedColors = new WeakMap();
+  const normalize = value => value.trim().replace(/\s+/g, ' ');
+  const keyFor = value => normalize(value).toLocaleLowerCase('fr');
+  const field = (row, name) => row.querySelector(`[name$="-${name}"]`);
+  const hasValues = row => ['size', 'color', 'quantity', 'reference'].some(name => field(row, name).value.trim()) || Boolean(row.querySelector('.errorlist'));
+  const isPristine = row => !linkedColors.has(row) && !field(row, 'DELETE').checked && !hasValues(row);
+  const canAdd = () => Number(total.value) < maximum || [...stockRows].some(isPristine);
+
+  function registerColor(row) {
+    if (colorCards.has(row)) return;
+    colorCards.set(row, {
+      row,
+      name: field(row, 'name'),
+      deleted: field(row, 'DELETE'),
+      block: row.querySelector('[data-color-stock]'),
+      rows: row.querySelector('[data-color-stock-rows]'),
+      add: row.querySelector('[data-add-color-size]'),
+      title: row.querySelector('[data-color-stock-title]'),
+      empty: row.querySelector('[data-color-stock-empty]'),
+      nameHint: row.querySelector('[data-color-stock-name-hint]'),
+    });
+  }
+
+  function prepareStock(row) {
+    field(row, 'size').setAttribute('list', sizeSuggestions.id);
+    field(row, 'color').setAttribute('list', colorSuggestions.id);
+    row.querySelector('[data-copy-stock-color]').hidden = false;
+  }
+
+  function placeRows(matchUnlinked) {
+    const matches = new Map();
+    colorCards.forEach(card => {
+      const name = normalize(card.name.value);
+      if (!name || card.deleted.checked) return;
+      const key = keyFor(name);
+      if (!matches.has(key)) matches.set(key, []);
+      matches.get(key).push(card);
+    });
+    stockRows.forEach(row => {
+      let owner = linkedColors.get(row);
+      if (owner?.deleted.checked) {
+        linkedColors.delete(row);
+        owner = null;
+        detachedNote.hidden = false;
+        fallback.open = true;
+      }
+      if (!owner && matchUnlinked && !field(row, 'DELETE').checked && hasValues(row)) {
+        const matching = matches.get(keyFor(field(row, 'color').value));
+        if (matching?.length === 1) {
+          owner = matching[0];
+          linkedColors.set(row, owner);
+        }
+      }
+      const colorField = row.querySelector('[data-stock-color-field]');
+      const ownerName = owner ? normalize(owner.name.value) : '';
+      if (ownerName) field(row, 'color').value = ownerName;
+      colorField.hidden = Boolean(ownerName) && !colorField.querySelector('.errorlist');
+      row.classList.toggle('is-color-linked', Boolean(ownerName));
+      row.querySelector('[data-stock-legend]').textContent = ownerName ? 'Taille' : 'Déclinaison';
+      row.querySelector('[data-copy-stock-color]').hidden = Boolean(owner);
+      const destination = owner ? owner.rows : fallbackRows;
+      if (row.parentElement !== destination) destination.append(row);
+    });
+  }
+
+  function fillSuggestions(list, values) {
+    const unique = new Map();
+    values.forEach(value => {
+      const label = normalize(value);
+      if (label && !unique.has(keyFor(label))) unique.set(keyFor(label), label);
+    });
+    list.replaceChildren(...[...unique.values()].map(value => {
+      const option = document.createElement('option');
+      option.value = value;
+      return option;
+    }));
+  }
+
+  function refreshSuggestions() {
+    fillSuggestions(sizeSuggestions, [
+      'XS', 'S', 'M', 'L', 'XL', 'XXL', 'Taille unique',
+      ...(declaredSizes ? declaredSizes.value.split(/[,;\n]/) : []),
+      ...[...stockRows].map(row => field(row, 'size').value),
+    ]);
+    fillSuggestions(colorSuggestions, [
+      ...[...colorCards.values()].filter(card => !card.deleted.checked).map(card => card.name.value),
+      ...[...stockRows].map(row => field(row, 'color').value),
+    ]);
+  }
+
+  function refresh(matchUnlinked = false) {
+    placeRows(matchUnlinked);
+    const combinations = new Map();
+    const groups = new Map();
+    const addAllowed = canAdd();
+    add.disabled = !addAllowed;
+    stockRows.forEach(row => {
+      const ignored = field(row, 'DELETE').checked;
+      row.classList.toggle('is-ignored', ignored);
+      row.querySelector('[data-copy-stock-color]').disabled = ignored || !addAllowed;
+      row.querySelector('[data-stock-duplicate]').hidden = true;
+      if (ignored || !hasValues(row)) return;
+      const size = normalize(field(row, 'size').value) || 'Taille unique';
+      const color = normalize(field(row, 'color').value) || 'Coloris unique';
+      const rawQuantity = field(row, 'quantity').value;
+      const combinationKey = JSON.stringify([keyFor(size), keyFor(color)]);
+      if (!combinations.has(combinationKey)) combinations.set(combinationKey, []);
+      combinations.get(combinationKey).push(row);
+      const groupKey = keyFor(color);
+      if (!groups.has(groupKey)) groups.set(groupKey, {color, entries: []});
+      groups.get(groupKey).entries.push({size, rawQuantity, combinationKey});
+    });
+    combinations.forEach(matching => {
+      if (matching.length > 1) matching.forEach(row => {
+        row.querySelector('[data-stock-duplicate]').hidden = false;
+      });
+    });
+    colorCards.forEach(card => {
+      const name = normalize(card.name.value);
+      card.block.hidden = card.deleted.checked;
+      card.title.textContent = name ? `· ${name}` : '';
+      card.add.disabled = card.deleted.checked || !name || !addAllowed;
+      card.nameHint.hidden = Boolean(name);
+      card.empty.hidden = [...stockRows].some(row => linkedColors.get(row) === card && !field(row, 'DELETE').checked);
+    });
+    const elements = [...groups.values()].map(group => {
+      const wrapper = document.createElement('div');
+      const term = document.createElement('dt');
+      term.textContent = group.color;
+      const description = document.createElement('dd');
+      const list = document.createElement('ul');
+      group.entries.forEach(({size, rawQuantity, combinationKey}) => {
+        const item = document.createElement('li');
+        const quantity = Number(rawQuantity);
+        let stockLabel = 'quantité à renseigner';
+        if (rawQuantity !== '' && Number.isInteger(quantity) && quantity >= 0) {
+          stockLabel = quantity === 0 ? 'rupture de stock' : `${quantity.toLocaleString('fr-FR')} ${quantity === 1 ? 'unité' : 'unités'}`;
+          item.classList.toggle('is-out-of-stock', quantity === 0);
+        }
+        const duplicate = combinations.get(combinationKey).length > 1;
+        item.classList.toggle('is-duplicate', duplicate);
+        item.textContent = `${size} · ${stockLabel}${duplicate ? ' · doublon' : ''}`;
+        list.append(item);
+      });
+      description.append(list);
+      wrapper.append(term, description);
+      return wrapper;
+    });
+    summaryList.replaceChildren(...elements);
+    summaryEmpty.hidden = elements.length > 0;
+    refreshSuggestions();
+  }
+
+  function createStockRow() {
+    const pristine = [...stockRows].find(isPristine);
+    if (pristine) return pristine;
     const index = Number(total.value);
-    if (index >= maximum) return;
-    const container = document.createElement('template');
-    container.innerHTML = template.innerHTML.replaceAll('__prefix__', String(index));
-    const row = container.content.querySelector('[data-stock-row]');
+    if (index >= maximum) return null;
+    const fragment = document.createElement('template');
+    fragment.innerHTML = template.innerHTML.replaceAll('__prefix__', String(index));
+    const row = fragment.content.querySelector('[data-stock-row]');
     row.querySelector('[data-stock-number]').textContent = String(index + 1);
-    rows.append(container.content);
+    prepareStock(row);
+    fallbackRows.append(fragment.content);
+    stockRows.add(row);
     total.value = index + 1;
-    add.disabled = Number(total.value) >= maximum;
-    status.textContent = 'Nouvelle ligne ajoutée.';
-    row.querySelector('input').focus();
+    return row;
+  }
+
+  function addStock(card, color) {
+    const name = card ? normalize(card.name.value) : normalize(color || '');
+    if (card && (!name || card.deleted.checked)) return;
+    const row = createStockRow();
+    if (!row) return;
+    if (card) linkedColors.set(row, card);
+    if (name) field(row, 'color').value = name;
+    if (!card) fallback.open = true;
+    refresh(false);
+    status.textContent = name
+      ? `Nouvelle taille pour le coloris ${name}. Indiquez sa taille et sa quantité.`
+      : 'Nouvelle déclinaison ajoutée. Indiquez sa taille, sa couleur et sa quantité.';
+    field(row, 'size').focus();
+  }
+
+  if (colorEditor) {
+    colorEditor.querySelectorAll('[data-color-row]').forEach(registerColor);
+    section.classList.add('is-grouped');
+    section.querySelector('[data-stock-section-title]').hidden = true;
+    section.querySelector('[data-stock-manual-intro]').hidden = true;
+    colorEditor.append(section);
+    colorEditor.addEventListener('catalog:color-added', event => {
+      registerColor(event.detail.row);
+      refresh(true);
+    });
+  }
+  add.hidden = false;
+  summary.hidden = false;
+  stockRows.forEach(prepareStock);
+  refresh(true);
+  fallback.open = [...fallbackRows.querySelectorAll('[data-stock-row]')].some(row => hasValues(row) || field(row, 'DELETE').checked);
+  add.addEventListener('click', () => addStock());
+  form.addEventListener('click', event => {
+    const addSize = event.target.closest('[data-add-color-size]');
+    if (addSize) {
+      addStock(colorCards.get(addSize.closest('[data-color-row]')));
+      return;
+    }
+    const copy = event.target.closest('[data-copy-stock-color]');
+    if (copy) addStock(null, field(copy.closest('[data-stock-row]'), 'color').value || 'Coloris unique');
   });
+  form.addEventListener('input', event => {
+    if (event.target.closest('[data-stock-row]')) refresh(false);
+    else if (event.target.name?.startsWith('colors-')) refresh(true);
+  });
+  form.addEventListener('change', event => {
+    if (event.target.closest('[data-stock-row]') || event.target.name?.startsWith('colors-')) refresh(true);
+  });
+  declaredSizes?.addEventListener('input', refreshSuggestions);
 })();
