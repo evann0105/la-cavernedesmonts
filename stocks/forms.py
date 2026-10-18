@@ -75,6 +75,8 @@ class InitialVariantForm(forms.Form):
     def clean(self):
         data = super().clean()
         if self.has_changed():
+            if any(separator in data.get('size', '') for separator in (',', ';', '\n')):
+                self.add_error('size', 'Indiquez une seule taille sur cette ligne. Pour M, L, XL, utilisez le champ « Tailles disponibles pour cette couleur » au-dessus.')
             for name, default in [('size', 'Taille unique'), ('color', 'Coloris unique'), ('reference', '')]:
                 data[name] = ' '.join(data.get(name, '').split()) or default
             if data.get('quantity') is None and 'quantity' not in self.errors:

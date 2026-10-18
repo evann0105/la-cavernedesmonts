@@ -1,4 +1,5 @@
 from io import BytesIO
+import re
 from uuid import uuid4
 from PIL import Image, ImageOps, UnidentifiedImageError
 from django import forms
@@ -153,6 +154,11 @@ class HomepageSelectionForm(forms.Form):
 
 
 class ProductColorForm(forms.ModelForm):
+    sizes = forms.CharField(
+        label='Tailles disponibles pour cette couleur', required=False, max_length=1000,
+        widget=forms.TextInput(attrs={'placeholder': 'M, L, XL', 'autocomplete': 'off'}),
+        help_text='Séparez les tailles par des virgules, par exemple M, L, XL ou 6 mois, 12 mois. Préparez ensuite les quantités pour chaque taille.',
+    )
     image = ShopImageField(label='Photo de cette couleur', required=True,
         widget=forms.ClearableFileInput(attrs={'accept': 'image/jpeg,image/png,image/webp'}),
         help_text='JPEG, PNG ou WebP. 10 Mo et 64 mégapixels maximum.')
@@ -162,6 +168,23 @@ class ProductColorForm(forms.ModelForm):
         fields = ['name', 'image']
         labels = {'name': 'Nom de la couleur'}
         widgets = {'name': forms.TextInput(attrs={'placeholder': 'Exemple : Rouge'})}
+
+    def clean_sizes(self):
+        labels = {}
+        for value in re.split(r'[,;\n]+', self.cleaned_data.get('sizes', '')):
+            label = ' '.join(value.split())
+            if not label:
+                continue
+            if len(label) > 50:
+                raise forms.ValidationError('Chaque taille doit contenir au maximum 50 caractères.')
+            labels.setdefault(label.casefold(), label)
+        if len(labels) > 50:
+            raise forms.ValidationError('Préparez au maximum 50 tailles à la fois.')
+        return ', '.join(labels.values())
+
+    @property
+    def size_options(self):
+        return [label for label in self.cleaned_data.get('sizes', '').split(', ') if label]
 
     def clean_name(self):
         name = ' '.join(self.cleaned_data['name'].split())

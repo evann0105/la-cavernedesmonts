@@ -4,7 +4,9 @@
   let changed = false;
   form.addEventListener('input', () => { changed = true; });
   form.addEventListener('change', () => { changed = true; });
-  form.addEventListener('submit', () => { changed = false; });
+  form.addEventListener('submit', event => {
+    queueMicrotask(() => { if (!event.defaultPrevented) changed = false; });
+  });
   window.addEventListener('beforeunload', event => {
     if (changed) { event.preventDefault(); event.returnValue = ''; }
   });

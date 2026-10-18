@@ -1,4 +1,4 @@
-<fieldset class="catalog-color-card" data-color-row data-original-color="{{ color_form.instance.name|default:'' }}">
+<fieldset class="catalog-color-card" data-color-row data-original-color="{% if color_form.existing_stock %}{{ color_form.existing_stock.0.color }}{% else %}{{ color_form.instance.name|default:'' }}{% endif %}">
   <legend>Coloris <span data-color-name-label>{{ color_form.name.value|default:'' }}</span></legend>
   {% for field in color_form.hidden_fields %}{{ field }}{% endfor %}{{ color_form.non_field_errors }}
   <div class="catalog-color-photo-fields">
@@ -15,13 +15,20 @@
   </div>
   <div class="catalog-color-stock" data-color-stock hidden>
     <h3>Tailles et quantités <span data-color-stock-title></span></h3>
-    <p class="help">Une ligne par taille. La couleur est reprise automatiquement depuis ce bloc. Zéro signifie rupture de stock.</p>
+    <div class="catalog-color-sizes">
+      {% include 'core/catalog/field.html' with field=color_form.sizes %}
+      <button class="button button-outline" type="button" data-apply-color-sizes>Préparer les tailles</button>
+      <p class="help" data-color-sizes-pending hidden></p>
+      <p class="help catalog-color-sizes-error" id="{{ color_form.sizes.auto_id }}_prepare_error" role="alert" data-color-sizes-error hidden></p>
+      <p class="help" role="status" data-color-sizes-status></p>
+    </div>
+    <p class="help">Chaque taille préparée a sa propre quantité à renseigner ci-dessous. Effacer une taille dans cette liste ne supprime aucun stock déjà enregistré ou préparé. Zéro signifie rupture de stock.</p>
     <div data-existing-color-stock>
       {% if color_form.existing_stock %}
         <p class="help"><strong>Stocks déjà enregistrés</strong> · <a href="{% url 'stocks:product' product.pk %}">Ajuster dans l’inventaire ↗</a></p>
         <ul class="catalog-existing-color-stock">
           {% for variant in color_form.existing_stock %}
-            <li data-existing-stock-item><strong>{{ variant.size }}</strong><span>{% if variant.quantity is None %}À compter{% elif variant.available == 0 %}Rupture de stock{% else %}{{ variant.available }} disponible{{ variant.available|pluralize }}{% endif %}</span></li>
+            <li data-existing-stock-item data-stock-size="{{ variant.size }}" data-stock-color="{{ variant.color }}"><strong>{{ variant.size }}</strong><span>{% if variant.quantity is None %}À compter{% elif variant.available == 0 %}Rupture de stock{% else %}{{ variant.available }} disponible{{ variant.available|pluralize }}{% endif %}</span></li>
           {% endfor %}
         </ul>
         <p class="help catalog-color-warning" data-existing-color-warning hidden>Le nom de cette photo a changé. Les stocks déjà enregistrés conservent leur couleur ; corrigez-les dans l’inventaire si besoin.</p>
@@ -29,7 +36,7 @@
     </div>
     <p class="help" data-color-stock-empty>Aucune nouvelle taille ajoutée pour ce coloris.</p>
     <div data-color-stock-rows></div>
-    <button class="button button-outline" type="button" data-add-color-size>Ajouter une taille pour ce coloris +</button>
+    <button class="initial-stock-copy" type="button" data-add-color-size>Ajouter une seule taille manuellement +</button>
     <p class="help" data-color-stock-name-hint hidden>Renseignez d’abord le nom de la couleur.</p>
   </div>
 </fieldset>

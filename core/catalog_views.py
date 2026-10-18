@@ -48,9 +48,29 @@ def catalog_edit(request, pk=None):
         # Keep the original stock identity visible when a photo name is edited.
         key = ' '.join(color_form.instance.name.split()).casefold()
         color_form.existing_stock = existing_stock.get(key, []) if color_form.instance.pk else []
+        if color_form.existing_stock:
+            color_form.fields['sizes'].label = 'Tailles à ajouter pour cette couleur'
     if request.method == 'POST':
         valid_colors = colors.is_valid()
         valid_stock = initial_stock.is_valid() if initial_stock is not None else True
+        if valid_colors and valid_stock:
+            combinations = {
+                (' '.join(size.split()).casefold(), ' '.join(color.split()).casefold())
+                for size, color in product.stock_variants.values_list('size', 'color')
+            } if product.pk else set()
+            combinations.update(
+                (stock_form.cleaned_data['size'].casefold(), stock_form.cleaned_data['color'].casefold())
+                for stock_form in initial_stock.forms
+                if stock_form.has_changed() and not stock_form.cleaned_data.get('DELETE')
+            )
+            for color_form in colors.forms:
+                if not color_form.cleaned_data or color_form.cleaned_data.get('DELETE'):
+                    continue
+                color_key = color_form.cleaned_data['name'].casefold()
+                missing = [size for size in color_form.size_options if (size.casefold(), color_key) not in combinations]
+                if missing:
+                    color_form.add_error('sizes', 'Préparez les tailles et renseignez leur quantité avant d’enregistrer : ' + ', '.join(missing) + '.')
+                    valid_colors = False
         valid_form, valid_photos = form.is_valid(), photos.is_valid()
         if valid_form and valid_photos:
             remaining = sum(1 for photo in photos.forms if not photo.cleaned_data.get('DELETE'))

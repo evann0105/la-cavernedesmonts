@@ -55,3 +55,10 @@
 .catalog-shell [data-color-editor] [hidden], .catalog-shell [data-initial-stock] [hidden] { display: none !important; }
 @media (max-width: 720px) { .catalog-color-photo-fields { grid-template-columns: minmax(0, 1fr); gap: 0; } .catalog-color-visual { margin-top: 8px; } }
 @media (max-width: 600px) { .initial-stock-fields, .is-color-linked .initial-stock-fields { grid-template-columns: minmax(0, 1fr); } .catalog-color-card, .initial-stock-row { padding: 16px; } .initial-stock-row-actions { align-items: flex-start; flex-direction: column; gap: 8px; } .initial-stock-summary-list > div { grid-template-columns: minmax(0, 1fr); gap: 6px; } .catalog-color-stock > .button, .catalog-colors > .button { width: 100%; white-space: normal; } }
+
+.catalog-color-sizes { margin: 18px 0 22px; padding: 16px; background: #f1f5eb; border-radius: 12px; min-width: 0; }
+.catalog-color-sizes .catalog-field { margin: 0 0 14px; }
+.catalog-color-sizes > .button { max-width: 100%; white-space: normal; }
+.catalog-shell .catalog-color-sizes-error { color: #8c2525; background: #fff0ec; padding: 10px 12px; border-radius: 8px; }
+.catalog-shell .catalog-color-sizes input[aria-invalid=true] { border-color: #8c2525; }
+@media (max-width: 600px) { .catalog-color-sizes { padding: 14px; } .catalog-color-sizes > .button { width: 100%; } }

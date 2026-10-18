@@ -343,3 +343,131 @@ class SizeColorVariantTests(TestCase):
         self.assertEqual(forms_by_photo[red_photo.pk].existing_stock[0].available, 3)
         self.assertEqual([variant.pk for variant in forms_by_photo[blue_photo.pk].existing_stock], [blue.pk])
         self.assertNotIn(black.pk, [variant.pk for form in forms_by_photo.values() for variant in form.existing_stock])
+
+    def test_color_size_lists_save_only_the_five_declared_pairs(self):
+        pairs = [('M', 'Rouge', 5), ('L', 'Rouge', 2), ('XL', 'Rouge', 1),
+                 ('S', 'Vert', 3), ('M', 'Vert', 4)]
+        values = {
+            'stock-TOTAL_FORMS': str(len(pairs)), 'colors-TOTAL_FORMS': '2',
+            'colors-0-name': 'Rouge', 'colors-0-sizes': 'M, L, XL',
+            'colors-0-image': color_photo('rouge.png'),
+            'colors-1-name': 'Vert', 'colors-1-sizes': 'S, M',
+            'colors-1-image': color_photo('vert.png'),
+        }
+        for index, (size, color, quantity) in enumerate(pairs):
+            values.update({
+                f'stock-{index}-size': size, f'stock-{index}-color': color,
+                f'stock-{index}-quantity': str(quantity),
+            })
+        response = self.client.post(reverse('core:catalog_add'), self.product_data(
+            name='Listes de tailles par couleur', main_image=color_photo(), **values,
+        ))
+        self.assertEqual(response.status_code, 302)
+        product = Product.objects.get(name='Listes de tailles par couleur')
+        self.assertEqual(set(product.stock_variants.values_list('size', 'color', 'quantity')), set(pairs))
+        self.assertFalse(product.stock_variants.filter(size='S', color='Rouge').exists())
+        self.assertFalse(product.stock_variants.filter(size__in=['L', 'XL'], color='Vert').exists())
+
+    def test_color_size_list_without_quantities_rejects_the_whole_product(self):
+        for total in ['0', '1']:
+            with self.subTest(stock_rows=total):
+                response = self.client.post(reverse('core:catalog_add'), self.product_data(
+                    name='Tailles sans quantités', main_image=color_photo(), **{
+                        'stock-TOTAL_FORMS': total, 'colors-TOTAL_FORMS': '1',
+                        'colors-0-name': 'Rouge', 'colors-0-sizes': 'M, L, XL',
+                        'colors-0-image': color_photo('rouge.png'),
+                    },
+                ))
+                self.assertEqual(response.status_code, 200)
+                self.assertIn('quantit', response.content.decode().lower())
+                self.assertFalse(Product.objects.filter(name='Tailles sans quantités').exists())
+                self.assertFalse(Variant.objects.exists())
+                self.assertFalse(ProductColor.objects.exists())
+
+    def test_color_size_list_cannot_use_another_color_or_a_deleted_stock_row(self):
+        for changes in [
+            {'stock-0-color': 'Vert'},
+            {'stock-0-color': 'Rouge', 'stock-0-DELETE': 'on'},
+        ]:
+            with self.subTest(changes=changes):
+                response = self.client.post(reverse('core:catalog_add'), self.product_data(
+                    name='Association couleur invalide', main_image=color_photo(), **{
+                        'stock-TOTAL_FORMS': '1', 'stock-0-size': 'M',
+                        'colors-TOTAL_FORMS': '1', 'colors-0-name': 'Rouge',
+                        'colors-0-sizes': 'M', 'colors-0-image': color_photo('rouge.png'),
+                        **changes,
+                    },
+                ))
+                self.assertEqual(response.status_code, 200)
+                self.assertIn('quantit', response.content.decode().lower())
+                self.assertFalse(Product.objects.filter(name='Association couleur invalide').exists())
+                self.assertFalse(Variant.objects.exists())
+
+    def test_color_size_list_normalizes_spaces_and_deduplicates_case_insensitively(self):
+        from .catalog_forms import ProductColorForm
+        form = ProductColorForm(
+            data={'name': 'Rouge', 'sizes': ' M , m, 6   mois, S/M,, 6 mois ,'},
+            files={'image': color_photo()}, instance=ProductColor(product=self.product),
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data['sizes'], 'M, 6 mois, S/M')
+        self.assertEqual(form.size_options, ['M', '6 mois', 'S/M'])
+
+    def test_color_size_list_rejects_a_label_longer_than_stock_allows(self):
+        from .catalog_forms import ProductColorForm
+        for size, valid in [('A' * 50, True), ('A' * 51, False)]:
+            with self.subTest(length=len(size)):
+                form = ProductColorForm(
+                    data={'name': 'Rouge', 'sizes': size}, files={'image': color_photo()},
+                    instance=ProductColor(product=self.product),
+                )
+                self.assertEqual(form.is_valid(), valid, form.errors)
+                if not valid:
+                    self.assertIn('sizes', form.errors)
+
+    def test_color_size_list_accepts_existing_and_new_sizes_without_rewriting_stock_or_orders(self):
+        existing = Variant.objects.create(
+            product=self.product, size=' M ', color=' Rouge ', quantity=7, reserved=2,
+        )
+        photo = ProductColor.objects.create(product=self.product, name='Rouge', image=color_photo())
+        items = [{
+            'variant': existing.pk, 'product': self.product.pk, 'name': self.product.name,
+            'size': ' M ', 'color': ' Rouge ', 'unit_amount': 3000, 'quantity': 1,
+        }]
+        order = Order.objects.create(session_key='old-csv-sizes', items=items, subtotal=3000, status='demo')
+        response = self.client.post(
+            reverse('core:catalog_edit', args=[self.product.pk]), self.product_data(**{
+                'stock-TOTAL_FORMS': '1', 'stock-0-size': 'L',
+                'stock-0-color': 'Rouge', 'stock-0-quantity': '3',
+                'colors-TOTAL_FORMS': '1', 'colors-INITIAL_FORMS': '1',
+                'colors-0-id': photo.pk, 'colors-0-product': self.product.pk,
+                'colors-0-name': 'Rouge', 'colors-0-sizes': 'M, L',
+            }),
+        )
+        self.assertEqual(response.status_code, 302)
+        existing.refresh_from_db()
+        order.refresh_from_db()
+        self.assertEqual((existing.size, existing.color, existing.quantity, existing.reserved),
+                         (' M ', ' Rouge ', 7, 2))
+        self.assertEqual(order.items, items)
+        self.assertEqual(self.product.stock_variants.count(), 2)
+        self.assertEqual(self.product.stock_variants.get(size='L', color='Rouge').quantity, 3)
+
+    def test_legacy_single_variant_size_rejects_csv_but_accepts_combined_slash_label(self):
+        response = self.client.post(reverse('core:catalog_add'), self.product_data(
+            name='CSV dans une seule variante', is_published='', **{
+                'stock-TOTAL_FORMS': '1', 'stock-0-size': 'M, L, XL',
+            },
+        ))
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Product.objects.filter(name='CSV dans une seule variante').exists())
+        self.assertIn('taille', response.content.decode().lower())
+        response = self.client.post(reverse('core:catalog_add'), self.product_data(
+            name='Taille combinée valide', is_published='', **{
+                'stock-TOTAL_FORMS': '1', 'stock-0-size': 'S/M',
+            },
+        ))
+        self.assertEqual(response.status_code, 302)
+        product = Product.objects.get(name='Taille combinée valide')
+        self.assertEqual(list(product.stock_variants.values_list('size', 'color', 'quantity')),
+                         [('S/M', 'Rouge', 5)])

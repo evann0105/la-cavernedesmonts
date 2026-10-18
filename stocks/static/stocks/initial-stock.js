@@ -39,7 +39,19 @@
       title: row.querySelector('[data-color-stock-title]'),
       empty: row.querySelector('[data-color-stock-empty]'),
       nameHint: row.querySelector('[data-color-stock-name-hint]'),
+      sizes: field(row, 'sizes'),
+      applySizes: row.querySelector('[data-apply-color-sizes]'),
+      sizesError: row.querySelector('[data-color-sizes-error]'),
+      sizesStatus: row.querySelector('[data-color-sizes-status]'),
+      sizesPending: row.querySelector('[data-color-sizes-pending]'),
+      sizesInitiallyInvalid: field(row, 'sizes')?.getAttribute('aria-invalid') === 'true',
     });
+    const card = colorCards.get(row);
+    if (card.sizes && card.sizesError) {
+      const describedBy = new Set((card.sizes.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean));
+      describedBy.add(card.sizesError.id);
+      card.sizes.setAttribute('aria-describedby', [...describedBy].join(' '));
+    }
   }
 
   function prepareStock(row) {
@@ -97,6 +109,52 @@
     }));
   }
 
+  function listedSizes(card) {
+    const value = card.sizes?.value || '';
+    const sizes = new Map();
+    value.split(/[,;\n]/).forEach(part => {
+      const size = normalize(part);
+      if (size && !sizes.has(keyFor(size))) sizes.set(keyFor(size), size);
+    });
+    const labels = [...sizes.values()];
+    let error = '';
+    if (value.length > 1000) error = 'La liste des tailles ne doit pas dépasser 1 000 caractères.';
+    else if (labels.some(size => size.length > 50)) error = 'Chaque taille doit contenir au maximum 50 caractères. Séparez les tailles par des virgules.';
+    return {labels, error};
+  }
+
+  function knownSizes(card) {
+    const known = new Set();
+    const colorKey = keyFor(card.name.value);
+    card.row.querySelectorAll('[data-existing-stock-item][data-stock-size]').forEach(item => {
+      const originalColor = item.dataset.stockColor || card.row.dataset.originalColor || '';
+      if (colorKey === keyFor(originalColor)) known.add(keyFor(item.dataset.stockSize));
+    });
+    stockRows.forEach(row => {
+      if (!field(row, 'DELETE').checked && hasValues(row) && keyFor(field(row, 'color').value) === colorKey) {
+        known.add(keyFor(field(row, 'size').value || 'Taille unique'));
+      }
+    });
+    return known;
+  }
+
+  function missingSizes(card) {
+    const known = knownSizes(card);
+    return listedSizes(card).labels.filter(size => !known.has(keyFor(size)));
+  }
+
+  function showSizesError(card, message) {
+    card.sizesError.textContent = message;
+    card.sizesError.hidden = false;
+    card.sizes.setAttribute('aria-invalid', 'true');
+  }
+
+  function clearSizesError(card) {
+    card.sizesError.textContent = '';
+    card.sizesError.hidden = true;
+    if (!card.sizesInitiallyInvalid) card.sizes.removeAttribute('aria-invalid');
+  }
+
   function refreshSuggestions() {
     fillSuggestions(sizeSuggestions, [
       'XS', 'S', 'M', 'L', 'XL', 'XXL', 'Taille unique',
@@ -141,8 +199,15 @@
       card.block.hidden = card.deleted.checked;
       card.title.textContent = name ? `· ${name}` : '';
       card.add.disabled = card.deleted.checked || !name || !addAllowed;
+      if (card.applySizes) card.applySizes.disabled = card.deleted.checked || !name;
       card.nameHint.hidden = Boolean(name);
       card.empty.hidden = [...stockRows].some(row => linkedColors.get(row) === card && !field(row, 'DELETE').checked);
+      if (card.sizesPending) {
+        const listed = listedSizes(card);
+        const pending = missingSizes(card).length;
+        card.sizesPending.hidden = !pending || Boolean(listed.error) || !name || card.deleted.checked;
+        card.sizesPending.textContent = `${pending} ${pending === 1 ? 'taille à préparer' : 'tailles à préparer'}. Cliquez sur « Préparer les tailles », puis renseignez les quantités.`;
+      }
     });
     const elements = [...groups.values()].map(group => {
       const wrapper = document.createElement('div');
@@ -203,6 +268,50 @@
     field(row, 'size').focus();
   }
 
+  function applyListedSizes(card) {
+    if (!card?.sizes || card.deleted.checked) return;
+    clearSizesError(card);
+    card.sizesStatus.textContent = '';
+    const name = normalize(card.name.value);
+    if (!name) {
+      showSizesError(card, 'Indiquez le nom de la couleur avant de préparer ses tailles.');
+      card.name.focus();
+      return;
+    }
+    const listed = listedSizes(card);
+    if (listed.error) {
+      showSizesError(card, listed.error);
+      card.sizes.focus();
+      return;
+    }
+    if (!listed.labels.length) {
+      showSizesError(card, 'Indiquez au moins une taille, par exemple M, L, XL.');
+      card.sizes.focus();
+      return;
+    }
+    const missing = missingSizes(card);
+    const capacity = maximum - Number(total.value) + [...stockRows].filter(isPristine).length;
+    if (missing.length > capacity) {
+      showSizesError(card, `Réduisez cette liste pour rester sous la limite de ${maximum} nouvelles déclinaisons par enregistrement.`);
+      card.sizes.focus();
+      return;
+    }
+    const created = [];
+    missing.forEach(size => {
+      const row = createStockRow();
+      linkedColors.set(row, card);
+      field(row, 'color').value = name;
+      field(row, 'size').value = size;
+      created.push(row);
+    });
+    card.sizes.value = listed.labels.join(', ');
+    refresh(false);
+    card.sizesStatus.textContent = created.length
+      ? `${created.length} ${created.length === 1 ? 'taille préparée' : 'tailles préparées'} pour ${name}. Renseignez chaque quantité ci-dessous.`
+      : 'Les tailles indiquées sont déjà enregistrées ou préparées. Leurs quantités et références sont conservées.';
+    if (created.length) field(created[0], 'quantity').focus();
+  }
+
   if (colorEditor) {
     colorEditor.querySelectorAll('[data-color-row]').forEach(registerColor);
     section.classList.add('is-grouped');
@@ -221,6 +330,11 @@
   fallback.open = [...fallbackRows.querySelectorAll('[data-stock-row]')].some(row => hasValues(row) || field(row, 'DELETE').checked);
   add.addEventListener('click', () => addStock());
   form.addEventListener('click', event => {
+    const apply = event.target.closest('[data-apply-color-sizes]');
+    if (apply) {
+      applyListedSizes(colorCards.get(apply.closest('[data-color-row]')));
+      return;
+    }
     const addSize = event.target.closest('[data-add-color-size]');
     if (addSize) {
       addStock(colorCards.get(addSize.closest('[data-color-row]')));
@@ -231,10 +345,36 @@
   });
   form.addEventListener('input', event => {
     if (event.target.closest('[data-stock-row]')) refresh(false);
-    else if (event.target.name?.startsWith('colors-')) refresh(true);
+    else if (event.target.name?.startsWith('colors-')) {
+      const card = colorCards.get(event.target.closest('[data-color-row]'));
+      if (card?.sizes && event.target === card.sizes) {
+        clearSizesError(card);
+        card.sizesStatus.textContent = '';
+      }
+      refresh(true);
+    }
   });
   form.addEventListener('change', event => {
     if (event.target.closest('[data-stock-row]') || event.target.name?.startsWith('colors-')) refresh(true);
+  });
+  form.addEventListener('submit', event => {
+    refresh(true);
+    for (const card of colorCards.values()) {
+      if (!card.sizes || card.deleted.checked) continue;
+      const listed = listedSizes(card);
+      if (listed.error) {
+        event.preventDefault();
+        showSizesError(card, listed.error);
+        card.sizes.focus();
+        return;
+      }
+      if (missingSizes(card).length) {
+        event.preventDefault();
+        showSizesError(card, 'Cliquez sur « Préparer les tailles », puis renseignez leurs quantités avant d’enregistrer le produit.');
+        (card.applySizes.disabled ? card.name : card.applySizes).focus();
+        return;
+      }
+    }
   });
   declaredSizes?.addEventListener('input', refreshSuggestions);
 })();
