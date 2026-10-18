@@ -63,6 +63,11 @@
   background: #f5f7eff0;
   border-color: #fff6;
 }
+@media (min-width: 1440px) {
+  .summit-home .desktop-nav {
+    margin-left: clamp(-80px, calc(36px - (100vw - 1320px) / 2), -24px);
+  }
+}
 @media (max-width: 1439px) {
   .summit-home .header-inner { --home-logo-width: clamp(300px, 34vw, 440px); }
   .summit-home .desktop-nav { display: none; }
