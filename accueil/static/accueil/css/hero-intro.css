@@ -19,3 +19,75 @@
   .summit-hero .hero-description { margin-top: 20px; font-size: 18px; }
   .summit-hero .hero-advice { font-size: 16px; }
 }
+
+/* A prominent signature on a calm masthead, separate from the landscape. */
+.summit-home .header {
+  position: relative;
+  top: auto;
+  color: var(--ink);
+  background: var(--paper);
+  padding-block: 14px;
+}
+.summit-home .header-inner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  gap: 20px;
+}
+.summit-home .header .brand {
+  width: clamp(320px, 30vw, 440px);
+  max-width: 100%;
+}
+.summit-home .brand-logo { color: var(--ink); filter: none; }
+.summit-home .brand-logo image { filter: url("#brand-color"); }
+.summit-home .desktop-nav {
+  justify-self: center;
+  gap: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.summit-home .desktop-nav a { padding: 10px 8px; }
+.summit-home .header-actions { margin-left: 0; }
+.summit-home .account-link { background: transparent; border-color: var(--line); }
+.summit-home .bag { background: var(--ink); color: var(--paper); }
+.summit-home .messages { padding-top: 0; }
+.summit-home .summit-hero { margin-top: 0; }
+@media (max-width: 1380px) {
+  .summit-home .desktop-nav { display: none; }
+  .summit-home .header-inner { grid-template-columns: minmax(0, 1fr) auto auto; gap: 18px; }
+  .summit-home .header .brand { width: clamp(280px, 28vw, 380px); }
+  .summit-home .menu-toggle {
+    display: block;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    padding: 10px 13px;
+    text-decoration: none;
+  }
+  .summit-home .mobile-nav:not([hidden]) {
+    display: block;
+    margin: 12px 24px 0;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--linen);
+    color: var(--ink);
+    overflow: hidden;
+    box-shadow: none;
+  }
+}
+@media (max-width: 900px) {
+  .summit-home .header { padding-block: 12px; }
+  .summit-home .header-inner { grid-template-columns: minmax(0, 1fr) auto; gap: 12px 16px; }
+  .summit-home .header .brand { grid-column: 1 / -1; justify-self: center; width: min(100%, 340px); }
+  .summit-home .header-actions { justify-self: start; justify-content: flex-start; min-width: 0; }
+  .summit-home .menu-toggle { justify-self: end; align-self: start; }
+}
+@media (max-width: 600px) {
+  .summit-home .header .brand { width: min(100%, 300px); }
+  .summit-home .header-actions { gap: 8px; }
+  .summit-home .header-actions > a,
+  .summit-home .header-actions form .text-button { white-space: nowrap; }
+}
