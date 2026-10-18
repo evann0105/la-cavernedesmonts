@@ -1,4 +1,5 @@
 .shop-opening-hours{margin-block:18px 0;min-width:0}
+.shop-opening-period-notice{padding:12px 14px;border:1px solid currentColor;border-radius:10px;font-size:15px;line-height:1.7;overflow-wrap:anywhere}
 .shop-opening-days{margin:0;font-size:16px;line-height:1.65}
 .shop-opening-day{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);align-items:start;gap:12px;padding-block:9px;border-bottom:1px solid currentColor;border-color:color-mix(in srgb,currentColor 18%,transparent)}
 .shop-opening-day:first-child{padding-top:0}

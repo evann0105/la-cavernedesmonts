@@ -269,7 +269,7 @@ class OpeningHoursTests(TestCase):
 
     def test_missing_public_schedule_is_handled_without_recreating_data(self):
         self.schedule.delete()
-        self.assertEqual(public_hours(), {'opening_days': [], 'opening_notice': ''})
+        self.assertEqual(public_hours(), {'opening_days': [], 'opening_notice': '', 'opening_period': None})
         self.assertEqual(Client().get(reverse('core:location')).status_code, 200)
         self.assertEqual(Client().get(reverse('espace:contact')).status_code, 200)
         self.assertFalse(OpeningHours.objects.exists())

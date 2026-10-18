@@ -1,4 +1,5 @@
 <div class="shop-opening-hours">
+  {% if opening_period %}<p class="shop-opening-period-notice"><strong>{{ opening_period.name }}</strong><br>Horaires exceptionnels du {{ opening_period.start_date|date:'d/m/Y' }} au {{ opening_period.end_date|date:'d/m/Y' }} inclus.</p>{% endif %}
   {% if opening_days %}
     <dl class="shop-opening-days">
       {% for day in opening_days %}

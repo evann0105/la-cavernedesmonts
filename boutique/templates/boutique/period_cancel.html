@@ -1,0 +1,12 @@
+{% extends 'core/catalog/base.html' %}{% load static %}
+{% block title %}{% if is_restoring %}Réactiver{% else %}Annuler{% endif %} la période — La Caverne des Monts{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'boutique/hours.css' %}?v=20261018-periods">{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Navigation de gestion"><a href="{% url 'espace:account' %}">Mon compte</a> / Boutique / <a href="{% url 'boutique:hours' %}">Horaires du magasin</a> / {% if is_restoring %}Réactiver{% else %}Annuler{% endif %} la période</nav>{% endblock %}
+{% block catalog_content %}
+<header class="catalog-heading hours-heading"><div><p class="eyebrow">BOUTIQUE · VACANCES ET EXCEPTIONS</p><h1>{% if is_restoring %}Réactiver cette période ?{% else %}Annuler cette période ?{% endif %}</h1><p>Les horaires habituels restent conservés.</p></div></header>
+<section class="catalog-panel hours-cancel-panel" aria-labelledby="hours-cancel-title">
+  <h2 id="hours-cancel-title">{{ period.name }}</h2><p class="hours-cancel-dates">Du {{ period.start_date|date:'d/m/Y' }} au {{ period.end_date|date:'d/m/Y' }} inclus</p>
+  {% if is_restoring %}<p>Les horaires de cette période seront de nouveau appliqués aux dates indiquées. Si la période est en cours, ils seront publiés dès la réactivation.</p><p>Les horaires habituels reprendront automatiquement après la date de fin.</p>{% else %}<p>Les horaires exceptionnels de cette période ne seront plus utilisés. Si elle est en cours, les horaires habituels reprendront dès l’annulation.</p><p>Vous pourrez retrouver cette période dans la liste et la réactiver si nécessaire.</p>{% endif %}
+  <form method="post" class="hours-cancel-confirm">{% csrf_token %}{{ action_form.revision }}{% if action_form.errors %}<div class="catalog-error hours-errors hours-action-errors" role="alert">{{ action_form.non_field_errors }}{{ action_form.revision.errors }}</div>{% endif %}<button class="button" type="submit">{% if is_restoring %}Réactiver{% else %}Annuler{% endif %} la période</button><a class="button button-outline" href="{% url 'boutique:hours' %}">{% if is_restoring %}Revenir aux horaires{% else %}Conserver la période{% endif %}</a></form>
+</section>
+{% endblock %}

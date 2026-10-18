@@ -1,0 +1,43 @@
+{% extends 'core/catalog/base.html' %}{% load static %}
+{% block title %}{% if is_new %}Prévoir des horaires différents{% else %}Modifier la période{% endif %} — La Caverne des Monts{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'boutique/hours.css' %}?v=20261018-periods">{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Navigation de gestion"><a href="{% url 'espace:account' %}">Mon compte</a> / Boutique / <a href="{% url 'boutique:hours' %}">Horaires du magasin</a> / {% if is_new %}Nouvelle période{% else %}{{ period.name }}{% endif %}</nav>{% endblock %}
+{% block catalog_content %}
+<header class="catalog-heading hours-heading">
+  <div><p class="eyebrow">BOUTIQUE · VACANCES ET EXCEPTIONS</p><h1>{% if is_new %}Prévoir des horaires différents.{% else %}Modifier la période.{% endif %}</h1><p>Choisissez les dates et les horaires à appliquer pendant cette période.</p></div>
+  <a class="button button-outline" href="{% url 'boutique:hours' %}"><span aria-hidden="true">←</span> Tous les horaires</a>
+</header>
+<form method="post" class="hours-editor" data-hours-editor>
+  {% csrf_token %}
+  {{ period_form.revision }}{{ period_form.revision.errors }}
+  {{ days_formset.management_form }}
+  {% if period_form.errors or days_formset.errors or days_formset.non_form_errors %}<div class="catalog-error hours-errors" role="alert"><p>La période n’a pas été enregistrée. Vérifiez les champs signalés ci-dessous.</p>{{ period_form.non_field_errors }}{{ days_formset.non_form_errors }}{{ days_formset.management_form.errors }}</div>{% endif %}
+  {% if period.is_cancelled %}<div class="hours-current-note hours-reactivate-note"><strong>Cette période est annulée.</strong> Vous pouvez corriger ses informations ici. Pour utiliser à nouveau ces horaires, enregistrez vos changements puis réactivez la période depuis la liste.</div>{% endif %}
+  <div class="hours-layout">
+    <div class="hours-main">
+      <section class="catalog-panel hours-period-details" aria-labelledby="hours-period-details-title">
+        <div class="hours-section-heading"><span class="hours-section-number" aria-hidden="true">01</span><div><h2 id="hours-period-details-title">La période concernée</h2><p>Les dates de début et de fin sont incluses. Les horaires habituels reprennent le lendemain de la date de fin.</p></div></div>
+        <div class="catalog-field{% if period_form.name.errors %} has-error{% endif %}">{{ period_form.name.label_tag }}{{ period_form.name }}{% if period_form.name.help_text %}<p class="help">{{ period_form.name.help_text }}</p>{% endif %}{{ period_form.name.errors }}</div>
+        <div class="hours-date-pair"><div class="catalog-field{% if period_form.start_date.errors %} has-error{% endif %}">{{ period_form.start_date.label_tag }}{{ period_form.start_date }}{{ period_form.start_date.errors }}</div><div class="catalog-field{% if period_form.end_date.errors %} has-error{% endif %}">{{ period_form.end_date.label_tag }}{{ period_form.end_date }}{{ period_form.end_date.errors }}</div></div>
+      </section>
+      <section class="catalog-panel hours-week" aria-labelledby="hours-week-title">
+        <div class="hours-section-heading"><span class="hours-section-number" aria-hidden="true">02</span><div><h2 id="hours-week-title">La semaine pendant cette période</h2><p>{% if is_new %}Les horaires habituels sont recopiés pour vous aider. Modifiez uniquement les jours concernés. {% endif %}Cette semaine se répète uniquement entre les deux dates choisies.</p></div></div>
+        {% include 'boutique/weekly_fields.html' %}
+      </section>
+      <section class="catalog-panel hours-notice" aria-labelledby="hours-notice-title">
+        <div class="hours-section-heading"><span class="hours-section-number" aria-hidden="true">03</span><div><h2 id="hours-notice-title">Une précision pendant cette période</h2><p>Facultatif : cette information remplace la note habituelle pendant les dates prévues.</p></div></div>
+        <div class="catalog-field{% if period_form.notice.errors %} has-error{% endif %}">{{ period_form.notice.label_tag }}{{ period_form.notice }}{% if period_form.notice.help_text %}<p class="help">{{ period_form.notice.help_text }}</p>{% endif %}{{ period_form.notice.errors }}</div>
+      </section>
+    </div>
+    <aside class="catalog-panel hours-publication" aria-labelledby="hours-publication-title">
+      <p class="eyebrow">UNE REPRISE AUTOMATIQUE</p><h2 id="hours-publication-title">Prévoyez, puis laissez faire.</h2>
+      <p>Les horaires de cette période s’affichent automatiquement dès la date de début et jusqu’à la fin du dernier jour inclus.</p>
+      <p>Les horaires habituels restent conservés. Ils reprennent le lendemain, sans nouvelle intervention.</p>
+      <p>Les dates suivent l’heure de la boutique, en France. Une autre période ne peut pas couvrir les mêmes dates.</p>
+      <a class="hours-preview-link" href="{% url 'core:location' %}#venir">Consulter les horaires publiés <span aria-hidden="true">↗</span></a>
+    </aside>
+  </div>
+  <div class="catalog-save hours-save"><div><strong>Enregistrer cette période</strong><p>{% if period.is_cancelled %}La période restera annulée après l’enregistrement.{% else %}Les changements se répercutent sur toutes les pages qui affichent les horaires.{% endif %}</p></div><button class="button" type="submit">Enregistrer la période <span aria-hidden="true">✓</span></button></div>
+</form>
+{% endblock %}
+{% block scripts %}<script src="{% static 'boutique/hours.js' %}?v=20261018" defer></script>{% endblock %}

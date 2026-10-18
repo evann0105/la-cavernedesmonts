@@ -49,11 +49,54 @@
 .hours-editor .errorlist { padding:10px 12px;line-height:1.6;font-size:13px;list-style-position:inside;overflow-wrap:anywhere; }
 .hours-editor .hours-time .errorlist { margin-bottom:0; }
 .hours-editor :focus-visible { outline:3px solid #809867;outline-offset:3px; }
+.hours-periods { padding:28px;margin-bottom:38px; }
+.hours-periods-heading { display:flex;align-items:flex-start;justify-content:space-between;gap:26px; }
+.hours-periods-heading>div { min-width:0;max-width:660px; }
+.hours-periods .eyebrow { margin:0 0 10px;font-size:11px;letter-spacing:1.3px; }
+.hours-periods h2 { margin:0 0 12px;font-size:25px;letter-spacing:-.6px; }
+.hours-periods-heading p:not(.eyebrow) { margin:0;color:#5c6c59;font-size:14px;line-height:1.8; }
+.hours-periods-heading>.button { flex-shrink:0; }
+.hours-current-note { margin:24px 0 0;padding:16px 18px;background:#eef2e8;border:1px solid #d6e0cd;border-radius:12px;font-size:14px;line-height:1.8;color:#425c3f; }
+.hours-current-note strong { color:#243e36;font-weight:600; }
+.hours-period-list { display:grid;gap:12px;margin-top:24px; }
+.hours-period-card { display:flex;align-items:center;justify-content:space-between;gap:24px;padding:19px 20px;border:1px solid #dbe1d6;border-radius:14px; }
+.hours-period-info { min-width:0; }
+.hours-period-title { display:flex;align-items:center;gap:12px;flex-wrap:wrap; }
+.hours-period-title h3 { margin:0;overflow-wrap:anywhere;font-size:19px;font-weight:500;letter-spacing:-.3px; }
+.hours-period-info p { margin:9px 0 0;font-size:14px;line-height:1.7;color:#5c6c59;font-variant-numeric:tabular-nums; }
+.hours-period-status { display:inline-flex;align-items:center;white-space:nowrap;padding:4px 9px;border-radius:6px;background:#f0f2ec;color:#5c6c59;font-size:11px;font-weight:600;line-height:1.6; }
+.hours-period-status.active,.hours-period-status.is-active { color:#20432e;background:#e3edda; }
+.hours-period-status.upcoming,.hours-period-status.is-upcoming { color:#37536d;background:#e9eff5; }
+.hours-period-status.past,.hours-period-status.is-past,.hours-period-status.is-cancelled { color:#6a6d66;background:#f0f1ec; }
+.hours-period-card.is-cancelled { background:#fafaf6; }
+.hours-period-actions { display:flex;align-items:center;gap:16px;flex-shrink:0; }
+.hours-period-actions>.button { min-height:42px;padding:11px 18px;font-size:13px; }
+.hours-cancel-link { display:flex;align-items:center;min-height:44px;color:#7a5048;font-size:12px;line-height:1.6;text-decoration:underline;text-underline-offset:4px; }
+.hours-restore-link { color:#375f39; }
+.hours-period-empty { margin-top:24px;padding:20px;border:1px dashed #cbd5c2;border-radius:12px;background:#fafbf7; }
+.hours-period-empty strong { font-size:15px;font-weight:500; }
+.hours-period-empty p { margin:8px 0 0;color:#5c6c59;font-size:14px;line-height:1.8; }
+.hours-normal-heading { margin:0 0 24px;scroll-margin-top:28px; }
+.hours-normal-heading h2 { margin:0 0 10px;font-size:28px;letter-spacing:-.6px; }
+.hours-normal-heading p { margin:0;color:#5c6c59;font-size:14px;line-height:1.8; }
+.hours-date-pair { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px; }
+.hours-date-pair .catalog-field { margin-bottom:0;min-width:0; }
+.catalog-shell .hours-period-details input[type=text],.catalog-shell .hours-period-details input[type=date] { min-width:0;max-width:100%;font-size:16px; }
+.catalog-shell .hours-period-details input[type=date] { min-height:48px;font-variant-numeric:tabular-nums; }
+.hours-reactivate-note { margin:0 0 24px; }
+.hours-cancel-panel { max-width:760px;padding:30px; }
+.hours-cancel-panel h2 { margin:0 0 10px;font-size:26px;overflow-wrap:anywhere; }
+.hours-cancel-panel p { color:#5c6c59;font-size:15px;line-height:1.8; }
+.hours-cancel-panel .hours-cancel-dates { margin:0 0 24px;font-size:14px;font-variant-numeric:tabular-nums; }
+.hours-cancel-confirm { display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:28px; }
+.hours-action-errors { width:100%; }
+.hours-periods :focus-visible,.hours-cancel-panel :focus-visible { outline:3px solid #809867;outline-offset:3px; }
 @media(max-width:1150px) {
   .hours-layout { grid-template-columns:minmax(0,1fr);gap:0; }
   .hours-publication { display:grid;grid-template-columns:1fr 1fr;gap:0 30px; }
   .hours-publication>.eyebrow,.hours-publication>h2 { grid-column:1/-1; }
   .hours-publication .hours-updated { margin-top:0; }
+  .hours-period-actions { align-items:flex-end;flex-direction:column;gap:3px; }
 }
 @media(max-width:700px) {
   .hours-week,.hours-notice,.hours-publication { padding:20px; }
@@ -67,6 +110,16 @@
   .hours-slots { gap:14px; }
   .hours-save { align-items:stretch; }
   .hours-save .button { width:100%; }
+  .hours-periods { padding:20px;margin-bottom:30px; }
+  .hours-periods-heading { flex-direction:column;gap:20px; }
+  .hours-periods-heading h2 { font-size:23px; }
+  .hours-periods-heading>.button { width:100%; }
+  .hours-period-card { align-items:flex-start;flex-direction:column;gap:14px;padding:17px; }
+  .hours-period-actions { width:100%;flex-direction:row;align-items:center;justify-content:space-between;gap:12px; }
+  .hours-period-actions .hours-cancel-link { text-align:right; }
+  .hours-period-title { gap:8px 12px; }
+  .hours-normal-heading h2 { font-size:25px; }
+  .hours-cancel-panel { padding:24px; }
 }
 @media(max-width:450px) {
   .hours-heading .button { width:100%; }
@@ -78,4 +131,16 @@
   .hours-publication .hours-updated { margin-top:20px; }
   .hours-save { padding:20px 16px; }
   .hours-save .button { font-size:15px;padding-inline:14px;gap:12px; }
+  .hours-periods { padding:16px; }
+  .hours-periods h2 { font-size:21px; }
+  .hours-period-card { padding:15px; }
+  .hours-period-title h3 { font-size:18px; }
+  .hours-period-info p { font-size:13px; }
+  .hours-period-empty { padding:17px; }
+  .hours-current-note { padding:14px; }
+  .hours-period-actions { align-items:stretch;flex-direction:column;gap:4px; }
+  .hours-period-actions .hours-cancel-link { justify-content:center;text-align:center; }
+  .hours-date-pair { grid-template-columns:minmax(0,1fr);gap:20px; }
+  .hours-cancel-panel { padding:20px; }
+  .hours-cancel-confirm { flex-direction:column;align-items:stretch; }
 }

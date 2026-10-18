@@ -1,0 +1,22 @@
+<div class="hours-days">
+  {% for day in days_formset %}
+  <fieldset class="hours-day{% if day.errors %} hours-day-error{% endif %}" data-hours-day>
+    <legend>{{ day.day_label }}</legend>
+    {% for hidden in day.hidden_fields %}{{ hidden }}{{ hidden.errors }}{% endfor %}
+    {{ day.non_field_errors }}
+    <div class="hours-day-body">
+      <div class="hours-day-state"><label class="hours-closed">{{ day.is_closed }}<span>Fermé</span></label>{{ day.is_closed.errors }}<p class="hours-closed-note" data-hours-closed-note {% if not day.is_closed.value %}hidden{% endif %}>Fermé toute la journée.</p></div>
+      <div class="hours-slots" data-hours-slots>
+        <fieldset class="hours-slot"><legend>Créneau 1</legend><div class="hours-time-pair">
+          <div class="hours-time{% if day.opens_at.errors %} has-error{% endif %}"><label for="{{ day.opens_at.id_for_label }}">Ouvre à</label>{{ day.opens_at }}{{ day.opens_at.errors }}</div>
+          <div class="hours-time{% if day.closes_at.errors %} has-error{% endif %}"><label for="{{ day.closes_at.id_for_label }}">Ferme à</label>{{ day.closes_at }}{{ day.closes_at.errors }}</div>
+        </div></fieldset>
+        <fieldset class="hours-slot"><legend>Créneau 2 <span>facultatif</span></legend><div class="hours-time-pair">
+          <div class="hours-time{% if day.reopens_at.errors %} has-error{% endif %}"><label for="{{ day.reopens_at.id_for_label }}">Rouvre à</label>{{ day.reopens_at }}{{ day.reopens_at.errors }}</div>
+          <div class="hours-time{% if day.recloses_at.errors %} has-error{% endif %}"><label for="{{ day.recloses_at.id_for_label }}">Ferme à</label>{{ day.recloses_at }}{{ day.recloses_at.errors }}</div>
+        </div></fieldset>
+      </div>
+    </div>
+  </fieldset>
+  {% endfor %}
+</div>
