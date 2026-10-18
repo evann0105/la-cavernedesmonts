@@ -8,6 +8,8 @@ Contrôle du 16 octobre 2026 sur le projet local et sa configuration effective. 
 
 L’entreprise est identifiée d’après les renseignements communiqués par le propriétaire du projet : Élodie FOLOPPE, EI, SIREN 525 114 914, SIRET 525 114 914 00019, immatriculation 525 114 914 RCS Bourg-en-Bresse. L’adresse de la boutique et des retours utilise le numéro 225 déjà fourni. L’état du registre, l’identité de la directrice de publication et le régime de TVA doivent être confirmés par l’entreprise. Le numéro de TVA proposé comme « à confirmer actif » n’a pas été présenté comme vérifié.
 
+Actualisation du 18 octobre 2026 : Élodie ne facture pas de TVA selon l’information transmise, mais le régime exact reste explicitement à confirmer. La franchise en base n’est pas validée par cette seule indication ; une facture récente et une confirmation fiscale sont demandées. Aucun régime ou taux n’a été activé, ni facture historique réécrite.
+
 ## Corrections réalisées
 
 | Point | Résultat et limites |

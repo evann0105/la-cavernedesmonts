@@ -1,10 +1,10 @@
 # Informations à demander à Élodie pour ouvrir les ventes
 
-État du 16 octobre 2026. Les éléments ci-dessous doivent correspondre aux contrats et pratiques réels de la boutique. Les ventes restent désactivées.
+État du 16 octobre 2026, point TVA actualisé le 18 octobre 2026. Les éléments ci-dessous doivent correspondre aux contrats et pratiques réels de la boutique. Les ventes restent désactivées.
 
 1. **Identité et publication** : confirmer Élodie FOLOPPE EI, SIREN 525 114 914, SIRET 525 114 914 00019 et RCS Bourg-en-Bresse ; fournir l’adresse officielle complète. « Résidence Les Gentianes » et « 225 rue des Monts-Jura » désignent-ils le même lieu ? Distinguer siège, boutique et retours si nécessaire. Confirmer la responsable de publication, le téléphone 04 50 40 46 17 et l’e-mail contact@la-cavernedesmonts.fr.
 
-2. **TVA** : régime réellement appliqué (TVA ou franchise en base), mention fiscale approuvée par le comptable, numéro intracommunautaire actif si applicable. Le numéro FR55 525114914 communiqué reste non confirmé. Demander les taux applicables aux articles et à la livraison ; ne pas supposer 20 %.
+2. **TVA** : il a été indiqué le 18 octobre 2026 qu’Élodie ne facture pas de TVA, avec **régime à confirmer**. Demander une facture récente et une confirmation écrite d’Élodie ou de son comptable : régime exact, date d’effet et mention fiscale à reproduire sur les factures. Si la franchise en base est confirmée, faire valider la mention légale applicable ; ne pas la déduire du seul fait qu’aucune TVA n’est facturée. Le numéro FR55 525114914 communiqué précédemment reste non confirmé et n’est pas publié. Aucun taux de 20 % ni régime fiscal n’est présumé ; les prix saisis restent les montants de vente.
 
 3. **Factures, avoirs et archives** : nom du logiciel et du comptable ; choix d’émission dans le site ou le logiciel actuel ; dernier numéro/date de facture et d’avoir ; accord sur une série web annuelle distincte WEB-AAAA-000001 commençant à 1. Confirmer le moment/nature d’émission (paiement, acompte, livraison), la preuve de livraison, les corrections et avoirs, l’archivage et la restauration. Identifier la plateforme agréée déjà choisie pour recevoir les factures électroniques et préparer le futur e-reporting avec le comptable. Éviter deux factures pour la même vente.
 

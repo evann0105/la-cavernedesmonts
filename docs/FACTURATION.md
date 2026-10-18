@@ -14,6 +14,8 @@ L’émission définitive est manuelle : une personne habilitée vérifie l’ap
 
 ## Paramètres restant à confirmer
 
+**Point TVA du 18 octobre 2026** : l’interlocuteur indique qu’Élodie ne facture pas de TVA, mais précise que son régime reste à confirmer. La configuration fiscale reste donc non validée, sans numéro de TVA publié ni taux présumé. Le paiement ne majore pas les prix d’une TVA calculée automatiquement. Demander une facture récente et la confirmation du régime, de sa date d’effet et de la mention fiscale avant de compléter la configuration. La branche de facturation en franchise existe déjà : elle conserve le montant payé et calcule une TVA nulle lorsqu’un profil de franchise confirmé a été capturé à l’achat. Cette information ne valide pas la numérotation, les règles d’émission ou l’ouverture des ventes.
+
 `SHOP_LEGAL` : identité et adresse professionnelles, SIREN/SIRET/RCS, mention fiscale, numéro TVA actif si applicable.
 
 `SHOP_INVOICING` reste vide. Ses clés sont `vat_mode` (standard ou franchise confirmée), `vat_rate` (taux unique explicite pour articles et livraison), `numbering_confirmed`, `issue_policy_confirmed` et `ready`. Ces confirmations ne doivent être activées qu’après vérification comptable. Aucun taux n’est présumé. Le moment et la nature d’émission, notamment paiement avant livraison/acompte, doivent être confirmés ; les dates de commande et règlement ne prouvent pas une livraison.
@@ -29,3 +31,5 @@ Les montants de vente sont identiques sur le bon de commande et la facture d’u
 Aucune facture réelle n’a été émise. Aucun paiement ni e-mail supplémentaire n’a été déclenché. Les ventes restent fermées.
 
 Sources : [mentions des factures](https://www.economie.gouv.fr/entreprises/gerer-son-entreprise-au-quotidien/gerer-sa-comptabilite-et-ses-demarches/mentions-obligatoires-dune-facture-tout-savoir), [documents EI](https://entreprendre.service-public.gouv.fr/vosdroits/F31808), [conservation](https://entreprendre.service-public.gouv.fr/vosdroits/F10029), [calendrier électronique](https://www.impots.gouv.fr/professionnel/questions/partir-de-quand-suis-je-concerne-par-la-reforme-de-la-facturation).
+
+Référence TVA consultée le 18 octobre 2026 : [régimes d’imposition à la TVA — impots.gouv.fr](https://www.impots.gouv.fr/professionnel/les-regimes-dimposition-la-tva). La mention de non-application doit correspondre au régime effectivement applicable à l’entreprise ; son éligibilité n’a pas été vérifiée ici.
