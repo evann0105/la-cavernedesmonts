@@ -1,0 +1,58 @@
+{% extends 'core/catalog/base.html' %}{% load static %}
+{% block title %}Horaires du magasin — La Caverne des Monts{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'boutique/hours.css' %}?v=20261018-closed">{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Navigation de gestion"><a href="{% url 'espace:account' %}">Mon compte</a> / Boutique / Horaires du magasin</nav>{% endblock %}
+{% block catalog_content %}
+<header class="catalog-heading hours-heading">
+  <div><p class="eyebrow">BOUTIQUE · INFORMATIONS PRATIQUES</p><h1>Horaires du magasin.</h1><p>Une seule semaine à renseigner pour mettre à jour les horaires affichés sur le site.</p></div>
+  <a class="button button-outline" href="{% url 'core:location' %}#venir">Voir la boutique <span aria-hidden="true">↗</span></a>
+</header>
+<form method="post" class="hours-editor" data-hours-editor>
+  {% csrf_token %}
+  {{ hours_form.revision }}{{ hours_form.revision.errors }}
+  {{ days_formset.management_form }}
+  {% if hours_form.errors or days_formset.errors or days_formset.non_form_errors %}<div class="catalog-error hours-errors" role="alert"><p>Les horaires n’ont pas été enregistrés. Vérifiez les champs signalés ci-dessous.</p>{{ hours_form.non_field_errors }}{{ days_formset.non_form_errors }}{{ days_formset.management_form.errors }}</div>{% endif %}
+  <div class="hours-layout">
+    <div class="hours-main">
+      <section class="catalog-panel hours-week" aria-labelledby="hours-week-title">
+        <div class="hours-section-heading"><span class="hours-section-number" aria-hidden="true">01</span><div><h2 id="hours-week-title">La semaine, du lundi au dimanche</h2><p>Indiquez un ou deux créneaux par jour. Pour une journée continue, utilisez uniquement le premier créneau.</p></div></div>
+        <div class="hours-days">
+          {% for day in days_formset %}
+          <fieldset class="hours-day{% if day.errors %} hours-day-error{% endif %}" data-hours-day>
+            <legend>{{ day.day_label }}</legend>
+            {% for hidden in day.hidden_fields %}{{ hidden }}{{ hidden.errors }}{% endfor %}
+            {{ day.non_field_errors }}
+            <div class="hours-day-body">
+              <div class="hours-day-state"><label class="hours-closed">{{ day.is_closed }}<span>Fermé</span></label>{{ day.is_closed.errors }}<p class="hours-closed-note" data-hours-closed-note {% if not day.is_closed.value %}hidden{% endif %}>Fermé toute la journée.</p></div>
+              <div class="hours-slots" data-hours-slots>
+                <fieldset class="hours-slot"><legend>Créneau 1</legend><div class="hours-time-pair">
+                  <div class="hours-time{% if day.opens_at.errors %} has-error{% endif %}"><label for="{{ day.opens_at.id_for_label }}">Ouvre à</label>{{ day.opens_at }}{{ day.opens_at.errors }}</div>
+                  <div class="hours-time{% if day.closes_at.errors %} has-error{% endif %}"><label for="{{ day.closes_at.id_for_label }}">Ferme à</label>{{ day.closes_at }}{{ day.closes_at.errors }}</div>
+                </div></fieldset>
+                <fieldset class="hours-slot"><legend>Créneau 2 <span>facultatif</span></legend><div class="hours-time-pair">
+                  <div class="hours-time{% if day.reopens_at.errors %} has-error{% endif %}"><label for="{{ day.reopens_at.id_for_label }}">Rouvre à</label>{{ day.reopens_at }}{{ day.reopens_at.errors }}</div>
+                  <div class="hours-time{% if day.recloses_at.errors %} has-error{% endif %}"><label for="{{ day.recloses_at.id_for_label }}">Ferme à</label>{{ day.recloses_at }}{{ day.recloses_at.errors }}</div>
+                </div></fieldset>
+              </div>
+            </div>
+          </fieldset>
+          {% endfor %}
+        </div>
+      </section>
+      <section class="catalog-panel hours-notice" aria-labelledby="hours-notice-title">
+        <div class="hours-section-heading"><span class="hours-section-number" aria-hidden="true">02</span><div><h2 id="hours-notice-title">Une précision pour vos visiteurs</h2><p>Facultatif : une période de vacances, une fermeture exceptionnelle ou une invitation à appeler avant de venir.</p></div></div>
+        <div class="catalog-field{% if hours_form.notice.errors %} has-error{% endif %}">{{ hours_form.notice.label_tag }}{{ hours_form.notice }}{% if hours_form.notice.help_text %}<p class="help">{{ hours_form.notice.help_text }}</p>{% endif %}{{ hours_form.notice.errors }}</div>
+      </section>
+    </div>
+    <aside class="catalog-panel hours-publication" aria-labelledby="hours-publication-title">
+      <p class="eyebrow">UNE INFORMATION COMMUNE</p><h2 id="hours-publication-title">À jour partout.</h2>
+      <p>Les horaires enregistrés ici sont repris automatiquement dans les informations pratiques du site.</p>
+      <p>La précision pour vos visiteurs est publiée avec les horaires. Videz ce champ pour la retirer.</p>
+      {% if schedule.updated_at %}<div class="hours-updated"><span>Dernier enregistrement</span><strong>{{ schedule.updated_at|date:'d/m/Y à H:i' }}</strong>{% if schedule.updated_by %}<span>Par {{ schedule.updated_by.get_full_name|default:schedule.updated_by.username }}</span>{% endif %}</div>{% endif %}
+      <a class="hours-preview-link" href="{% url 'core:location' %}#venir">Consulter les horaires publiés <span aria-hidden="true">↗</span></a>
+    </aside>
+  </div>
+  <div class="catalog-save hours-save"><div><strong>Enregistrer les horaires</strong><p>La mise à jour est visible sur le site après l’enregistrement.</p></div><button class="button" type="submit">Enregistrer les horaires <span aria-hidden="true">✓</span></button></div>
+</form>
+{% endblock %}
+{% block scripts %}<script src="{% static 'boutique/hours.js' %}?v=20261018" defer></script>{% endblock %}

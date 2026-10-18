@@ -1,0 +1,12 @@
+.shop-opening-hours{margin-block:18px 0;min-width:0}
+.shop-opening-days{margin:0;font-size:16px;line-height:1.65}
+.shop-opening-day{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);align-items:start;gap:12px;padding-block:9px;border-bottom:1px solid currentColor;border-color:color-mix(in srgb,currentColor 18%,transparent)}
+.shop-opening-day:first-child{padding-top:0}
+.shop-opening-day:last-child{border-bottom:0}
+.shop-opening-day dt{font-weight:500;overflow-wrap:anywhere}
+.shop-opening-day dd{display:grid;justify-items:end;gap:3px;margin:0;text-align:right;min-width:0}
+.shop-opening-period{white-space:nowrap;font-variant-numeric:tabular-nums}
+.shop-opening-status{opacity:.8}
+.shop-opening-hours .shop-opening-notice{margin:18px 0 0;font-size:15px;line-height:1.75;overflow-wrap:anywhere}
+.contact-hero .shop-opening-hours{margin-block:18px 24px}
+@media(max-width:360px){.shop-opening-days{font-size:14px}.shop-opening-day{gap:8px}}

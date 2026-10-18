@@ -37,6 +37,7 @@ urlpatterns = [
     path('gestion/emails-test/', test_email_inbox, name='test_email_inbox'),
     path('gestion/tableau-de-bord/', include('tableau.urls')),
     path('gestion/stocks/', include('stocks.urls')),
+    path('', include('boutique.urls')),
     path('', include(secure_urls)),
     path('paiement/', include('paiement.urls')),
     path('', include('facturation.urls')),

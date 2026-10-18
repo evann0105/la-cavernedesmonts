@@ -1,0 +1,27 @@
+<div class="shop-opening-hours">
+  {% if opening_days %}
+    <dl class="shop-opening-days">
+      {% for day in opening_days %}
+        <div class="shop-opening-day">
+          <dt>{{ day.name }}</dt>
+          <dd>
+            {% if day.closed %}
+              <span class="shop-opening-status">Fermé</span>
+            {% elif not day.known %}
+              <span class="shop-opening-status">À confirmer</span>
+            {% else %}
+              {% for period in day.periods %}
+                <span class="shop-opening-period"><time datetime="{{ period.start|time:'H:i' }}">{{ period.start|time:'H:i' }}</time> – <time datetime="{{ period.end|time:'H:i' }}">{{ period.end|time:'H:i' }}</time></span>
+              {% empty %}
+                <span class="shop-opening-status">À confirmer</span>
+              {% endfor %}
+            {% endif %}
+          </dd>
+        </div>
+      {% endfor %}
+    </dl>
+  {% else %}
+    <p>Contactez la boutique pour connaître les horaires avant votre visite.</p>
+  {% endif %}
+  {% if opening_notice %}<p class="shop-opening-notice">{{ opening_notice|linebreaksbr }}</p>{% endif %}
+</div>

@@ -72,7 +72,7 @@ Pour les **bons de réduction**, créer et configurer d’abord le code promotio
 
 Source lue le 18 septembre 2026 : https://la-cavernedesmonts.fr/content/3-conditions-utilisation. Le texte français est repris dans une page avec sommaire. Il mentionne notamment CIC, le paiement par chèque, des e-mails automatiques et des modalités qui ne correspondent pas toutes au nouveau parcours. Ce n’est pas une validation juridique ni une nouvelle rédaction des CGV. Faire valider une version adaptée avant de passer SHOP_READY et PAYMENTS_ENABLED à True. Les traductions concernent l’interface ; le texte contractuel reste identifié comme la version originale française.
 
-Adresse et horaires repris de https://la-cavernedesmonts.fr/content/4-a-propos : 225 rue des Monts-Jura, Résidence Les Gentianes, 01410 Lélex ; mercredi–samedi 9h30–12h et 14h30–18h30, dimanche 9h30–12h, ouverture quotidienne annoncée en haute saison. Le site invite à confirmer par téléphone avant la visite.
+L’adresse du magasin est le 225 rue des Monts-Jura, Résidence Les Gentianes, 01410 Lélex. Les horaires se gèrent depuis **Mon compte → Boutique → Horaires du magasin** : une ligne par jour, les créneaux d’ouverture et une note pour les informations saisonnières ou exceptionnelles. Après enregistrement, le même planning apparaît sur les pages **Notre magasin** et **Contact**, y compris sur l’ancienne adresse `/localisation/`. Il n’est pas nécessaire de modifier chaque page séparément.
 
 
 ### Vérification unique de l’adresse e-mail

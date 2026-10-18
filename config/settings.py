@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'accueil',
     'espace',
     'core',
+    'boutique',
     'stocks',
     'tableau',
     'pages_products',

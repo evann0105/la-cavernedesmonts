@@ -1,4 +1,39 @@
-{% extends 'espace/private.html' %}{% load i18n %}{% block introduction %}<p>{% translate 'Votre petit coin de montagne.' %}</p>{% endblock %}
-{% block account_content %}<div class="hub-welcome"><p class="eyebrow">{% translate 'HEUREUX DE VOUS RETROUVER' %}</p><h2>{{ user.first_name|default:user.username }}</h2><p>{% translate 'Retrouvez vos achats, vos adresses et vos préférences en un seul endroit.' %}</p></div><div class="hub-cards"><a class="hub-card" href="{% url 'espace:orders' %}"><span>01 ↗</span><h2>{% translate 'Mes commandes' %}</h2><p>{% translate 'Retrouver mes achats et leur statut.' %}</p></a><a class="hub-card" href="{% url 'espace:addresses' %}"><span>02 ↗</span><h2>{% translate 'Mes adresses' %}</h2><p>{% translate 'Préparer mes prochaines livraisons.' %}</p></a><a class="hub-card" href="{% url 'espace:personal' %}"><span>03 ↗</span><h2>{% translate 'Mes informations personnelles' %}</h2><p>{% translate 'Garder mes coordonnées à jour.' %}</p></a><a class="hub-card" href="{% url 'retours:mine' %}"><span>04 ↗</span><h2>Mes retours et remboursements</h2><p>Déclarer un retour et suivre chaque dossier.</p></a></div>{% if can_manage_catalog %}<section class="account-admin-section"><p class="eyebrow">ADMINISTRATION</p><h2>Gérer la boutique</h2><div class="hub-cards"><a class="hub-card" href="{% url 'tableau:dashboard' %}"><h3>Tableau de bord</h3><p>Ventes du mois, bilan annuel et produits les plus vendus.</p></a><a class="hub-card" href="{% url 'core:catalog_list' %}"><h3>Gérer les produits</h3><p>Prix, descriptions, photos et publication.</p></a><a class="hub-card" href="{% url 'stocks:overview' %}"><h3>Stock</h3><p>Ajouter ou retirer des unités, compter les tailles et couleurs et retrouver les ajustements.</p></a><a class="hub-card" href="{% url 'core:catalog_homepage' %}"><h3>Personnaliser l’accueil</h3><p>Choisir les produits mis en avant.</p></a></div></section>{% endif %}
-
-{% if can_manage_returns %}<section class="account-admin-section"><p class="eyebrow">SERVICE CLIENT</p><a class="hub-card" href="{% url 'retours:manage' %}"><h2>Retours et remboursements</h2><p>Demandes clients, remboursements, réception et remise en stock.</p></a></section>{% endif %}{% endblock %}
+{% extends 'espace/private.html' %}{% load i18n %}
+{% block introduction %}<p>{% translate 'Votre petit coin de montagne.' %}</p>{% endblock %}
+{% block account_content %}
+<div class="hub-welcome"><p class="eyebrow">{% translate 'HEUREUX DE VOUS RETROUVER' %}</p><h2>{{ user.first_name|default:user.username }}</h2><p>{% translate 'Retrouvez vos achats, vos adresses et vos préférences en un seul endroit.' %}</p></div>
+<div class="hub-cards">
+  <a class="hub-card" href="{% url 'espace:orders' %}"><span>01 ↗</span><h2>{% translate 'Mes commandes' %}</h2><p>{% translate 'Retrouver mes achats et leur statut.' %}</p></a>
+  <a class="hub-card" href="{% url 'espace:addresses' %}"><span>02 ↗</span><h2>{% translate 'Mes adresses' %}</h2><p>{% translate 'Préparer mes prochaines livraisons.' %}</p></a>
+  <a class="hub-card" href="{% url 'espace:personal' %}"><span>03 ↗</span><h2>{% translate 'Mes informations personnelles' %}</h2><p>{% translate 'Garder mes coordonnées à jour.' %}</p></a>
+  <a class="hub-card" href="{% url 'retours:mine' %}"><span>04 ↗</span><h2>Mes retours et remboursements</h2><p>Déclarer un retour et suivre chaque dossier.</p></a>
+</div>
+{% if can_manage_catalog or can_manage_returns %}
+<section class="account-admin-section" aria-labelledby="account-admin-title">
+  <p class="eyebrow">ADMINISTRATION</p><h2 id="account-admin-title">Gérer la boutique</h2>
+  {% if can_manage_catalog %}
+  <a class="hub-card" href="{% url 'tableau:dashboard' %}"><h3>Tableau de bord</h3><p>Ventes du mois, bilan annuel et dossiers à traiter.</p></a>
+  <section class="account-admin-section" aria-labelledby="account-catalogue-title"><h3 id="account-catalogue-title">Catalogue</h3><div class="hub-cards">
+    <a class="hub-card" href="{% url 'core:catalog_list' %}"><h3>Gérer les produits</h3><p>Prix, descriptions, photos et publication.</p></a>
+    <a class="hub-card" href="{% url 'stocks:overview' %}"><h3>Stock</h3><p>Ajouter ou retirer des unités et compter les tailles et couleurs.</p></a>
+  </div></section>
+  <section class="account-admin-section" aria-labelledby="account-boutique-title"><h3 id="account-boutique-title">Boutique</h3><div class="hub-cards">
+    <a class="hub-card" href="{% url 'boutique:hours' %}"><h3>Horaires du magasin</h3><p>Les jours d’ouverture, les créneaux et les informations pratiques, à jour partout sur le site.</p></a>
+    <a class="hub-card" href="{% url 'core:catalog_homepage' %}"><h3>Personnaliser l’accueil</h3><p>Choisir les produits mis en avant sur la page d’accueil.</p></a>
+  </div></section>
+  {% endif %}
+  {% if can_manage_returns %}
+  <section class="account-admin-section" aria-labelledby="account-service-title"><h3 id="account-service-title">Service client</h3><div class="hub-cards">
+    <a class="hub-card" href="{% url 'facturation:management' %}"><h3>Commandes et factures</h3><p>Suivre les commandes et imprimer les documents du colis.</p></a>
+    <a class="hub-card" href="{% url 'retours:manage' %}"><h3>Retours et remboursements</h3><p>Recevoir les articles et suivre le traitement des dossiers.</p></a>
+  </div></section>
+  {% endif %}
+  {% if can_manage_catalog %}
+  <section class="account-admin-section" aria-labelledby="account-configuration-title"><h3 id="account-configuration-title">Configuration</h3><div class="hub-cards">
+    <a class="hub-card" href="{% url 'espace:legal_readiness' %}"><h3>Préparer l’ouverture des ventes</h3><p>Retrouver les informations et vérifications nécessaires à la mise en vente.</p></a>
+    {% if email_test_mode %}<a class="hub-card" href="{% url 'test_email_inbox' %}"><h3>Boîte e-mail de test</h3><p>Consulter les messages générés pendant les essais du site.</p></a>{% endif %}
+  </div></section>
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}
