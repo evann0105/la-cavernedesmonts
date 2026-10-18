@@ -4,7 +4,7 @@ Document interne préparé le 16 octobre 2026 à partir du code local de La Cave
 
 ## Responsable et périmètre
 
-Responsable de traitement : Élodie FOLOPPE, entrepreneur individuel, enseigne La Caverne des Monts, SIREN 525 114 914. Coordonnées publiques reprises des mentions légales. Le contact pour les droits est `contact@la-cavernedesmonts.fr` ; **Élodie doit confirmer qui surveille cette adresse et assure le remplacement en cas d’absence**. Aucun DPO n’est déclaré ici sans désignation réelle.
+Responsable de traitement : Élodie FOLOPPE, EI, enseigne La Caverne des Monts, SIREN 525 114 914. Coordonnées publiques reprises des mentions légales. Le contact pour les droits est `contact@la-cavernedesmonts.fr` ; **Élodie doit confirmer qui surveille cette adresse et assure le remplacement en cas d’absence**. Aucun DPO n’est déclaré ici sans désignation réelle.
 
 Périmètre : site e-commerce, clients et visiteurs, comptes de gestion habilités. La vente de vêtements pour bébés n’implique pas à elle seule un traitement de données de nourrissons : aucun compte bébé ni date de naissance n’est nécessaire au parcours actuel. Les champs libres peuvent néanmoins contenir accidentellement des informations inutiles ; les minimiser lors du traitement des demandes.
 

@@ -6,7 +6,7 @@ Contrôle du 16 octobre 2026 sur le projet local et sa configuration effective. 
 
 **Le site n’est pas encore prêt pour l’ouverture des ventes.** Les pages essentielles sont maintenant accessibles et les principales incohérences de l’ancien texte ont été corrigées. Les paiements restent fermés. L’ouverture nécessite les renseignements réels manquants et la mise en œuvre des procédures métier décrites ci-dessous.
 
-L’entreprise est identifiée d’après les renseignements communiqués par le propriétaire du projet : Élodie FOLOPPE, entrepreneur individuel, SIREN 525 114 914, SIRET 525 114 914 00019, immatriculation 525 114 914 RCS Bourg-en-Bresse. L’adresse de la boutique et des retours utilise le numéro 225 déjà fourni. L’état du registre, l’identité de la directrice de publication et le régime de TVA doivent être confirmés par l’entreprise. Le numéro de TVA proposé comme « à confirmer actif » n’a pas été présenté comme vérifié.
+L’entreprise est identifiée d’après les renseignements communiqués par le propriétaire du projet : Élodie FOLOPPE, EI, SIREN 525 114 914, SIRET 525 114 914 00019, immatriculation 525 114 914 RCS Bourg-en-Bresse. L’adresse de la boutique et des retours utilise le numéro 225 déjà fourni. L’état du registre, l’identité de la directrice de publication et le régime de TVA doivent être confirmés par l’entreprise. Le numéro de TVA proposé comme « à confirmer actif » n’a pas été présenté comme vérifié.
 
 ## Corrections réalisées
 

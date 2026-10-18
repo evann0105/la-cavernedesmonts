@@ -9,7 +9,7 @@ from django.utils.html import strip_tags
 
 VERSION = '2026-10-16.2'
 DEFAULTS = {
-    'business_name': 'Élodie FOLOPPE', 'legal_form': 'Entrepreneur individuel (EI)',
+    'business_name': 'Élodie FOLOPPE', 'legal_form': 'EI',
     'siren': '525 114 914', 'siret': '525 114 914 00019',
     'registration': '525 114 914 RCS Bourg-en-Bresse',
     'address': 'Résidence Les Gentianes, 225 rue des Monts-Jura, 01410 Lélex, France',
@@ -29,8 +29,19 @@ REQUIRED = {
     'return_costs':'Prise en charge des frais de retour', 'processors':'Prestataires, localisation et transferts de données',
 }
 
+def short_legal_form(value):
+    if isinstance(value, str) and re.fullmatch(
+        r'(?:entrepreneur(?:e)?\s+individuel(?:le)?|entreprise\s+individuelle)(?:\s*\(\s*EI\s*\))?',
+        value.strip(), flags=re.IGNORECASE,
+    ):
+        return 'EI'
+    return value
+
+
 def profile():
-    return {**DEFAULTS, **getattr(settings, 'SHOP_LEGAL', {})}
+    data = {**DEFAULTS, **getattr(settings, 'SHOP_LEGAL', {})}
+    data['legal_form'] = short_legal_form(data['legal_form'])
+    return data
 
 
 def blockers():

@@ -14,7 +14,7 @@ from .services import DocumentError, build_preview, issue
 
 
 LEGAL = {
-    'business_name': 'Élodie FOLOPPE', 'legal_form': 'Entrepreneur individuel (EI)',
+    'business_name': 'Élodie FOLOPPE', 'legal_form': 'EI',
     'siren': '525 114 914', 'siret': '525 114 914 00019',
     'registration': '525 114 914 RCS Bourg-en-Bresse',
     'address': '225 rue des Monts-Jura, 01410 Lélex, France',
