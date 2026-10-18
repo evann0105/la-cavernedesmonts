@@ -1,0 +1,40 @@
+.shipping-summary {
+  margin-block: 22px;
+  padding: 18px 20px;
+  border: 1px solid #ccd5c3;
+  border-radius: 14px;
+  background: #f7f9f2;
+  color: #243e36;
+  overflow-wrap: anywhere;
+}
+
+.shipping-summary.shipping-summary--free {
+  border-color: #b9caa8;
+  background: #e5edda;
+}
+
+.shipping-summary .shipping-summary__title {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.shipping-summary .shipping-summary__detail {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.shipping-summary .shipping-summary__note {
+  margin: 10px 0 0;
+  color: #5e6d58;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .shipping-summary {
+    padding: 16px;
+  }
+}

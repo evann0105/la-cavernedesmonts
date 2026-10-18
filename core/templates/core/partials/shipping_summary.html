@@ -1,0 +1,13 @@
+{% if shipping %}
+<div class="shipping-summary{% if shipping.is_free %} shipping-summary--free{% endif %}" aria-label="Livraison">
+  {% if shipping.is_free %}
+    <p class="shipping-summary__title">Livraison standard offerte</p>
+    <p class="shipping-summary__detail">Votre panier atteint {{ shipping.threshold|floatformat:"-2" }} € d’articles.</p>
+  {% else %}
+    <p class="shipping-summary__title">Livraison standard offerte dès {{ shipping.threshold|floatformat:"-2" }} €</p>
+    <p class="shipping-summary__detail">Encore <strong>{{ shipping.remaining|floatformat:2 }} €</strong> d’articles pour en profiter.</p>
+    <p class="shipping-summary__note">Les frais de livraison sont indiqués avant le paiement.</p>
+  {% endif %}
+  <p class="shipping-summary__note">Seuil calculé sur les articles, hors livraison et avant code promotionnel.</p>
+</div>
+{% endif %}

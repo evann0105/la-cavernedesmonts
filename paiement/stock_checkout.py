@@ -6,6 +6,7 @@ from django.db import transaction
 from django.urls import reverse
 from django.utils import timezone
 from .models import Order
+from .shipping import shipping_option
 from stocks.reservations import finish_locked, StockUnavailable
 
 
@@ -31,7 +32,7 @@ def get_session(order_id, language='fr'):
                 'expires_at':int(order.reservation_expires_at.timestamp()),
                 'line_items':[{'price_data':{'currency':'eur','unit_amount':i['unit_amount'],'product_data':{'name':f"{i['name']} — {i['size']} · {i['color']}",'metadata':{'order_id':str(order.pk),'order_item':str(n)}}},'quantity':i['quantity']} for n,i in enumerate(order.items)],
                 'shipping_address_collection':{'allowed_countries':['FR']},
-                'shipping_options':[{'shipping_rate':settings.STRIPE_SHIPPING_RATE}],
+                'shipping_options':[shipping_option(order.subtotal)],
                 'billing_address_collection':'required',
                 'success_url':settings.SITE_URL+reverse('paiement:confirmation',args=[order.pk]),
                 'cancel_url':settings.SITE_URL+reverse('core:cart'),

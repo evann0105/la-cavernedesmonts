@@ -123,8 +123,10 @@ def location(request):
 
 
 def cart(request):
+    from paiement.shipping import shipping_summary
     items = lines(request)
-    return render(request, 'core/cart.html', {'cart_items': items, 'total': total(items)})
+    subtotal = total(items)
+    return render(request, 'core/cart.html', {'cart_items': items, 'total': subtotal, 'shipping': shipping_summary(subtotal)})
 
 
 @require_POST

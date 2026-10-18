@@ -67,7 +67,9 @@ def checkout(request):
             logger.warning('Stripe Checkout unavailable; pending stock reservation preserved.')
             messages.error(request, _('Le paiement est momentanément indisponible. Votre panier est conservé ; réessayez pour reprendre la même tentative.'))
         return redirect('paiement:checkout')
-    return render(request,'paiement/checkout.html',{'enabled':enabled,'total':total(items),'cart_items':items})
+    from .shipping import shipping_summary
+    subtotal = total(items)
+    return render(request,'paiement/checkout.html',{'enabled':enabled,'total':subtotal,'cart_items':items,'shipping':shipping_summary(subtotal)})
 
 
 def confirmation(request, order_id):

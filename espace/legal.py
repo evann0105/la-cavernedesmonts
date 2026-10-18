@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
-VERSION = '2026-10-16.2'
+VERSION = '2026-10-18.1'
 DEFAULTS = {
     'business_name': 'Élodie FOLOPPE', 'legal_form': 'EI',
     'siren': '525 114 914', 'siret': '525 114 914 00019',
@@ -68,7 +68,9 @@ def sales_ready():
 
 
 def context():
-    return {'legal':profile(), 'legal_version':VERSION, 'legal_draft':not sales_ready()}
+    from paiement.shipping import free_shipping_threshold
+    return {'legal':profile(), 'legal_version':VERSION, 'legal_draft':not sales_ready(),
+            'free_shipping_threshold':free_shipping_threshold()}
 
 
 def contract_snapshot():
