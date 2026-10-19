@@ -6,8 +6,6 @@
 .shop-reviews blockquote{font-size:16px;line-height:1.7;margin:0 0 16px;overflow-wrap:anywhere}
 .shop-reviews figcaption{display:grid;gap:4px;font-size:14px;line-height:1.5;color:#596953}
 .shop-reviews .review-author{font-weight:500;color:var(--ink)}
-.shop-reviews-source{display:inline-flex;gap:10px;align-items:center;margin-top:22px;font-size:14px;text-decoration:underline;text-underline-offset:5px}
-.shop-reviews-source:focus-visible{outline:2px solid currentColor;outline-offset:5px}
 .shop-reviews-compact{padding:20px 0 24px;margin:0;border-bottom:1px solid var(--line)}
 .product-summary .shop-reviews-compact h2{font-size:17px;letter-spacing:0}
 .shop-reviews-compact .shop-reviews-grid{grid-template-columns:1fr}

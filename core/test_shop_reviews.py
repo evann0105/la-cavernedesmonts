@@ -14,7 +14,8 @@ class ShopReviewTests(SimpleTestCase):
             html = render_to_string('core/partials/shop_reviews.html', data)
         self.assertIn('Visite en',html)
         self.assertIn('datetime="2023-02"',html)
-        self.assertIn('target="_blank" rel="noopener noreferrer"',html)
+        self.assertNotIn('Consulter les avis Google',html)
+        self.assertIn('Comment ces avis sont présentés',html)
         self.assertNotIn('aggregateRating',html)
 
     def test_compact_review_is_about_shop_not_product(self):
@@ -46,7 +47,7 @@ class ShopReviewTests(SimpleTestCase):
 
     def test_date_is_omitted_when_not_supplied(self):
         with override('fr'):
-            html=render_to_string('core/partials/shop_reviews.html', {'reviews':[REVIEWS[3]],'reviews_url':'https://www.google.com/'})
+            html=render_to_string('core/partials/shop_reviews.html', {'reviews':[REVIEWS[3]]})
         self.assertNotIn('Visite en',html)
         self.assertNotIn('<time',html)
         self.assertIn('sophie Giradet',html)

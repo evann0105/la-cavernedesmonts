@@ -2,7 +2,6 @@
 
 Visit months are supplied visit dates, not publication dates. No live Google
 rating, purchase verification or product-specific endorsement is inferred.
-The Google link opens the shop's reviews search, not an individual review.
 """
 from datetime import date
 from random import sample
@@ -39,5 +38,4 @@ def shop_reviews(compact=False):
     return {
         'compact': compact,
         'reviews': select_reviews(compact),
-        'reviews_url': 'https://www.google.com/search?q=LA+CAVERNE+DES+MONTS+L%C3%A9lex+avis',
     }

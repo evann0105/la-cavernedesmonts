@@ -10,7 +10,6 @@
   </div>
   {% get_current_language as review_language %}{% if review_language != 'fr' %}<p class="review-original-language">{% translate 'Avis reproduits dans leur langue d’origine : français.' %}</p>{% endif %}
   <p class="review-original-language">Sélection éditoriale non exhaustive d’avis Google sur le magasin, sans vérification d’achat par ce site. Les mois de visite, lorsqu’ils sont indiqués, ne sont pas des dates de publication. <a href="{% url 'espace:review_policy' %}">Comment ces avis sont présentés</a>.</p>
-  <a class="shop-reviews-source" href="{{ reviews_url }}" target="_blank" rel="noopener noreferrer">{% translate 'Consulter les avis Google' %} <span aria-hidden="true">↗</span></a>
 </section>
 
 {% endif %}
