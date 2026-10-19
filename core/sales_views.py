@@ -107,7 +107,8 @@ def _selection_response(request, filter_form, error=None):
     rows = matching_rows(criteria) if criteria is not None else []
     if error:
         filter_form.add_error(None, error)
-    return render(request, 'core/sales/create.html', {'stage': 'selection', 'filter_form': filter_form,
+    template = 'core/sales/selection.html' if request.headers.get('X-Sales-Selection') == '1' and request.method == 'GET' else 'core/sales/create.html'
+    return render(request, template, {'stage': 'selection', 'filter_form': filter_form,
         'candidate_rows': rows, 'selected_product_ids': [row['product'].pk for row in rows],
         'filter_hidden': _filter_hidden(criteria) if criteria is not None else []})
 

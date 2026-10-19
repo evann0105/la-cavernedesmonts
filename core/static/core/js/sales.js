@@ -1,29 +1,127 @@
 (() => {
   'use strict';
 
-  const selection = document.querySelector('[data-sales-selection]');
-  if (selection) {
+  const filterForm = document.querySelector('[data-sales-filter]');
+  const results = document.querySelector('[data-sales-results]');
+  const status = document.querySelector('[data-sales-selection-status]');
+  const excluded = new Set();
+  let updateSelection = () => {};
+  let pending = false;
+  let failed = false;
+  let requestId = 0;
+  let controller;
+  let timer;
+
+  const bindSelection = () => {
+    const selection = document.querySelector('[data-sales-selection]');
+    if (!selection) return;
     const choices = Array.from(selection.querySelectorAll('[data-sales-product-choice]'));
     const all = selection.querySelector('[data-sales-select-all]');
     const count = selection.querySelector('[data-sales-selected-count]');
     const plural = selection.querySelectorAll('[data-sales-selected-plural]');
     const submit = selection.querySelector('[data-sales-selection-submit]');
-    const updateSelection = () => {
+    choices.forEach(choice => { if (excluded.has(choice.value)) choice.checked = false; });
+    updateSelection = () => {
       const selected = choices.filter(choice => choice.checked).length;
+      const blocked = pending || failed;
       if (count) count.textContent = String(selected);
       plural.forEach(node => { node.textContent = selected > 1 ? 's' : ''; });
+      choices.forEach(choice => { choice.disabled = blocked; });
       if (all) {
         all.checked = choices.length > 0 && selected === choices.length;
         all.indeterminate = selected > 0 && selected < choices.length;
+        all.disabled = blocked;
       }
-      if (submit) submit.disabled = selected === 0;
+      if (submit) submit.disabled = blocked || selected === 0;
     };
-    choices.forEach(choice => choice.addEventListener('change', updateSelection));
+    choices.forEach(choice => choice.addEventListener('change', () => {
+      if (choice.checked) excluded.delete(choice.value);
+      else excluded.add(choice.value);
+      updateSelection();
+    }));
     if (all) all.addEventListener('change', () => {
-      choices.forEach(choice => { choice.checked = all.checked; });
+      choices.forEach(choice => {
+        choice.checked = all.checked;
+        if (choice.checked) excluded.delete(choice.value);
+        else excluded.add(choice.value);
+      });
       updateSelection();
     });
+    selection.addEventListener('submit', event => {
+      if (pending || failed) event.preventDefault();
+    });
     updateSelection();
+  };
+  bindSelection();
+
+  if (filterForm && results) {
+    const refreshSelection = async () => {
+      const current = ++requestId;
+      controller?.abort();
+      controller = new AbortController();
+      if (!filterForm.checkValidity()) {
+        pending = false;
+        failed = true;
+        results.removeAttribute('aria-busy');
+        if (status) status.textContent = 'Vérifiez les critères avant de continuer.';
+        updateSelection();
+        return;
+      }
+      const url = new URL(filterForm.action || window.location.href);
+      url.search = new URLSearchParams(new FormData(filterForm)).toString();
+      url.hash = '';
+      pending = true;
+      failed = false;
+      results.setAttribute('aria-busy', 'true');
+      if (status) status.textContent = 'Mise à jour de la sélection…';
+      updateSelection();
+      try {
+        const response = await fetch(url, {
+          headers: {'X-Sales-Selection': '1'}, credentials: 'same-origin', signal: controller.signal,
+        });
+        if (!response.ok || response.redirected) throw new Error('Selection unavailable');
+        const html = await response.text();
+        if (current !== requestId) return;
+        const fragment = document.createElement('template');
+        fragment.innerHTML = html;
+        if (!fragment.content.querySelector('[data-sales-selection]')) throw new Error('Invalid selection');
+        results.replaceChildren(fragment.content);
+        pending = false;
+        failed = false;
+        bindSelection();
+        window.history.replaceState(null, '', url);
+        const total = results.querySelectorAll('[data-sales-product-choice]').length;
+        if (status) status.textContent = `Sélection mise à jour : ${total} produit${total > 1 ? 's' : ''}.`;
+      } catch (error) {
+        if (current !== requestId) return;
+        failed = true;
+        if (status) status.textContent = 'La sélection n’a pas pu être actualisée. Réessayez avec « Afficher les produits ».';
+      } finally {
+        if (current === requestId) {
+          pending = false;
+          results.removeAttribute('aria-busy');
+          updateSelection();
+        }
+      }
+    };
+    const scheduleRefresh = () => {
+      clearTimeout(timer);
+      // Block the old selection immediately, including the short debounce window.
+      ++requestId;
+      controller?.abort();
+      pending = true;
+      failed = false;
+      results.setAttribute('aria-busy', 'true');
+      updateSelection();
+      timer = setTimeout(refreshSelection, 180);
+    };
+    filterForm.addEventListener('change', scheduleRefresh);
+    filterForm.addEventListener('input', scheduleRefresh);
+    filterForm.addEventListener('submit', event => {
+      event.preventDefault();
+      clearTimeout(timer);
+      refreshSelection();
+    });
   }
 
   const priceForm = document.querySelector('[data-sales-price-form]');

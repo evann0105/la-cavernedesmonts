@@ -48,6 +48,15 @@ class SaleCriteriaTests(TestCase):
             self.assertEqual(self.keys(categories=[category.pk], article_type='polaires', q='montagne', price_min='75'), {f'v{self.green_l.pk}'})
         self.assertFalse(self.keys(article_type='vestes'))
 
+    def test_multiple_categories_are_combined_without_replacing_the_first(self):
+        men = Category.objects.create(name='Hommes', slug='hommes')
+        male_product = Product.objects.create(name='Polaire homme', price=60, category=men)
+        gift = Product.objects.create(name='Cadeau seul', price=20, category=self.gifts)
+        women_keys = {f'v{self.red_m.pk}', f'v{self.green_l.pk}'}
+        self.assertEqual(self.keys(categories=[self.women.pk]), women_keys)
+        self.assertEqual(self.keys(categories=[self.women.pk, men.pk]), women_keys | {f'p{male_product.pk}'})
+        self.assertNotIn(f'p{gift.pk}', self.keys(categories=[self.women.pk, men.pk]))
+
     def test_stock_filters_distinguish_unknown_from_zero_and_reserved_from_available(self):
         unknown = Variant.objects.create(product=self.product, color='Bleu', size='S', quantity=None)
         self.assertEqual(self.keys(stock='zero'), {f'v{self.green_l.pk}'})
@@ -133,6 +142,38 @@ class SalesWorkspaceTests(TestCase):
         self.assertEqual(SaleCampaign.objects.count(), 0)
         self.assertEqual(ProductPromotion.objects.count(), 0)
         self.assertIn('no-store', response['Cache-Control'])
+
+    def test_live_category_results_and_submitted_criteria_stay_in_sync(self):
+        women = Category.objects.create(name='Femmes', slug='femmes')
+        men = Category.objects.create(name='Hommes', slug='hommes')
+        self.product.category = women
+        self.product.save(update_fields=['category'])
+        self.other.category = men
+        self.other.save(update_fields=['category'])
+        headers = {'HTTP_X_SALES_SELECTION': '1'}
+        response = self.client.get(self.url, {'categories': [women.pk]}, **headers)
+        self.assertTemplateUsed(response, 'core/sales/selection.html')
+        self.assertNotContains(response, '<html')
+        self.assertEqual([row['product'].pk for row in response.context['candidate_rows']], [self.product.pk])
+        response = self.client.get(self.url, {'categories': [women.pk, men.pk]}, **headers)
+        self.assertEqual({row['product'].pk for row in response.context['candidate_rows']}, {self.product.pk, self.other.pk})
+        replay = {}
+        for item in response.context['filter_hidden']:
+            replay.setdefault(item['name'], []).append(item['value'])
+        self.assertEqual(set(replay['categories']), {women.pk, men.pk})
+        replay.update(action='preview', product_ids=[self.product.pk, self.other.pk])
+        preview = self.client.post(self.url, replay)
+        self.assertEqual(preview.context['stage'], 'preview')
+        self.assertEqual(preview.context['preview_summary']['product_count'], 2)
+        self.assertEqual((SaleCampaign.objects.count(), ProductPromotion.objects.count()), (0, 0))
+        self.assertIn('no-store', response['Cache-Control'])
+
+    def test_invalid_live_price_criteria_clear_the_old_product_selection(self):
+        response = self.client.get(self.url, {'price_min': 80, 'price_max': 20}, HTTP_X_SALES_SELECTION='1')
+        self.assertContains(response, 'Vérifiez les critères de sélection.')
+        self.assertNotContains(response, 'data-sales-product-choice')
+        self.assertNotContains(response, 'data-sales-selection-submit')
+        self.assertEqual(ProductPromotion.objects.count(), 0)
 
     def test_confirmed_creation_freezes_variants_applies_pricing_and_audits(self):
         campaign = self.create()

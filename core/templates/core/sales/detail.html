@@ -1,6 +1,6 @@
 {% extends 'core/catalog/base.html' %}{% load static tz %}
 {% block title %}{{ row.title }} — Soldes{% endblock %}
-{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'core/css/sales.css' %}?v=20261019-sales-center">{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'core/css/sales.css' %}?v=20261019-sales-live-selection">{% endblock %}
 {% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a><span aria-hidden="true"> / </span><a href="{% url 'core:sales_dashboard' %}">Soldes</a><span aria-hidden="true"> / </span><span aria-current="page">{{ row.title }}</span></nav>{% endblock %}
 {% block catalog_content %}<div class="sales-shell">
 <header class="sales-heading"><div><p class="eyebrow">LES DÉTAILS DE L’OPÉRATION</p><h1>{{ row.title }}<span class="sales-heading-dot">.</span></h1><p>Les produits sélectionnés et le détail de leurs réductions.</p></div><a class="sales-back-link" href="{% url 'core:sales_dashboard' %}">← Toutes les opérations</a></header>
