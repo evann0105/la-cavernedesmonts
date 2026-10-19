@@ -168,8 +168,8 @@ class SizeColorVariantTests(TestCase):
         )
         response = Client().get(self.detail_url())
         self.assertEqual(
-            response.context['product_colors'],
-            [{'key': 'rouge vif', 'name': 'ROUGE VIF', 'image': photo.image.url}],
+            [color for color in response.context['product_colors'] if color['key'] != '__main_photo__'],
+            [{'key': 'rouge vif', 'name': 'ROUGE VIF', 'image': photo.image.url, 'state': 'available'}],
         )
         self.assertEqual({variant.color_key for variant in response.context['variants']}, {'rouge vif'})
         self.assertEqual({variant.size_key for variant in response.context['variants']}, {'m', 'l'})
@@ -471,3 +471,212 @@ class SizeColorVariantTests(TestCase):
         product = Product.objects.get(name='Taille combinée valide')
         self.assertEqual(list(product.stock_variants.values_list('size', 'color', 'quantity')),
                          [('S/M', 'Rouge', 5)])
+
+    def build_options(self):
+        from .product_options import build_product_options
+        variants = list(self.product.stock_variants.all())
+        photos = list(self.product.color_photos.all())
+        with self.assertNumQueries(0):
+            options = build_product_options(self.product, variants, photos)
+        return options, variants
+
+    def test_color_states_use_real_available_stock_and_preserve_unknown_stock(self):
+        Variant.objects.create(product=self.product, size='M', color='Rouge', quantity=0)
+        Variant.objects.create(product=self.product, size='L', color='Rouge', quantity=None)
+        Variant.objects.create(product=self.product, size='S', color='Noir', quantity=0)
+        Variant.objects.create(product=self.product, size='M', color='Noir', quantity=2, reserved=2)
+        Variant.objects.create(product=self.product, size='S', color='Vert', quantity=3, reserved=2)
+        ProductColor.objects.create(product=self.product, name='Violet', image=color_photo())
+        before = list(self.product.stock_variants.values_list('pk', 'quantity', 'reserved'))
+        options, variants = self.build_options()
+        states = {color['key']: color['state'] for color in options['colors']}
+        self.assertEqual(
+            {key: state for key, state in states.items() if key != '__main_photo__'},
+            {'rouge': 'unknown', 'noir': 'out', 'vert': 'available', 'violet': 'unknown'},
+        )
+        self.assertEqual(
+            {size['name']: size['available'] for size in options['sizes']},
+            {'L': False, 'M': False, 'S': True},
+        )
+        self.assertEqual({item.size_key for item in variants}, {'l', 'm', 's'})
+        self.assertEqual({item.color_key for item in variants}, {'rouge', 'noir', 'vert'})
+        self.assertEqual(
+            list(self.product.stock_variants.values_list('pk', 'quantity', 'reserved')), before,
+        )
+
+    def test_explicit_main_color_uses_main_photo_without_duplicating_color_or_stock(self):
+        self.product.main_color = 'Rouge'
+        self.product.save(update_fields=['main_color'])
+        Variant.objects.create(product=self.product, size='M', color=' rouge ', quantity=2)
+        Variant.objects.create(product=self.product, size='L', color='ROUGE', quantity=0)
+        options, _ = self.build_options()
+        self.assertEqual(len(options['colors']), 1)
+        self.assertEqual(
+            {key: options['colors'][0][key] for key in ('key', 'image', 'state')},
+            {'key': 'rouge', 'image': self.product.image_url, 'state': 'available'},
+        )
+        self.assertEqual(self.product.stock_variants.count(), 2)
+
+    def test_explicit_color_photo_takes_priority_over_main_photo_for_the_same_color(self):
+        self.product.main_color = 'ROUGE'
+        self.product.save(update_fields=['main_color'])
+        Variant.objects.create(product=self.product, size='M', color='Rouge', quantity=1)
+        photo = ProductColor.objects.create(
+            product=self.product, name=' Rouge ', image=color_photo('rouge-detail.png'),
+        )
+        options, _ = self.build_options()
+        red = [color for color in options['colors'] if color['key'] == 'rouge']
+        self.assertEqual(len(red), 1)
+        self.assertEqual((red[0]['image'], red[0]['state']), (photo.image.url, 'available'))
+        self.assertEqual(self.product.stock_variants.count(), 1)
+
+    def test_main_color_without_variants_remains_unknown_and_does_not_create_stock(self):
+        self.product.main_color = 'Beige'
+        self.product.save(update_fields=['main_color'])
+        options, variants = self.build_options()
+        self.assertEqual(options['sizes'], [])
+        self.assertEqual(variants, [])
+        self.assertEqual(len(options['colors']), 1)
+        self.assertEqual(
+            {key: options['colors'][0][key] for key in ('key', 'image', 'state')},
+            {'key': 'beige', 'image': self.product.image_url, 'state': 'unknown'},
+        )
+        self.assertFalse(self.product.stock_variants.exists())
+
+    def test_orphan_main_photo_has_a_generic_unknown_option_without_inferred_stock(self):
+        self.product.name = 'Polaire beige de test'
+        self.product.save(update_fields=['name'])
+        red = Variant.objects.create(product=self.product, size='M', color='Rouge', quantity=4)
+        ProductColor.objects.create(product=self.product, name='Rouge', image=color_photo())
+        options, _ = self.build_options()
+        origin = options['colors'][0]
+        self.assertEqual(
+            {key: origin[key] for key in ('key', 'name', 'image', 'state')},
+            {'key': '__main_photo__', 'name': 'Coloris d’origine',
+             'image': self.product.image_url, 'state': 'unknown'},
+        )
+        self.assertNotIn('beige', {color['key'] for color in options['colors']})
+        self.assertEqual([size['key'] for size in options['sizes']], ['m'])
+        self.assertEqual(list(self.product.stock_variants.values_list('pk', flat=True)), [red.pk])
+
+    def test_multiple_unpictured_variant_colors_keep_access_to_the_original_photo(self):
+        Variant.objects.create(product=self.product, size='M', color='Rouge', quantity=1)
+        Variant.objects.create(product=self.product, size='L', color='Bleu', quantity=0)
+        options, _ = self.build_options()
+        self.assertEqual(options['colors'][0]['key'], '__main_photo__')
+        self.assertEqual(options['colors'][0]['state'], 'unknown')
+        self.assertEqual(
+            {color['key']: color['state'] for color in options['colors']},
+            {'__main_photo__': 'unknown', 'rouge': 'available', 'bleu': 'out'},
+        )
+        self.assertEqual(self.product.stock_variants.count(), 2)
+
+    def test_legacy_product_without_color_information_keeps_its_existing_selector(self):
+        options, variants = self.build_options()
+        self.assertEqual(options, {'sizes': [], 'colors': []})
+        self.assertEqual(variants, [])
+        self.assertFalse(self.product.stock_variants.exists())
+
+    def test_creation_records_original_color_and_its_sizes_without_copying_main_photo(self):
+        response = self.client.post(reverse('core:catalog_add'), self.product_data(
+            name='Origine beige', main_image=color_photo('beige-main.png'), **{
+                'original-name': ' Beige ', 'original-sizes': 'M, L',
+                'colors-TOTAL_FORMS': '0', 'stock-TOTAL_FORMS': '2',
+                'stock-0-size': 'M', 'stock-0-color': 'Beige', 'stock-0-quantity': '2',
+                'stock-1-size': 'L', 'stock-1-color': 'Beige', 'stock-1-quantity': '0',
+            },
+        ))
+        self.assertEqual(response.status_code, 302)
+        product = Product.objects.get(name='Origine beige')
+        self.assertRedirects(response, reverse('core:product_detail', args=[product.slug]))
+        self.assertEqual(product.main_color, 'Beige')
+        self.assertTrue(product.main_image)
+        self.assertFalse(product.color_photos.exists())
+        self.assertEqual(
+            set(product.stock_variants.values_list('size', 'color', 'quantity')),
+            {('M', 'Beige', 2), ('L', 'Beige', 0)},
+        )
+        page = Client().get(reverse('core:product_detail', args=[product.slug]))
+        beige = [color for color in page.context['product_colors'] if color['key'] == 'beige']
+        self.assertEqual(len(beige), 1)
+        self.assertEqual((beige[0]['image'], beige[0]['state']), (product.image_url, 'available'))
+
+    def test_older_product_post_without_original_metadata_preserves_main_color(self):
+        self.product.main_color = 'Beige'
+        self.product.save(update_fields=['main_color'])
+        response = self.client.post(
+            reverse('core:catalog_edit', args=[self.product.pk]),
+            self.product_data(price='39.95', **{'stock-TOTAL_FORMS': '0'}),
+        )
+        self.assertEqual(response.status_code, 302)
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.main_color, 'Beige')
+        self.assertEqual(str(self.product.price), '39.95')
+        self.assertFalse(self.product.color_photos.exists())
+
+    def test_original_sizes_require_a_name_and_quantities_before_saving_anything(self):
+        for original, error_field in [
+            ({'original-sizes': 'M'}, 'name'),
+            ({'original-name': 'Beige', 'original-sizes': 'M, L'}, 'sizes'),
+        ]:
+            with self.subTest(original=original):
+                response = self.client.post(reverse('core:catalog_add'), self.product_data(
+                    name='Origine incomplète', main_image=color_photo(), **{
+                        'stock-TOTAL_FORMS': '0', 'colors-TOTAL_FORMS': '0', **original,
+                    },
+                ))
+                self.assertEqual(response.status_code, 200)
+                self.assertIn(error_field, response.context['original_color_form'].errors)
+                self.assertFalse(Product.objects.filter(name='Origine incomplète').exists())
+                self.assertFalse(Variant.objects.exists())
+                self.assertFalse(ProductColor.objects.exists())
+
+    def test_original_card_shows_only_its_existing_stock_and_adding_size_preserves_history(self):
+        self.product.main_color = 'Beige'
+        self.product.save(update_fields=['main_color'])
+        beige = Variant.objects.create(
+            product=self.product, size='M', color=' Beige ', quantity=5, reserved=1, revision=9,
+        )
+        black = Variant.objects.create(product=self.product, size='S', color='Noir', quantity=6)
+        items = [{
+            'variant': beige.pk, 'product': self.product.pk, 'name': self.product.name,
+            'size': 'M', 'color': ' Beige ', 'unit_amount': 3000, 'quantity': 1,
+        }]
+        order = Order.objects.create(session_key='original-color-history', items=items, subtotal=3000, status='demo')
+        edit_url = reverse('core:catalog_edit', args=[self.product.pk])
+        page = self.client.get(edit_url)
+        self.assertEqual(page.status_code, 200)
+        original = page.context['original_color_form']
+        self.assertEqual(original.initial['name'], 'Beige')
+        self.assertEqual(original.original_image_url, self.product.image_url)
+        self.assertEqual([(variant.pk, variant.size, variant.available) for variant in original.existing_stock],
+                         [(beige.pk, 'M', 4)])
+        response = self.client.post(edit_url, self.product_data(**{
+            'original-name': 'Beige', 'original-sizes': 'M, L',
+            'stock-TOTAL_FORMS': '1', 'stock-0-size': 'L',
+            'stock-0-color': 'Beige', 'stock-0-quantity': '2',
+            'colors-TOTAL_FORMS': '0',
+        }))
+        self.assertEqual(response.status_code, 302)
+        beige.refresh_from_db()
+        black.refresh_from_db()
+        order.refresh_from_db()
+        self.assertEqual((beige.color, beige.quantity, beige.reserved, beige.revision), (' Beige ', 5, 1, 9))
+        self.assertEqual((black.quantity, black.reserved), (6, 0))
+        self.assertEqual(order.items, items)
+        self.assertEqual(self.product.stock_variants.get(size='L', color='Beige').quantity, 2)
+        self.assertEqual(self.product.stock_variants.count(), 3)
+        self.assertFalse(self.product.color_photos.exists())
+
+    def test_identified_color_without_inventory_cannot_be_ordered_as_a_legacy_size(self):
+        for main_color, with_photo in [('Beige', False), ('', True)]:
+            with self.subTest(main_color=main_color, with_photo=with_photo):
+                self.product.main_color = main_color
+                self.product.save(update_fields=['main_color'])
+                if with_photo:
+                    ProductColor.objects.create(product=self.product, name='Rouge', image=color_photo())
+                buyer = Client()
+                response = buyer.post(self.cart_url(), {'size': 'M', 'quantity': 1})
+                self.assertEqual(response.status_code, 302)
+                self.assertFalse(buyer.session.get('cart'))
+                self.assertFalse(self.product.stock_variants.exists())

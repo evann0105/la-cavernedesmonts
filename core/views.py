@@ -97,24 +97,13 @@ def product_detail(request, slug, catalog_preview=False):
             images.append(color.image.url)
         photo_alts[color.image.url] = f'{product.localized_name} — {color.name}'
     variants = list(product.stock_variants.all())
-    sizes = {}
-    colors = {}
-    for variant in variants:
-        size_name = ' '.join(variant.size.split())
-        color_name = ' '.join(variant.color.split())
-        variant.size_key = size_name.casefold()
-        variant.color_key = color_name.casefold()
-        size = sizes.setdefault(variant.size_key, {'key':variant.size_key, 'name':size_name, 'available':False})
-        size['available'] = size['available'] or variant.available > 0
-        colors.setdefault(variant.color_key, {'key':variant.color_key, 'name':color_name, 'image':''})
-    for color in color_photos:
-        key = ' '.join(color.name.split()).casefold()
-        colors[key] = {'key':key, 'name':color.name, 'image':color.image.url}
+    from .product_options import build_product_options
+    options = build_product_options(product, variants, color_photos)
 
     gallery = [{'url': url, 'thumbnail': thumbnail_url(url), 'alt': photo_alts.get(url) or product.localized_name} for url in images]
     related = Product.objects.filter(category=product.category, is_published=True).select_related('category').exclude(pk=product.pk)[:4]
     return render(request, 'core/product_detail.html', {'product': product, 'images': images, 'gallery': gallery, 'related': related, 'catalog_preview': catalog_preview,
-        'variants':variants, 'product_sizes':list(sizes.values()), 'product_colors':list(colors.values()),
+        'variants':variants, 'product_sizes':options['sizes'], 'product_colors':options['colors'],
         'has_available_variant':any(variant.available > 0 for variant in variants),
         'has_unknown_stock':any(variant.quantity is None for variant in variants)})
 
@@ -151,6 +140,9 @@ def cart_add(request, slug):
             return redirect('core:product_detail', slug=slug)
         size = variant.size
     else:
+        if product.main_color or product.color_photos.exists():
+            messages.error(request, _('Le stock de ce coloris est à confirmer avec la boutique.'))
+            return redirect('core:product_detail', slug=slug)
         size = request.POST.get('size', '').strip()
         if product.size_options and size not in product.size_options:
             messages.error(request, _('Choisissez une taille disponible.'))

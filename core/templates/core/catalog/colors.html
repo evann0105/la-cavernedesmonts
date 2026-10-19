@@ -1,9 +1,9 @@
 <section class="catalog-panel catalog-colors" data-color-editor>
   <h2>Couleurs, tailles et stock</h2>
-  <p>Ajoutez une couleur et sa photo, puis indiquez juste dessous les tailles disponibles et la quantité de chacune.</p>
+  <p>Renseignez la couleur de la photo principale, puis ajoutez les autres coloris. Sous chaque photo, choisissez les tailles disponibles et leurs quantités.</p>
   <p class="help">Exemple : saisissez M, L, XL pour le rouge et S, M pour le vert. Le client verra uniquement les tailles du coloris choisi. Chaque taille conserve sa propre quantité.</p>
   {{ colors.management_form }}{{ colors.non_form_errors }}
-  <div data-color-rows>{% for color_form in colors %}{% include 'core/catalog/color_row.html' %}{% endfor %}</div>
+  <div data-color-rows>{% if original_color_form %}{% include 'core/catalog/color_row.html' with color_form=original_color_form original_color=True %}{% endif %}{% for color_form in colors %}{% include 'core/catalog/color_row.html' %}{% endfor %}</div>
   <template data-color-template>{% include 'core/catalog/color_row.html' with color_form=colors.empty_form %}</template>
   <button class="button button-outline" type="button" data-add-color hidden>Ajouter une couleur +</button>
   <p class="help" role="status" data-color-status></p>

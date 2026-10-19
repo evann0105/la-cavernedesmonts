@@ -4,34 +4,54 @@
   const photos = [...document.querySelectorAll('[data-product-photo]')];
   const dialog = document.querySelector('.product-lightbox');
   let showColorPhoto = null;
+  let onGalleryPhotoChange = null;
+  const photoUrl = url => {
+    if (!url) return null;
+    try {
+      const resolved = new URL(url, document.baseURI || location.href);
+      resolved.hash = '';
+      return resolved.href;
+    } catch (_) {
+      return null;
+    }
+  };
   if (main && opener && dialog && photos.length) {
     const large = dialog.querySelector('img');
     const canvas = dialog.querySelector('.lightbox-canvas');
     const zoom = dialog.querySelector('[data-photo-zoom]');
     let index = 0;
-    function show(next) {
-      index = (next + photos.length) % photos.length;
-      const photo = photos[index];
-      main.src = photo.href;
-      main.alt = photo.querySelector('img').alt;
-      opener.href = photo.href;
-      large.src = photo.href;
+    function displayPhoto(url, alt, photoIndex) {
+      index = photoIndex;
+      main.src = url;
+      main.alt = alt;
+      opener.href = url;
+      large.src = url;
       large.alt = main.alt;
       photos.forEach((item, i) => i === index ? item.setAttribute('aria-current', 'true') : item.removeAttribute('aria-current'));
-      dialog.querySelector('.photo-counter').textContent = `${index + 1} / ${photos.length}`;
+      dialog.querySelector('.photo-counter').textContent = index === null ? 'Photo du coloris' : `${index + 1} / ${photos.length}`;
       canvas.classList.remove('is-zoomed');
       zoom.setAttribute('aria-pressed', 'false');
       zoom.querySelector('[data-zoom-symbol]').textContent = '+';
       canvas.scrollTop = canvas.scrollLeft = 0;
     }
-    showColorPhoto = url => {
-      const target = photos.findIndex(photo => photo.href === new URL(url, location.href).href);
+    function show(next, syncColor = false) {
+      const photoIndex = (next + photos.length) % photos.length;
+      const photo = photos[photoIndex];
+      displayPhoto(photo.href, photo.querySelector('img').alt, photoIndex);
+      if (syncColor) onGalleryPhotoChange?.(photo.href);
+    }
+    showColorPhoto = (url, alt) => {
+      const resolved = photoUrl(url);
+      if (!resolved) return;
+      const target = photos.findIndex(photo => photoUrl(photo.href) === resolved);
       if (target >= 0) show(target);
+      else displayPhoto(resolved, alt || main.alt, null);
     };
-    photos.forEach((photo, i) => photo.addEventListener('click', event => { event.preventDefault(); show(i); }));
+    show(0);
+    photos.forEach((photo, i) => photo.addEventListener('click', event => { event.preventDefault(); show(i, true); }));
     opener.addEventListener('click', event => {
       if (typeof dialog.showModal !== 'function') return;
-      event.preventDefault(); show(index); dialog.showModal();
+      event.preventDefault(); dialog.showModal();
     });
     dialog.querySelector('[data-photo-close]').addEventListener('click', () => dialog.close());
     dialog.addEventListener('close', () => opener.focus());
@@ -39,8 +59,8 @@
     const previous = dialog.querySelector('[data-photo-prev]');
     const next = dialog.querySelector('[data-photo-next]');
     previous.disabled = next.disabled = photos.length < 2;
-    previous.addEventListener('click', () => show(index - 1));
-    next.addEventListener('click', () => show(index + 1));
+    previous.addEventListener('click', () => show(index === null ? photos.length - 1 : index - 1, true));
+    next.addEventListener('click', () => show(index === null ? 0 : index + 1, true));
     zoom.addEventListener('click', () => {
       const enlarged = canvas.classList.toggle('is-zoomed');
       zoom.setAttribute('aria-pressed', String(enlarged));
@@ -50,7 +70,13 @@
     dialog.addEventListener('keydown', event => {
       // Let the scrollable image respond to arrow keys while enlarged.
       if (canvas.classList.contains('is-zoomed')) return;
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); show(index + (event.key === 'ArrowLeft' ? -1 : 1)); }
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault();
+        const target = event.key === 'ArrowLeft'
+          ? (index === null ? photos.length - 1 : index - 1)
+          : (index === null ? 0 : index + 1);
+        show(target, true);
+      }
     });
   }
   const colorPicker = document.querySelector('[data-product-colors]');
@@ -63,14 +89,17 @@
     const purchase = form.querySelector('button[type="submit"]');
     const quantity = form.querySelector('input[name="quantity"]');
     const feedback = colorPicker.querySelector('[data-color-feedback]');
+    const stockSummary = document.querySelector('[data-product-stock-summary]');
+    const overallStockLabel = stockSummary?.textContent;
     const originalPhoto = opener?.href;
     const photoFor = button => {
       const url = button?.dataset.colorImage || originalPhoto;
-      if (showColorPhoto && url) showColorPhoto(url);
+      if (showColorPhoto && url) showColorPhoto(url, button ? `Coloris ${button.dataset.colorName}` : main?.alt);
     };
+    const matchingVariants = (size, color) => variants.filter(input =>
+      input.dataset.variantSize === size && input.dataset.variantColor === color);
     const variantFor = (size, color) => {
-      const matching = variants.filter(input =>
-        input.dataset.variantSize === size && input.dataset.variantColor === color);
+      const matching = matchingVariants(size, color);
       return matching.find(input => !input.disabled && Number(input.dataset.variantAvailable) > 0) || matching[0];
     };
 
@@ -80,6 +109,9 @@
       let selectedColor = null;
       const fallback = form.querySelector('[data-variant-fallback]');
       const canOrder = input => Boolean(input && !input.disabled && Number(input.dataset.variantAvailable) > 0);
+      const stockState = matching => matching.some(canOrder) ? 'available'
+        : (!matching.length || matching.some(input => input.dataset.variantStockKnown === 'false') ? 'unknown' : 'out');
+      const stockLabel = state => state === 'available' ? 'En stock' : (state === 'out' ? 'Rupture de stock' : 'Stock à confirmer');
 
       function selectSize(button) {
         const variant = button && variantFor(button.dataset.productSize, selectedColor?.dataset.productColor);
@@ -93,10 +125,13 @@
           if (!Number.isFinite(Number(quantity.value)) || Number(quantity.value) < 1) quantity.value = '1';
           if (Number(quantity.value) > limit) quantity.value = String(limit);
         }
+        if (stockSummary) stockSummary.textContent = selectedColor
+          ? `${selectedColor.dataset.colorName} : ${stockLabel(selectedColor.dataset.stockState)}` : overallStockLabel;
         if (!selectedColor) {
-          feedback.textContent = colors.some(item => !item.disabled)
-            ? 'Choisissez d’abord votre couleur pour voir les tailles disponibles.'
-            : 'Ces coloris ne sont pas disponibles à la commande. Contactez la boutique.';
+          feedback.textContent = 'Choisissez d’abord votre couleur pour voir ses tailles et sa disponibilité.';
+        } else if (selectedColor.dataset.stockState !== 'available') {
+          feedback.textContent = `${selectedColor.dataset.colorName} : ${stockLabel(selectedColor.dataset.stockState)}.` +
+            (selectedColor.dataset.stockState === 'unknown' ? ' Contactez la boutique pour vérifier la disponibilité.' : ' Vous pouvez consulter les tailles et les photos de ce coloris.');
         } else {
           feedback.textContent = (selectedSize
             ? `${selectedColor.dataset.colorName} · ${selectedSize.dataset.sizeName}.`
@@ -106,7 +141,7 @@
       }
 
       function selectColor(button, preferredSize = selectedSize?.dataset.productSize) {
-        selectedColor = button && !button.disabled ? button : null;
+        selectedColor = button || null;
         colors.forEach(item => item.setAttribute('aria-pressed', String(item === selectedColor)));
         const compatibleSizes = [];
         sizes.forEach(item => {
@@ -115,10 +150,10 @@
           item.disabled = !canOrder(variant);
           const state = item.querySelector('[data-size-state]');
           const unavailable = variant && !canOrder(variant);
+          item.dataset.stockState = variant ? stockState(matchingVariants(item.dataset.productSize, selectedColor.dataset.productColor)) : 'unknown';
           if (state) {
             state.hidden = !unavailable;
-            state.textContent = unavailable
-              ? (variant.dataset.variantStockKnown === 'false' ? 'À confirmer' : 'Épuisé') : '';
+            state.textContent = unavailable ? stockLabel(item.dataset.stockState) : '';
           }
           if (unavailable) item.title = `${item.dataset.sizeName} : ${state?.textContent || 'indisponible'} en ${selectedColor.dataset.colorName}`;
           else item.removeAttribute('title');
@@ -126,22 +161,23 @@
         });
         const retained = compatibleSizes.find(item => item.dataset.productSize === preferredSize);
         selectSize(retained || (compatibleSizes.length === 1 ? compatibleSizes[0] : null));
-        sizePicker.hidden = !selectedColor;
+        sizePicker.hidden = !selectedColor || !sizes.some(button => !button.hidden);
         photoFor(selectedColor);
       }
 
       colors.forEach(button => {
         const matching = variants.filter(input => input.dataset.variantColor === button.dataset.productColor);
-        button.disabled = !matching.some(canOrder);
+        button.dataset.stockState = stockState(matching);
+        // A color remains selectable to inspect its photograph and unavailable sizes.
+        button.disabled = false;
         const state = button.querySelector('[data-color-state]');
         if (state) {
-          state.hidden = !button.disabled;
-          state.textContent = button.disabled
-            ? (matching.some(input => input.dataset.variantStockKnown === 'false') ? 'À confirmer' : (matching.length ? 'Épuisé' : 'Indisponible')) : '';
+          state.hidden = button.dataset.stockState === 'available';
+          state.textContent = state.hidden ? '' : stockLabel(button.dataset.stockState);
         }
-        if (button.disabled) button.title = `${button.dataset.colorName} : ${state?.textContent || 'indisponible'}`;
+        if (button.dataset.stockState !== 'available') button.title = `${button.dataset.colorName} : ${stockLabel(button.dataset.stockState)}`;
         else button.removeAttribute('title');
-        button.addEventListener('click', () => { if (!button.disabled) selectColor(button); });
+        button.addEventListener('click', () => selectColor(button));
       });
       sizes.forEach(button => button.addEventListener('click', () => {
         if (!button.hidden && !button.disabled) selectSize(button);
@@ -152,28 +188,49 @@
         event.preventDefault();
         feedback.textContent = 'Choisissez une couleur et une taille disponibles avant d’ajouter le produit.';
         const target = selectedColor
-          ? sizes.find(button => !button.hidden && !button.disabled)
-          : colors.find(button => !button.disabled);
+          ? (sizes.find(button => !button.hidden && !button.disabled) || selectedColor)
+          : colors.find(button => button.dataset.stockState === 'available') || colors[0];
         target?.focus();
       });
+      onGalleryPhotoChange = url => {
+        const resolved = photoUrl(url);
+        const matching = colors.filter(button => button.dataset.colorImage && photoUrl(button.dataset.colorImage) === resolved);
+        if (resolved && matching.length === 1) selectColor(matching[0]);
+      };
       const restored = variants.find(input => input.checked && canOrder(input));
-      const availableColors = colors.filter(button => !button.disabled);
+      const availableColors = colors.filter(button => button.dataset.stockState === 'available');
+      const originalColor = colors.find(button => photoUrl(button.dataset.colorImage) === photoUrl(originalPhoto));
       const initialColor = restored
         ? colors.find(button => button.dataset.productColor === restored.dataset.variantColor)
-        : (availableColors.length === 1 ? availableColors[0] : null);
+        : (originalColor || (availableColors.length === 1 ? availableColors[0] : null));
       selectColor(initialColor, restored?.dataset.variantSize);
       // The enhanced controls validate the pair; hidden radios cannot receive native validation focus.
       variants.forEach(input => { input.required = false; });
       if (fallback) fallback.hidden = true;
     } else {
       // Photos alone do not create a size/color combination that can be ordered.
-      colors.forEach(button => button.addEventListener('click', () => {
+      const selectPhotoOnlyColor = button => {
         colors.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
         photoFor(button);
-        feedback.textContent = 'Contactez la boutique pour vérifier les tailles et les stocks de ce coloris.';
-      }));
+        if (stockSummary) stockSummary.textContent = `${button.dataset.colorName} : Stock à confirmer`;
+        feedback.textContent = `${button.dataset.colorName} : Stock à confirmer. Contactez la boutique pour vérifier les tailles et les stocks de ce coloris.`;
+      };
+      colors.forEach(button => {
+        button.disabled = false;
+        button.dataset.stockState = 'unknown';
+        const state = button.querySelector('[data-color-state]');
+        if (state) { state.hidden = false; state.textContent = 'Stock à confirmer'; }
+        button.addEventListener('click', () => selectPhotoOnlyColor(button));
+      });
+      onGalleryPhotoChange = url => {
+        const resolved = photoUrl(url);
+        const matching = colors.filter(button => button.dataset.colorImage && photoUrl(button.dataset.colorImage) === resolved);
+        if (resolved && matching.length === 1) selectPhotoOnlyColor(matching[0]);
+      };
       if (!variants.length && purchase) purchase.disabled = true;
-      feedback.textContent = 'Contactez la boutique pour vérifier les tailles et les stocks de ces coloris.';
+      feedback.textContent = 'Stock à confirmer. Contactez la boutique pour vérifier les tailles et les stocks de ces coloris.';
+      const originalColor = colors.find(button => photoUrl(button.dataset.colorImage) === photoUrl(originalPhoto));
+      if (originalColor || colors.length === 1) selectPhotoOnlyColor(originalColor || colors[0]);
     }
   }
   document.querySelector('.size-advice')?.addEventListener('click', () => {

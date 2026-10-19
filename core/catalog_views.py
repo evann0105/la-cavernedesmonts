@@ -6,8 +6,8 @@ from django.db.models import Q, Max
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 from .catalog_access import catalog_required
-from .catalog_forms import CatalogProductForm, GalleryFormSet, ColorPhotoForms
-from .models import Category, Product, ProductImage
+from .catalog_forms import CatalogProductForm, GalleryFormSet, ColorPhotoForms, OriginalColorForm
+from .models import Category, Product, ProductImage, ProductColor
 from .views import product_detail
 from stocks.forms import InitialStockForms
 from stocks.models import Variant
@@ -39,6 +39,11 @@ def catalog_edit(request, pk=None):
     photos = GalleryFormSet(request.POST if request.method == 'POST' else None, request.FILES or None, instance=product, prefix='photos')
     initial_stock = InitialStockForms(request.POST if request.method == 'POST' else None, prefix='stock', product=product)
     colors = ColorPhotoForms(request.POST if request.method == 'POST' else None, request.FILES or None, instance=product, prefix='colors')
+    original_color_name = product.main_color
+    original_data = request.POST if request.method == 'POST' and any(key.startswith('original-') for key in request.POST) else None
+    original_color_form = OriginalColorForm(original_data, prefix='original', instance=ProductColor(product=product, name=original_color_name))
+    original_color_form.initial['name'] = original_color_name
+    original_color_form.original_image_url = product.image_url
     existing_stock = {}
     if product.pk:
         for variant in product.stock_variants.all():
@@ -50,10 +55,14 @@ def catalog_edit(request, pk=None):
         color_form.existing_stock = existing_stock.get(key, []) if color_form.instance.pk else []
         if color_form.existing_stock:
             color_form.fields['sizes'].label = 'Tailles à ajouter pour cette couleur'
+    original_color_form.existing_stock = existing_stock.get(' '.join(original_color_name.split()).casefold(), []) if original_color_name else []
+    if original_color_form.existing_stock:
+        original_color_form.fields['sizes'].label = 'Tailles à ajouter pour cette couleur'
     if request.method == 'POST':
+        valid_original = original_color_form.is_valid() if original_color_form.is_bound else True
         valid_colors = colors.is_valid()
         valid_stock = initial_stock.is_valid() if initial_stock is not None else True
-        if valid_colors and valid_stock:
+        if valid_colors and valid_stock and valid_original:
             combinations = {
                 (' '.join(size.split()).casefold(), ' '.join(color.split()).casefold())
                 for size, color in product.stock_variants.values_list('size', 'color')
@@ -63,7 +72,8 @@ def catalog_edit(request, pk=None):
                 for stock_form in initial_stock.forms
                 if stock_form.has_changed() and not stock_form.cleaned_data.get('DELETE')
             )
-            for color_form in colors.forms:
+            color_forms = list(colors.forms) + ([original_color_form] if original_color_form.is_bound else [])
+            for color_form in color_forms:
                 if not color_form.cleaned_data or color_form.cleaned_data.get('DELETE'):
                     continue
                 color_key = color_form.cleaned_data['name'].casefold()
@@ -77,8 +87,10 @@ def catalog_edit(request, pk=None):
             if remaining + len(form.cleaned_data['new_photos']) > 50:
                 form.add_error('new_photos', 'La galerie peut contenir au maximum 50 photos.')
                 valid_form = False
-        if valid_form and valid_photos and valid_stock and valid_colors:
+        if valid_form and valid_photos and valid_stock and valid_colors and valid_original:
             with transaction.atomic():
+                if original_color_form.is_bound:
+                    form.instance.main_color = original_color_form.cleaned_data['name']
                 product = form.save()
                 if initial_stock is not None:
                     for stock_form in initial_stock.forms:
@@ -100,7 +112,7 @@ def catalog_edit(request, pk=None):
                 return redirect('core:product_detail', slug=product.slug)
             return redirect('core:catalog_preview', pk=product.pk)
         messages.error(request, 'Vérifiez les champs signalés. Si vous aviez choisi des fichiers, sélectionnez-les à nouveau avant d’enregistrer.')
-    return render(request, 'core/catalog/edit.html', {'form':form, 'photos':photos, 'product':product, 'initial_stock':initial_stock, 'colors':colors})
+    return render(request, 'core/catalog/edit.html', {'form':form, 'photos':photos, 'product':product, 'initial_stock':initial_stock, 'colors':colors, 'original_color_form':original_color_form, 'original_color_name':original_color_name})
 
 
 @catalog_required

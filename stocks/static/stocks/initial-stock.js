@@ -32,7 +32,7 @@
     colorCards.set(row, {
       row,
       name: field(row, 'name'),
-      deleted: field(row, 'DELETE'),
+      deleted: row.querySelector(`[name="${field(row, 'name').name.replace(/-name$/, '-DELETE')}"]`) || {checked: false},
       block: row.querySelector('[data-color-stock]'),
       rows: row.querySelector('[data-color-stock-rows]'),
       add: row.querySelector('[data-add-color-size]'),
@@ -345,7 +345,7 @@
   });
   form.addEventListener('input', event => {
     if (event.target.closest('[data-stock-row]')) refresh(false);
-    else if (event.target.name?.startsWith('colors-')) {
+    else if ((event.target.name?.startsWith('colors-') || event.target.name?.startsWith('original-'))) {
       const card = colorCards.get(event.target.closest('[data-color-row]'));
       if (card?.sizes && event.target === card.sizes) {
         clearSizesError(card);
@@ -355,7 +355,7 @@
     }
   });
   form.addEventListener('change', event => {
-    if (event.target.closest('[data-stock-row]') || event.target.name?.startsWith('colors-')) refresh(true);
+    if (event.target.closest('[data-stock-row]') || (event.target.name?.startsWith('colors-') || event.target.name?.startsWith('original-'))) refresh(true);
   });
   form.addEventListener('submit', event => {
     refresh(true);

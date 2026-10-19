@@ -32,6 +32,7 @@ class Product(models.Model):
 	benefits = models.TextField(blank=True, null=True, default=None, verbose_name='Pourquoi le choisir ?', help_text='Un bénéfice vérifié par ligne, fondé sur les caractéristiques de cet article.')
 	translations = models.JSONField(default=dict, blank=True)
 	main_image = models.ImageField(upload_to='products/', blank=True, null=True)
+	main_color = models.CharField('Couleur de la photo principale', max_length=80, blank=True, default='')
 	is_featured = models.BooleanField(default=False)
 	is_published = models.BooleanField(default=True)
 	include_imported_gallery = models.BooleanField(default=True)

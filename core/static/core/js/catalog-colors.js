@@ -7,26 +7,41 @@
   const rows = section.querySelector('[data-color-rows]');
   const normalize = value => value.trim().replace(/\s+/g, ' ');
   const previews = new WeakMap();
+  const mainInput = document.querySelector('input[type="file"][name="main_image"]');
+  const mainClear = document.querySelector('[name="main_image-clear"]');
+  const removeOriginal = document.querySelector('[name="remove_original"]');
+  const originalCard = rows.querySelector('[data-original-color-card]');
 
   function updateCard(row) {
-    const name = normalize(row.querySelector('[name$="-name"]').value);
-    row.querySelector('[data-color-name-label]').textContent = name;
-    const deleted = row.querySelector('[name$="-DELETE"]').checked;
+    const nameField = row.querySelector('[name$="-name"]');
+    const name = normalize(nameField.value);
+    row.querySelector('[data-color-name-label]').textContent = name || (row.hasAttribute('data-original-color-card') ? 'Coloris d’origine' : '');
+    const deleteField = row.querySelector(`[name="${nameField.name.replace(/-name$/, '-DELETE')}"]`);
+    const deleted = deleteField?.checked || false;
     row.classList.toggle('is-removed', deleted);
-    row.querySelector('[data-color-removal-note]').hidden = !deleted;
+    const removalNote = row.querySelector('[data-color-removal-note]');
+    if (removalNote) removalNote.hidden = !deleted;
     const warning = row.querySelector('[data-existing-color-warning]');
     if (warning) warning.hidden = normalize(row.dataset.originalColor).toLocaleLowerCase('fr') === name.toLocaleLowerCase('fr');
   }
 
   function updatePreview(row) {
-    const input = row.querySelector('input[type="file"][name$="-image"]');
+    const isOriginal = row.hasAttribute('data-original-color-card');
+    const input = isOriginal ? mainInput : row.querySelector('input[type="file"][name$="-image"]');
     const image = row.querySelector('[data-color-preview]');
     const placeholder = row.querySelector('[data-color-placeholder]');
     const previous = previews.get(row);
     if (previous) URL.revokeObjectURL(previous);
     previews.delete(row);
-    const file = input.files?.[0];
-    const source = file ? URL.createObjectURL(file) : image.dataset.originalImage;
+    const file = input?.files?.[0];
+    let existing = image.dataset.originalImage || '';
+    if (isOriginal) {
+      const staticImage = row.dataset.staticImage || '';
+      const originalImage = row.dataset.mainImageUrl || '';
+      if (mainClear?.checked) existing = removeOriginal?.checked ? '' : staticImage;
+      else if (removeOriginal?.checked && originalImage === staticImage) existing = '';
+    }
+    const source = file ? URL.createObjectURL(file) : existing;
     if (file) previews.set(row, source);
     if (source) {
       image.src = source;
@@ -42,6 +57,13 @@
   add.hidden = false;
   add.disabled = Number(total.value) >= maximum;
   rows.querySelectorAll('[data-color-row]').forEach(updateCard);
+  if (originalCard) {
+    const updateOriginalPreview = () => updatePreview(originalCard);
+    mainInput?.addEventListener('change', updateOriginalPreview);
+    mainClear?.addEventListener('change', updateOriginalPreview);
+    removeOriginal?.addEventListener('change', updateOriginalPreview);
+    updateOriginalPreview();
+  }
   add.addEventListener('click', () => {
     const index = Number(total.value);
     if (index >= maximum) return;

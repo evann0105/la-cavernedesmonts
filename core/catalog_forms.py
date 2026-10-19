@@ -193,6 +193,25 @@ class ProductColorForm(forms.ModelForm):
         return name
 
 
+class OriginalColorForm(ProductColorForm):
+    """Identify the existing main photograph without duplicating its image file."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields.pop('image')
+        self.fields['name'].required = False
+        self.fields['name'].label = 'Nom de la couleur d’origine'
+        self.fields['name'].help_text = 'Par exemple Beige, Blanc ou Bleu. Ce nom relie la photo principale aux stocks de ce coloris.'
+
+    def clean_name(self):
+        return ' '.join(self.cleaned_data.get('name', '').split())
+
+    def clean(self):
+        data = super().clean()
+        if data.get('sizes') and not data.get('name'):
+            self.add_error('name', 'Nommez la couleur d’origine avant de préparer ses tailles et leurs quantités.')
+        return data
+
+
 class ProductColorFormSet(BaseInlineFormSet):
     def clean(self):
         super().clean()
