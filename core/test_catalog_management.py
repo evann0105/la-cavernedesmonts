@@ -64,6 +64,21 @@ class CatalogManagementTests(TestCase):
         self.assertNotContains(self.client.get('/'), 'Gérer les produits')
         self.assertContains(self.client.get('/mon-compte/'), 'Gérer les produits')
 
+    def test_sales_has_its_own_admin_entry_and_back_navigation(self):
+        sales = reverse('core:sales_dashboard')
+        account = self.client.get(reverse('espace:account'))
+        self.assertContains(account, f'href="{sales}"')
+        self.assertContains(account, '<h3>Soldes</h3>', html=True)
+        response = self.client.get(sales)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['back_url'], reverse('espace:account'))
+        detail = self.client.get(reverse('core:catalog_promotions', args=[self.product.pk]))
+        self.assertEqual(detail.context['back_url'], sales)
+        self.assertContains(detail, 'Tous les soldes')
+        verify_test_user(self.customer)
+        self.client.force_login(self.customer, backend='connexion.backends.EmailOrUsernameBackend')
+        self.assertNotContains(self.client.get(reverse('espace:account')), f'href="{sales}"')
+
     def test_guards_for_anonymous_customer_staff_and_unverified_manager(self):
         paths = [reverse('core:catalog_list'), reverse('core:catalog_add'), self.edit_url(), reverse('core:catalog_preview', args=[self.product.pk])]
         self.client.logout()

@@ -171,9 +171,24 @@ class ProductColor(models.Model):
         return f'{self.product} — {self.name}'
 
 
+class SaleCampaign(models.Model):
+    """An explicit, frozen selection of product reductions managed together."""
+    title = models.CharField('Nom de l’opération', max_length=160)
+    criteria = models.JSONField('Critères de sélection', default=dict, blank=True)
+    revision = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at', '-pk']
+
+    def __str__(self):
+        return self.title
+
+
 class ProductPromotion(models.Model):
     """One scheduled reduction. Base prices and purchase snapshots stay intact."""
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='promotions')
+    campaign = models.ForeignKey(SaleCampaign, on_delete=models.PROTECT, related_name='promotions', null=True, blank=True)
     starts_at = models.DateTimeField('Début')
     ends_at = models.DateTimeField('Fin')
     kind = models.CharField('Type de réduction', max_length=10, choices=[('percent', 'Pourcentage'), ('amount', 'Remise en euros'), ('fixed', 'Prix remisé')])

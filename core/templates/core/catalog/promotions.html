@@ -1,8 +1,9 @@
 {% extends 'core/catalog/base.html' %}{% load static tz %}
 {% block title %}Réductions programmées — {{ product.name }}{% endblock %}
 {% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'core/css/promotions.css' %}?v=20261019-scheduled-prices">{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a> / <a href="{% url 'core:sales_dashboard' %}">Soldes</a> / <span>{{ product.name }}</span></nav>{% endblock %}
 {% block catalog_content %}
-<div class="catalog-heading"><div><p class="eyebrow">LE BON PRIX, AU BON MOMENT</p><h1>Réductions programmées.</h1><p>{{ product.name }}</p></div><a class="button button-outline" href="{% url 'core:catalog_edit' product.pk %}">Retour à la fiche produit</a></div>
+<div class="catalog-heading"><div><p class="eyebrow">SOLDES · UN PRODUIT</p><h1>Réduction d’un produit.</h1><p>{{ product.name }}</p></div><a class="button button-outline" href="{% url 'core:sales_dashboard' %}">Tous les soldes</a></div>
 <p class="promotion-intro">Choisissez une période et une réduction. Le prix habituel est conservé : il revient automatiquement à la fin de la période. Les commandes déjà passées gardent leur prix.</p>
 <div class="promotion-layout">
 <form method="post" class="catalog-form promotion-form" data-promotion-form>{% csrf_token %}

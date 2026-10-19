@@ -20,7 +20,9 @@ def back_navigation(request):
     if name == 'accueil:home':
         return {'back_url': None}
     fallback = reverse('accueil:home')
-    if name.startswith('core:catalog_') and name != 'core:catalog_list':
+    if name == 'core:catalog_promotions' or name.startswith('core:sales_'):
+        fallback = reverse('espace:account') if name == 'core:sales_dashboard' else reverse('core:sales_dashboard')
+    elif name.startswith('core:catalog_') and name != 'core:catalog_list':
         fallback = reverse('core:catalog_list')
     elif name == 'core:product_detail':
         fallback = reverse('core:product_list')

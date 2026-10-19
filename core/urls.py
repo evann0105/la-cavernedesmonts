@@ -1,9 +1,13 @@
 from django.urls import path
-from . import views, catalog_views, promotion_views
+from . import views, catalog_views, promotion_views, sales_views
 
 app_name = 'core'
 
 urlpatterns = [
+    path('gestion/soldes/', sales_views.sales_dashboard, name='sales_dashboard'),
+    path('gestion/soldes/ajouter/', sales_views.sales_create, name='sales_create'),
+    path('gestion/soldes/<int:pk>/', sales_views.sales_detail, name='sales_detail'),
+    path('gestion/soldes/<int:pk>/annuler/', sales_views.sales_cancel, name='sales_cancel'),
     path('gestion/accueil/', catalog_views.catalog_homepage, name='catalog_homepage'),
     path('gestion/produits/', catalog_views.catalog_list, name='catalog_list'),
     path('gestion/produits/ajouter/', catalog_views.catalog_edit, name='catalog_add'),
