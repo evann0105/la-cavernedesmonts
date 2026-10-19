@@ -49,7 +49,7 @@ class CatalogVariantPriceTests(TestCase):
         self.other = Product.objects.create(name='Autre polaire', category=category, price='30.00')
 
     def test_catalog_annotations_use_real_prices_without_additional_queries(self):
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             products = list(with_catalog_prices(Product.objects.all()).order_by('_catalog_min_price'))
             self.assertEqual([product.pk for product in products], [self.product.pk, self.other.pk])
             self.assertEqual([(product.display_price, product.has_price_range) for product in products], [

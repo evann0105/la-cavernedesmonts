@@ -143,7 +143,7 @@ def catalog_edit(request, pk=None):
                         if values['price'] is None:
                             values['price'] = color_prices.get(values['color'].casefold())
                         variant = Variant.objects.create(product=product, revision=1, **values)
-                        LogEntry.objects.log_actions(user_id=request.user.pk, queryset=Variant.objects.filter(pk=variant.pk), action_flag=ADDITION, change_message=f'Stock initial : {variant.quantity}. Taille : {variant.size}. Couleur : {variant.color}. Prix : {variant.effective_price:.2f} €.')
+                        LogEntry.objects.log_actions(user_id=request.user.pk, queryset=Variant.objects.filter(pk=variant.pk), action_flag=ADDITION, change_message=f'Stock initial : {variant.quantity}. Taille : {variant.size}. Couleur : {variant.color}. Prix : {variant.regular_price:.2f} €.')
                 colors.instance = product
                 colors.save()
                 photos.instance = product

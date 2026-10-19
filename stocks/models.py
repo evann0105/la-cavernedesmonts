@@ -25,8 +25,31 @@ class Variant(models.Model):
         ]
 
     @property
-    def effective_price(self):
+    def regular_price(self):
         return self.price if self.price is not None else self.product.price
+
+    @property
+    def effective_price(self):
+        from core.pricing import price_quote
+        return price_quote(self.product, self).current
+
+    def save(self, *args, **kwargs):
+        from django.db import transaction
+        price_may_change = kwargs.get('update_fields') is None or 'price' in kwargs['update_fields']
+        previous = None
+        if self.pk and price_may_change:
+            previous = type(self).objects.filter(pk=self.pk).values('price', 'product_id').first()
+        price_changed = price_may_change and (previous is None or previous['price'] != self.price or previous['product_id'] != self.product_id)
+        with transaction.atomic(using=kwargs.get('using') or self._state.db or 'default'):
+            super().save(*args, **kwargs)
+            if price_changed:
+                from core.pricing import record_variant_price
+                record_variant_price(self)
+        if price_changed:
+            self.__dict__.pop('_pricing_context', None)
+            if 'product' in self._state.fields_cache:
+                self.product.__dict__.pop('_pricing_context', None)
+                self.product.__dict__.pop('_pricing_at', None)
 
     @property
     def available(self):

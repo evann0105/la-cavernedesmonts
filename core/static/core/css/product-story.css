@@ -37,3 +37,5 @@
 .product-colors [data-color-feedback] { margin: 12px 0 0; color: #536151; line-height: 1.5; }
 
 .product-option-price{display:block;margin-top:3px;font-size:12px;line-height:1.35;font-weight:400;white-space:nowrap}.product-size-option .product-option-price{color:#526449}.product-size-option[aria-pressed="true"] .product-option-price{color:inherit}
+
+.detail-price-saving{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:-18px 0 22px;font-size:15px}.detail-price-saving s,.product-option-reference{color:#687260}.detail-price-saving [data-product-saving]{padding:4px 9px;border-radius:6px;background:#e8efdf;color:#294734;font-weight:600}.product-option-reference{display:block;font-size:11px;line-height:1.35;margin-top:2px}.product-size-option[aria-pressed="true"] .product-option-reference{color:inherit}.product-summary [data-product-discount][hidden],.product-size-option [hidden]{display:none!important}

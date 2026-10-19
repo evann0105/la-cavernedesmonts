@@ -99,6 +99,26 @@
     const minimum = Math.min(...prices);
     return `${minimum === Math.max(...prices) ? '' : 'À partir de '}${money.format(minimum)}`;
   };
+  const referencePrice = input => {
+    const raw = input?.dataset.variantReference;
+    const amount = raw ? Number(raw) : NaN;
+    return Number.isFinite(amount) && amount > 0 ? amount : null;
+  };
+  let refreshSelectedPricing = null;
+  function showPrice(inputs) {
+    if (priceDisplay) priceDisplay.textContent = priceLabel(inputs) || initialPriceLabel;
+    const discount = document.querySelector('[data-product-discount]');
+    if (!discount) return;
+    const current = variantPrice(inputs[0]);
+    const reference = referencePrice(inputs[0]);
+    const uniform = current !== null && reference !== null && reference > current && inputs.every(input =>
+      variantPrice(input) === current && referencePrice(input) === reference);
+    discount.hidden = !uniform;
+    if (uniform) {
+      discount.querySelector('[data-product-reference]').textContent = money.format(reference);
+      discount.querySelector('[data-product-saving]').textContent = `${money.format(reference - current)} économisés`;
+    }
+  }
   if (colorPicker && form) {
     const colors = [...colorPicker.querySelectorAll('[data-product-color]')];
     const sizes = [...(sizePicker?.querySelectorAll('[data-product-size]') || [])];
@@ -136,9 +156,8 @@
         variants.forEach(input => { input.checked = input === variant && Boolean(selectedSize); });
         sizes.forEach(item => item.setAttribute('aria-pressed', String(item === selectedSize)));
         if (purchase) purchase.disabled = !selectedSize;
-        if (priceDisplay) priceDisplay.textContent = selectedSize && variantPrice(variant) !== null
-          ? money.format(variantPrice(variant))
-          : (priceLabel(selectedColor ? variants.filter(input => input.dataset.variantColor === selectedColor.dataset.productColor) : variants) || initialPriceLabel);
+        showPrice(selectedSize ? [variant] : (selectedColor
+          ? variants.filter(input => input.dataset.variantColor === selectedColor.dataset.productColor) : variants));
         if (quantity) {
           const limit = selectedSize ? Math.min(10, Number(variant.dataset.variantAvailable)) : 10;
           quantity.max = String(limit);
@@ -180,6 +199,12 @@
           if (sizePrice) {
             sizePrice.hidden = amount === null;
             sizePrice.textContent = amount === null ? '' : money.format(amount);
+          }
+          const sizeReference = item.querySelector('[data-size-reference]');
+          const reference = referencePrice(variant);
+          if (sizeReference) {
+            sizeReference.hidden = amount === null || reference === null || reference <= amount;
+            sizeReference.textContent = sizeReference.hidden ? '' : money.format(reference);
           }
           if (unavailable) item.title = `${item.dataset.sizeName} : ${state?.textContent || 'indisponible'} en ${selectedColor.dataset.colorName}`;
           else item.removeAttribute('title');
@@ -236,6 +261,13 @@
         ? colors.find(button => button.dataset.productColor === restored.dataset.variantColor)
         : (originalColor || (availableColors.length === 1 ? availableColors[0] : null));
       selectColor(initialColor, restored?.dataset.variantSize);
+      refreshSelectedPricing = () => {
+        colors.forEach(button => {
+          const label = button.querySelector('[data-color-price]');
+          if (label) label.textContent = priceLabel(variants.filter(input => input.dataset.variantColor === button.dataset.productColor));
+        });
+        selectColor(selectedColor);
+      };
       // The enhanced controls validate the pair; hidden radios cannot receive native validation focus.
       variants.forEach(input => { input.required = false; });
       if (fallback) fallback.hidden = true;
@@ -264,6 +296,45 @@
       const originalColor = colors.find(button => photoUrl(button.dataset.colorImage) === photoUrl(originalPhoto));
       if (originalColor || colors.length === 1) selectPhotoOnlyColor(originalColor || colors[0]);
     }
+  }
+  if (priceDisplay?.dataset.priceEndpoint) {
+    let priceTimer;
+    let updating = false;
+    function planPriceUpdate(serverTime, nextChange) {
+      clearTimeout(priceTimer);
+      if (!nextChange) return;
+      const wait = Date.parse(nextChange) - Date.parse(serverTime);
+      if (!Number.isFinite(wait)) return;
+      priceTimer = setTimeout(refreshPrices, Math.min(2147483000, Math.max(1000, wait + 300)));
+    }
+    async function refreshPrices() {
+      if (updating) return;
+      updating = true;
+      try {
+        const response = await fetch(priceDisplay.dataset.priceEndpoint, {cache: 'no-store', credentials: 'same-origin'});
+        if (!response.ok) throw new Error('Price unavailable');
+        const data = await response.json();
+        const rows = new Map(data.variants.map(row => [String(row.id), row]));
+        document.querySelectorAll('input[name="variant"]').forEach(input => {
+          const row = rows.get(input.value);
+          if (!row) return;
+          input.dataset.variantPrice = row.price;
+          input.dataset.variantReference = row.reference || '';
+        });
+        refreshSelectedPricing?.();
+        planPriceUpdate(data.server_time, data.next_change);
+      } catch (_) {
+        // The server rechecks the amount before payment; retry without losing the selection.
+        priceTimer = setTimeout(refreshPrices, 30000);
+      } finally {
+        updating = false;
+      }
+    }
+    planPriceUpdate(priceDisplay.dataset.priceServerTime, priceDisplay.dataset.priceNextChange);
+    window.addEventListener('focus', refreshPrices);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') refreshPrices();
+    });
   }
   document.querySelector('.size-advice')?.addEventListener('click', () => {
     const help = document.getElementById('size-help');

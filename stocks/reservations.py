@@ -22,6 +22,9 @@ def reserve(session_key, user_id, snapshot):
             return order
         products = {p.pk:p for p in Product.objects.select_for_update().filter(pk__in=[i['product'] for i in snapshot]).order_by('pk')}
         variants = {v.pk:v for v in Variant.objects.select_for_update().filter(pk__in=[i.get('variant') for i in snapshot]).order_by('pk')}
+        from core.pricing import load_pricing_context, price_quote
+        pricing_at = timezone.now()
+        load_pricing_context(products.values(), at=pricing_at)
         if len(variants) != len(snapshot):
             raise StockUnavailable('Choisissez une variante valide pour chaque article.')
         for item in snapshot:
@@ -30,7 +33,7 @@ def reserve(session_key, user_id, snapshot):
             if variant and product and variant.product_id == product.pk:
                 # Use the locked Product for a current, race-safe fallback price.
                 variant.product = product
-            if not variant or variant.product_id != item['product'] or not product or not product.is_published or product.availability == 'unavailable' or int(variant.effective_price*100) != item['unit_amount'] or (variant.size,variant.color)!=(item['size'],item['color']) or not 1 <= item['quantity'] <= 10 or variant.available < item['quantity']:
+            if not variant or variant.product_id != item['product'] or not product or not product.is_published or product.availability == 'unavailable' or int(price_quote(product, variant, at=pricing_at).current*100) != item['unit_amount'] or (variant.size,variant.color)!=(item['size'],item['color']) or not 1 <= item['quantity'] <= 10 or variant.available < item['quantity']:
                 raise StockUnavailable('Une taille, une couleur, un prix ou un stock a changé. Vérifiez votre panier.')
             variant.reserved += item['quantity'];variant.revision += 1
             variant.save(update_fields=['reserved','revision','updated_at'])

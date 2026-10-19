@@ -35,9 +35,20 @@ def checkout(request):
     from stocks.reservations import reserve, StockUnavailable
     from .stock_checkout import get_session, settle
     enabled = ready() and all(i['variant'] and i['product'].availability != 'unavailable' for i in items)
+    displayed_prices = [
+        {'product': item['product'].pk, 'variant': item['variant'].pk if item['variant'] else None,
+         'quantity': item['quantity'], 'unit_amount': int(item['unit_price'] * 100)}
+        for item in items
+    ]
+    if request.method == 'GET':
+        request.session['checkout_displayed_prices'] = displayed_prices
     if request.method == 'POST':
         if not enabled:
             messages.info(request, _('Le paiement en ligne n’est pas encore disponible pour ce panier. Contactez-nous pour préparer votre commande.'))
+            return redirect('paiement:checkout')
+        previous_prices = request.session.get('checkout_displayed_prices')
+        if previous_prices is not None and previous_prices != displayed_prices:
+            messages.info(request, 'Le prix ou le contenu de votre panier a changé. Vérifiez le nouveau récapitulatif avant de payer.')
             return redirect('paiement:checkout')
         if not request.session.session_key:request.session.save()
         snapshot = [{'product':i['product'].pk, 'variant':i['variant'].pk, 'name':i['product'].name, 'size':i['size'], 'color':i['color'], 'quantity':i['quantity'], 'unit_amount':int(i['unit_price']*100)} for i in items]

@@ -1,0 +1,30 @@
+{% extends 'core/catalog/base.html' %}{% load static tz %}
+{% block title %}Réductions programmées — {{ product.name }}{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'core/css/promotions.css' %}?v=20261019-scheduled-prices">{% endblock %}
+{% block catalog_content %}
+<div class="catalog-heading"><div><p class="eyebrow">LE BON PRIX, AU BON MOMENT</p><h1>Réductions programmées.</h1><p>{{ product.name }}</p></div><a class="button button-outline" href="{% url 'core:catalog_edit' product.pk %}">Retour à la fiche produit</a></div>
+<p class="promotion-intro">Choisissez une période et une réduction. Le prix habituel est conservé : il revient automatiquement à la fin de la période. Les commandes déjà passées gardent leur prix.</p>
+<div class="promotion-layout">
+<form method="post" class="catalog-form promotion-form" data-promotion-form>{% csrf_token %}
+<section class="catalog-panel"><div class="promotion-section-title"><span aria-hidden="true">01</span><div><h2>Choisir la période</h2><p>Toutes les dates et heures sont celles de Paris, été comme hiver.</p></div></div>
+{% if form.errors %}<div class="catalog-error" role="alert">La réduction n’a pas été enregistrée. Corrigez les champs signalés.</div>{% endif %}{{ form.non_field_errors }}
+{% include 'core/catalog/field.html' with field=form.start_mode %}<div class="promotion-date-grid"><div data-scheduled-start>{% include 'core/catalog/field.html' with field=form.starts_at %}</div><div>{% include 'core/catalog/field.html' with field=form.ends_at %}</div></div>
+</section>
+<section class="catalog-panel"><div class="promotion-section-title"><span aria-hidden="true">02</span><div><h2>Choisir les tailles et couleurs</h2><p>Une réduction sur le vert laisse le rouge à son prix habituel.</p></div></div>
+{% include 'core/catalog/field.html' with field=form.scope %}<div data-color-scope>{% include 'core/catalog/field.html' with field=form.color %}</div><div data-variant-scope>{% include 'core/catalog/field.html' with field=form.targets %}</div>
+</section>
+<section class="catalog-panel"><div class="promotion-section-title"><span aria-hidden="true">03</span><div><h2>Définir la réduction</h2><p>En pourcentage, en euros à déduire, ou en prix final.</p></div></div><div class="promotion-date-grid">{% include 'core/catalog/field.html' with field=form.kind %}{% include 'core/catalog/field.html' with field=form.value %}</div>
+<p class="help">La réduction est calculée à partir du prix de référence confirmé ci-dessous. Exemple : 80 € avec 10 % de réduction devient 72 €. Si une autre réduction abaisse ensuite la référence, un prix final déjà fixé est conservé comme prix temporaire, sans prix barré injustifié.</p>
+<div class="promotion-reference"><h3>Prix de référence avant réduction</h3><p class="help">Pour annoncer une réduction, utilisez le prix le plus bas pratiqué pendant les 30 jours précédant son début. Vérifiez aussi les prix pratiqués en boutique. Une baisse enregistrée avant le début pourra abaisser cette référence automatiquement.</p>
+<div class="promotion-table-wrap"><table class="promotion-price-table"><thead><tr><th scope="col">Taille et couleur</th><th scope="col">Prix habituel</th><th scope="col">Référence 30 jours</th><th scope="col">Prix pendant la période</th></tr></thead><tbody>
+{% for row in reference_rows %}<tr data-promotion-target="{{ row.key }}" data-target-color="{{ row.color }}" data-regular-price="{{ row.regular_price|stringformat:'.2f' }}"><th scope="row">{{ row.label }}</th><td>{{ row.regular_price|floatformat:2 }} €</td><td><label class="promotion-sr-only" for="{{ row.field.id_for_label }}">{{ row.field.label }}</label>{{ row.field }}{{ row.field.errors }}{% if row.known_reference != None %}<small>Minimum enregistré : {{ row.known_reference|floatformat:2 }} €</small>{% else %}<small>À vérifier dans vos historiques.</small>{% endif %}</td><td><output data-promotion-preview>—</output></td></tr>{% endfor %}
+</tbody></table></div>
+{% include 'core/catalog/field.html' with field=form.reference_confirmed %}</div>
+<button class="button" type="submit">Enregistrer la réduction <span aria-hidden="true">↗</span></button></section>
+</form>
+<aside class="promotion-history"><section class="catalog-panel"><p class="eyebrow">VOTRE CALENDRIER DE PRIX</p><h2>Les périodes enregistrées</h2><p class="help">Pour changer une période, annulez-la puis programmez la nouvelle. Les dates de fin sont exclues : à l’heure de fin, le prix habituel revient.</p>
+{% for row in promotion_rows %}<article class="promotion-period"><div class="promotion-period-top"><span class="promotion-status promotion-status-{{ row.status }}">{{ row.status_label }}</span><strong>{{ row.description }}</strong></div><p>{{ row.scope }}</p>{% timezone 'Europe/Paris' %}<p class="promotion-period-dates"><span>Du <time datetime="{{ row.promotion.starts_at|date:'c' }}">{{ row.promotion.starts_at|date:'d/m/Y à H:i' }}</time></span><span>Au <time datetime="{{ row.promotion.ends_at|date:'c' }}">{{ row.promotion.ends_at|date:'d/m/Y à H:i' }}</time></span></p>{% endtimezone %}
+{% if row.can_cancel %}<form method="post" action="{% url 'core:catalog_promotion_cancel' product.pk row.promotion.pk %}">{% csrf_token %}<input type="hidden" name="revision" value="{{ row.promotion.revision }}"><button type="submit" class="button button-outline promotion-cancel">Annuler cette réduction</button></form>{% endif %}</article>{% empty %}<div class="promotion-empty"><span aria-hidden="true">↗</span><h3>Votre première réduction</h3><p>Préparez-la à gauche. Elle apparaîtra ici avec ses dates et son état.</p></div>{% endfor %}
+</section></aside></div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'core/js/promotions.js' %}?v=20261019-scheduled-prices" defer></script>{% endblock %}

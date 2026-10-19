@@ -123,7 +123,18 @@ class Product(models.Model):
 			self.slug = base
 			while Product.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
 				self.slug = f'{base}-{uuid4().hex[:10]}'
-		super().save(*args, **kwargs)
+		from django.db import transaction
+		price_may_change = kwargs.get('update_fields') is None or 'price' in kwargs['update_fields']
+		previous_price = None
+		if self.pk and price_may_change:
+			previous_price = Product.objects.filter(pk=self.pk).values_list('price', flat=True).first()
+		with transaction.atomic(using=kwargs.get('using') or self._state.db or 'default'):
+			super().save(*args, **kwargs)
+			if price_may_change and (previous_price is None or previous_price != self.price):
+				from .pricing import record_product_price
+				record_product_price(self)
+		self.__dict__.pop('_pricing_context', None)
+		self.__dict__.pop('_pricing_at', None)
 
 
 class ProductImage(models.Model):
@@ -158,3 +169,83 @@ class ProductColor(models.Model):
 
     def __str__(self):
         return f'{self.product} — {self.name}'
+
+
+class ProductPromotion(models.Model):
+    """One scheduled reduction. Base prices and purchase snapshots stay intact."""
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='promotions')
+    starts_at = models.DateTimeField('Début')
+    ends_at = models.DateTimeField('Fin')
+    kind = models.CharField('Type de réduction', max_length=10, choices=[('percent', 'Pourcentage'), ('amount', 'Remise en euros'), ('fixed', 'Prix remisé')])
+    value = models.DecimalField('Valeur', max_digits=10, decimal_places=2)
+    enabled = models.BooleanField('Activée', default=True)
+    all_variants = models.BooleanField('Toutes les tailles et couleurs', default=True)
+    targets = models.ManyToManyField('stocks.Variant', blank=True, related_name='promotions')
+    reference_prices = models.JSONField('Prix de référence confirmés', default=dict, blank=True)
+    reference_confirmed = models.BooleanField('Prix les plus bas des 30 jours précédents vérifiés', default=False)
+    cancelled_at = models.DateTimeField('Annulée le', null=True, blank=True, editable=False)
+    revision = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['starts_at', 'pk']
+        indexes = [models.Index(fields=['product', 'starts_at', 'ends_at'], name='promotion_product_dates')]
+        constraints = [
+            models.CheckConstraint(condition=models.Q(ends_at__gt=models.F('starts_at')), name='promotion_positive_period'),
+            models.CheckConstraint(condition=models.Q(value__gt=0), name='promotion_positive_value'),
+            models.CheckConstraint(condition=~models.Q(kind='percent') | models.Q(value__lt=100), name='promotion_percent_below_100'),
+            models.CheckConstraint(condition=models.Q(kind__in=['percent', 'amount', 'fixed']), name='promotion_valid_kind'),
+        ]
+
+    def clean(self):
+        from decimal import Decimal, InvalidOperation
+        from django.core.exceptions import ValidationError
+        from django.utils import timezone
+        errors = {}
+        if self.starts_at and self.ends_at:
+            if timezone.is_naive(self.starts_at) or timezone.is_naive(self.ends_at):
+                errors['starts_at'] = 'Les dates doivent préciser le fuseau horaire.'
+            elif self.ends_at <= self.starts_at:
+                errors['ends_at'] = 'La fin doit être postérieure au début.'
+        if self.value is not None:
+            if self.value <= 0:
+                errors['value'] = 'La réduction doit être supérieure à zéro.'
+            elif self.kind == 'percent' and self.value >= 100:
+                errors['value'] = 'Le pourcentage doit être inférieur à 100 %.'
+        if not isinstance(self.reference_prices, dict):
+            errors['reference_prices'] = 'Indiquez un prix de référence par taille et couleur.'
+        else:
+            for key, raw in self.reference_prices.items():
+                try:
+                    reference = Decimal(str(raw))
+                    if not reference.is_finite() or reference <= 0:
+                        raise InvalidOperation
+                    if self.value is not None and self.kind in ('amount', 'fixed') and self.value >= reference:
+                        errors['value'] = 'La remise ou le prix remisé doit être inférieur au prix de référence.'
+                except (InvalidOperation, ValueError, TypeError):
+                    errors['reference_prices'] = 'Les prix de référence doivent être des montants positifs.'
+        if errors:
+            raise ValidationError(errors)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if 'product' in self._state.fields_cache:
+            self.product.__dict__.pop('_pricing_context', None)
+            self.product.__dict__.pop('_pricing_at', None)
+
+    def __str__(self):
+        return f'{self.product} — {self.get_kind_display()} {self.value}'
+
+
+class PriceObservation(models.Model):
+    """A regular price actually recorded at this date; never backfilled as 30 days."""
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='price_observations')
+    variant = models.ForeignKey('stocks.Variant', on_delete=models.CASCADE, null=True, blank=True, related_name='price_observations')
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    observed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['observed_at', 'pk']
+        indexes = [models.Index(fields=['product', 'variant', 'observed_at'], name='observed_product_variant_date')]
+        constraints = [models.CheckConstraint(condition=models.Q(price__gt=0), name='observed_price_positive')]

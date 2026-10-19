@@ -9,9 +9,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 from django.utils.translation import gettext as _
+from django.utils import timezone
 from django.db.models import Q
 from connexion.email_verification import email_access_allowed
-from core.models import Product, Category
+from core.models import Product, Category, ProductPromotion
+from core.pricing import with_catalog_prices, load_pricing_context, price_quote
 from paiement.models import Order
 from .models import Address, CreditNote, Voucher
 from .forms import AddressForm, PersonalForm
@@ -29,18 +31,34 @@ def private(view):
 
 def collection(request, kind):
     products = Product.objects.filter(is_published=True).select_related('category')
+    pricing_at = timezone.now()
     titles = {'promotions':_('Promotions'), 'new':_('Nouveaux produits'), 'best':_('Meilleures ventes')}
     intros = {'promotions':_('Les belles occasions du moment.'), 'new':_('Les derniers ajouts à notre catalogue, à découvrir à votre rythme.'), 'best':_('Les articles les plus commandés sur cette boutique en ligne.')}
     if kind == 'promotions':
-        products = products.filter(Q(category__slug='offres-speciales') | Q(collections__slug='offres-speciales')).distinct().order_by('price')
+        # Confirm the actual price, not merely the existence of a scheduled row:
+        # expired, future, malformed or reference-invalid campaigns are excluded.
+        candidate_ids = ProductPromotion.objects.filter(
+            product_id__in=products.values('pk'), enabled=True, cancelled_at__isnull=True,
+            reference_confirmed=True, starts_at__lte=pricing_at, ends_at__gt=pricing_at,
+        ).values_list('product_id', flat=True).distinct()
+        candidates = load_pricing_context(products.filter(pk__in=candidate_ids), at=pricing_at)
+        discounted_ids = []
+        for product in candidates:
+            variants = product._pricing_context.variants.get(product.pk, [])
+            if any(price_quote(product, variant, at=pricing_at).has_discount for variant in (variants or [None])):
+                discounted_ids.append(product.pk)
+        products = with_catalog_prices(products.filter(
+            Q(category__slug='offres-speciales') | Q(collections__slug='offres-speciales') |
+            Q(pk__in=discounted_ids),
+        ).distinct(), at=pricing_at).order_by('_catalog_min_price', 'pk')
     elif kind == 'new':
-        products = products.order_by('-created_at','-pk')[:24]
+        products = with_catalog_prices(products, at=pricing_at).order_by('-created_at','-pk')[:24]
     else:
         counts = Counter()
         for items in Order.objects.filter(status='paid').values_list('items', flat=True):
             for item in items:
                 counts[item['product']] += item['quantity']
-        available = {p.pk:p for p in products.filter(pk__in=counts)}
+        available = {p.pk:p for p in with_catalog_prices(products.filter(pk__in=counts), at=pricing_at)}
         products = [available[pk] for pk,_ in counts.most_common() if pk in available][:24]
     return render(request,'espace/collection.html',{'title':titles[kind],'intro':intros[kind],'products':products})
 

@@ -9,6 +9,9 @@ from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.templatetags.static import static
 from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET
+from django.http import JsonResponse
+from django.utils import timezone
 from .models import Product, Category
 from .cart import lines, total
 from .pricing import product_price_summary, with_catalog_prices
@@ -98,6 +101,16 @@ def product_detail(request, slug, catalog_preview=False):
             images.append(color.image.url)
         photo_alts[color.image.url] = f'{product.localized_name} — {color.name}'
     variants = list(product.stock_variants.all())
+    from .pricing import load_pricing_context, price_quote
+    pricing_at = timezone.now()
+    load_pricing_context([product], at=pricing_at)
+    quotes = []
+    for variant in variants:
+        variant.price_quote = price_quote(product, variant, at=pricing_at)
+        quotes.append(variant.price_quote)
+    if not quotes:
+        quotes.append(price_quote(product, at=pricing_at))
+    next_price_change = min((quote.next_boundary for quote in quotes if quote.next_boundary), default=None)
     from .product_options import build_product_options
     options = build_product_options(product, variants, color_photos)
 
@@ -105,8 +118,32 @@ def product_detail(request, slug, catalog_preview=False):
     related = with_catalog_prices(Product.objects.filter(category=product.category, is_published=True).select_related('category').exclude(pk=product.pk))[:4]
     return render(request, 'core/product_detail.html', {'product': product, 'images': images, 'gallery': gallery, 'related': related, 'catalog_preview': catalog_preview,
         'variants':variants, 'product_sizes':options['sizes'], 'product_colors':options['colors'], 'price_summary':product_price_summary(product, variants),
+        'pricing_at':pricing_at, 'next_price_change':next_price_change,
         'has_available_variant':any(variant.available > 0 for variant in variants),
         'has_unknown_stock':any(variant.quantity is None for variant in variants)})
+
+
+@require_GET
+def product_prices(request, slug):
+    from .pricing import load_pricing_context, price_quote
+    product = get_object_or_404(Product.objects.prefetch_related('stock_variants'), slug=slug, is_published=True)
+    at = timezone.now()
+    load_pricing_context([product], at=at)
+    variants = list(product.stock_variants.all())
+    quotes = [(variant.pk, price_quote(product, variant, at=at)) for variant in variants]
+    if not quotes:
+        quotes = [(None, price_quote(product, at=at))]
+    next_change = min((quote.next_boundary for _, quote in quotes if quote.next_boundary), default=None)
+    response = JsonResponse({
+        'server_time':at.isoformat(), 'next_change':next_change.isoformat() if next_change else None,
+        'variants':[
+            {'id':identifier, 'price':str(quote.current),
+             'reference':str(quote.reference) if quote.has_discount and quote.reference is not None else None}
+            for identifier, quote in quotes
+        ],
+    })
+    response['Cache-Control'] = 'no-store'
+    return response
 
 
 def product_preview(request, slug):

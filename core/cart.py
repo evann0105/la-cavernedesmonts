@@ -1,6 +1,8 @@
 from decimal import Decimal
 from .models import Product
 from stocks.models import Variant
+from django.utils import timezone
+from .pricing import load_pricing_context, price_quote
 
 
 def lines(request):
@@ -9,6 +11,8 @@ def lines(request):
     result = []
     cart = request.session.get('cart', {})
     products = {str(p.pk): p for p in Product.objects.filter(is_published=True, pk__in=[v['product'] for v in cart.values()])}
+    pricing_at = timezone.now()
+    load_pricing_context(products.values(), at=pricing_at)
     variants = {v.pk:v for v in Variant.objects.filter(pk__in=[v.get('variant') for v in cart.values() if v.get('variant')])}
     for key, item in cart.items():
         product = products.get(str(item['product']))
@@ -21,7 +25,7 @@ def lines(request):
             if variant:
                 # The already-loaded product supplies the current fallback price.
                 variant.product = product
-            unit_price = variant.effective_price if variant else product.price
+            unit_price = price_quote(product, variant, at=pricing_at).current
             result.append({'key':key,'product':product,'variant':variant,'size':variant.size if variant else item['size'],'color':variant.color if variant else item.get('color', ''), 'quantity':quantity,'unit_price':unit_price,'subtotal':unit_price*quantity,'stock_ok':bool(variant and variant.available >= quantity)})
     return result
 
