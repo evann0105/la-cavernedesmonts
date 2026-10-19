@@ -84,18 +84,15 @@ def product_list(request):
 
 
 def product_detail(request, slug, catalog_preview=False):
-    products = Product.objects.all() if catalog_preview else Product.objects.filter(is_published=True)
+    products = Product.objects.all() if catalog_preview else Product.objects.filter(Q(is_published=True) | Q(duplicate_of__isnull=False))
     product = get_object_or_404(products.select_related('category').prefetch_related('images', 'color_photos', 'stock_variants'), slug=slug)
+    if product.duplicate_of_id and not catalog_preview:
+        canonical = get_object_or_404(Product, pk=product.duplicate_of_id, is_published=True, duplicate_of__isnull=True)
+        return redirect('core:product_detail', slug=canonical.slug, permanent=True)
     images = [product.image_url] if product.image_url else []
     images += [i.image.url for i in product.images.all()]
-    for folder in (('products', 'best_product', 'femmes', 'hommes', 'enfants') if product.include_imported_gallery else ()):
-        directory = Path(settings.BASE_DIR) / 'core/static/core/img' / folder / slug
-        if directory.is_dir():
-            for p in sorted(directory.iterdir()):
-                if p.suffix.lower() in ('.png', '.jpg', '.jpeg', '.webp'):
-                    url = static(f'core/img/{folder}/{slug}/{p.name}')
-                    if url not in images:
-                        images.append(url)
+    from .product_images import imported_gallery_urls
+    images = imported_gallery_urls(product, images)
     color_photos = list(product.color_photos.all())
     photo_alts = {photo.image.url: photo.alt for photo in product.images.all()}
     for color in color_photos:
@@ -181,8 +178,10 @@ def product_prices(request, slug):
 
 
 def product_preview(request, slug):
-    get_object_or_404(Product, slug=slug, is_published=True)
-    return redirect('core:product_detail', slug=slug, permanent=True)
+    product = get_object_or_404(Product, Q(is_published=True) | Q(duplicate_of__isnull=False), slug=slug)
+    if product.duplicate_of_id:
+        product = get_object_or_404(Product, pk=product.duplicate_of_id, is_published=True, duplicate_of__isnull=True)
+    return redirect('core:product_detail', slug=product.slug, permanent=True)
 
 
 def location_legacy(request):

@@ -12,8 +12,8 @@ from .seo_products import build_product_seo
 @catalog_required
 @require_GET
 def overview(request):
-    products = list(Product.objects.select_related('category').prefetch_related('stock_variants').order_by('name', 'pk'))
-    rows = [{'product': product, 'metadata': build_product_seo(product)} for product in products]
+    products = list(Product.objects.filter(duplicate_of__isnull=True).select_related('category').prefetch_related('stock_variants').order_by('name', 'pk'))
+    rows = [{'product': product, 'metadata': build_product_seo(product), 'brand_review': product.information_sources.get('_brand_review', {})} for product in products]
     titles = Counter(row['metadata'].title.casefold() for row in rows)
     for row in rows:
         row['duplicate_title'] = titles[row['metadata'].title.casefold()] > 1
@@ -27,5 +27,6 @@ def overview(request):
         'total': len(rows), 'published': sum(product.is_published for product in products),
         'prepared': sum(bool(row['metadata'].title and row['metadata'].description and row['metadata'].keywords) for row in rows),
         'to_review': sum(bool(row['metadata'].warnings or row['duplicate_title']) for row in rows),
+        'archived_duplicates': Product.objects.filter(duplicate_of__isnull=False).count(),
         'indexing_enabled': indexing_allowed(), 'site_origin': site_origin(),
     })

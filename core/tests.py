@@ -43,9 +43,13 @@ class ShopTests(TestCase):
         self.assertEqual(Product.objects.count(), 110)
         for product in Product.objects.all():
             self.assertIsNotNone(finders.find(product.static_image))
-            self.assertEqual(self.client.get(f'/produits/{product.slug}/').status_code, 200)
-            self.assertRedirects(self.client.get(f'/preview/{product.slug}/?price=0.01'), f'/produits/{product.slug}/', status_code=301)
-            self.assertRedirects(self.client.get(f'/page-produit/{product.slug}/'), f'/produits/{product.slug}/', status_code=301)
+            canonical_slug = product.duplicate_of.slug if product.duplicate_of_id else product.slug
+            if product.duplicate_of_id:
+                self.assertRedirects(self.client.get(f'/produits/{product.slug}/'), f'/produits/{canonical_slug}/', status_code=301)
+            else:
+                self.assertEqual(self.client.get(f'/produits/{product.slug}/').status_code, 200)
+            self.assertRedirects(self.client.get(f'/preview/{product.slug}/?price=0.01'), f'/produits/{canonical_slug}/', status_code=301)
+            self.assertRedirects(self.client.get(f'/page-produit/{product.slug}/'), f'/produits/{canonical_slug}/', status_code=301)
 
     def test_public_pages(self):
         for url in ('/', '/produits/', '/magasins/', '/panier/', '/accounts/login/', '/accounts/signup/'):
@@ -156,12 +160,19 @@ class WomenImportTests(TestCase):
             self.assertEqual(product.price, Decimal(item['price']))
             self.assertEqual(product.description, item['description'])
             self.assertFalse(product.sizes)  # Live stock has not been validated.
-            page = self.client.get(f'/produits/{product.slug}/')
+            page = self.client.get(f'/produits/{product.slug}/', follow=True)
+            from hashlib import sha256
+            from urllib.parse import unquote
+            displayed_hashes = {
+                sha256((Path(settings.BASE_DIR) / 'core/static' / unquote(url[len('/static/'):])).read_bytes()).hexdigest()
+                for url in page.context['images'] if url.startswith('/static/')
+            }
             for image in item['images']:
                 self.assertIsNotNone(finders.find(image))
-                self.assertIn('/static/' + image, page.context['images'])
+                # A reviewed alias may reuse the canonical URL for identical bytes.
+                self.assertIn(sha256((Path(settings.BASE_DIR) / 'core/static' / image).read_bytes()).hexdigest(), displayed_hashes)
         response = self.client.get('/produits/', {'categorie': 'femmes'})
-        self.assertEqual(response.context['page_obj'].paginator.count, 52)
+        self.assertEqual(response.context['page_obj'].paginator.count, 52 - Product.objects.filter(category__slug='femmes', duplicate_of__isnull=False).count())
 
     def test_restart_preserves_merchant_edits_and_product_identity(self):
         product = Product.objects.get(slug='veste-polaire-femme-anapurna-utern-violet')

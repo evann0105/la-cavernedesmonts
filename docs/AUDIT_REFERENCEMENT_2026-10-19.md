@@ -1,4 +1,6 @@
-# Contrôle du catalogue — 19 octobre 2026
+# Contrôle initial du catalogue — 19 octobre 2026
+
+> État initial avant recherche des marques et rapprochement des doublons. Pour le résultat actualisé, lire [la vérification des marques et doublons](VERIFICATION_MARQUES_DOUBLONS_2026-10-19.md).
 
 Contrôle en lecture seule des 111 produits publiés dans la base locale, avec simulation de la configuration publique `https://la-cavernedesmonts.fr`. Ce contrôle ne constitue pas une indexation effective par Google.
 

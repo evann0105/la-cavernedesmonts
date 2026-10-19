@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-10-19",
+  "duplicates": [
+    {
+      "duplicate_slug": "femme-960-veste-polaire-udilas-canadian-peak",
+      "canonical_slug": "veste-polaire-douce-cocooning-canadian-2",
+      "duplicate_source_url": "https://la-cavernedesmonts.fr/accueil/960-veste-polaire-udilas-canadian-peak.html",
+      "canonical_source_url": "https://la-cavernedesmonts.fr/accueil/738-veste-polaire-udilas-canadian-peak.html",
+      "evidence": {
+        "checked_on": "2026-10-19",
+        "verdict": "verified_catalogue_duplicate",
+        "merchant_reference": "FME/Pol/CanadPK/Udi/B.Marine",
+        "image_sha256": "823baba889ad1c999c6476b0b76b728d85ba20454f73044f4b6c8345bac825ad",
+        "reason": "Même référence interne du marchand, même photographie exacte, même marque, couleur, modèle et prix ; aucune différence de modèle trouvée.",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/738-veste-polaire-udilas-canadian-peak.html",
+            "role": "ancienne fiche du marchand",
+            "merchant_reference": "FME/Pol/CanadPK/Udi/B.Marine",
+            "html_sha256": "813d0ace5124d932abeb57c41273e776959efd8bb3228778256ae3423f249b08"
+          },
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/960-veste-polaire-udilas-canadian-peak.html",
+            "role": "ancienne fiche du marchand",
+            "merchant_reference": "FME/Pol/CanadPK/Udi/B.Marine",
+            "html_sha256": "80548f38eeb21d67acae0c796a98b52a606d61437768cc15ab3b05d54f5b70c5"
+          }
+        ],
+        "stock_imported": false
+      }
+    },
+    {
+      "duplicate_slug": "femme-1046-veste-polaire-sans-manche-lhotse",
+      "canonical_slug": "femme-1024-veste-polaire-sans-manche-lhotse",
+      "duplicate_source_url": "https://la-cavernedesmonts.fr/accueil/1046-veste-polaire-sans-manche-lhotse.html",
+      "canonical_source_url": "https://la-cavernedesmonts.fr/accueil/1024-veste-polaire-sans-manche-lhotse.html",
+      "evidence": {
+        "checked_on": "2026-10-19",
+        "verdict": "verified_catalogue_duplicate",
+        "merchant_reference": "FME/Pol/lhots marb./Blc",
+        "image_sha256": "952aedd9930905b08a3dc128e795199b2ad5a0c73c52e5d5f640e951a9c0da55",
+        "reason": "Même référence interne du marchand, même photographie exacte, même marque, couleur, modèle et prix ; aucune différence de modèle trouvée.",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/1024-veste-polaire-sans-manche-lhotse.html",
+            "role": "ancienne fiche du marchand",
+            "merchant_reference": "FME/Pol/lhots marb./Blc",
+            "html_sha256": "57feebad16d45438223714cde13dab661062216f997a0968ceff0a40379b31eb"
+          },
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/1046-veste-polaire-sans-manche-lhotse.html",
+            "role": "ancienne fiche du marchand",
+            "merchant_reference": "FME/Pol/lhots marb./Blc",
+            "html_sha256": "683437504232ee3554efbebd39ce926ce0980e5f7baa9244d22ca2667058662f"
+          }
+        ],
+        "stock_imported": false
+      }
+    },
+    {
+      "duplicate_slug": "femme-944-veste-polaire-udilas-canadian-peak",
+      "canonical_slug": "femme-734-veste-polaire-udilas-canadian-peak",
+      "duplicate_source_url": "https://la-cavernedesmonts.fr/accueil/944-veste-polaire-udilas-canadian-peak.html",
+      "canonical_source_url": "https://la-cavernedesmonts.fr/accueil/734-veste-polaire-udilas-canadian-peak.html",
+      "evidence": {
+        "checked_on": "2026-10-19",
+        "verdict": "verified_catalogue_duplicate",
+        "merchant_reference": "FME/Pol/CanadPK/Udi/Tpe",
+        "image_sha256": "d3a8eca1e41cbf7bf703cd8274ce4c7c577ee40e9d9f08cd2f479a9c710d6b26",
+        "reason": "Même référence marchande, modèle Udilas taupe, photo exacte et prix ; le nom diffère seulement par la casse de la marque.",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/944-veste-polaire-udilas-canadian-peak.html",
+            "role": "ancienne fiche du marchand",
+            "html_sha256": "b936a96bd26cb539295c697c2f71d795b5a6cfac62d4937fa2a8a4fa247f3c69"
+          },
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/734-veste-polaire-udilas-canadian-peak.html",
+            "role": "ancienne fiche du marchand",
+            "html_sha256": "3339353be3011c013706f18bfab8978c87692edfabe1753763256e8bff1ce991"
+          }
+        ],
+        "stock_imported": false
+      }
+    }
+  ]
+}

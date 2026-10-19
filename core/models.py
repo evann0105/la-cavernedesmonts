@@ -18,6 +18,7 @@ class Product(models.Model):
 	category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL, related_name='products')
 	collections = models.ManyToManyField(Category, blank=True, related_name='collection_products', help_text='Rubriques complémentaires : bébé, offres spéciales…')
 	source_url = models.URLField(max_length=500, unique=True, null=True, blank=True, editable=False)
+	duplicate_of = models.ForeignKey('self', null=True, blank=True, editable=False, on_delete=models.PROTECT, related_name='duplicate_records', verbose_name='Fiche conservée après vérification du doublon')
 	name = models.CharField(max_length=200)
 	slug = models.SlugField(max_length=220, unique=True)
 	price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -44,6 +45,7 @@ class Product(models.Model):
 
 	class Meta:
 		permissions = [('manage_catalog', 'Gérer le catalogue depuis la boutique')]
+		constraints = [models.CheckConstraint(condition=~models.Q(duplicate_of=models.F('pk')), name='product_duplicate_not_self')]
 
 	def translated_value(self, field):
 		from django.utils.translation import get_language

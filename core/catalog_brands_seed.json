@@ -1,0 +1,1746 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-10-19",
+  "products": [
+    {
+      "slug": "veste-polaire-urbaine-noire-peak-mountain",
+      "expected_name": "Veste polaire urbaine Noire Peak Mountain",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/575-veste-polaire-urbaine-noire-peak-mountain.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/575-veste-polaire-urbaine-noire-peak-mountain.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "6e61fee8e47f10a1d056f0d0e2b93306dd5f6dba06382338e59e6128b9991e63"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "blouson-softshell-homme-impermeable",
+      "expected_name": "Blouson Softshell homme imperméable Marine/orange PEAK MOUNTAIN",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1036-veste-technique-homme-impermeable-en-softshell.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1036-veste-technique-homme-impermeable-en-softshell.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "c281c43a291a1dcc8871201926f0d0a07a185e1fe74d0c715417929ebc1273a8"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "blouson-softshell-impermeable-femme-bordeaux",
+      "expected_name": "Blouson Softshell imperméable femme Bordeaux/Ciel",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1002-veste-technique-softshell-bordeaux-lie-de-vin-prune.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1002-veste-technique-softshell-bordeaux-lie-de-vin-prune.html"
+          }
+        ],
+        "basis": "Contrôle de la zone produit, du titre SEO, de la description et de la référence source : aucune marque univoque.",
+        "source_snapshot_sha256": "5ef34cdbb837b48ca2806b1e62f368194e6e0ae21b456d8caa8fd3a4a7583319"
+      },
+      "review_notes": "Aucune marque explicite dans le titre, le descriptif, les métadonnées ou la référence de la fiche source. Référence interne Lavder seule, insuffisante pour identifier un fabricant."
+    },
+    {
+      "slug": "blouson-softshell-impermeable-femme-gris",
+      "expected_name": "Blouson Softshell imperméable femme Gris/Corail",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1000-veste-technique-softshell-gris-orange-corail.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1000-veste-technique-softshell-gris-orange-corail.html"
+          }
+        ],
+        "basis": "Contrôle de la zone produit, du titre SEO, de la description et de la référence source : aucune marque univoque.",
+        "source_snapshot_sha256": "0d713adc7072d19d0115954fda5a4435c26e3f60c5e83a114cfa844a17def3dc"
+      },
+      "review_notes": "Aucune marque explicite dans le titre, le descriptif, les métadonnées ou la référence de la fiche source. Référence interne Lavder seule, insuffisante pour identifier un fabricant."
+    },
+    {
+      "slug": "veste-outdoor-anapurna-homme",
+      "expected_name": "Veste outdoor Anapurna Homme",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/621-veste-outdoor-chinee-anapurna-homme.html",
+      "brand": "Anapurna",
+      "evidence": {
+        "value": "Anapurna",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/621-veste-outdoor-chinee-anapurna-homme.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Anapurna.",
+        "source_snapshot_sha256": "45bd750b9d5a5242d13108228b4a6eaea4fdfe447d3013ea4a495ddee62f5fcf"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "chaussettes-antiderapantes-mouton-fuchsia",
+      "expected_name": "Chaussettes antidérapantes Mouton Fuchsia",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/104-chaussettes-antiderapantes-mouton.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/104-chaussettes-antiderapantes-mouton.html",
+            "label": "La Caverne des Monts — fiche d’origine exacte"
+          }
+        ],
+        "basis": "La description d’origine et les photographies disponibles ne donnent pas de marque lisible et confirmée pour cette référence exacte.",
+        "source_snapshot_sha256": "a758055befc7a32f8e64be19b27476e5bfbf276d2496d0d451b2702f98fea511"
+      },
+      "review_notes": "Les mentions décoratives (mouton, marmotte, fabrication française) n’identifient pas le fabricant. Demander photo de l’étiquette de marque ou facture fournisseur ; ne pas extrapoler des bodies voisins."
+    },
+    {
+      "slug": "veste-polaire-de-montagne-rouge",
+      "expected_name": "Veste polaire de montagne Rouge",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/443-veste-polaire-de-montagne-homme-rouge.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/443-veste-polaire-de-montagne-homme-rouge.html"
+          }
+        ],
+        "basis": "Contrôle de la zone produit, du titre SEO, de la description et de la référence source : aucune marque univoque.",
+        "source_snapshot_sha256": "465619ae6b256f11693520fc3f6827fb741b83647f0e91134efe858fa3a4ceca"
+      },
+      "review_notes": "Aucune marque explicite sur la fiche. Référence interne HME-Pol/Imerk/Rge seule, logo de la petite photo illisible ; ne pas attribuer une marque par ressemblance."
+    },
+    {
+      "slug": "chaussettes-antiderapantes-marmottes-blanches",
+      "expected_name": "Chaussettes antidérapantes Marmottes Blanches",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/106-chaussettes-antiderapantes-marmottes.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/106-chaussettes-antiderapantes-marmottes.html",
+            "label": "La Caverne des Monts — fiche d’origine exacte"
+          }
+        ],
+        "basis": "La description d’origine et les photographies disponibles ne donnent pas de marque lisible et confirmée pour cette référence exacte.",
+        "source_snapshot_sha256": "4be53d887f6d32f2230218391470a4c8e190f4053bc1d1d7e270331ddfc616d3"
+      },
+      "review_notes": "Les mentions décoratives (mouton, marmotte, fabrication française) n’identifient pas le fabricant. Demander photo de l’étiquette de marque ou facture fournisseur ; ne pas extrapoler des bodies voisins."
+    },
+    {
+      "slug": "chaussettes-antiderapantes-vache-taupe",
+      "expected_name": "Chaussettes antidérapantes Vache taupe",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/105-chaussettes-antiderapantes-vache.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/105-chaussettes-antiderapantes-vache.html",
+            "label": "La Caverne des Monts — fiche d’origine exacte"
+          }
+        ],
+        "basis": "La description d’origine et les photographies disponibles ne donnent pas de marque lisible et confirmée pour cette référence exacte.",
+        "source_snapshot_sha256": "7257b4f0efa516c7232ff94da7597191c0397882294e144b20280944c8dddd4d"
+      },
+      "review_notes": "Les mentions décoratives (mouton, marmotte, fabrication française) n’identifient pas le fabricant. Demander photo de l’étiquette de marque ou facture fournisseur ; ne pas extrapoler des bodies voisins."
+    },
+    {
+      "slug": "veste-polaire-femme-anapurna-utern-violet",
+      "expected_name": "Veste polaire Femme ANAPURNA utern Violet",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/952-veste-polaire-femme-anapurna-violet.html",
+      "brand": "Anapurna",
+      "evidence": {
+        "value": "Anapurna",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/952-veste-polaire-femme-anapurna-violet.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Anapurna.",
+        "source_snapshot_sha256": "d0abb1ecb8bf6603db070fa723bdb276b5044884207edd662e3a4437a23d689d"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "veste-polaire-de-montagne-beige",
+      "expected_name": "Veste polaire de montagne Beige",
+      "source_url": null,
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [],
+        "basis": "Aucune URL d’origine enregistrée. Le petit logo de la photographie disponible ne permet pas une lecture suffisamment fiable."
+      },
+      "review_notes": "Ne pas inférer la marque depuis une polaire ressemblante. Demander photo lisible de l’étiquette de marque ou référence fournisseur."
+    },
+    {
+      "slug": "veste-polaire-douce-cocooning-canadian",
+      "expected_name": "Veste polaire douce cocooning Canadian PEAK Gris perle",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/740-veste-polaire-udilas-canadian-peak.html",
+      "brand": "Canadian Peak",
+      "evidence": {
+        "value": "Canadian Peak",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/740-veste-polaire-udilas-canadian-peak.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Canadian Peak.",
+        "source_snapshot_sha256": "29040428d3bb70f55e7f2f5cdd8c2eb5ab013de050680ca89e5c82b2d1548d1c"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "veste-polaire-douce-cocooning-canadian-2",
+      "expected_name": "Veste polaire douce cocooning Canadian PEAK Bleu Marine",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/738-veste-polaire-udilas-canadian-peak.html",
+      "brand": "Canadian Peak",
+      "evidence": {
+        "value": "Canadian Peak",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/738-veste-polaire-udilas-canadian-peak.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Canadian Peak.",
+        "source_snapshot_sha256": "810fc28a207ef9915b47d2b882de32dea53f012e7d6595c5cb3a83e36c4f6be3"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "bebe-101-echarpe-bebe",
+      "expected_name": "Echarpe bébé doublée",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/101-echarpe-bebe-.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/101-echarpe-bebe-.html",
+            "label": "La Caverne des Monts — fiche d’origine exacte"
+          }
+        ],
+        "basis": "La description d’origine et les photographies disponibles ne donnent pas de marque lisible et confirmée pour cette référence exacte.",
+        "source_snapshot_sha256": "3635ecb01bcd910606fb2db3eb7bfe5c70beab907394ac7af47f6a55db731841"
+      },
+      "review_notes": "Les mentions décoratives (mouton, marmotte, fabrication française) n’identifient pas le fabricant. Demander photo de l’étiquette de marque ou facture fournisseur ; ne pas extrapoler des bodies voisins."
+    },
+    {
+      "slug": "bebe-868-body-bebe-montagne-manches-longue-coton",
+      "expected_name": "Body bébé Les 3 marmottes",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/868-body-bebe-montagne-manches-longue-coton-.html",
+      "brand": "Petits Cœurs à la Montagne",
+      "evidence": {
+        "value": "Petits Cœurs à la Montagne",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/868-body-bebe-montagne-manches-longue-coton-.html",
+            "label": "La Caverne des Monts — photos originales de cet article"
+          },
+          {
+            "url": "https://www.mesenseignes.fr/lart-des-choix/shop/e-shop/m/petits-coeurs-a-la-montagne/",
+            "label": "L’Art des Choix — collection de layette Petits coeurs à la montagne"
+          }
+        ],
+        "basis": "La photographie originale de la galerie montre au col une étiquette cousue « Petits coeurs à la montagne ». Le commerçant L’Art des Choix identifie séparément cette collection de layette sous le même nom.",
+        "source_snapshot_sha256": "dc6a771006706e2e43a1349de22b68112508e097293acb7433604630857c98ac"
+      },
+      "review_notes": "Marque uniquement. L’identité juridique du fabricant et son contact ne sont pas établis ; ne pas les déduire du nom de la collection."
+    },
+    {
+      "slug": "bebe-870-body-bebe-montagne-manches-longue-coton",
+      "expected_name": "Body bébé Un amour de Marmottes",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/870-body-bebe-montagne-manches-longue-coton-.html",
+      "brand": "Petits Cœurs à la Montagne",
+      "evidence": {
+        "value": "Petits Cœurs à la Montagne",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/870-body-bebe-montagne-manches-longue-coton-.html",
+            "label": "La Caverne des Monts — photos originales de cet article"
+          },
+          {
+            "url": "https://www.mesenseignes.fr/lart-des-choix/shop/e-shop/m/petits-coeurs-a-la-montagne/",
+            "label": "L’Art des Choix — collection de layette Petits coeurs à la montagne"
+          }
+        ],
+        "basis": "La photographie originale de la galerie montre au col une étiquette cousue « Petits coeurs à la montagne ». Le commerçant L’Art des Choix identifie séparément cette collection de layette sous le même nom.",
+        "source_snapshot_sha256": "48f71d823fc5f5194c0c9a8b08efe16935b52b039a0590fee8fd4c96b4e1b5b5"
+      },
+      "review_notes": "Marque uniquement. L’identité juridique du fabricant et son contact ne sont pas établis ; ne pas les déduire du nom de la collection."
+    },
+    {
+      "slug": "bebe-872-body-bebe-montagne-manches-longue-coton",
+      "expected_name": "Body bébé brodé les 2 Marmottes",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/872-body-bebe-montagne-manches-longue-coton-.html",
+      "brand": "Petits Cœurs à la Montagne",
+      "evidence": {
+        "value": "Petits Cœurs à la Montagne",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/872-body-bebe-montagne-manches-longue-coton-.html",
+            "label": "La Caverne des Monts — photos originales de cet article"
+          },
+          {
+            "url": "https://www.mesenseignes.fr/lart-des-choix/shop/e-shop/m/petits-coeurs-a-la-montagne/",
+            "label": "L’Art des Choix — collection de layette Petits coeurs à la montagne"
+          }
+        ],
+        "basis": "La photographie originale de la galerie montre au col une étiquette cousue « Petits coeurs à la montagne ». Le commerçant L’Art des Choix identifie séparément cette collection de layette sous le même nom.",
+        "source_snapshot_sha256": "147cd2621d8304a497fed43a67784b5f078137133411d17dace9915017c5cf04"
+      },
+      "review_notes": "Marque uniquement. L’identité juridique du fabricant et son contact ne sont pas établis ; ne pas les déduire du nom de la collection."
+    },
+    {
+      "slug": "bebe-874-body-bebe-montagne-manches-longue-coton",
+      "expected_name": "Body bébé La famille Marmotte",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/874-body-bebe-montagne-manches-longue-coton-.html",
+      "brand": "Petits Cœurs à la Montagne",
+      "evidence": {
+        "value": "Petits Cœurs à la Montagne",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/874-body-bebe-montagne-manches-longue-coton-.html",
+            "label": "La Caverne des Monts — photos originales de cet article"
+          },
+          {
+            "url": "https://www.mesenseignes.fr/lart-des-choix/shop/e-shop/m/petits-coeurs-a-la-montagne/",
+            "label": "L’Art des Choix — collection de layette Petits coeurs à la montagne"
+          }
+        ],
+        "basis": "La photographie originale de la galerie montre au col une étiquette cousue « Petits coeurs à la montagne ». Le commerçant L’Art des Choix identifie séparément cette collection de layette sous le même nom.",
+        "source_snapshot_sha256": "4cdc5c9bce64621d14e040af89a7fbfd397992abfe533f2f2da995ab4e5776cc"
+      },
+      "review_notes": "Marque uniquement. L’identité juridique du fabricant et son contact ne sont pas établis ; ne pas les déduire du nom de la collection."
+    },
+    {
+      "slug": "bebe-876-body-bebe-montagne-manches-longue-coton",
+      "expected_name": "Body bébé de montagne Les Lugeurs",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/876-body-bebe-montagne-manches-longue-coton-.html",
+      "brand": "Petits Cœurs à la Montagne",
+      "evidence": {
+        "value": "Petits Cœurs à la Montagne",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/876-body-bebe-montagne-manches-longue-coton-.html",
+            "label": "La Caverne des Monts — photos originales de cet article"
+          },
+          {
+            "url": "https://www.mesenseignes.fr/lart-des-choix/shop/e-shop/m/petits-coeurs-a-la-montagne/",
+            "label": "L’Art des Choix — collection de layette Petits coeurs à la montagne"
+          }
+        ],
+        "basis": "La photographie originale de la galerie montre au col une étiquette cousue « Petits coeurs à la montagne ». Le commerçant L’Art des Choix identifie séparément cette collection de layette sous le même nom.",
+        "source_snapshot_sha256": "0c7b9bdbc418c6ae5ff1c877c6f22eefb799aab4cabe95099cca4a4b6f0f087d"
+      },
+      "review_notes": "Marque uniquement. L’identité juridique du fabricant et son contact ne sont pas établis ; ne pas les déduire du nom de la collection."
+    },
+    {
+      "slug": "bebe-878-body-bebe-montagne-manches-longue-coton",
+      "expected_name": "Body bébé Les Marmottes au ski",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/878-body-bebe-montagne-manches-longue-coton-.html",
+      "brand": "Petits Cœurs à la Montagne",
+      "evidence": {
+        "value": "Petits Cœurs à la Montagne",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/878-body-bebe-montagne-manches-longue-coton-.html",
+            "label": "La Caverne des Monts — photos originales de cet article"
+          },
+          {
+            "url": "https://www.mesenseignes.fr/lart-des-choix/shop/e-shop/m/petits-coeurs-a-la-montagne/",
+            "label": "L’Art des Choix — collection de layette Petits coeurs à la montagne"
+          }
+        ],
+        "basis": "La photographie originale de la galerie montre au col une étiquette cousue « Petits coeurs à la montagne ». Le commerçant L’Art des Choix identifie séparément cette collection de layette sous le même nom.",
+        "source_snapshot_sha256": "42f1a1feba213d10d102fcefce41fb3804e603ea2395e0e56bef85c38ce81d2c"
+      },
+      "review_notes": "Marque uniquement. L’identité juridique du fabricant et son contact ne sont pas établis ; ne pas les déduire du nom de la collection."
+    },
+    {
+      "slug": "bebe-806-veste-polaire-bebe-sans-manche-rose-fushia",
+      "expected_name": "Veste polaire bébé sans manche rose fuchsia",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/806-veste-polaire-bebe-sans-manche-rose-fushia.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/806-veste-polaire-bebe-sans-manche-rose-fushia.html",
+            "label": "La Caverne des Monts — fiche d’origine exacte"
+          }
+        ],
+        "basis": "La description d’origine et les photographies disponibles ne donnent pas de marque lisible et confirmée pour cette référence exacte.",
+        "source_snapshot_sha256": "3689fbf2f225429b23d38a58aab9f0a874a41663d03f79f74f215c09b6e8cbf2"
+      },
+      "review_notes": "Les mentions décoratives (mouton, marmotte, fabrication française) n’identifient pas le fabricant. Demander photo de l’étiquette de marque ou facture fournisseur ; ne pas extrapoler des bodies voisins."
+    },
+    {
+      "slug": "bebe-808-veste-polaire-bebe-sans-manche-rose-fushia",
+      "expected_name": "Veste polaire bébé sans manche avec capuche doublé coton rose fuchsia",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/808-veste-polaire-bebe-sans-manche-rose-fushia.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/808-veste-polaire-bebe-sans-manche-rose-fushia.html",
+            "label": "La Caverne des Monts — fiche d’origine exacte"
+          }
+        ],
+        "basis": "La description d’origine et les photographies disponibles ne donnent pas de marque lisible et confirmée pour cette référence exacte.",
+        "source_snapshot_sha256": "a91c391e48834867f133e6085b300afea52617ce1d8a531963701d9b13580291"
+      },
+      "review_notes": "Les mentions décoratives (mouton, marmotte, fabrication française) n’identifient pas le fabricant. Demander photo de l’étiquette de marque ou facture fournisseur ; ne pas extrapoler des bodies voisins."
+    },
+    {
+      "slug": "bebe-810-veste-polaire-bebe-sans-manche-a-pois-couleur-rose-poudre-fabrique-en-france",
+      "expected_name": "Veste polaire bébé sans manche avec capuche ,rose poudré à pois",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/810-veste-polaire-bebe-sans-manche-a-pois-couleur-rose-poudre-fabrique-en-france.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/810-veste-polaire-bebe-sans-manche-a-pois-couleur-rose-poudre-fabrique-en-france.html",
+            "label": "La Caverne des Monts — fiche d’origine exacte"
+          }
+        ],
+        "basis": "La description d’origine et les photographies disponibles ne donnent pas de marque lisible et confirmée pour cette référence exacte.",
+        "source_snapshot_sha256": "e911b82a0545670b704f30a5acfb22eb43160a75dfde3049cc93c74334ddf5bc"
+      },
+      "review_notes": "Les mentions décoratives (mouton, marmotte, fabrication française) n’identifient pas le fabricant. Demander photo de l’étiquette de marque ou facture fournisseur ; ne pas extrapoler des bodies voisins."
+    },
+    {
+      "slug": "bebe-812-veste-polaire-bebe-sans-manche-mixte-fille-garcon-blanc-ecru-beige",
+      "expected_name": "Veste polaire bébé mixte sans manche blanc/écru",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/812-veste-polaire-bebe-sans-manche-mixte-fille-garcon-blanc-ecru-beige.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/812-veste-polaire-bebe-sans-manche-mixte-fille-garcon-blanc-ecru-beige.html",
+            "label": "La Caverne des Monts — fiche d’origine exacte"
+          }
+        ],
+        "basis": "La description d’origine et les photographies disponibles ne donnent pas de marque lisible et confirmée pour cette référence exacte.",
+        "source_snapshot_sha256": "4615688d9bc74e6b10b944134f58ec82d4ca20d5d9c12ed34a1706226ed5716d"
+      },
+      "review_notes": "Les mentions décoratives (mouton, marmotte, fabrication française) n’identifient pas le fabricant. Demander photo de l’étiquette de marque ou facture fournisseur ; ne pas extrapoler des bodies voisins."
+    },
+    {
+      "slug": "bebe-816-veste-polaire-bebe-chorges-blanc-ecru",
+      "expected_name": "Gilet polaire basique bébé blanc/écru",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/816-veste-polaire-bebe-chorges-blanc-ecru.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/816-veste-polaire-bebe-chorges-blanc-ecru.html",
+            "label": "La Caverne des Monts — fiche d’origine exacte"
+          }
+        ],
+        "basis": "La description d’origine et les photographies disponibles ne donnent pas de marque lisible et confirmée pour cette référence exacte.",
+        "source_snapshot_sha256": "1c2fbbd745af5656976ca6656326e628873ce2b1ca30bcfe8a3a98f1f56c9251"
+      },
+      "review_notes": "Les mentions décoratives (mouton, marmotte, fabrication française) n’identifient pas le fabricant. Demander photo de l’étiquette de marque ou facture fournisseur ; ne pas extrapoler des bodies voisins."
+    },
+    {
+      "slug": "femme-623-veste-polaire-sans-manche-anapurna-noire",
+      "expected_name": "Veste polaire sans manche femme Anapurna noire",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/623-veste-polaire-sans-manche-anapurna-noire.html",
+      "brand": "Anapurna",
+      "evidence": {
+        "value": "Anapurna",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/623-veste-polaire-sans-manche-anapurna-noire.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Anapurna.",
+        "source_snapshot_sha256": "9a9b472dc05bb23d25a85994597aefb1cbac85b506a2bbb91444b81b188785dd"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-728-veste-bi-matiere-femme-a-capuche-avec-doudoune-et-polaire",
+      "expected_name": "Veste bi -matière femme à capuche avec doudoune et polaire",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/728-veste-bi-matiere-femme-a-capuche-avec-doudoune-et-polaire.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/728-veste-bi-matiere-femme-a-capuche-avec-doudoune-et-polaire.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "f647a37ff5feaa2acad7ecebb7dba83246b049e9ad647b096706464ff6379adc"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-734-veste-polaire-udilas-canadian-peak",
+      "expected_name": "Veste polaire douce cocooning Canadian PEAK Taupe",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/734-veste-polaire-udilas-canadian-peak.html",
+      "brand": "Canadian Peak",
+      "evidence": {
+        "value": "Canadian Peak",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/734-veste-polaire-udilas-canadian-peak.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Canadian Peak.",
+        "source_snapshot_sha256": "3339353be3011c013706f18bfab8978c87692edfabe1753763256e8bff1ce991"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-736-veste-polaire-udilas-canadian-peak",
+      "expected_name": "Veste polaire douce cocooning Canadian PEAK Bleu Turquoise",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/736-veste-polaire-udilas-canadian-peak.html",
+      "brand": "Canadian Peak",
+      "evidence": {
+        "value": "Canadian Peak",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/736-veste-polaire-udilas-canadian-peak.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Canadian Peak.",
+        "source_snapshot_sha256": "a1404eb5164ebf0b2ea4785e9a5439b91b08191dcd77a7b15f2a941a489261bc"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-820-veste-technique-softshell-bordeaux-lie-de-vin",
+      "expected_name": "Blouson Softshell imperméable femme bordeaux",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/820-veste-technique-softshell-bordeaux-lie-de-vin.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/820-veste-technique-softshell-bordeaux-lie-de-vin.html"
+          }
+        ],
+        "basis": "Contrôle de la zone produit, du titre SEO, de la description et de la référence source : aucune marque univoque.",
+        "source_snapshot_sha256": "e0d2845ef29d1ed9266b7ba33d89e7b5a886becd51865a0e36f944d6c286c47d"
+      },
+      "review_notes": "Aucune marque explicite sur la fiche. Référence interne Lima seule, insuffisante pour identifier un fabricant."
+    },
+    {
+      "slug": "femme-854-veste-bi-matiere-femme-a-capuche-avec-doudoune-et-polaire",
+      "expected_name": "Veste bi -matière femme mélange doucoune et polaire couleur Noir et rose cuivrée",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/854-veste-bi-matiere-femme-a-capuche-avec-doudoune-et-polaire.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/854-veste-bi-matiere-femme-a-capuche-avec-doudoune-et-polaire.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "779b0b822cdbed7c5c8834df59b782bace16ac83658fdeeafb17341c4ad8aea3"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-892-pull-polaire-femme-noire-maille-gaufree-vertigo",
+      "expected_name": "Pull polaire femme noir maille gaufrée",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/892-pull-polaire-femme-noire-maille-gaufree-vertigo.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/892-pull-polaire-femme-noire-maille-gaufree-vertigo.html"
+          }
+        ],
+        "basis": "Contrôle de la zone produit, du titre SEO, de la description et de la référence source : aucune marque univoque.",
+        "source_snapshot_sha256": "893819d4b661c33eec0d8dc89ca6ed97767c65ad61077bf2534befb2b427d080"
+      },
+      "review_notes": "Contradiction dans le titre SEO de la source : il cite AULP puis VERTIGO ALPES. Le descriptif produit ne tranche pas et la photo ne présente pas de marque lisible. Étiquette produit réelle à vérifier."
+    },
+    {
+      "slug": "femme-896-veste-polaire-unie-noire-bi-matiere-aulp",
+      "expected_name": "Veste polaire unie noire bi-matière",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/896-veste-polaire-unie-noire-bi-matiere-aulp.html",
+      "brand": "AULP",
+      "evidence": {
+        "value": "AULP",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/896-veste-polaire-unie-noire-bi-matiere-aulp.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : AULP.",
+        "source_snapshot_sha256": "006db7f00ddecc4913231a6ec5a0888dd8c01327998ecbfadb8487f8b91a486d"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-940-veste-polaire-udilas-canadian-peak",
+      "expected_name": "Veste polaire douce cocooning Canadian PEAK - Noir",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/940-veste-polaire-udilas-canadian-peak.html",
+      "brand": "Canadian Peak",
+      "evidence": {
+        "value": "Canadian Peak",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/940-veste-polaire-udilas-canadian-peak.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Canadian Peak.",
+        "source_snapshot_sha256": "8828cc1c112333423fcd986837e63fe2a3b055cf2543a40171e4181168edee48"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-944-veste-polaire-udilas-canadian-peak",
+      "expected_name": "Veste polaire douce cocooning Canadian Peak Taupe",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/944-veste-polaire-udilas-canadian-peak.html",
+      "brand": "Canadian Peak",
+      "evidence": {
+        "value": "Canadian Peak",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/944-veste-polaire-udilas-canadian-peak.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Canadian Peak.",
+        "source_snapshot_sha256": "b936a96bd26cb539295c697c2f71d795b5a6cfac62d4937fa2a8a4fa247f3c69"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-946-veste-polaire-unif-violine-lie-de-vin",
+      "expected_name": "Veste polaire geographical norway/Anapurna Unif Lie de Vin",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/946-veste-polaire-unif-violine-lie-de-vin.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/946-veste-polaire-unif-violine-lie-de-vin.html"
+          }
+        ],
+        "basis": "Contrôle de la zone produit, du titre SEO, de la description et de la référence source : aucune marque univoque.",
+        "source_snapshot_sha256": "c4d7d1db1b7e253a9c0a7ed71057f4cbcc4691cc927cdd6e7b4787ec31729671"
+      },
+      "review_notes": "Marques contradictoires : nom source geographical norway/Anapurna, référence GeoNwy et titre Geographical Norway ; étiquette du col de la photo lisible Canadian Peak avec watermark Geographical Norway. Vérifier le produit physique avant de choisir une marque."
+    },
+    {
+      "slug": "femme-948-veste-polaire-anapurna-femme",
+      "expected_name": "Veste polaire femme ANAPURNA utern Fushia",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/948-veste-polaire-anapurna-femme.html",
+      "brand": "Anapurna",
+      "evidence": {
+        "value": "Anapurna",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/948-veste-polaire-anapurna-femme.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Anapurna.",
+        "source_snapshot_sha256": "38fc85391cb9d042acc9d68d7dbee280b485fe79e0782de075fb303c693f9b32"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-954-veste-polaire-upzlinr-canadian-peak",
+      "expected_name": "Veste polaire douce cocooning Canadian Peak Gris foncé",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/954-veste-polaire-upzlinr-canadian-peak.html",
+      "brand": "Canadian Peak",
+      "evidence": {
+        "value": "Canadian Peak",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/954-veste-polaire-upzlinr-canadian-peak.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Canadian Peak.",
+        "source_snapshot_sha256": "491b1d43d4e76bcb4968fd29df42f1c75fc5fefce667d20c0f7fc0bab15a9fb5"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-956-veste-polaire-douce-femme-uternel-geographical-norway",
+      "expected_name": "Veste polaire douce cocooning Geographical norway Gris clair",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/956-veste-polaire-douce-femme-uternel-geographical-norway.html",
+      "brand": "Geographical Norway",
+      "evidence": {
+        "value": "Geographical Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/956-veste-polaire-douce-femme-uternel-geographical-norway.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Geographical Norway.",
+        "source_snapshot_sha256": "d752921e3a5dbead8d3a04411e2ee2118afaf9b8ae188ec302df89bb59e24b4c"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-960-veste-polaire-udilas-canadian-peak",
+      "expected_name": "Veste polaire douce cocooning Canadian PEAK Bleu Marine",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/960-veste-polaire-udilas-canadian-peak.html",
+      "brand": "Canadian Peak",
+      "evidence": {
+        "value": "Canadian Peak",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/960-veste-polaire-udilas-canadian-peak.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Canadian Peak.",
+        "source_snapshot_sha256": "eb98445e58544c28a1493bc581998cc400bab09b24637c24a2a20198de7fe76d"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-962-veste-polaire-femme-anapurna-bleu-turquoise",
+      "expected_name": "Veste polaire Femme ANAPURNA utern Bleu Turquoise",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/962-veste-polaire-femme-anapurna-bleu-turquoise.html",
+      "brand": "Anapurna",
+      "evidence": {
+        "value": "Anapurna",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/962-veste-polaire-femme-anapurna-bleu-turquoise.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Anapurna.",
+        "source_snapshot_sha256": "903dc4960d009ddac205cf6eb5f921fdc23dff6c955537fe5519f10db4d6247a"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-964-veste-polaire-femme-anapurna-vert-fonce",
+      "expected_name": "Veste polaire Femme ANAPURNA utern Vert sapin",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/964-veste-polaire-femme-anapurna-vert-fonce.html",
+      "brand": "Anapurna",
+      "evidence": {
+        "value": "Anapurna",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/964-veste-polaire-femme-anapurna-vert-fonce.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Anapurna.",
+        "source_snapshot_sha256": "2607036157dcac80352e9f6e2175fa8a73d7bc8f00a01e9b3913bfe1681ec5c4"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-966-veste-polaire-femme-anapurna-bleu-lavande",
+      "expected_name": "Veste polaire Femme ANAPURNA utern Bleu Lavande",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/966-veste-polaire-femme-anapurna-bleu-lavande.html",
+      "brand": "Anapurna",
+      "evidence": {
+        "value": "Anapurna",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/966-veste-polaire-femme-anapurna-bleu-lavande.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Anapurna.",
+        "source_snapshot_sha256": "b7ae711ef0b2ab919065cdd4ff2a6ed059fff56eab09ea8e387f6ac5f9521c20"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-968-veste-polaire-femme-geographical-norway-bleu-marine",
+      "expected_name": "Veste polaire femme douce cocooning, effet marbré chic GEONORWAY Marine",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/968-veste-polaire-femme-geographical-norway-bleu-marine.html",
+      "brand": "Geo Norway",
+      "evidence": {
+        "value": "Geo Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/968-veste-polaire-femme-geographical-norway-bleu-marine.html"
+          },
+          {
+            "label": "Geo Norway / Geographical Norway — site officiel",
+            "url": "https://www.geographicalnorway.com/en-eu/products/geographical-norway-royaute-homme-noir-noir"
+          }
+        ],
+        "basis": "Le titre ou le descriptif propre à cette fiche indique GEONORWAY/GeoNorway ; la référence et les photos concordent.",
+        "source_snapshot_sha256": "ad2ccce4454069fb072d5998e153716e10dc868b24833d11e713b9a2b5eba228"
+      },
+      "review_notes": "Libellé Geo Norway conservé pour les produits étiquetés GEONORWAY ; pas de substitution par Canadian Peak ou Anapurna."
+    },
+    {
+      "slug": "femme-974-veste-polaire-femme-geographical-norway-gris-clair",
+      "expected_name": "Veste polaire femme douce cocooning, effet marbré chic GEONORWAY Gris clair",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/974-veste-polaire-femme-geographical-norway-gris-clair.html",
+      "brand": "Geo Norway",
+      "evidence": {
+        "value": "Geo Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/974-veste-polaire-femme-geographical-norway-gris-clair.html"
+          },
+          {
+            "label": "Geo Norway / Geographical Norway — site officiel",
+            "url": "https://www.geographicalnorway.com/en-eu/products/geographical-norway-royaute-homme-noir-noir"
+          }
+        ],
+        "basis": "Le titre ou le descriptif propre à cette fiche indique GEONORWAY/GeoNorway ; la référence et les photos concordent.",
+        "source_snapshot_sha256": "3be3b946cf31a74932484f8fd6f626f5c3790a96fd75ff42b511298c45300447"
+      },
+      "review_notes": "Libellé Geo Norway conservé pour les produits étiquetés GEONORWAY ; pas de substitution par Canadian Peak ou Anapurna."
+    },
+    {
+      "slug": "femme-978-veste-polaire-femme-geographical-norway-noir",
+      "expected_name": "Veste polaire femme douce cocooning, effet marbré chic GEONORWAY Noir",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/978-veste-polaire-femme-geographical-norway-noir.html",
+      "brand": "Geo Norway",
+      "evidence": {
+        "value": "Geo Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/978-veste-polaire-femme-geographical-norway-noir.html"
+          },
+          {
+            "label": "Geo Norway / Geographical Norway — site officiel",
+            "url": "https://www.geographicalnorway.com/en-eu/products/geographical-norway-royaute-homme-noir-noir"
+          }
+        ],
+        "basis": "Le titre ou le descriptif propre à cette fiche indique GEONORWAY/GeoNorway ; la référence et les photos concordent.",
+        "source_snapshot_sha256": "3758de61662cabf881841c6edb1cb9d6658d4e9caf2e684c28e3367034936373"
+      },
+      "review_notes": "Libellé Geo Norway conservé pour les produits étiquetés GEONORWAY ; pas de substitution par Canadian Peak ou Anapurna."
+    },
+    {
+      "slug": "femme-996-veste-technique-softshell-noir-bleu-canard",
+      "expected_name": "Blouson Softshell imperméable femme Noir/Bleu canard",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/996-veste-technique-softshell-noir-bleu-canard.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/996-veste-technique-softshell-noir-bleu-canard.html"
+          }
+        ],
+        "basis": "Contrôle de la zone produit, du titre SEO, de la description et de la référence source : aucune marque univoque.",
+        "source_snapshot_sha256": "fc6469ed986f1c6d044adc0dcbd7d62d0a9feb9dcd159539ae9d4b7e2087f850"
+      },
+      "review_notes": "Aucune marque explicite dans le titre, le descriptif, les métadonnées ou la référence de la fiche source. Référence interne Lavder seule, insuffisante pour identifier un fabricant."
+    },
+    {
+      "slug": "femme-998-veste-technique-softshell-bleu-bleu-canard-bleu-ciel",
+      "expected_name": "Blouson Softshell imperméable femme Bleu/Ciel",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/998-veste-technique-softshell-bleu-bleu-canard-bleu-ciel.html",
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/998-veste-technique-softshell-bleu-bleu-canard-bleu-ciel.html"
+          }
+        ],
+        "basis": "Contrôle de la zone produit, du titre SEO, de la description et de la référence source : aucune marque univoque.",
+        "source_snapshot_sha256": "4d04b14f0c59ea14f2329878ba8893b6b24d8e09298cbfdee5543b8c7f1c28a9"
+      },
+      "review_notes": "Aucune marque explicite dans le titre, le descriptif, les métadonnées ou la référence de la fiche source. Référence interne Lavder seule, insuffisante pour identifier un fabricant."
+    },
+    {
+      "slug": "femme-1016-gilet-sans-manche-hybride-femme-aulp",
+      "expected_name": "Veste sans manche femme bi-matière avec fausse fourrure Gris ,Blanc,Noir",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1016-gilet-sans-manche-hybride-femme-aulp.html",
+      "brand": "AULP",
+      "evidence": {
+        "value": "AULP",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1016-gilet-sans-manche-hybride-femme-aulp.html"
+          }
+        ],
+        "basis": "Titre SEO de cette fiche : gilet sans manche en fausse fourrure de marque AULP. Référence interne aulp/ULA.",
+        "source_snapshot_sha256": "415bba8667a1bf293997476093d0400c3ef890e4531a4b19ca64a3f06e854236"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-1024-veste-polaire-sans-manche-lhotse",
+      "expected_name": "Veste polaire sans manche blanche LHOTSE",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1024-veste-polaire-sans-manche-lhotse.html",
+      "brand": "LHOTSE",
+      "evidence": {
+        "value": "LHOTSE",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1024-veste-polaire-sans-manche-lhotse.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : LHOTSE.",
+        "source_snapshot_sha256": "9f448dd4ea6b2ce4dff8696546946f4d03d0bd9550eb1bf9781da94b33c8c1a9"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-1032-veste-hybride-nexus-femme-aulp",
+      "expected_name": "Veste hybride outdoor gris/ noir",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1032-veste-hybride-nexus-femme-aulp.html",
+      "brand": "AULP",
+      "evidence": {
+        "value": "AULP",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1032-veste-hybride-nexus-femme-aulp.html"
+          },
+          {
+            "label": "AULP — Polaire Nexus femme, site officiel",
+            "url": "https://www.aulp.fr/products/nexus"
+          }
+        ],
+        "basis": "La source identifie le modèle Nexus de marque AULP ; le fabricant publie également la polaire Nexus femme.",
+        "source_snapshot_sha256": "e4d3d5e4db81f1c9c98b1226b43cc5d31cda91385b732a19e30a4c0bb79605d6"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-1046-veste-polaire-sans-manche-lhotse",
+      "expected_name": "Veste polaire sans manche blanche LHOTSE",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1046-veste-polaire-sans-manche-lhotse.html",
+      "brand": "LHOTSE",
+      "evidence": {
+        "value": "LHOTSE",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1046-veste-polaire-sans-manche-lhotse.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : LHOTSE.",
+        "source_snapshot_sha256": "48c73d3af19fce7fb42ea94920e7b94d6f682eb94e8b6d1822e5e40ba0679491"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-1048-veste-polaire-sans-manche-noir-lhotse",
+      "expected_name": "Veste polaire sans manche noire LHOTSE",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1048-veste-polaire-sans-manche-noir-lhotse.html",
+      "brand": "LHOTSE",
+      "evidence": {
+        "value": "LHOTSE",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1048-veste-polaire-sans-manche-noir-lhotse.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : LHOTSE.",
+        "source_snapshot_sha256": "0e7ccf83884b72e79e11aff2647f2d9d280b1c3a350204d25178360e318b013e"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "femme-1050-veste-outdoor-multi-matiere-femme-geonorway",
+      "expected_name": "Veste outdoor multi- matière E femme Marine/blanc/noir",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1050-veste-outdoor-multi-matiere-femme-geonorway.html",
+      "brand": "Geo Norway",
+      "evidence": {
+        "value": "Geo Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1050-veste-outdoor-multi-matiere-femme-geonorway.html"
+          },
+          {
+            "label": "Geo Norway / Geographical Norway — site officiel",
+            "url": "https://www.geographicalnorway.com/en-eu/products/geographical-norway-royaute-homme-noir-noir"
+          }
+        ],
+        "basis": "Le titre ou le descriptif propre à cette fiche indique GEONORWAY/GeoNorway ; la référence et les photos concordent.",
+        "source_snapshot_sha256": "e43ce99212d5de3cbe5aed557321408499f267281030571d716d6d1814ff7843"
+      },
+      "review_notes": "Libellé Geo Norway conservé pour les produits étiquetés GEONORWAY ; pas de substitution par Canadian Peak ou Anapurna."
+    },
+    {
+      "slug": "femme-1052-veste-outdoor-multi-matiere-femme-geonorway",
+      "expected_name": "Veste outdoor à capuche, multi- matière femme Noir",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1052-veste-outdoor-multi-matiere-femme-geonorway.html",
+      "brand": "Geo Norway",
+      "evidence": {
+        "value": "Geo Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1052-veste-outdoor-multi-matiere-femme-geonorway.html"
+          },
+          {
+            "label": "Geo Norway / Geographical Norway — site officiel",
+            "url": "https://www.geographicalnorway.com/en-eu/products/geographical-norway-royaute-homme-noir-noir"
+          }
+        ],
+        "basis": "Le titre ou le descriptif propre à cette fiche indique GEONORWAY/GeoNorway ; la référence et les photos concordent.",
+        "source_snapshot_sha256": "d05eaac3de003ea812f2126d2a10d2998af06faae34320bf4348350f0d19aa26"
+      },
+      "review_notes": "Libellé Geo Norway conservé pour les produits étiquetés GEONORWAY ; pas de substitution par Canadian Peak ou Anapurna."
+    },
+    {
+      "slug": "femme-1070-gilet-sans-manche-hybride-femme-aulp",
+      "expected_name": "Gilet bi-matière sans manche Femme bicolore",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1070-gilet-sans-manche-hybride-femme-aulp.html",
+      "brand": "AULP",
+      "evidence": {
+        "value": "AULP",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1070-gilet-sans-manche-hybride-femme-aulp.html"
+          }
+        ],
+        "basis": "Titre SEO et référence interne de cette fiche précisent AULP ; logo AULP lisible sur sa photo.",
+        "source_snapshot_sha256": "f311c24df37e5a46aa5a37b121cef07158307abd4098262e7e57d3b4011ba9d0"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "homme-692-veste-bi-matiere-homme-peak-mountain",
+      "expected_name": "Veste bi-matière homme en mélange doudoune et maille",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/692-veste-bi-matiere-homme-peak-mountain.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/692-veste-bi-matiere-homme-peak-mountain.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "471b03472cf436ada33ad06c8325c45d54e36211f4d1bb7131fd3fd10526c167"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "homme-796-veste-bi-matiere-homme-peak-mountain-modele-curtis",
+      "expected_name": "Veste bi-matière homme PEAK MOUNTAIN en mélange doudoune matelassée et maille",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/796-veste-bi-matiere-homme-peak-mountain-modele-curtis.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/796-veste-bi-matiere-homme-peak-mountain-modele-curtis.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "8d5a49ed724242db7992773d9e7ba2c77d35e5c2e6ce3c0de5b21617c4ef9f4f"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "homme-880-veste-chinee-homme-matelassee-",
+      "expected_name": "Veste homme bi-matière en maille chinée et doudoune matelassée Gris clair",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/880-veste-chinee-homme-matelassee-.html",
+      "brand": "Legenders",
+      "evidence": {
+        "value": "Legenders",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/880-veste-chinee-homme-matelassee-.html"
+          }
+        ],
+        "basis": "La description SEO de cette fiche précise une seule marque : Legenders. La référence interne contient LGD.",
+        "source_snapshot_sha256": "79366cad9206ba46a5fde57c605a185d4e8534d323fae5884448c170f89c1cea"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "homme-906-veste-outdoor-chinee-anapurna-homme",
+      "expected_name": "Veste outdoor Anapurna Homme Kaki/Gris",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/906-veste-outdoor-chinee-anapurna-homme.html",
+      "brand": "Anapurna",
+      "evidence": {
+        "value": "Anapurna",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/906-veste-outdoor-chinee-anapurna-homme.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Anapurna.",
+        "source_snapshot_sha256": "df9cfdc364d973b62a011e51a5cc565eb194c995b8ce104c98a56832a13589dd"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "homme-912-veste-outdoor-chinee-anapurna-homme",
+      "expected_name": "Veste outdoor Anapurna Homme Noir chiné",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/912-veste-outdoor-chinee-anapurna-homme.html",
+      "brand": "Anapurna",
+      "evidence": {
+        "value": "Anapurna",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/912-veste-outdoor-chinee-anapurna-homme.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Anapurna.",
+        "source_snapshot_sha256": "36e055b82063251c334be9892362d4dfd26a16c66bfaf4ff2cc4aa48b0a6076c"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "homme-930-sweat-homme-a-fermeture-marine-et-camel",
+      "expected_name": "Sweat zippé outdoor homme Marine/blanc/camel",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/930-sweat-homme-a-fermeture-marine-et-camel.html",
+      "brand": "CLUB JU",
+      "evidence": {
+        "value": "CLUB JU",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/930-sweat-homme-a-fermeture-marine-et-camel.html"
+          },
+          {
+            "label": "CLUB JU — présentation officielle de la marque",
+            "url": "https://clubju.com/fr/a-propos-de-nous/"
+          }
+        ],
+        "basis": "Titre SEO et description SEO de cette fiche nomment explicitement CLUB JU ; référence interne CLBj et W417501.",
+        "source_snapshot_sha256": "abc51f5e3fb6168cda3d22354ba443c0e1c3840eeef696d3e4e0f7e6e3f23767"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "homme-932-sweat-homme-zippe-club-ju",
+      "expected_name": "Sweat zippé outdoor homme Noir/blanc/Rouge",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/932-sweat-homme-zippe-club-ju.html",
+      "brand": "CLUB JU",
+      "evidence": {
+        "value": "CLUB JU",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/932-sweat-homme-zippe-club-ju.html"
+          },
+          {
+            "label": "CLUB JU — présentation officielle de la marque",
+            "url": "https://clubju.com/fr/a-propos-de-nous/"
+          }
+        ],
+        "basis": "Titre SEO et description SEO de cette fiche nomment explicitement CLUB JU ; référence interne CLBj et W417501.",
+        "source_snapshot_sha256": "c6823e3662c862f43fe9c58ded10b70b2710762a0d188723d12390d67c464e66"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "homme-982-veste-outdoor-chinee-geonorway-homme-urval-homme",
+      "expected_name": "Veste outdoor Homme GeoNorway en maille, Noir",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/982-veste-outdoor-chinee-geonorway-homme-urval-homme.html",
+      "brand": "Geo Norway",
+      "evidence": {
+        "value": "Geo Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/982-veste-outdoor-chinee-geonorway-homme-urval-homme.html"
+          },
+          {
+            "label": "Geo Norway / Geographical Norway — site officiel",
+            "url": "https://www.geographicalnorway.com/en-eu/products/geographical-norway-royaute-homme-noir-noir"
+          }
+        ],
+        "basis": "Le titre ou le descriptif propre à cette fiche indique GEONORWAY/GeoNorway ; la référence et les photos concordent.",
+        "source_snapshot_sha256": "18d16cc875101d89bc2ab1e3be46541b336a8a5f3a74f32a1af310d0a07ceba4"
+      },
+      "review_notes": "Libellé Geo Norway conservé pour les produits étiquetés GEONORWAY ; pas de substitution par Canadian Peak ou Anapurna."
+    },
+    {
+      "slug": "homme-984-veste-outdoor-chinee-geonorway-homme-urval-homme",
+      "expected_name": "Veste outdoor Homme GeoNorway en maille, Marine",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/984-veste-outdoor-chinee-geonorway-homme-urval-homme.html",
+      "brand": "Geo Norway",
+      "evidence": {
+        "value": "Geo Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/984-veste-outdoor-chinee-geonorway-homme-urval-homme.html"
+          },
+          {
+            "label": "Geo Norway / Geographical Norway — site officiel",
+            "url": "https://www.geographicalnorway.com/en-eu/products/geographical-norway-royaute-homme-noir-noir"
+          }
+        ],
+        "basis": "Le titre ou le descriptif propre à cette fiche indique GEONORWAY/GeoNorway ; la référence et les photos concordent.",
+        "source_snapshot_sha256": "ec5346b5c6827aba86055c35f7777b2b6d0f20302330d96578784c7ee7cc221e"
+      },
+      "review_notes": "Libellé Geo Norway conservé pour les produits étiquetés GEONORWAY ; pas de substitution par Canadian Peak ou Anapurna."
+    },
+    {
+      "slug": "homme-986-veste-technique-homme-impermeable-en-softshell",
+      "expected_name": "Blouson Softshell homme GEONORWAY déperlant et imperméable Noir",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/986-veste-technique-homme-impermeable-en-softshell.html",
+      "brand": "Geographical Norway",
+      "evidence": {
+        "value": "Geographical Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/986-veste-technique-homme-impermeable-en-softshell.html"
+          }
+        ],
+        "basis": "La fiche indique GEONORWAY ; les photos de ce softshell présentent le logo poitrine GEOGRAPHICAL NORWAY lisible.",
+        "source_snapshot_sha256": "9cd71608de50d3aeef8b825926aa6ce2e0cdf99e3022f0bf58b980757babba2b"
+      },
+      "review_notes": "Libellé long Geographical Norway retenu pour correspondre au logo du produit, sans l’assimiler à Canadian Peak ou Anapurna."
+    },
+    {
+      "slug": "homme-990-veste-technique-homme-impermeable-en-softshell",
+      "expected_name": "Blouson Softshell homme GEONORWAY déperlant et imperméable Gris",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/990-veste-technique-homme-impermeable-en-softshell.html",
+      "brand": "Geographical Norway",
+      "evidence": {
+        "value": "Geographical Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/990-veste-technique-homme-impermeable-en-softshell.html"
+          }
+        ],
+        "basis": "La fiche indique GEONORWAY ; les photos de ce softshell présentent le logo poitrine GEOGRAPHICAL NORWAY lisible.",
+        "source_snapshot_sha256": "4b64e891f23b870f11d0b075f8038f02cf318e4eacfb81c6ee04bd7453e35087"
+      },
+      "review_notes": "Libellé long Geographical Norway retenu pour correspondre au logo du produit, sans l’assimiler à Canadian Peak ou Anapurna."
+    },
+    {
+      "slug": "homme-1038-veste-technique-homme-impermeable-en-softshell-peak-mountain-cafe",
+      "expected_name": "Blouson Softshell homme imperméable Kaki/Noir PEAK MOUNTAIN",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1038-veste-technique-homme-impermeable-en-softshell-peak-mountain-cafe.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1038-veste-technique-homme-impermeable-en-softshell-peak-mountain-cafe.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "3b7f68c1f0a68fb6e342009b736a55aaed67d7e1efcb1ca8b3fdd5573117d91d"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "homme-1040-blouson-softshell-elgon-homme-aulp-impermeable-et-deperlant",
+      "expected_name": "Blouson softshell technique Homme AULP Noir/Turquoise",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1040-blouson-softshell-elgon-homme-aulp-impermeable-et-deperlant.html",
+      "brand": "AULP",
+      "evidence": {
+        "value": "AULP",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1040-blouson-softshell-elgon-homme-aulp-impermeable-et-deperlant.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : AULP.",
+        "source_snapshot_sha256": "c1e77f8bcfd4b617cf8906a82a622cba035625ac23c7c7d6dbe2ef3aac269871"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "homme-1044-blouson-softshell-elgon-homme-aulp-impermeable-et-deperlant",
+      "expected_name": "Blouson softshell technique Homme AULP Marine/Orange",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1044-blouson-softshell-elgon-homme-aulp-impermeable-et-deperlant.html",
+      "brand": "AULP",
+      "evidence": {
+        "value": "AULP",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1044-blouson-softshell-elgon-homme-aulp-impermeable-et-deperlant.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : AULP.",
+        "source_snapshot_sha256": "e637b9c721d5b06e2a4bfc36a2c83574cab4602f9dd9bae914aed04d16a9e0f2"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "homme-1064-veste-polaire-effet-matelasse-homme-couleur-gris-anthracite-geonorway",
+      "expected_name": "Veste polaire bi-matière membrane polarshell Homme Noire GEONORWAY",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1064-veste-polaire-effet-matelasse-homme-couleur-gris-anthracite-geonorway.html",
+      "brand": "Geo Norway",
+      "evidence": {
+        "value": "Geo Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1064-veste-polaire-effet-matelasse-homme-couleur-gris-anthracite-geonorway.html"
+          },
+          {
+            "label": "Geo Norway / Geographical Norway — site officiel",
+            "url": "https://www.geographicalnorway.com/en-eu/products/geographical-norway-royaute-homme-noir-noir"
+          }
+        ],
+        "basis": "Le titre ou le descriptif propre à cette fiche indique GEONORWAY/GeoNorway ; la référence et les photos concordent.",
+        "source_snapshot_sha256": "a24050fcc8516e98f3e735e4d129634244c4f21223026c12adcde523559b2365"
+      },
+      "review_notes": "Libellé Geo Norway conservé pour les produits étiquetés GEONORWAY ; pas de substitution par Canadian Peak ou Anapurna."
+    },
+    {
+      "slug": "homme-1065-veste-polaire-aspect-matelasse-gris-homme-geonorway",
+      "expected_name": "Veste polaire bi-matière membrane polarshell Homme Gris GEONORWAY",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1065-veste-polaire-aspect-matelasse-gris-homme-geonorway.html",
+      "brand": "Geo Norway",
+      "evidence": {
+        "value": "Geo Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1065-veste-polaire-aspect-matelasse-gris-homme-geonorway.html"
+          },
+          {
+            "label": "Geo Norway / Geographical Norway — site officiel",
+            "url": "https://www.geographicalnorway.com/en-eu/products/geographical-norway-royaute-homme-noir-noir"
+          }
+        ],
+        "basis": "Le titre ou le descriptif propre à cette fiche indique GEONORWAY/GeoNorway ; la référence et les photos concordent.",
+        "source_snapshot_sha256": "d7828c8126f52c725a77b3205604bf5197d8da95b4e185334fba55ed8a2779b4"
+      },
+      "review_notes": "Libellé Geo Norway conservé pour les produits étiquetés GEONORWAY ; pas de substitution par Canadian Peak ou Anapurna."
+    },
+    {
+      "slug": "homme-1066-veste-polaire-aspect-matelasse-bleu-marine-homme-geonorway",
+      "expected_name": "Veste polaire bi-matière membrane polarshell Homme Marine GEONORWAY",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/1066-veste-polaire-aspect-matelasse-bleu-marine-homme-geonorway.html",
+      "brand": "Geo Norway",
+      "evidence": {
+        "value": "Geo Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/1066-veste-polaire-aspect-matelasse-bleu-marine-homme-geonorway.html"
+          },
+          {
+            "label": "Geo Norway / Geographical Norway — site officiel",
+            "url": "https://www.geographicalnorway.com/en-eu/products/geographical-norway-royaute-homme-noir-noir"
+          }
+        ],
+        "basis": "Le titre ou le descriptif propre à cette fiche indique GEONORWAY/GeoNorway ; la référence et les photos concordent.",
+        "source_snapshot_sha256": "bdd7a1b5aec5270161e3d8ec71170ff2e95eb43acbb7962e60099a7feee1fb6e"
+      },
+      "review_notes": "Libellé Geo Norway conservé pour les produits étiquetés GEONORWAY ; pas de substitution par Canadian Peak ou Anapurna."
+    },
+    {
+      "slug": "enfant-74-polaire-garcon-ceven",
+      "expected_name": "Veste polaire garçon outdoor peak mountain bleu turquoise",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/74-polaire-garcon-ceven.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/74-polaire-garcon-ceven.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "11fcd05e6a4b074e4a437e7eca0f021c708b1bccd29fff2eae0c4db4f0436b2a"
+      },
+      "review_notes": "Les anciennes métadonnées listent plusieurs autres marques à des fins SEO ; attribution fondée sur le nom/descriptif de cet article et sa référence, pas sur ces listes."
+    },
+    {
+      "slug": "enfant-71-polaire-fille-ursula-geographical-norway",
+      "expected_name": "Polaire fille Grise-Geographical Norway",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/71-polaire-fille-ursula-geographical-norway.html",
+      "brand": "Geographical Norway",
+      "evidence": {
+        "value": "Geographical Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/71-polaire-fille-ursula-geographical-norway.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Geographical Norway.",
+        "source_snapshot_sha256": "c4483b9900c329d591a40dcd9805311c710599b1c3741999c3049f4e224464b5"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "enfant-72-polaire-fille-ursula-geographical-norway",
+      "expected_name": "Polaire fille cocoon Marron-Geographical Norway",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/72-polaire-fille-ursula-geographical-norway.html",
+      "brand": "Geographical Norway",
+      "evidence": {
+        "value": "Geographical Norway",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/72-polaire-fille-ursula-geographical-norway.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Geographical Norway.",
+        "source_snapshot_sha256": "aa9ce2599e1a2536c1145b3737abd9b57cdff60dcd7d8ea37ae4986be1ec1df0"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "enfant-77-blouson-polaire-peak-mountain",
+      "expected_name": "Blouson polaire rouge ECELIK Peak Mountain",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/77-blouson-polaire-peak-mountain.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/77-blouson-polaire-peak-mountain.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "10ac4baf4266f3b100c7dc95b3d6e4549c4bfe0b405a9250210c717cf3676568"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "enfant-79-blouson-polaire-peak-mountain-garcon",
+      "expected_name": "Blouson polaire Bleu roi ECELIK Peak Mountain",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/79-blouson-polaire-peak-mountain-garcon.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/79-blouson-polaire-peak-mountain-garcon.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "e65f751124efbb74f9fa9480c9b2be3c4db3c4c88c24bccbee1fe5837b34fdc3"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "enfant-80-blouson-polaire-peak-mountain-garcon",
+      "expected_name": "Blouson polaire Gris ECELIK Peak Mountain",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/80-blouson-polaire-peak-mountain-garcon.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/80-blouson-polaire-peak-mountain-garcon.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "e9aa1f8a8e953dffff759ffa68a689279250c3778f60b01070ea6acb1c104d34"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "enfant-81-blouson-polaire-peak-mountain",
+      "expected_name": "Blouson polaire Noir ECELIK Peak Mountain",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/81-blouson-polaire-peak-mountain.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/81-blouson-polaire-peak-mountain.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "c6c02fb9eac1b77a893e383e5de68b313082cc0ef244f17b1a31d24a5e530257"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "enfant-90-polaire-fille-genepy-taupe-nirvana",
+      "expected_name": "Polaire Fille Taupe-Nirvana",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/90-polaire-fille-genepy-taupe-nirvana.html",
+      "brand": "Nirvana",
+      "evidence": {
+        "value": "Nirvana",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/90-polaire-fille-genepy-taupe-nirvana.html",
+            "label": "La Caverne des Monts — fiche d’origine exacte"
+          }
+        ],
+        "basis": "La description originale de cet article indique explicitement « marque NIRVANA » ; cette marque apparaît aussi dans le titre de la fiche.",
+        "source_snapshot_sha256": "bd80a0f7ce98cbf1545a9e8590420d7d7a23e4b894e643e1e1c7989fc4a48d84"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "enfant-93-polaire-fille-genepy-turquoise-nirvana",
+      "expected_name": "Polaire Fille Turquoise-Nirvana",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/93-polaire-fille-genepy-turquoise-nirvana.html",
+      "brand": "Nirvana",
+      "evidence": {
+        "value": "Nirvana",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "url": "https://la-cavernedesmonts.fr/accueil/93-polaire-fille-genepy-turquoise-nirvana.html",
+            "label": "La Caverne des Monts — fiche d’origine exacte"
+          },
+          {
+            "url": "https://la-cavernedesmonts.fr/28-polaires-fille-",
+            "label": "La Caverne des Monts — catégorie Polaires fille, produit Turquoise-Nirvana"
+          }
+        ],
+        "basis": "La description originale de cet article indique explicitement « marque NIRVANA » ; cette marque apparaît aussi dans le titre de la fiche.",
+        "source_snapshot_sha256": "603bc1e4ab8e2c0c5520d9963d62ba2a7abc000d3524144eebbf99dbf4d4815b"
+      },
+      "review_notes": "Texte de la fiche exacte revérifié dans le HTML téléchargé le 19/10/2026 : « Polaire Genepy Fille marque NIRVANA ». Identité juridique du fabricant et contact non ajoutés."
+    },
+    {
+      "slug": "enfant-319-polaire-douce-taupe-peak-mountain",
+      "expected_name": "Polaire douce Taupe Peak Mountain",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/319-polaire-douce-taupe-peak-mountain.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/319-polaire-douce-taupe-peak-mountain.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "e2a5542d967c15857fea771c3995f6af4792f8ba42a6e07958824e18c2f3be8d"
+      },
+      "review_notes": "Les anciennes métadonnées listent plusieurs autres marques à des fins SEO ; attribution fondée sur le nom/descriptif de cet article et sa référence, pas sur ces listes."
+    },
+    {
+      "slug": "enfant-321-polaire-douce-noire-peak-mountain",
+      "expected_name": "Polaire douce noire Peak Mountain",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/321-polaire-douce-noire-peak-mountain.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/321-polaire-douce-noire-peak-mountain.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "50b1bb6c21ba9b00fbcb3a14ec294ad28a495bca4cd6e19f9b7c2b55c3cdda87"
+      },
+      "review_notes": "Les anciennes métadonnées listent plusieurs autres marques à des fins SEO ; attribution fondée sur le nom/descriptif de cet article et sa référence, pas sur ces listes."
+    },
+    {
+      "slug": "enfant-579-veste-polaire-urbaine-gris-peak-mountain",
+      "expected_name": "Veste polaire urbaine Gris Peak Mountain",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/579-veste-polaire-urbaine-gris-peak-mountain.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/579-veste-polaire-urbaine-gris-peak-mountain.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "7b42800b7f5e00f58da2ca7527a7badab2ea824562a53bf466ff98d6e143182d"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "enfant-790-veste-polaire-peak-mountain-enfant-en-maille-coloris-rose-fuchsia-peak-mountain",
+      "expected_name": "Veste polaire Peak Mountain enfant en maille coloris rose fuchsia",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/790-veste-polaire-peak-mountain-enfant-en-maille-coloris-rose-fuchsia-peak-mountain.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/790-veste-polaire-peak-mountain-enfant-en-maille-coloris-rose-fuchsia-peak-mountain.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "7b0b8d3e204f90ccbd2ad1015d4d16feddf134ec1588ccd6b15b11fde2534456"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "enfant-792-veste-polaire-peak-mountain-enfant-en-maille-coloris-gris-peak-mountain",
+      "expected_name": "Veste polaire Peak Mountain enfant en maille coloris Gris",
+      "source_url": "https://la-cavernedesmonts.fr/accueil/792-veste-polaire-peak-mountain-enfant-en-maille-coloris-gris-peak-mountain.html",
+      "brand": "Peak Mountain",
+      "evidence": {
+        "value": "Peak Mountain",
+        "checked_on": "2026-10-19",
+        "sources": [
+          {
+            "label": "Fiche produit originale de La Caverne des Monts",
+            "url": "https://la-cavernedesmonts.fr/accueil/792-veste-polaire-peak-mountain-enfant-en-maille-coloris-gris-peak-mountain.html"
+          }
+        ],
+        "basis": "La fiche originale identifie explicitement la marque dans son nom ou sa description : Peak Mountain.",
+        "source_snapshot_sha256": "4830ac6808c8d9496c2b4c7b045376abd83ce1e621e321fd7435926fd50ee375"
+      },
+      "review_notes": ""
+    },
+    {
+      "slug": "test",
+      "expected_name": "test",
+      "source_url": null,
+      "brand": null,
+      "evidence": {
+        "value": null,
+        "checked_on": "2026-10-19",
+        "sources": [],
+        "basis": "Fiche fictive « test » sans source fournisseur ni identification précise du produit. La photo comporte le logo POC, mais ne permet pas de transformer cette fiche d’essai en article commercial identifié."
+      },
+      "review_notes": "Conserver la marque vide et l’avertissement de revue. Faire identifier article réel/référence avant publication commerciale."
+    }
+  ]
+}

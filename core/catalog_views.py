@@ -17,7 +17,7 @@ from .pricing import with_catalog_prices
 @catalog_required
 @require_http_methods(['GET'])
 def catalog_list(request):
-    products = with_catalog_prices(Product.objects.select_related('category')).order_by('-created_at', '-pk')
+    products = with_catalog_prices(Product.objects.select_related('category', 'duplicate_of')).order_by('-created_at', '-pk')
     query = request.GET.get('q', '').strip()[:100]
     category = request.GET.get('categorie', '')
     status = request.GET.get('statut', '')
@@ -25,6 +25,8 @@ def catalog_list(request):
         products = products.filter(Q(name__icontains=query) | Q(description__icontains=query))
     if category:
         products = products.filter(Q(category__slug=category) | Q(collections__slug=category)).distinct()
+    if status == 'duplicate':
+        products = products.filter(duplicate_of__isnull=False)
     if status in ('published', 'draft'):
         products = products.filter(is_published=status == 'published')
     return render(request, 'core/catalog/list.html', {'page_obj':Paginator(products, 20).get_page(request.GET.get('page')), 'categories':Category.objects.all(), 'query':query, 'selected':category, 'status':status, 'total_count':Product.objects.count(), 'published_count':Product.objects.filter(is_published=True).count(), 'draft_count':Product.objects.filter(is_published=False).count()})
@@ -162,7 +164,7 @@ def catalog_edit(request, pk=None):
     from django.urls import reverse
     seo_product = build_product_seo(product, variants=stock_variants)
     seo_product_url = public_absolute_url(reverse('core:product_detail', kwargs={'slug': product.slug})) if product.pk else ''
-    return render(request, 'core/catalog/edit.html', {'seo_product':seo_product, 'seo_product_url':seo_product_url, 'form':form, 'photos':photos, 'product':product, 'initial_stock':initial_stock, 'colors':colors, 'original_color_form':original_color_form, 'original_color_name':original_color_name, 'variant_prices':variant_prices, 'unlinked_price_forms':unlinked_price_forms})
+    return render(request, 'core/catalog/edit.html', {'seo_brand_review':product.information_sources.get('_brand_review', {}), 'seo_product':seo_product, 'seo_product_url':seo_product_url, 'form':form, 'photos':photos, 'product':product, 'initial_stock':initial_stock, 'colors':colors, 'original_color_form':original_color_form, 'original_color_name':original_color_name, 'variant_prices':variant_prices, 'unlinked_price_forms':unlinked_price_forms})
 
 
 @catalog_required

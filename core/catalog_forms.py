@@ -103,6 +103,8 @@ class CatalogProductForm(forms.ModelForm):
                 self.add_error(key, 'Indiquez au maximum 3 bénéfices de 250 caractères chacun.')
             else:
                 data[key] = '\n'.join(lines)
+        if self.instance.duplicate_of_id and (data.get('is_published') or data.get('is_featured')):
+            self.add_error('is_published', 'Ce doublon est archivé. Modifiez la fiche conservée indiquée en haut de page.')
         if data.get('is_published'):
             if not data.get('description', '').strip():
                 self.add_error('description', 'Ajoutez une description avant de publier.')
