@@ -1,0 +1,15 @@
+<meta name="description" content="{{ seo.description }}">
+<meta name="robots" content="{{ seo.robots }}">
+{% if seo.canonical %}<link rel="canonical" href="{{ seo.canonical }}">{% endif %}
+<meta property="og:site_name" content="La Caverne des Monts">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="{{ seo.og_type }}">
+<meta property="og:title" content="{{ seo.title }}">
+<meta property="og:description" content="{{ seo.description }}">
+{% if seo.url %}<meta property="og:url" content="{{ seo.url }}">{% endif %}
+{% if seo.image %}<meta property="og:image" content="{{ seo.image }}">{% endif %}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo.title }}">
+<meta name="twitter:description" content="{{ seo.description }}">
+{% if seo.image %}<meta name="twitter:image" content="{{ seo.image }}">{% endif %}
+{% if seo.json_ld %}<script type="application/ld+json">{{ seo.json_ld|safe }}</script>{% endif %}

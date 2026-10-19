@@ -342,7 +342,7 @@ class OpeningPeriodTests(TestCase):
         public = Client()
         for route in ('core:location', 'core:location_legacy', 'espace:contact'):
             with self.subTest(route=route), patch('django.utils.timezone.localdate', return_value=date(2030, 2, 15)):
-                response = public.get(reverse(route))
+                response = public.get(reverse(route), follow=True)
                 self.assertContains(response, '07:05')
                 self.assertContains(response, '17:35')
                 self.assertContains(response, 'Vacances de février')

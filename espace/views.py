@@ -68,7 +68,7 @@ def info(request, page):
         from .legal_views import document
         return document(request, 'terms')
     titles = {'contact':_('Contactez-nous'), 'about':_('À propos'), 'terms':_('Conditions d’utilisation'), 'sitemap':_('Plan du site')}
-    return render(request, 'espace/'+page+'.html', {'title':titles[page], 'categories':Category.objects.all()})
+    return render(request, 'espace/'+page+'.html', {'title':titles[page], 'categories':Category.objects.all(), 'sitemap_products':Product.objects.filter(is_published=True).only('name', 'slug').order_by('name') if page == 'sitemap' else []})
 
 
 @private

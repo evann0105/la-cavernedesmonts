@@ -22,6 +22,8 @@ def back_navigation(request):
     fallback = reverse('accueil:home')
     if name == 'core:catalog_promotions' or name.startswith('core:sales_'):
         fallback = reverse('espace:account') if name == 'core:sales_dashboard' else reverse('core:sales_dashboard')
+    elif name == 'core:seo_overview':
+        fallback = reverse('espace:account')
     elif name.startswith('core:catalog_') and name != 'core:catalog_list':
         fallback = reverse('core:catalog_list')
     elif name == 'core:product_detail':

@@ -144,6 +144,7 @@
     if (sizes.length && variants.length) {
       let selectedSize = null;
       let selectedColor = null;
+      let unavailableSelection = null;
       const fallback = form.querySelector('[data-variant-fallback]');
       const canOrder = input => Boolean(input && !input.disabled && Number(input.dataset.variantAvailable) > 0);
       const stockState = matching => matching.some(canOrder) ? 'available'
@@ -152,11 +153,12 @@
 
       function selectSize(button) {
         const variant = button && variantFor(button.dataset.productSize, selectedColor?.dataset.productColor);
+        unavailableSelection = variant && !canOrder(variant) ? variant : null;
         selectedSize = canOrder(variant) ? button : null;
         variants.forEach(input => { input.checked = input === variant && Boolean(selectedSize); });
-        sizes.forEach(item => item.setAttribute('aria-pressed', String(item === selectedSize)));
+        sizes.forEach(item => item.setAttribute('aria-pressed', String(item === selectedSize || Boolean(unavailableSelection && item === button))));
         if (purchase) purchase.disabled = !selectedSize;
-        showPrice(selectedSize ? [variant] : (selectedColor
+        showPrice(variant ? [variant] : (selectedColor
           ? variants.filter(input => input.dataset.variantColor === selectedColor.dataset.productColor) : variants));
         if (quantity) {
           const limit = selectedSize ? Math.min(10, Number(variant.dataset.variantAvailable)) : 10;
@@ -166,7 +168,11 @@
         }
         if (stockSummary) stockSummary.textContent = selectedColor
           ? `${selectedColor.dataset.colorName} : ${stockLabel(selectedColor.dataset.stockState)}` : overallStockLabel;
-        if (!selectedColor) {
+        if (unavailableSelection) {
+          const state = stockState([unavailableSelection]);
+          feedback.textContent = `${selectedColor.dataset.colorName} · ${button.dataset.sizeName} : ${stockLabel(state)}.`;
+          if (stockSummary) stockSummary.textContent = feedback.textContent;
+        } else if (!selectedColor) {
           feedback.textContent = 'Choisissez d’abord votre couleur pour voir ses tailles et sa disponibilité.';
         } else if (selectedColor.dataset.stockState !== 'available') {
           feedback.textContent = `${selectedColor.dataset.colorName} : ${stockLabel(selectedColor.dataset.stockState)}.` +
@@ -179,7 +185,7 @@
         }
       }
 
-      function selectColor(button, preferredSize = selectedSize?.dataset.productSize) {
+      function selectColor(button, preferredSize = selectedSize?.dataset.productSize || unavailableSelection?.dataset.variantSize) {
         selectedColor = button || null;
         colors.forEach(item => item.setAttribute('aria-pressed', String(item === selectedColor)));
         const compatibleSizes = [];
@@ -211,7 +217,8 @@
           if (canOrder(variant)) compatibleSizes.push(item);
         });
         const retained = compatibleSizes.find(item => item.dataset.productSize === preferredSize);
-        selectSize(retained || (compatibleSizes.length === 1 ? compatibleSizes[0] : null));
+        const requested = sizes.find(item => item.dataset.productSize === preferredSize && !item.hidden);
+        selectSize(retained || requested || (compatibleSizes.length === 1 ? compatibleSizes[0] : null));
         sizePicker.hidden = !selectedColor || !sizes.some(button => !button.hidden);
         photoFor(selectedColor);
       }
@@ -254,7 +261,8 @@
         const matching = colors.filter(button => button.dataset.colorImage && photoUrl(button.dataset.colorImage) === resolved);
         if (resolved && matching.length === 1) selectColor(matching[0]);
       };
-      const restored = variants.find(input => input.checked && canOrder(input));
+      const specified = variants.find(input => input.value === form.dataset.selectedVariant);
+      const restored = specified || variants.find(input => input.checked && canOrder(input));
       const availableColors = colors.filter(button => button.dataset.stockState === 'available');
       const originalColor = colors.find(button => photoUrl(button.dataset.colorImage) === photoUrl(originalPhoto));
       const initialColor = restored
@@ -266,7 +274,7 @@
           const label = button.querySelector('[data-color-price]');
           if (label) label.textContent = priceLabel(variants.filter(input => input.dataset.variantColor === button.dataset.productColor));
         });
-        selectColor(selectedColor);
+        selectColor(selectedColor, selectedSize?.dataset.productSize || unavailableSelection?.dataset.variantSize);
       };
       // The enhanced controls validate the pair; hidden radios cannot receive native validation focus.
       variants.forEach(input => { input.required = false; });

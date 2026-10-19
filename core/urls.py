@@ -1,9 +1,10 @@
 from django.urls import path
-from . import views, catalog_views, promotion_views, sales_views
+from . import views, catalog_views, promotion_views, sales_views, seo_admin
 
 app_name = 'core'
 
 urlpatterns = [
+    path('gestion/referencement/', seo_admin.overview, name='seo_overview'),
     path('gestion/soldes/', sales_views.sales_dashboard, name='sales_dashboard'),
     path('gestion/soldes/ajouter/', sales_views.sales_create, name='sales_create'),
     path('gestion/soldes/<int:pk>/', sales_views.sales_detail, name='sales_detail'),
@@ -20,7 +21,7 @@ urlpatterns = [
     path('produits/<slug:slug>/prix/', views.product_prices, name='product_prices'),
     path('preview/<slug:slug>/', views.product_preview, name='product_preview'),
     path('magasins/', views.location, name='location'),
-    path('localisation/', views.location, name='location_legacy'),
+    path('localisation/', views.location_legacy, name='location_legacy'),
     path('panier/ajouter/<slug:slug>/', views.cart_add, name='cart_add'),
     path('panier/modifier/', views.cart_update, name='cart_update'),
     path('panier/', views.cart, name='cart'),

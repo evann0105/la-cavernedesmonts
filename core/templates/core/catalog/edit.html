@@ -1,5 +1,5 @@
 {% extends 'core/catalog/base.html' %}{% load static %}
-{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'stocks/initial-stock.css' %}?v=20261019-variant-prices">{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'core/css/seo-admin.css' %}?v=20261019"><link rel="stylesheet" href="{% static 'stocks/initial-stock.css' %}?v=20261019-variant-prices">{% endblock %}
 {% block catalog_content %}
 <div class="catalog-heading"><div><p class="eyebrow">LE CATALOGUE À VOTRE MAIN</p><h1>{% if product.pk %}Modifier un produit.{% else %}Ajouter un produit.{% endif %}</h1><p>{% if product.pk %}{{ product.name }}{% else %}Préparez votre fiche, ajoutez vos photos, puis choisissez quand la publier.{% endif %}</p></div>{% if product.pk %}<a class="button button-outline" href="{% url 'core:catalog_preview' product.pk %}">Voir l’aperçu enregistré ↗</a>{% endif %}</div>
 {% if product.pk %}<section class="catalog-panel"><h2>Déclinaisons et stocks existants</h2><p>Chaque couleur peut proposer ses propres tailles. Modifiez les prix de chaque taille sous sa couleur dans cette fiche. Pour ajuster une quantité ou corriger un libellé, utilisez l’inventaire.</p><a class="button button-outline" href="{% url 'stocks:product' product.pk %}">Gérer les variantes et le stock ↗</a></section>{% endif %}
@@ -14,6 +14,7 @@
 {% include 'core/catalog/colors.html' %}
 {% if initial_stock %}{% include 'stocks/initial_stock.html' %}{% endif %}
 </div><aside><section class="catalog-panel"><h2>03 · Où le retrouver ?</h2>{% include 'core/catalog/field.html' with field=form.category %}{% include 'core/catalog/field.html' with field=form.collections %}</section><section class="catalog-panel"><h2>04 · Publication</h2>{% include 'core/catalog/field.html' with field=form.is_published %}{% include 'core/catalog/field.html' with field=form.is_featured %}<p class="help">Les changements apparaissent après enregistrement. Un article retiré est masqué dans les collections et ne peut plus être ajouté au panier.</p></section></aside></div>
+{% include 'core/seo/product_preview.html' %}
 <div class="catalog-save"><a href="{% url 'core:catalog_list' %}">Retour aux produits</a><button class="button" type="submit">Enregistrer le produit ✓</button></div></form>
 {% endblock %}
 

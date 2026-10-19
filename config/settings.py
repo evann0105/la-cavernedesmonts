@@ -69,6 +69,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'core.seo_middleware.SearchIndexingMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -95,6 +96,7 @@ TEMPLATES = [
                 'core.context_processors.basket',
                 'core.context_processors.catalog_access',
                 'core.context_processors.back_navigation',
+                'core.seo.metadata',
             ],
         },
     },
@@ -168,6 +170,7 @@ STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET", default="")
 PAYMENTS_ENABLED = env.bool("PAYMENTS_ENABLED", default=False)
 SHOP_READY = env.bool("SHOP_READY", default=False)
 SITE_URL = env("SITE_URL", default="http://127.0.0.1:8000").rstrip("/")
+SEO_INDEXING_ENABLED = env.bool('SEO_INDEXING_ENABLED', default=False)
 STRIPE_SHIPPING_RATE = env("STRIPE_SHIPPING_RATE", default="")
 FREE_SHIPPING_THRESHOLD_EUR = env('FREE_SHIPPING_THRESHOLD_EUR', default='99.00')
 SESSION_COOKIE_HTTPONLY = True

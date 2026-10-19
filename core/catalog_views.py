@@ -157,7 +157,12 @@ def catalog_edit(request, pk=None):
                 return redirect('core:product_detail', slug=product.slug)
             return redirect('core:catalog_preview', pk=product.pk)
         messages.error(request, 'Vérifiez les champs signalés. Si vous aviez choisi des fichiers, sélectionnez-les à nouveau avant d’enregistrer.')
-    return render(request, 'core/catalog/edit.html', {'form':form, 'photos':photos, 'product':product, 'initial_stock':initial_stock, 'colors':colors, 'original_color_form':original_color_form, 'original_color_name':original_color_name, 'variant_prices':variant_prices, 'unlinked_price_forms':unlinked_price_forms})
+    from .seo_products import build_product_seo
+    from .seo import public_absolute_url
+    from django.urls import reverse
+    seo_product = build_product_seo(product, variants=stock_variants)
+    seo_product_url = public_absolute_url(reverse('core:product_detail', kwargs={'slug': product.slug})) if product.pk else ''
+    return render(request, 'core/catalog/edit.html', {'seo_product':seo_product, 'seo_product_url':seo_product_url, 'form':form, 'photos':photos, 'product':product, 'initial_stock':initial_stock, 'colors':colors, 'original_color_form':original_color_form, 'original_color_name':original_color_name, 'variant_prices':variant_prices, 'unlinked_price_forms':unlinked_price_forms})
 
 
 @catalog_required

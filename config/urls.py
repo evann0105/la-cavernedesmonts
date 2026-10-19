@@ -23,6 +23,7 @@ from django.conf.urls.static import static
 from connexion.views import SecureLoginView
 from connexion.email_views import verify_email
 from connexion.admin_site import BoutiqueAdminSite
+from core import seo_views
 
 admin.site.__class__ = BoutiqueAdminSite
 # Retain historical links without exposing the former OTP setup wizard.
@@ -33,6 +34,8 @@ secure_urls = ([
 ], 'two_factor')
 
 urlpatterns = [
+    path('robots.txt', seo_views.robots, name='seo_robots'),
+    path('sitemap.xml', seo_views.sitemap, name='seo_sitemap'),
     path('gestion/emails-test/<uuid:message_id>/', test_email_preview, name='test_email_preview'),
     path('gestion/emails-test/', test_email_inbox, name='test_email_inbox'),
     path('gestion/tableau-de-bord/', include('tableau.urls')),

@@ -48,7 +48,7 @@ class ShopTests(TestCase):
             self.assertRedirects(self.client.get(f'/page-produit/{product.slug}/'), f'/produits/{product.slug}/', status_code=301)
 
     def test_public_pages(self):
-        for url in ('/', '/produits/', '/localisation/', '/panier/', '/accounts/login/', '/accounts/signup/'):
+        for url in ('/', '/produits/', '/magasins/', '/panier/', '/accounts/login/', '/accounts/signup/'):
             self.assertEqual(self.client.get(url).status_code, 200)
         self.assertEqual(self.client.get('/produits/inexistant/').status_code, 404)
 

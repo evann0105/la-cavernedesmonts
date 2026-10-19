@@ -2,6 +2,7 @@ from django.utils.translation import gettext as _, get_language
 from pathlib import Path
 from django.conf import settings
 from django.core.paginator import Paginator
+from django.urls import reverse
 from .product_images import thumbnail_url
 from .catalog_filters import with_article_type
 from django.contrib import messages
@@ -76,6 +77,7 @@ def product_list(request):
         products = products.order_by('_catalog_min_price' if sort == 'prix' else '-_catalog_min_price', 'pk')
     selected_category = Category.objects.filter(slug=category).first() if category else None
     page = Paginator(products, 24).get_page(request.GET.get('page'))
+    request._seo_page_number = page.number
     params = request.GET.copy()
     params.pop('page', None)
     return render(request, 'core/product_list.html', {'products': page, 'page_obj': page, 'pagination_query': params.urlencode(), 'categories': Category.objects.all(), 'selected': category, 'selected_category': selected_category, 'query': query, 'sort': sort, 'article_type': article_type, 'availability': availability, 'size': size, 'size_choices': size_choices, 'type_choices': Product._meta.get_field('article_type').choices, 'availability_choices': Product._meta.get_field('availability').choices, 'intent_title': intent_title, 'intent_intro': intent_intro})
@@ -101,7 +103,22 @@ def product_detail(request, slug, catalog_preview=False):
             images.append(color.image.url)
         photo_alts[color.image.url] = f'{product.localized_name} — {color.name}'
     variants = list(product.stock_variants.all())
-    from .pricing import load_pricing_context, price_quote
+    selected_variant = None
+    if 'variante' in request.GET:
+        value = request.GET.get('variante', '')
+        selected_variant = next((variant for variant in variants if str(variant.pk) == value), None)
+        if selected_variant is None or len(request.GET.getlist('variante')) != 1:
+            return redirect('core:product_detail', slug=slug, permanent=True)
+        request._seo_variant_valid = True
+    if selected_variant:
+        color_key = ' '.join(selected_variant.color.split()).casefold()
+        matching_photo = next((color.image.url for color in color_photos if ' '.join(color.name.split()).casefold() == color_key), '')
+        if not matching_photo and ' '.join(product.main_color.split()).casefold() == color_key:
+            matching_photo = product.image_url
+        if matching_photo in images:
+            images.remove(matching_photo)
+            images.insert(0, matching_photo)
+    from .pricing import load_pricing_context, price_quote, PriceSummary
     pricing_at = timezone.now()
     load_pricing_context([product], at=pricing_at)
     quotes = []
@@ -115,9 +132,26 @@ def product_detail(request, slug, catalog_preview=False):
     options = build_product_options(product, variants, color_photos)
 
     gallery = [{'url': url, 'thumbnail': thumbnail_url(url), 'alt': photo_alts.get(url) or product.localized_name} for url in images]
+    from .seo_products import build_product_seo
+    from .seo_schema import build_product_schema
+    from .seo import page_seo, public_absolute_url
+    from paiement.views import ready
+    metadata = build_product_seo(product, variants=variants)
+    canonical = public_absolute_url(reverse('core:product_detail', kwargs={'slug': product.slug}))
+    schema = build_product_schema(product, url=canonical, images=gallery, variants=variants, at=pricing_at, can_sell=bool(ready()))
+    breadcrumb_items = [('Accueil', public_absolute_url(reverse('accueil:home')))]
+    if product.category_id:
+        from urllib.parse import urlencode
+        breadcrumb_items.append((product.category.name, public_absolute_url(reverse('core:product_list') + '?' + urlencode({'categorie': product.category.slug}))))
+    breadcrumb_items.append((product.name, canonical))
+    breadcrumb = {'@context': 'https://schema.org', '@type': 'BreadcrumbList', 'itemListElement': [
+        {'@type': 'ListItem', 'position': index, 'name': name, 'item': url}
+        for index, (name, url) in enumerate(breadcrumb_items, 1) if url]}
+    seo = page_seo(request, product=product, product_metadata={'title': metadata.title, 'description': metadata.description, 'image': gallery[0]['url'] if gallery else ''}, structured_data=[schema, breadcrumb])
+    summary = PriceSummary(selected_variant.price_quote.current, selected_variant.price_quote.current) if selected_variant else product_price_summary(product, variants)
     related = with_catalog_prices(Product.objects.filter(category=product.category, is_published=True).select_related('category').exclude(pk=product.pk))[:4]
     return render(request, 'core/product_detail.html', {'product': product, 'images': images, 'gallery': gallery, 'related': related, 'catalog_preview': catalog_preview,
-        'variants':variants, 'product_sizes':options['sizes'], 'product_colors':options['colors'], 'price_summary':product_price_summary(product, variants),
+        'variants':variants, 'product_sizes':options['sizes'], 'product_colors':options['colors'], 'price_summary':summary, 'selected_variant':selected_variant, 'seo':seo,
         'pricing_at':pricing_at, 'next_price_change':next_price_change,
         'has_available_variant':any(variant.available > 0 for variant in variants),
         'has_unknown_stock':any(variant.quantity is None for variant in variants)})
@@ -149,6 +183,10 @@ def product_prices(request, slug):
 def product_preview(request, slug):
     get_object_or_404(Product, slug=slug, is_published=True)
     return redirect('core:product_detail', slug=slug, permanent=True)
+
+
+def location_legacy(request):
+    return redirect('core:location', permanent=True)
 
 
 def location(request):

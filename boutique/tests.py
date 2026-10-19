@@ -235,13 +235,13 @@ class OpeningHoursTests(TestCase):
         urls = [reverse('core:location'), reverse('core:location_legacy'), reverse('espace:contact')]
         public = Client()
         for url in urls:
-            self.assertEqual(public.get(url).status_code, 200)
+            self.assertEqual(public.get(url, follow=True).status_code, 200)
         notice = '<script>alert("horaires")</script> Fermeture exceptionnelle dimanche.'
         data = self.data(notice=notice, **{'days-2-opens_at': '07:45', 'days-2-closes_at': '10:15'})
         self.assertRedirects(self.client.post(self.url, data), self.url)
         for url in urls:
             with self.subTest(url=url):
-                response = public.get(url)
+                response = public.get(url, follow=True)
                 self.assertContains(response, '07:45')
                 self.assertContains(response, '10:15')
                 self.assertContains(response, escape(notice))
