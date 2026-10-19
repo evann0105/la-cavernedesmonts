@@ -23,7 +23,7 @@
   const normalize = value => value.trim().replace(/\s+/g, ' ');
   const keyFor = value => normalize(value).toLocaleLowerCase('fr');
   const field = (row, name) => row.querySelector(`[name$="-${name}"]`);
-  const hasValues = row => ['size', 'color', 'quantity', 'reference'].some(name => field(row, name).value.trim()) || Boolean(row.querySelector('.errorlist'));
+  const hasValues = row => ['size', 'color', 'quantity', 'reference', 'price'].some(name => field(row, name).value.trim()) || Boolean(row.querySelector('.errorlist'));
   const isPristine = row => !linkedColors.has(row) && !field(row, 'DELETE').checked && !hasValues(row);
   const canAdd = () => Number(total.value) < maximum || [...stockRows].some(isPristine);
 
@@ -39,6 +39,9 @@
       title: row.querySelector('[data-color-stock-title]'),
       empty: row.querySelector('[data-color-stock-empty]'),
       nameHint: row.querySelector('[data-color-stock-name-hint]'),
+      price: field(row, 'color_price'),
+      applyPrice: row.querySelector('[data-apply-color-price]'),
+      priceStatus: row.querySelector('[data-color-price-status]'),
       sizes: field(row, 'sizes'),
       applySizes: row.querySelector('[data-apply-color-sizes]'),
       sizesError: row.querySelector('[data-color-sizes-error]'),
@@ -187,7 +190,7 @@
       combinations.get(combinationKey).push(row);
       const groupKey = keyFor(color);
       if (!groups.has(groupKey)) groups.set(groupKey, {color, entries: []});
-      groups.get(groupKey).entries.push({size, rawQuantity, combinationKey});
+      groups.get(groupKey).entries.push({size, rawQuantity, combinationKey, rawPrice: field(row, 'price').value || linkedColors.get(row)?.price?.value || ''});
     });
     combinations.forEach(matching => {
       if (matching.length > 1) matching.forEach(row => {
@@ -200,6 +203,7 @@
       card.title.textContent = name ? `· ${name}` : '';
       card.add.disabled = card.deleted.checked || !name || !addAllowed;
       if (card.applySizes) card.applySizes.disabled = card.deleted.checked || !name;
+      if (card.applyPrice) card.applyPrice.disabled = card.deleted.checked || !name;
       card.nameHint.hidden = Boolean(name);
       card.empty.hidden = [...stockRows].some(row => linkedColors.get(row) === card && !field(row, 'DELETE').checked);
       if (card.sizesPending) {
@@ -215,7 +219,7 @@
       term.textContent = group.color;
       const description = document.createElement('dd');
       const list = document.createElement('ul');
-      group.entries.forEach(({size, rawQuantity, combinationKey}) => {
+      group.entries.forEach(({size, rawQuantity, combinationKey, rawPrice}) => {
         const item = document.createElement('li');
         const quantity = Number(rawQuantity);
         let stockLabel = 'quantité à renseigner';
@@ -225,7 +229,9 @@
         }
         const duplicate = combinations.get(combinationKey).length > 1;
         item.classList.toggle('is-duplicate', duplicate);
-        item.textContent = `${size} · ${stockLabel}${duplicate ? ' · doublon' : ''}`;
+        const priceValue = Number((rawPrice || '').replace(',', '.'));
+        const priceLabel = rawPrice === '' ? 'prix général' : Number.isFinite(priceValue) && priceValue > 0 ? priceValue.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR'}) : 'prix à vérifier';
+        item.textContent = `${size} · ${stockLabel} · ${priceLabel}${duplicate ? ' · doublon' : ''}`;
         list.append(item);
       });
       description.append(list);
@@ -258,7 +264,10 @@
     if (card && (!name || card.deleted.checked)) return;
     const row = createStockRow();
     if (!row) return;
-    if (card) linkedColors.set(row, card);
+    if (card) {
+      linkedColors.set(row, card);
+      field(row, 'price').value = card.price?.value || '';
+    }
     if (name) field(row, 'color').value = name;
     if (!card) fallback.open = true;
     refresh(false);
@@ -302,6 +311,7 @@
       linkedColors.set(row, card);
       field(row, 'color').value = name;
       field(row, 'size').value = size;
+      field(row, 'price').value = card.price?.value || '';
       created.push(row);
     });
     card.sizes.value = listed.labels.join(', ');
@@ -310,6 +320,19 @@
       ? `${created.length} ${created.length === 1 ? 'taille préparée' : 'tailles préparées'} pour ${name}. Renseignez chaque quantité ci-dessous.`
       : 'Les tailles indiquées sont déjà enregistrées ou préparées. Leurs quantités et références sont conservées.';
     if (created.length) field(created[0], 'quantity').focus();
+  }
+
+  function applyColorPrice(card) {
+    if (!card?.price || card.deleted.checked || !normalize(card.name.value)) return;
+    const inputs = [
+      ...[...stockRows].filter(row => linkedColors.get(row) === card && !field(row, 'DELETE').checked).map(row => field(row, 'price')),
+      ...card.row.querySelectorAll('[data-existing-price-row] [name$="-price"]'),
+    ];
+    inputs.forEach(input => { input.value = card.price.value; });
+    card.priceStatus.textContent = inputs.length
+      ? `Prix appliqué à ${inputs.length} ${inputs.length === 1 ? 'taille' : 'tailles'}. Vous pouvez encore ajuster chaque prix avant d’enregistrer.`
+      : 'Préparez les tailles : ce prix sera repris pour chaque nouvelle taille.';
+    refresh(false);
   }
 
   if (colorEditor) {
@@ -330,6 +353,11 @@
   fallback.open = [...fallbackRows.querySelectorAll('[data-stock-row]')].some(row => hasValues(row) || field(row, 'DELETE').checked);
   add.addEventListener('click', () => addStock());
   form.addEventListener('click', event => {
+    const applyPrice = event.target.closest('[data-apply-color-price]');
+    if (applyPrice) {
+      applyColorPrice(colorCards.get(applyPrice.closest('[data-color-row]')));
+      return;
+    }
     const apply = event.target.closest('[data-apply-color-sizes]');
     if (apply) {
       applyListedSizes(colorCards.get(apply.closest('[data-color-row]')));

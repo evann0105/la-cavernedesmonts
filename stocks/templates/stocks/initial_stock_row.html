@@ -4,6 +4,7 @@
   <div class="initial-stock-fields">
     <div data-stock-size-field>{% include 'core/catalog/field.html' with field=stock_form.size %}</div>
     <div data-stock-color-field>{% include 'core/catalog/field.html' with field=stock_form.color %}</div>
+    <div data-stock-price-field>{% include 'core/catalog/field.html' with field=stock_form.price %}</div>
     <div data-stock-quantity-field>{% include 'core/catalog/field.html' with field=stock_form.quantity %}</div>
   </div>
   <details class="initial-stock-reference"{% if stock_form.reference.value or stock_form.reference.errors %} open{% endif %}>

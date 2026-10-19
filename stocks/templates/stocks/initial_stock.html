@@ -1,6 +1,7 @@
 <section class="catalog-panel initial-stock" data-initial-stock aria-labelledby="initial-stock-title">
   <h2 id="initial-stock-title" data-stock-section-title>Tailles et stock</h2>
   <p class="help" data-stock-manual-intro>Une ligne correspond à une taille, une couleur et sa quantité. Pour une couleur avec photo, reprenez exactement le nom renseigné dans « Couleurs, tailles et stock ».</p>
+  {% if unlinked_price_forms %}<section class="catalog-existing-price-list"><h3>Prix des tailles déjà enregistrées sans photo couleur associée</h3>{% for price_form in unlinked_price_forms %}{% include 'stocks/variant_price_row.html' %}{% endfor %}</section>{% endif %}
   {{ initial_stock.management_form }}{{ initial_stock.non_form_errors }}
   <details class="initial-stock-fallback" data-stock-fallback open>
     <summary>Stock sans photo couleur</summary>

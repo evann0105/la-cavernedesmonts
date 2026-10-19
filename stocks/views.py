@@ -65,8 +65,10 @@ def product_stock(request, pk, variant_pk=None):
                     before = old.quantity if old else 'nouvelle variante'
                     labels = (f'Taille : {old.size} → {saved.size}. Couleur : {old.color} → {saved.color}.'
                         if old else f'Taille : {saved.size}. Couleur : {saved.color}.')
-                    LogEntry.objects.log_actions(user_id=request.user.pk, queryset=Variant.objects.filter(pk=saved.pk), action_flag=CHANGE if old else ADDITION, change_message=f'Stock : {before} → {saved.quantity}. {labels}')
-                    messages.success(request, 'Variante et stock enregistrés.')
+                    before_price = f'{old.price:.2f} €' if old and old.price is not None else f'prix général du produit ({product.price:.2f} €)'
+                    after_price = f'{saved.price:.2f} €' if saved.price is not None else f'prix général du produit ({product.price:.2f} €)'
+                    LogEntry.objects.log_actions(user_id=request.user.pk, queryset=Variant.objects.filter(pk=saved.pk), action_flag=CHANGE if old else ADDITION, change_message=f'Stock : {before} → {saved.quantity}. {labels} Prix : {before_price} → {after_price}.')
+                    messages.success(request, 'Variante, prix et stock enregistrés.')
                     return redirect('stocks:product', pk=product.pk)
         except IntegrityError:
             form.add_error(None, 'Cette combinaison existe déjà. Rechargez la page pour retrouver les variantes enregistrées.')

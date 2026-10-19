@@ -99,6 +99,16 @@ class Product(models.Model):
 		return [s.strip() for s in self.sizes.split(',') if s.strip()]
 
 	@property
+	def display_price(self):
+		from .pricing import product_price_summary
+		return product_price_summary(self).minimum
+
+	@property
+	def has_price_range(self):
+		from .pricing import product_price_summary
+		return product_price_summary(self).has_range
+
+	@property
 	def image_url(self):
 		from django.templatetags.static import static
 		return self.main_image.url if self.main_image else (static(self.static_image) if self.static_image else '')

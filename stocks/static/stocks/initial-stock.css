@@ -21,11 +21,11 @@
 .catalog-existing-color-stock li { display: flex; align-items: baseline; gap: 8px; border: 1px solid #dbe1d6; border-radius: 8px; padding: 8px 12px; font-size: 14px; }
 .catalog-existing-color-stock li span { color: #5c6c59; }
 .catalog-shell .catalog-color-warning { border-left: 3px solid #b18543; background: #fff8ea; padding: 10px 12px; color: #66502a; }
-.initial-stock-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 16px; }
+.initial-stock-fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 16px; }
 .initial-stock-fields > div { min-width: 0; }
 .initial-stock-fields .catalog-field { margin: 12px 0; }
 .catalog-shell .initial-stock-fields input:not([type=checkbox]) { width: 100%; }
-.is-color-linked .initial-stock-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.is-color-linked .initial-stock-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .initial-stock-reference { margin: 10px 0; }
 .initial-stock-reference summary { font-size: 13px; color: #5c6c59; cursor: pointer; }
 .initial-stock-reference .catalog-field { margin: 12px 0; }
@@ -62,3 +62,13 @@
 .catalog-shell .catalog-color-sizes-error { color: #8c2525; background: #fff0ec; padding: 10px 12px; border-radius: 8px; }
 .catalog-shell .catalog-color-sizes input[aria-invalid=true] { border-color: #8c2525; }
 @media (max-width: 600px) { .catalog-color-sizes { padding: 14px; } .catalog-color-sizes > .button { width: 100%; } }
+
+.catalog-color-price { margin: 16px 0 20px; padding: 16px; border: 1px solid #d8dfd0; border-radius: 12px; background: #f9faf6; }
+.catalog-color-price .catalog-field { margin-top: 0; }
+.catalog-color-price .button { max-width: 100%; white-space: normal; }
+.catalog-existing-price-list { display: grid; gap: 12px; margin: 16px 0 24px; }
+.catalog-existing-price-row { padding: 14px 16px; background: #f8faf5; border: 1px solid #d8dfd0; border-radius: 10px; min-width: 0; }
+.catalog-existing-price-row > p { margin: 0 0 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+.catalog-existing-price-row .catalog-field { margin: 0; }
+@media (max-width: 720px) { .initial-stock-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } .is-color-linked .initial-stock-fields { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) { .initial-stock-fields { grid-template-columns: minmax(0, 1fr); } .catalog-color-price { padding: 14px; } .catalog-color-price .button { width: 100%; } }

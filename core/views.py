@@ -11,11 +11,12 @@ from django.templatetags.static import static
 from django.views.decorators.http import require_POST
 from .models import Product, Category
 from .cart import lines, total
+from .pricing import product_price_summary, with_catalog_prices
 
 
 def product_list(request):
     products = Product.objects.filter(is_published=True).select_related('category').order_by('-is_featured', 'name', 'pk')
-    products = with_article_type(products)
+    products = with_catalog_prices(with_article_type(products))
     category = request.GET.get('categorie', '')
     query = request.GET.get('q', '').strip()[:100]
     if category == 'cadeaux-bebe':
@@ -69,7 +70,7 @@ def product_list(request):
         intent_intro = _('Une petite attention pour les premiers mois. Besoin de choisir une taille ou un cadeau ? Parlons-en.')
     sort = request.GET.get('tri', '')
     if sort in ('prix', '-prix'):
-        products = products.order_by('price' if sort == 'prix' else '-price', 'pk')
+        products = products.order_by('_catalog_min_price' if sort == 'prix' else '-_catalog_min_price', 'pk')
     selected_category = Category.objects.filter(slug=category).first() if category else None
     page = Paginator(products, 24).get_page(request.GET.get('page'))
     params = request.GET.copy()
@@ -101,9 +102,9 @@ def product_detail(request, slug, catalog_preview=False):
     options = build_product_options(product, variants, color_photos)
 
     gallery = [{'url': url, 'thumbnail': thumbnail_url(url), 'alt': photo_alts.get(url) or product.localized_name} for url in images]
-    related = Product.objects.filter(category=product.category, is_published=True).select_related('category').exclude(pk=product.pk)[:4]
+    related = with_catalog_prices(Product.objects.filter(category=product.category, is_published=True).select_related('category').exclude(pk=product.pk))[:4]
     return render(request, 'core/product_detail.html', {'product': product, 'images': images, 'gallery': gallery, 'related': related, 'catalog_preview': catalog_preview,
-        'variants':variants, 'product_sizes':options['sizes'], 'product_colors':options['colors'],
+        'variants':variants, 'product_sizes':options['sizes'], 'product_colors':options['colors'], 'price_summary':product_price_summary(product, variants),
         'has_available_variant':any(variant.available > 0 for variant in variants),
         'has_unknown_stock':any(variant.quantity is None for variant in variants)})
 

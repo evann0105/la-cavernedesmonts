@@ -1,7 +1,8 @@
 <section class="catalog-panel catalog-colors" data-color-editor>
-  <h2>Couleurs, tailles et stock</h2>
+  <h2>Couleurs, tailles, prix et stock</h2>
   <p>Renseignez la couleur de la photo principale, puis ajoutez les autres coloris. Sous chaque photo, choisissez les tailles disponibles et leurs quantités.</p>
-  <p class="help">Exemple : saisissez M, L, XL pour le rouge et S, M pour le vert. Le client verra uniquement les tailles du coloris choisi. Chaque taille conserve sa propre quantité.</p>
+  <p class="help">Exemple : saisissez M, L, XL pour le rouge et S, M pour le vert. Le client verra uniquement les tailles du coloris choisi. Chaque taille conserve sa propre quantité et peut avoir un prix différent, par exemple Junior à 29 € et Ado à 35 €. Un champ prix vide utilise le prix général du produit.</p>
+  {{ variant_prices.management_form }}{{ variant_prices.non_form_errors }}
   {{ colors.management_form }}{{ colors.non_form_errors }}
   <div data-color-rows>{% if original_color_form %}{% include 'core/catalog/color_row.html' with color_form=original_color_form original_color=True %}{% endif %}{% for color_form in colors %}{% include 'core/catalog/color_row.html' %}{% endfor %}</div>
   <template data-color-template>{% include 'core/catalog/color_row.html' with color_form=colors.empty_form %}</template>

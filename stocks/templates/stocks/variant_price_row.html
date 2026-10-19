@@ -1,0 +1,5 @@
+<div class="catalog-existing-price-row" data-existing-price-row data-stock-size="{{ price_form.variant.size }}" data-stock-color="{{ price_form.variant.color }}">
+  {{ price_form.variant_id }}{{ price_form.revision }}{{ price_form.non_field_errors }}
+  <p><strong>{{ price_form.variant.size }} · {{ price_form.variant.color }}</strong> <span class="help">{% if price_form.variant.quantity is None %}Stock à confirmer{% else %}{{ price_form.variant.available }} disponible{{ price_form.variant.available|pluralize }}{% endif %}</span></p>
+  {% include 'core/catalog/field.html' with field=price_form.price %}
+</div>

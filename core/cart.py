@@ -18,7 +18,11 @@ def lines(request):
             if variant and (variant.product_id != product.pk or
                             (variant.size, variant.color) != (item.get('size'), item.get('color', variant.color))):
                 variant = None
-            result.append({'key':key,'product':product,'variant':variant,'size':variant.size if variant else item['size'],'color':variant.color if variant else item.get('color', ''), 'quantity':quantity,'subtotal':product.price*quantity,'stock_ok':bool(variant and variant.available >= quantity)})
+            if variant:
+                # The already-loaded product supplies the current fallback price.
+                variant.product = product
+            unit_price = variant.effective_price if variant else product.price
+            result.append({'key':key,'product':product,'variant':variant,'size':variant.size if variant else item['size'],'color':variant.color if variant else item.get('color', ''), 'quantity':quantity,'unit_price':unit_price,'subtotal':unit_price*quantity,'stock_ok':bool(variant and variant.available >= quantity)})
     return result
 
 

@@ -25,7 +25,13 @@
     </div>
   </div>
   <div class="catalog-color-stock" data-color-stock hidden>
-    <h3>Tailles et quantités <span data-color-stock-title></span></h3>
+    <h3>Tailles, prix et quantités <span data-color-stock-title></span></h3>
+    <div class="catalog-color-price">
+      {% include 'core/catalog/field.html' with field=color_form.color_price %}
+      <button class="button button-outline" type="button" data-apply-color-price>Appliquer le prix aux tailles de ce coloris</button>
+      <p class="help">Le bouton remplace les prix des tailles de ce coloris. Chaque taille reste modifiable séparément. Les anciennes commandes gardent leur prix d’achat.</p>
+      <p class="help" role="status" data-color-price-status></p>
+    </div>
     <div class="catalog-color-sizes">
       {% include 'core/catalog/field.html' with field=color_form.sizes %}
       <button class="button button-outline" type="button" data-apply-color-sizes>Préparer les tailles</button>
@@ -42,6 +48,7 @@
             <li data-existing-stock-item data-stock-size="{{ variant.size }}" data-stock-color="{{ variant.color }}"><strong>{{ variant.size }}</strong><span>{% if variant.quantity is None %}À compter{% elif variant.available == 0 %}Rupture de stock{% else %}{{ variant.available }} disponible{{ variant.available|pluralize }}{% endif %}</span></li>
           {% endfor %}
         </ul>
+        {% if color_form.price_forms %}<div class="catalog-existing-price-list">{% for price_form in color_form.price_forms %}{% include 'stocks/variant_price_row.html' %}{% endfor %}</div>{% endif %}
         <p class="help catalog-color-warning" data-existing-color-warning hidden>Le nom de cette photo a changé. Les stocks déjà enregistrés conservent leur couleur ; corrigez-les dans l’inventaire si besoin.</p>
       {% endif %}
     </div>

@@ -82,6 +82,23 @@
   const colorPicker = document.querySelector('[data-product-colors]');
   const sizePicker = document.querySelector('[data-product-sizes]');
   const form = document.querySelector('.product-purchase');
+  const priceDisplay = document.querySelector('[data-product-price]');
+  const initialPriceLabel = priceDisplay?.textContent;
+  const money = new Intl.NumberFormat(document.documentElement.lang || 'fr-FR', {
+    style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2,
+  });
+  const variantPrice = input => {
+    const raw = input?.dataset.variantPrice;
+    if (!raw) return null;
+    const amount = Number(raw);
+    return Number.isFinite(amount) && amount > 0 ? amount : null;
+  };
+  const priceLabel = inputs => {
+    const prices = inputs.map(variantPrice).filter(amount => amount !== null);
+    if (!prices.length) return '';
+    const minimum = Math.min(...prices);
+    return `${minimum === Math.max(...prices) ? '' : 'À partir de '}${money.format(minimum)}`;
+  };
   if (colorPicker && form) {
     const colors = [...colorPicker.querySelectorAll('[data-product-color]')];
     const sizes = [...(sizePicker?.querySelectorAll('[data-product-size]') || [])];
@@ -119,6 +136,9 @@
         variants.forEach(input => { input.checked = input === variant && Boolean(selectedSize); });
         sizes.forEach(item => item.setAttribute('aria-pressed', String(item === selectedSize)));
         if (purchase) purchase.disabled = !selectedSize;
+        if (priceDisplay) priceDisplay.textContent = selectedSize && variantPrice(variant) !== null
+          ? money.format(variantPrice(variant))
+          : (priceLabel(selectedColor ? variants.filter(input => input.dataset.variantColor === selectedColor.dataset.productColor) : variants) || initialPriceLabel);
         if (quantity) {
           const limit = selectedSize ? Math.min(10, Number(variant.dataset.variantAvailable)) : 10;
           quantity.max = String(limit);
@@ -155,6 +175,12 @@
             state.hidden = !unavailable;
             state.textContent = unavailable ? stockLabel(item.dataset.stockState) : '';
           }
+          const sizePrice = item.querySelector('[data-size-price]');
+          const amount = variantPrice(variant);
+          if (sizePrice) {
+            sizePrice.hidden = amount === null;
+            sizePrice.textContent = amount === null ? '' : money.format(amount);
+          }
           if (unavailable) item.title = `${item.dataset.sizeName} : ${state?.textContent || 'indisponible'} en ${selectedColor.dataset.colorName}`;
           else item.removeAttribute('title');
           if (canOrder(variant)) compatibleSizes.push(item);
@@ -174,6 +200,12 @@
         if (state) {
           state.hidden = button.dataset.stockState === 'available';
           state.textContent = state.hidden ? '' : stockLabel(button.dataset.stockState);
+        }
+        const colorPrice = button.querySelector('[data-color-price]');
+        if (colorPrice) {
+          const label = priceLabel(matching);
+          colorPrice.hidden = !label;
+          colorPrice.textContent = label;
         }
         if (button.dataset.stockState !== 'available') button.title = `${button.dataset.colorName} : ${stockLabel(button.dataset.stockState)}`;
         else button.removeAttribute('title');

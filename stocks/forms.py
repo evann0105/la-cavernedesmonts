@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django import forms
 from .models import Variant
 from .adjustments import MAX_QUANTITY
@@ -30,18 +31,31 @@ class AdjustmentForm(forms.Form):
         return values
 
 
+def variant_price_field():
+    return forms.DecimalField(
+        label='Prix pour cette taille (€)', max_digits=10, decimal_places=2,
+        min_value=Decimal('0.01'), required=False, localize=True,
+        widget=forms.TextInput(attrs={'inputmode': 'decimal', 'placeholder': 'Prix général'}),
+        help_text='Facultatif. Vide : utilise le prix général du produit.',
+    )
+
+
 class VariantForm(forms.ModelForm):
+    price = variant_price_field()
     revision = forms.IntegerField(min_value=0, widget=forms.HiddenInput, initial=0)
     quantity = forms.IntegerField(label='Quantité en stock', min_value=0, max_value=1000000, required=False, help_text='Vide : à compter. Zéro : rupture de stock.')
 
     class Meta:
         model = Variant
-        fields = ['size', 'color', 'reference', 'quantity']
+        fields = ['size', 'color', 'reference', 'quantity', 'price']
         help_texts = {'size':'Exemple : M, 6 mois ou Taille unique.', 'color':'Exemple : Bleu ou Coloris unique.'}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['revision'].initial = self.instance.revision
+        if self.instance.pk and self.is_bound and self.add_prefix('price') not in self.data:
+            self.data = self.data.copy()
+            self.data[self.add_prefix('price')] = self.instance.price if self.instance.price is not None else ''
 
     def clean(self):
         data = super().clean()
@@ -64,6 +78,11 @@ class VariantForm(forms.ModelForm):
 
 
 class InitialVariantForm(forms.Form):
+    price = variant_price_field()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['price'].help_text = 'Vide : reprend le prix du coloris s’il est renseigné, sinon le prix général du produit.'
     size = forms.CharField(label='Taille', max_length=50, required=False,
                            widget=forms.TextInput(attrs={'placeholder': 'Taille unique'}))
     color = forms.CharField(label='Couleur', max_length=80, required=False,
@@ -108,4 +127,48 @@ class InitialStockFormSet(forms.BaseFormSet):
 InitialStockForms = forms.formset_factory(
     InitialVariantForm, formset=InitialStockFormSet, extra=1,
     can_delete=True, max_num=50, absolute_max=50, validate_max=True,
+)
+
+
+class VariantPriceForm(forms.Form):
+    variant_id = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
+    revision = forms.IntegerField(min_value=0, widget=forms.HiddenInput)
+    price = variant_price_field()
+
+
+class VariantPriceFormSet(forms.BaseFormSet):
+    """Edit prices only: quantities and purchase snapshots are never rewritten."""
+    def __init__(self, *args, product, variants=None, **kwargs):
+        self.variants = {variant.pk: variant for variant in (variants if variants is not None else product.stock_variants.all())}
+        super().__init__(*args, **kwargs)
+        for form in self.forms:
+            identifier = form.data.get(form.add_prefix('variant_id')) if form.is_bound else form.initial.get('variant_id')
+            try:
+                form.variant = self.variants.get(int(identifier))
+            except (TypeError, ValueError):
+                form.variant = None
+            if form.is_bound and form.variant is not None and form.add_prefix('price') not in form.data:
+                form.data = form.data.copy()
+                form.data[form.add_prefix('price')] = form.variant.price if form.variant.price is not None else ''
+
+    def clean(self):
+        super().clean()
+        if any(self.errors):
+            return
+        seen = set()
+        for form in self.forms:
+            if not form.cleaned_data:
+                continue
+            identifier = form.cleaned_data['variant_id']
+            variant = self.variants.get(identifier)
+            if variant is None or identifier in seen:
+                raise forms.ValidationError('Une déclinaison est invalide ou ne fait pas partie de ce produit. Rechargez la page.')
+            seen.add(identifier)
+            if form.cleaned_data['revision'] != variant.revision:
+                form.add_error(None, 'Cette déclinaison a changé dans un autre onglet. Rechargez la page avant de modifier son prix.')
+
+
+VariantPriceForms = forms.formset_factory(
+    VariantPriceForm, formset=VariantPriceFormSet, extra=0,
+    max_num=1000, absolute_max=1000, validate_max=True,
 )

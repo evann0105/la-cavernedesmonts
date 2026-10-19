@@ -1,3 +1,4 @@
+from decimal import Decimal
 from io import BytesIO
 import re
 from uuid import uuid4
@@ -61,7 +62,7 @@ class CatalogProductForm(forms.ModelForm):
     benefits = forms.CharField(label='Pourquoi le choisir ?', required=False, max_length=750, widget=forms.Textarea(attrs={'rows':4}), help_text='Un bénéfice concret par ligne, 3 maximum : douceur, coupe, fermeture… Appuyez chaque phrase sur la description ou une fiche fabricant. Ne promettez pas une performance technique ni un entretien sans preuve. Videz ce champ pour masquer le bloc.')
     main_image = ShopImageField(label='Photo principale', required=False, widget=forms.ClearableFileInput(attrs={'accept':'image/jpeg,image/png,image/webp'}), help_text='JPEG, PNG ou WebP, 10 Mo et 64 mégapixels maximum. La photo est redimensionnée et optimisée automatiquement.')
     new_photos = MultiPhotoField(label='Ajouter des photos à la galerie', required=False, help_text='Vous pouvez sélectionner plusieurs photos (12 maximum par enregistrement). JPEG, PNG ou WebP : 10 Mo et 64 mégapixels maximum par photo.')
-    price = forms.DecimalField(label='Prix TTC (€)', max_digits=10, decimal_places=2, min_value=0.01, localize=True, widget=forms.TextInput(attrs={'inputmode':'decimal', 'placeholder':'39,90'}))
+    price = forms.DecimalField(label='Prix général (€)', max_digits=10, decimal_places=2, min_value=0.01, localize=True, widget=forms.TextInput(attrs={'inputmode':'decimal', 'placeholder':'39,90'}))
     category = forms.ModelChoiceField(label='Rubrique principale', queryset=Category.objects.all())
     collections = forms.ModelMultipleChoiceField(label='Afficher aussi dans', queryset=Category.objects.all(), required=False, widget=forms.CheckboxSelectMultiple, help_text='Un produit peut figurer dans plusieurs rubriques, par exemple Enfants et Polaires bébé.')
     remove_original = forms.BooleanField(label='Retirer la photo principale d’origine', required=False)
@@ -154,6 +155,12 @@ class HomepageSelectionForm(forms.Form):
 
 
 class ProductColorForm(forms.ModelForm):
+    color_price = forms.DecimalField(
+        label='Prix pour ce coloris (€)', max_digits=10, decimal_places=2,
+        min_value=Decimal('0.01'), required=False, localize=True,
+        widget=forms.TextInput(attrs={'inputmode': 'decimal', 'placeholder': 'Prix général du produit'}),
+        help_text='Facultatif. Préremplit les nouvelles tailles. Vous pouvez ensuite personnaliser le prix de chaque taille.',
+    )
     sizes = forms.CharField(
         label='Tailles disponibles pour cette couleur', required=False, max_length=1000,
         widget=forms.TextInput(attrs={'placeholder': 'M, L, XL', 'autocomplete': 'off'}),

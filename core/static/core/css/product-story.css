@@ -35,3 +35,5 @@
 .product-color-option[aria-pressed="true"] { background: #e7eddd; border-color: #294b3d; box-shadow: inset 0 0 0 1px #294b3d; }
 .product-color-option:focus-visible { outline: 3px solid #749662; outline-offset: 3px; }
 .product-colors [data-color-feedback] { margin: 12px 0 0; color: #536151; line-height: 1.5; }
+
+.product-option-price{display:block;margin-top:3px;font-size:12px;line-height:1.35;font-weight:400;white-space:nowrap}.product-size-option .product-option-price{color:#526449}.product-size-option[aria-pressed="true"] .product-option-price{color:inherit}

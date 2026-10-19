@@ -40,7 +40,7 @@ def checkout(request):
             messages.info(request, _('Le paiement en ligne n’est pas encore disponible pour ce panier. Contactez-nous pour préparer votre commande.'))
             return redirect('paiement:checkout')
         if not request.session.session_key:request.session.save()
-        snapshot = [{'product':i['product'].pk, 'variant':i['variant'].pk, 'name':i['product'].name, 'size':i['size'], 'color':i['color'], 'quantity':i['quantity'], 'unit_amount':int(i['product'].price*100)} for i in items]
+        snapshot = [{'product':i['product'].pk, 'variant':i['variant'].pk, 'name':i['product'].name, 'size':i['size'], 'color':i['color'], 'quantity':i['quantity'], 'unit_amount':int(i['unit_price']*100)} for i in items]
         try:
             previous = current_order(request)
             if previous and previous.status == 'pending' and (previous.items != snapshot or previous.user_id != (request.user.pk if request.user.is_authenticated else None)):

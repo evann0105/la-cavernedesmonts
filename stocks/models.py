@@ -1,3 +1,5 @@
+from decimal import Decimal
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models.functions import Lower
 
@@ -8,6 +10,7 @@ class Variant(models.Model):
     color = models.CharField('Couleur', max_length=80)
     reference = models.CharField('Référence interne', max_length=80, blank=True)
     quantity = models.PositiveIntegerField('Quantité en stock', null=True, blank=True)
+    price = models.DecimalField('Prix de cette taille et couleur (€)', max_digits=10, decimal_places=2, null=True, blank=True, default=None, validators=[MinValueValidator(Decimal('0.01'))])
     reserved = models.PositiveIntegerField(default=0, editable=False)
     revision = models.PositiveIntegerField(default=0)
     updated_at = models.DateTimeField(auto_now=True)
@@ -17,8 +20,13 @@ class Variant(models.Model):
         constraints = [
             models.CheckConstraint(condition=models.Q(reserved=0) | (models.Q(quantity__isnull=False) & models.Q(quantity__gte=models.F('reserved'))), name='reserved_within_stock'),
             models.UniqueConstraint('product', Lower('size'), Lower('color'), name='unique_stock_combination'),
+            models.CheckConstraint(condition=models.Q(price__isnull=True) | models.Q(price__gt=0), name='positive_variant_price'),
             models.CheckConstraint(condition=models.Q(quantity__gte=0) | models.Q(quantity__isnull=True), name='nonnegative_stock'),
         ]
+
+    @property
+    def effective_price(self):
+        return self.price if self.price is not None else self.product.price
 
     @property
     def available(self):

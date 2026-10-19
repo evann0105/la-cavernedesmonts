@@ -27,7 +27,10 @@ def reserve(session_key, user_id, snapshot):
         for item in snapshot:
             variant = variants.get(item.get('variant'))
             product = products.get(item['product'])
-            if not variant or variant.product_id != item['product'] or not product or not product.is_published or product.availability == 'unavailable' or int(product.price*100) != item['unit_amount'] or (variant.size,variant.color)!=(item['size'],item['color']) or not 1 <= item['quantity'] <= 10 or variant.available < item['quantity']:
+            if variant and product and variant.product_id == product.pk:
+                # Use the locked Product for a current, race-safe fallback price.
+                variant.product = product
+            if not variant or variant.product_id != item['product'] or not product or not product.is_published or product.availability == 'unavailable' or int(variant.effective_price*100) != item['unit_amount'] or (variant.size,variant.color)!=(item['size'],item['color']) or not 1 <= item['quantity'] <= 10 or variant.available < item['quantity']:
                 raise StockUnavailable('Une taille, une couleur, un prix ou un stock a changé. Vérifiez votre panier.')
             variant.reserved += item['quantity'];variant.revision += 1
             variant.save(update_fields=['reserved','revision','updated_at'])
