@@ -10,6 +10,10 @@ from .shipping import shipping_option
 from stocks.reservations import finish_locked, StockUnavailable
 
 
+def benefit_coupon_id(order):
+    return f'customer-benefit-{order.pk.hex}'
+
+
 def get_session(order_id, language='fr'):
     with transaction.atomic():
         order=Order.objects.select_for_update().get(pk=order_id)
@@ -38,7 +42,16 @@ def get_session(order_id, language='fr'):
                 'cancel_url':settings.SITE_URL+reverse('core:cart'),
                 'client_reference_id':str(order.pk),'metadata':{'order_id':str(order.pk)},
             }
-            order.save(update_fields=['checkout_payload','terms_snapshot','invoice_profile'])
+            from avoirs.models import BenefitRedemption
+            redemption = BenefitRedemption.objects.filter(order=order, state='held').first()
+            if redemption:
+                order.checkout_payload.pop('allow_promotion_codes', None)
+                order.checkout_payload['discounts'] = [{'coupon': benefit_coupon_id(order)}]
+                # The beneficiary is authenticated and verified before reservation.
+                # This is a payment contact, never a public promotion code.
+                order.customer_email = redemption.benefit.recipient_email
+                order.checkout_payload['metadata']['customer_benefit'] = str(redemption.benefit_id)
+            order.save(update_fields=['checkout_payload','terms_snapshot','invoice_profile','customer_email'])
     # The payload and reservations are committed before any external request.
     with transaction.atomic():
         order=Order.objects.select_for_update().get(pk=order_id)
@@ -49,7 +62,27 @@ def get_session(order_id, language='fr'):
             # Stripe may prune idempotency keys after 24 h. Never risk recreating an old ambiguous attempt.
             if timezone.now()-order.created_at > timedelta(hours=23):
                 raise StockUnavailable('Cette tentative de paiement nécessite une vérification par la boutique.')
-            session=stripe.checkout.Session.create(api_key=settings.STRIPE_SECRET_KEY,idempotency_key=f'order-{order.pk}',**order.checkout_payload)
+            from avoirs.models import BenefitRedemption
+            redemption = BenefitRedemption.objects.filter(order=order, state='held').first()
+            if redemption and not redemption.stripe_coupon_id:
+                # Frozen amount and stable idempotency key: a timeout cannot
+                # generate a second code or silently alter an existing attempt.
+                coupon = stripe.Coupon.create(
+                    api_key=settings.STRIPE_SECRET_KEY,
+                    idempotency_key=f'benefit-coupon-{order.pk}',
+                    id=benefit_coupon_id(order), amount_off=redemption.discount_amount,
+                    currency='eur', duration='once', max_redemptions=1,
+                    name='Avantage client La Caverne des Monts',
+                    metadata={'order_id': str(order.pk)},
+                )
+                redemption.stripe_coupon_id = coupon.id
+                redemption.save(update_fields=['stripe_coupon_id'])
+            payload = dict(order.checkout_payload)
+            if redemption:
+                # Contact stays encrypted at rest rather than leaking into the
+                # otherwise non-personal JSON used for payment idempotency.
+                payload['customer_email'] = order.customer_email
+            session=stripe.checkout.Session.create(api_key=settings.STRIPE_SECRET_KEY,idempotency_key=f'order-{order.pk}',**payload)
             order.stripe_session_id=session.id
             order.save(update_fields=['stripe_session_id'])
         return session
@@ -72,6 +105,10 @@ def settle(session):
             from .line_totals import capture_line_totals
             order.paid_line_totals = capture_line_totals(order, session)
             finish_locked(order,True)
+            # Keep the same global lock order as reservation (stock, then
+            # benefit). A mismatch rolls back stock and benefit together.
+            from avoirs.services import consume_locked
+            consume_locked(order, session)
             order.status='paid';order.paid_at=timezone.now();order.stripe_session_id=session['id']
             order.customer_email=(session.get('customer_details') or {}).get('email') or ''
             customer = session.get('customer_details') or {}

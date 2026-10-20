@@ -136,7 +136,17 @@ def personal(request):
 
 @private
 def credits(request):
-    return render(request,'espace/credits.html',{'title':_('Mes avoirs'),'credits':CreditNote.objects.filter(order__user=request.user)})
+    from avoirs.models import CustomerBenefit
+    from config.encrypted_fields import email_digest
+    from connexion.email_verification import email_verified
+    verified = email_verified(request.user)
+    benefits = CustomerBenefit.objects.filter(Q(bound_user_id=request.user.pk) | Q(bound_user_id__isnull=True), Q(user=request.user) | Q(user__isnull=True), recipient_email_hash=email_digest(request.user.email)).prefetch_related('redemptions').order_by('-created_at') if verified else CustomerBenefit.objects.none()
+    priority = {'available': 0, 'scheduled': 1, 'reserved': 2, 'used': 3, 'expired': 4, 'inactive': 5}
+    benefits = sorted(benefits, key=lambda benefit: (priority[benefit.status], -benefit.pk))
+    return render(request, 'espace/credits.html', {
+        'title': _('Mes avoirs'), 'credits': CreditNote.objects.filter(order__user=request.user),
+        'benefits': benefits, 'benefits_email_verified': verified,
+    })
 
 
 @private

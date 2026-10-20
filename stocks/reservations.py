@@ -13,12 +13,23 @@ class StockUnavailable(ValueError):
     pass
 
 
-def reserve(session_key, user_id, snapshot):
-    fingerprint = hashlib.sha256(json.dumps([session_key,user_id,snapshot],sort_keys=True).encode()).hexdigest()
+def reserve(session_key, user_id, snapshot, benefit=None, benefit_quote=None):
+    identity = [session_key, user_id, snapshot]
+    if benefit is not None:
+        # An existing hold keeps its original conditions even if the seller
+        # resaves the offer without changing it during the payment attempt.
+        revision = benefit_quote['revision'] if benefit_quote is not None else benefit.updated_at.isoformat()
+        identity.append([benefit.pk, revision])
+    fingerprint = hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest()
     with transaction.atomic():
         order, created = Order.objects.get_or_create(checkout_fingerprint=fingerprint, defaults={'session_key':session_key,'user_id':user_id,'items':snapshot,'subtotal':sum(i['unit_amount']*i['quantity'] for i in snapshot),'reservation_expires_at':timezone.now()+timedelta(minutes=35)})
         order = Order.objects.select_for_update().get(pk=order.pk)
         if not created:
+            if benefit is not None:
+                from avoirs.services import reserve_locked
+                from django.contrib.auth import get_user_model
+                redemption = reserve_locked(order, benefit, get_user_model().objects.get(pk=user_id))
+                _check_benefit_quote(redemption, benefit_quote)
             return order
         products = {p.pk:p for p in Product.objects.select_for_update().filter(pk__in=[i['product'] for i in snapshot]).order_by('pk')}
         variants = {v.pk:v for v in Variant.objects.select_for_update().filter(pk__in=[i.get('variant') for i in snapshot]).order_by('pk')}
@@ -38,7 +49,21 @@ def reserve(session_key, user_id, snapshot):
             variant.reserved += item['quantity'];variant.revision += 1
             variant.save(update_fields=['reserved','revision','updated_at'])
             Reservation.objects.create(order=order,variant=variant,quantity=item['quantity'])
+        if benefit is not None:
+            from avoirs.services import reserve_locked
+            from django.contrib.auth import get_user_model
+            redemption = reserve_locked(order, benefit, get_user_model().objects.get(pk=user_id))
+            _check_benefit_quote(redemption, benefit_quote)
         return order
+
+
+def _check_benefit_quote(redemption, expected):
+    from paiement.benefits import validate_discounted_total
+    validate_discounted_total(redemption.snapshot['subtotal'], redemption.discount_amount)
+    if expected is not None and (redemption.discount_amount != expected['discount_amount'] or
+            redemption.snapshot['benefit_revision'] != expected['revision']):
+        from avoirs.services import BenefitError
+        raise BenefitError('Les conditions du code ont changé. Vérifiez le récapitulatif avant de payer.')
 
 
 def finish_locked(order, sold):
@@ -55,3 +80,6 @@ def finish_locked(order, sold):
         variant.save(update_fields=['quantity','reserved','revision','updated_at'])
         hold.state='sold' if sold else 'released';hold.save(update_fields=['state'])
     order.checkout_fingerprint=None
+    if not sold:
+        from avoirs.services import release_locked
+        release_locked(order)

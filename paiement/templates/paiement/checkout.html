@@ -1,1 +1,63 @@
-{% extends 'base.html' %}{% load i18n shop_i18n static %}{% block title %}{% translate 'Votre commande — La Caverne des Monts' %}{% endblock %}{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/shipping.css' %}?v=20261018-shipping">{% endblock %}{% block content %}<section class="wrap section checkout"><p class="eyebrow">{% translate 'BIENTÔT CHEZ VOUS' %}</p><h1 class="page-title">{% translate 'Un dernier pas.' %}</h1>{% for item in cart_items %}<p>{{ item.quantity }} × {{ item.product.localized_name }} · {{ item.size|shop_text }}{% if item.color %} · {{ item.color }}{% endif %} — {{ item.subtotal|floatformat:2 }} €</p>{% endfor %}<div class="total"><strong>{% translate 'Total des articles' %}</strong><strong>{{ total|floatformat:2 }} €</strong></div>{% include 'core/partials/shipping_summary.html' %}<p class="small">Prix en euros TTC. Les frais et le montant total sont présentés avant validation du paiement. Achat ponctuel, sans abonnement ni renouvellement automatique.</p><p class="small"><a href="{% url 'espace:sales_terms' %}">Conditions générales de vente</a> · <a href="{% url 'espace:withdrawal' %}">Rétractation et garanties</a> · <a href="{% url 'espace:privacy' %}">Vos données personnelles</a></p>{% if enabled %}<p>Les quantités sont réservées au départ vers Stripe, pour environ 35 minutes. Ajouter un article au panier ne le réserve pas. En cas de retour au panier, la réservation reste active jusqu’à l’expiration du paiement.</p><p>{% translate 'Vous allez être redirigé vers la page sécurisée de Stripe. Vous y renseignerez votre adresse et consulterez les frais de livraison avant de confirmer le paiement. Vos coordonnées bancaires ne sont pas enregistrées sur notre site.' %}</p><form method="post">{% csrf_token %}<button class="button">{% translate 'Continuer vers le paiement sécurisé →' %}</button></form>{% else %}<div class="notice"><h2>{% translate 'Préparons votre commande ensemble.' %}</h2><p>{% translate 'Le paiement en ligne sera bientôt disponible. Pour le moment, contactez-nous pour confirmer les tailles, les disponibilités et la livraison. Votre panier est conservé et aucun paiement n’a été effectué.' %}</p><a class="button" href="tel:+33450404617">{% translate 'Appeler la boutique ↗' %}</a></div>{% endif %}<p class="small"><a href="{% url 'core:cart' %}">{% translate '← Revenir à mon panier' %}</a></p></section>{% endblock %}
+{% extends 'base.html' %}
+{% load i18n shop_i18n static %}
+{% block title %}Votre commande — La Caverne des Monts{% endblock %}
+{% block styles %}{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/shipping.css' %}?v=20261018-shipping">
+<link rel="stylesheet" href="{% static 'paiement/css/checkout.css' %}?v=20261020-avoirs">
+{% endblock %}
+{% block content %}
+<section class="wrap section checkout">
+  <p class="eyebrow">BIENTÔT CHEZ VOUS</p>
+  <h1 class="page-title">Un dernier pas.</h1>
+  <div class="checkout-layout">
+    <div class="checkout-summary">
+      <h2>Votre commande</h2>
+      <ul class="checkout-items">
+        {% for item in cart_items %}
+        <li><span>{{ item.quantity }} × {{ item.product.localized_name }}<small>{{ item.size|shop_text }}{% if item.color %} · {{ item.color }}{% endif %}</small></span><strong>{{ item.subtotal|floatformat:2 }} €</strong></li>
+        {% endfor %}
+      </ul>
+      <div class="checkout-amount"><span>Total des articles</span><strong>{{ total|floatformat:2 }} €</strong></div>
+      {% if discount %}
+      <div class="checkout-amount checkout-discount"><span>{{ benefit.label }}</span><strong>− {{ discount|floatformat:2 }} €</strong></div>
+      <div class="checkout-amount checkout-net"><strong>Articles après remise</strong><strong>{{ discounted_total|floatformat:2 }} €</strong></div>
+      {% endif %}
+      {% include 'core/partials/shipping_summary.html' %}
+      <p class="small">Prix en euros TTC. Les frais et le montant total sont présentés avant validation du paiement. Achat ponctuel, sans abonnement ni renouvellement automatique.</p>
+    </div>
+    <div class="checkout-next">
+      <section class="checkout-code" aria-labelledby="benefit-title">
+        <h2 id="benefit-title">Un avoir ou un bon de réduction ?</h2>
+        {% if benefit_error %}<p class="checkout-code-error" role="alert">{{ benefit_error }}</p>{% endif %}
+        {% if benefit_selected %}
+        <p class="checkout-selected-code">{% if benefit %}<strong>{{ benefit.code }}</strong><span>{{ benefit.value_label }}{% if not benefit_error %} · appliqué aux articles{% endif %}</span>{% else %}Code à retirer{% endif %}</p>
+        <form method="post">{% csrf_token %}<button class="underlined" name="action" value="remove_benefit">Retirer ce code</button></form>
+        {% endif %}
+        {% if not request.user.is_authenticated %}
+        <p>Connectez-vous au compte destinataire pour utiliser votre code personnel.</p>
+        <a class="underlined" href="{% url 'two_factor:login' %}?next={% url 'paiement:checkout' %}">Me connecter →</a>
+        {% elif not email_confirmed %}
+        <p>Confirmez votre adresse e-mail avant d’utiliser un code personnel.</p>
+        <a class="underlined" href="{% url 'connexion:verify_email' %}">Confirmer mon adresse →</a>
+        {% else %}
+        <form method="post" class="checkout-code-form">{% csrf_token %}
+          <label for="benefit-code">Votre code personnel</label>
+          <div><input id="benefit-code" name="benefit_code" maxlength="32" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CDM-…"><button class="button" name="action" value="apply_benefit">Appliquer</button></div>
+        </form>
+        <p class="small">Retrouvez vos codes et leurs conditions dans <a class="underlined" href="{% url 'espace:credits' %}">Mes avoirs</a>. Un seul code par commande, hors frais de livraison.</p>
+        {% endif %}
+      </section>
+      {% if enabled %}
+      <p>Les quantités sont réservées au départ vers Stripe, pour environ 35 minutes. Ajouter un article au panier ne le réserve pas.</p>
+      <p>Vous allez être redirigé vers la page sécurisée de Stripe. Vous y renseignerez votre adresse et consulterez les frais de livraison avant de confirmer le paiement. Vos coordonnées bancaires ne sont pas enregistrées sur notre site.</p>
+      {% if benefit_selected %}<p class="small">Votre code est réservé pendant le paiement et utilisé après confirmation. Pour l’utiliser sur une autre commande, retirez-le ici : le paiement en cours sera d’abord annulé de façon sécurisée.</p>{% endif %}
+      <form method="post">{% csrf_token %}<button class="button checkout-pay" name="action" value="pay"{% if benefit_error %} disabled{% endif %}>Continuer vers le paiement sécurisé →</button></form>
+      {% else %}
+      <div class="notice"><h2>Préparons votre commande ensemble.</h2><p>Le paiement en ligne sera bientôt disponible. Pour le moment, contactez-nous pour confirmer les tailles, les disponibilités et la livraison. Votre panier est conservé et aucun paiement n’a été effectué.</p><a class="button" href="tel:+33450404617">Appeler la boutique ↗</a></div>
+      {% endif %}
+      <p class="small checkout-legal"><a href="{% url 'espace:sales_terms' %}">Conditions générales de vente</a> · <a href="{% url 'espace:withdrawal' %}">Rétractation et garanties</a> · <a href="{% url 'espace:privacy' %}">Vos données personnelles</a></p>
+    </div>
+  </div>
+  <p class="small"><a href="{% url 'core:cart' %}">← Revenir à mon panier</a></p>
+</section>
+{% endblock %}

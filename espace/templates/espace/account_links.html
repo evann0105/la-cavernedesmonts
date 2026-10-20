@@ -16,7 +16,7 @@
   <div class="account-admin-links"><p class="eyebrow">Boutique</p><a href="{% url 'boutique:hours' %}" {% if request.resolver_match.view_name == 'boutique:hours' %}aria-current="page"{% endif %}>Horaires du magasin</a><a href="{% url 'core:catalog_homepage' %}">Personnaliser l’accueil</a></div>
   {% endif %}
   {% if can_manage_returns %}
-  <div class="account-admin-links"><p class="eyebrow">Service client</p><a href="{% url 'facturation:management' %}">Commandes et factures</a><a href="{% url 'retours:manage' %}">Gérer les retours et remboursements</a></div>
+  <div class="account-admin-links"><p class="eyebrow">Service client</p><a href="{% url 'avoirs:management' %}" {% if request.resolver_match.namespace == 'avoirs' %}aria-current="page"{% endif %}>Avoirs clients</a><a href="{% url 'facturation:management' %}">Commandes et factures</a><a href="{% url 'retours:manage' %}">Gérer les retours et remboursements</a></div>
   {% endif %}
   {% if can_manage_catalog %}
   <div class="account-admin-links"><p class="eyebrow">Configuration</p><a href="{% url 'espace:legal_readiness' %}">Préparer l’ouverture des ventes</a>{% if email_test_mode %}<a href="{% url 'test_email_inbox' %}">Boîte e-mail de test</a>{% endif %}</div>

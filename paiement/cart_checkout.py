@@ -32,6 +32,8 @@ def sync_paid_cart(request):
                 del cart[key]
     request.session['cart'] = cart
     request.session.pop('checkout_order', None)
+    request.session.pop('checkout_customer_benefit', None)
+    request.session.pop('checkout_displayed_benefit', None)
     return order
 
 
