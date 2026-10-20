@@ -17,7 +17,7 @@ class BenefitError(ValueError):
     pass
 
 
-EDIT_FIELDS = ('recipient_email', 'user_id', 'bound_user_id', 'label', 'kind', 'value', 'minimum_subtotal', 'starts_at', 'ends_at', 'active')
+EDIT_FIELDS = ('recipient_email', 'user_id', 'bound_user_id', 'label', 'justification', 'kind', 'value', 'minimum_subtotal', 'starts_at', 'ends_at', 'active')
 
 
 def cents(amount):
@@ -91,7 +91,8 @@ def reserve_locked(order, benefit, user):
     try:
         with transaction.atomic():
             redemption = BenefitRedemption.objects.create(benefit=benefit, order=order,
-                discount_amount=quoted['discount_amount'], snapshot=quoted['snapshot'])
+                discount_amount=quoted['discount_amount'], snapshot=quoted['snapshot'],
+                justification_snapshot=benefit.justification)
     except IntegrityError as exc:
         raise BenefitError('Ce code est déjà réservé ou utilisé. Actualisez votre panier.') from exc
     if not benefit.user_id:

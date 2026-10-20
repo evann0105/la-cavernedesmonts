@@ -8,6 +8,8 @@ vérification du compte, comme les autres actions du service client.
 
 1. Créer un avoir ou un bon, rechercher un client par nom / e-mail exact, ou
    renseigner une adresse dont le destinataire n’a pas encore de compte.
+   Le champ « Justification visible par le client » permet d’expliquer le geste
+   de la boutique. Ce message apparaît dans son espace et dans la notification.
 2. Choisir le type : avoir commercial en euros, réduction en euros ou pourcentage.
    Exemple : **15 %**, minimum d’articles **70 €**.
 3. Choisir éventuellement un début et une fin, à la minute, en heure de Paris.
@@ -30,6 +32,9 @@ Le client retrouve ses avantages dans **Mon compte → Mes avoirs** (`/avoirs/`)
 après confirmation de son adresse e-mail. Il copie le code puis le saisit dans
 le récapitulatif de commande, avant le paiement. La remise et le montant des
 articles après remise sont affichés avant de partir vers Stripe.
+La carte client affiche aussi la date de création, le message de la vendeuse,
+la période de validité, le temps restant et les conditions. La création et la
+modification des codes restent réservées à la page d’administration.
 
 - Un seul code personnel par commande, utilisable une seule fois.
 - Les conditions portent sur le montant effectif des articles, après les

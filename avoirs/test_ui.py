@@ -202,3 +202,55 @@ class CustomerBenefitUITests(TestCase):
         self.benefit.refresh_from_db()
         self.assertEqual(self.benefit.user, self.customer)
         self.assertEqual(self.benefit.bound_user_id, self.customer.pk)
+
+    def test_percentage_invalid_decimal_values_show_errors_without_server_failure(self):
+        count = CustomerBenefit.objects.count()
+        for value in ('', 'abc', 'NaN', 'Infinity'):
+            with self.subTest(value=value):
+                response = self.client.post(reverse('avoirs:create'), self.data(kind='percent', value=value))
+                self.assertEqual(response.status_code, 200)
+                self.assertIn('value', response.context['form'].errors)
+        self.assertEqual(CustomerBenefit.objects.count(), count)
+
+    def test_seller_can_create_justification_and_client_sees_details_without_admin_controls(self):
+        start = timezone.now() - timedelta(days=1)
+        end = timezone.now() + timedelta(days=2)
+        justification = 'Pour vous remercier de votre fidélité.\nÀ bientôt à la boutique.'
+        response = self.client.post(reverse('avoirs:create'), self.data(
+            label='Votre fidélité récompensée', justification=justification,
+            starts_at=timezone.localtime(start).strftime('%Y-%m-%dT%H:%M'),
+            ends_at=timezone.localtime(end).strftime('%Y-%m-%dT%H:%M'),
+        ))
+        self.assertEqual(response.status_code, 302)
+        benefit = CustomerBenefit.objects.get(label='Votre fidélité récompensée')
+        self.assertEqual(benefit.justification, justification)
+        self.assertContains(self.client.get(response.url), 'Message de la boutique')
+        self.client.force_login(self.customer, backend='connexion.backends.EmailOrUsernameBackend')
+        page = self.client.get(reverse('espace:credits'))
+        self.assertContains(page, 'Message de la boutique')
+        self.assertContains(page, '<p>Pour vous remercier de votre fidélité.<br>À bientôt à la boutique.</p>', html=True)
+        self.assertContains(page, 'Créé le')
+        self.assertContains(page, timezone.localtime(benefit.created_at).strftime('%d/%m/%Y à %H:%M'))
+        self.assertContains(page, 'Disponible du')
+        self.assertContains(page, timezone.localtime(benefit.starts_at).strftime('%d/%m/%Y à %H:%M'))
+        self.assertContains(page, 'Valable jusqu’au')
+        self.assertContains(page, timezone.localtime(benefit.ends_at).strftime('%d/%m/%Y à %H:%M'))
+        self.assertContains(page, 'Temps restant :')
+        self.assertContains(page, 'Conditions d’utilisation')
+        self.assertContains(page, '70,00')
+        self.assertContains(page, benefit.code)
+        self.assertNotContains(page, 'Créer un avoir ou un bon')
+        self.assertNotContains(page, 'Modifier les conditions')
+        self.assertNotContains(page, 'Activer le code')
+        self.assertNotContains(page, 'Réattribuer au compte')
+
+    def test_justification_is_escaped_and_optional(self):
+        self.benefit.justification = '<script>alert(1)</script>\nUn geste pour vous.'
+        self.benefit.save()
+        self.client.force_login(self.customer, backend='connexion.backends.EmailOrUsernameBackend')
+        page = self.client.get(reverse('espace:credits'))
+        self.assertNotContains(page, '<script>alert(1)</script>')
+        self.assertContains(page, '&lt;script&gt;alert(1)&lt;/script&gt;')
+        self.benefit.justification = ''
+        self.benefit.save()
+        self.assertNotContains(self.client.get(reverse('espace:credits')), 'Message de la boutique')

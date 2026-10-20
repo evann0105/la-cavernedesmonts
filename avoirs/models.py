@@ -4,11 +4,11 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxLengthValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 
-from config.encrypted_fields import EncryptedEmailField, EncryptedJSONField, email_digest
+from config.encrypted_fields import EncryptedEmailField, EncryptedJSONField, EncryptedTextField, email_digest
 
 
 def generate_code():
@@ -32,6 +32,8 @@ class CustomerBenefit(models.Model):
     # becomes NULL). Reuse of an old e-mail must never transfer issued value.
     bound_user_id = models.PositiveBigIntegerField(null=True, blank=True, editable=False)
     label = models.CharField('Intitulé', max_length=160)
+    justification = EncryptedTextField('Justification visible par le client', blank=True, default='',
+                                       validators=[MaxLengthValidator(2000)])
     kind = models.CharField('Type', max_length=12, choices=KINDS, default='credit')
     value = models.DecimalField('Montant / pourcentage', max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
     minimum_subtotal = models.DecimalField('Minimum d’articles (€)', max_digits=10, decimal_places=2, default=Decimal('0.00'), validators=[MinValueValidator(Decimal('0.00'))])
@@ -139,6 +141,35 @@ class CustomerBenefit(models.Model):
     def available(self):
         return self.status == 'available'
 
+    @property
+    def validity_label(self):
+        state = self.status
+        if state == 'used':
+            return 'Ce code a déjà été utilisé.'
+        if state == 'inactive':
+            return 'Ce code est désactivé.'
+        if state == 'expired':
+            return 'La période de validité est terminée.'
+        if state == 'reserved':
+            return 'Ce code est réservé pour votre paiement en cours.'
+        if not self.ends_at:
+            return 'Sans date limite d’utilisation.'
+        start = max(timezone.now(), self.starts_at) if self.starts_at else timezone.now()
+        seconds = max(0, int((self.ends_at - start).total_seconds()))
+        if seconds < 60:
+            duration = 'moins d’une minute'
+        elif seconds < 3600:
+            minutes = seconds // 60
+            duration = f'{minutes} minute' + ('s' if minutes > 1 else '')
+        elif seconds < 86400:
+            hours = seconds // 3600
+            duration = f'{hours} heure' + ('s' if hours > 1 else '')
+        else:
+            days = seconds // 86400
+            duration = f'{days} jour' + ('s' if days > 1 else '')
+        return (f'Durée d’utilisation : {duration} à partir du début de validité.' if state == 'scheduled'
+                else f'Temps restant : {duration}.')
+
 
 class BenefitRedemption(models.Model):
     benefit = models.ForeignKey(CustomerBenefit, on_delete=models.PROTECT, related_name='redemptions')
@@ -146,6 +177,8 @@ class BenefitRedemption(models.Model):
     state = models.CharField(max_length=12, choices=[('held', 'Réservé'), ('used', 'Utilisé'), ('released', 'Libéré')], default='held')
     discount_amount = models.PositiveIntegerField(help_text='Remise en centimes, figée à la réservation.')
     snapshot = models.JSONField(default=dict, editable=False)
+    justification_snapshot = EncryptedTextField(blank=True, default='', editable=False,
+                                               validators=[MaxLengthValidator(2000)])
     stripe_coupon_id = models.CharField(max_length=255, blank=True, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     used_at = models.DateTimeField(null=True, blank=True)

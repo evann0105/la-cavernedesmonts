@@ -58,6 +58,7 @@ def subject_export(user):
             snapshot = redemption.snapshot
             benefit_record = {
                 'code': snapshot.get('code'), 'intitule': snapshot.get('label'),
+                'justification': redemption.justification_snapshot,
                 'type': snapshot.get('kind'), 'valeur': snapshot.get('value'),
                 'minimum_articles_euros': snapshot.get('effective_minimum'),
                 'debut': snapshot.get('starts_at'), 'fin': snapshot.get('ends_at'),
@@ -121,6 +122,7 @@ def subject_export(user):
                              for voucher in Voucher.objects.filter(user_id=user.pk)],
         'avoirs_et_bons_clients': [{
             'code': benefit.code, 'intitule': benefit.label, 'type': benefit.get_kind_display(),
+            'justification': benefit.justification,
             'valeur': benefit.value, 'destinataire': benefit.recipient_email,
             'minimum_articles_euros': benefit.effective_minimum, 'actif': benefit.active,
             'debut': benefit.starts_at, 'fin': benefit.ends_at,

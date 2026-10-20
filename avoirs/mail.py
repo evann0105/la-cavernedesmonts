@@ -20,6 +20,9 @@ logger = logging.getLogger(__name__)
 
 def conditions(benefit):
     text = f'Code personnel : {benefit.code}\n{benefit.label}\n{benefit.get_kind_display()} : {benefit.value_label}\n'
+    text += 'Créé le ' + timezone.localtime(benefit.created_at).strftime('%d/%m/%Y à %H:%M %Z') + '.\n'
+    if benefit.justification:
+        text += f'Message de la boutique :\n{benefit.justification}\n'
     text += f'Minimum d’articles : {benefit.effective_minimum:.2f} €, hors frais de livraison.\n'
     if benefit.starts_at:
         text += 'Valable à partir du ' + timezone.localtime(benefit.starts_at).strftime('%d/%m/%Y à %H:%M %Z') + '.\n'

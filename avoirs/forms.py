@@ -12,6 +12,11 @@ class BenefitForm(forms.ModelForm):
     revision = forms.CharField(required=False, widget=forms.HiddenInput)
     creation_key = forms.UUIDField(required=False, widget=forms.HiddenInput)
     reassign_customer = forms.BooleanField(required=False, label='Réattribuer au compte correspondant à cette adresse', help_text='À utiliser si le client a changé de compte. Cette action est conservée dans l’historique.')
+    justification = forms.CharField(
+        required=False, max_length=2000, label='Justification visible par le client',
+        help_text='Expliquez votre geste au client. Ce message apparaît dans son espace et dans son e-mail ; ce n’est pas une note interne.',
+        widget=forms.Textarea(attrs={'rows': 4, 'placeholder': 'Par exemple : Pour vous remercier de votre fidélité à la boutique.'}),
+    )
     notify = forms.BooleanField(
         required=False, initial=True, label='Informer le client par e-mail',
         help_text='Le message indique le code, ses conditions et le lien vers « Mes avoirs ».',
@@ -20,7 +25,7 @@ class BenefitForm(forms.ModelForm):
     class Meta:
         model = CustomerBenefit
         fields = [
-            'recipient_email', 'label', 'kind', 'value', 'minimum_subtotal',
+            'recipient_email', 'label', 'justification', 'kind', 'value', 'minimum_subtotal',
             'starts_at', 'ends_at', 'active',
         ]
         labels = {
