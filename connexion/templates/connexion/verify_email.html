@@ -1,3 +1,26 @@
-{% extends 'base.html' %}{% load i18n %}{% block title %}{% translate 'Vérifier mon adresse e-mail' %}{% endblock %}{% block content %}<section class="auth"><h1>{% translate 'Mon compte' %}</h1>{% if verified %}<h2>{% translate 'Votre adresse e-mail est confirmée.' %}</h2><p>{{ user.email }}</p><p>{% translate 'Vous pouvez désormais vous connecter avec votre mot de passe, sans nouvelle vérification par e-mail.' %}</p><a class="button" href="{% url 'espace:account' %}">{% translate 'Accéder à mon compte' %} ↗</a>{% else %}<h2>{% translate 'Juste une confirmation.' %}</h2><p>{% translate 'Confirmez votre adresse e-mail une seule fois pour accéder à votre compte. Aucun code d’application à configurer.' %}</p>{% if user.email %}<p>{{ user.email }}</p>{% endif %}{% if not ready %}<p role="status">{% translate 'L’envoi des e-mails est momentanément indisponible. Contactez la boutique.' %}</p>{% endif %}<form method="post">{% csrf_token %}{% if not user.email %}{{ form.as_p }}{% endif %}<button class="button">{% translate 'Recevoir un lien de confirmation' %} ↗</button></form><p class="small">{% translate 'Le lien expire après une heure. Consultez aussi vos courriers indésirables.' %}</p>{% endif %}
-
-</section>{% endblock %}
+{% extends 'base.html' %}{% load i18n %}
+{% block title %}{% translate 'Vérifier mon adresse e-mail' %}{% endblock %}
+{% block content %}
+<section class="auth">
+  <h1>{% translate 'Confirmer mon adresse e-mail' %}</h1>
+  {% if verified %}
+    <h2>{% translate 'Votre adresse e-mail est confirmée.' %}</h2>
+    <p>{{ user.email }}</p>
+    <p>{% translate 'Vous pouvez consulter vos codes personnels et utiliser les services de votre compte.' %}</p>
+    {% if return_to_credits %}<a class="button" href="{% url 'espace:credits' %}">Consulter mes avoirs ↗</a>{% else %}<a class="button" href="{% url 'espace:account' %}">{% translate 'Accéder à mon compte' %} ↗</a><p><a class="text-link" href="{% url 'espace:credits' %}">Consulter mes avoirs ↗</a></p>{% endif %}
+  {% else %}
+    <p>{% translate 'Cette confirmation prouve que vous avez accès à votre adresse e-mail. Votre compte ne sera confirmé qu’après votre action depuis le lien reçu.' %}</p>
+    <ol><li>{% translate 'Renseignez votre adresse e-mail si elle manque dans votre compte.' %}</li><li>{% translate 'Demandez le lien de confirmation et ouvrez l’e-mail reçu.' %}</li><li>{% translate 'Cliquez sur le lien, puis sur « Confirmer mon adresse e-mail » dans la page qui s’ouvre.' %}</li></ol>
+    {% if user.email %}<p><strong>{% translate 'Adresse à confirmer :' %}</strong> {{ user.email }}</p>{% endif %}
+    {% if email_test_mode %}<p role="status">Mode test : les e-mails sont conservés dans la boîte e-mail de test du site. Aucun message n’est envoyé à votre boîte personnelle.</p>{% if can_manage_catalog %}<p><a class="text-link" href="{% url 'test_email_inbox' %}">Ouvrir la boîte e-mail de test ↗</a></p>{% endif %}{% endif %}
+    {% if not ready %}<p role="status">{% translate 'L’envoi des e-mails est momentanément indisponible. Contactez la boutique.' %}</p>{% endif %}
+    <form method="post" action="{% url 'connexion:verify_email' %}">{% csrf_token %}
+      {% if return_to_credits %}<input type="hidden" name="next" value="{% url 'espace:credits' %}">{% endif %}
+      {% if not user.email %}{{ form.as_p }}{% endif %}
+      <button class="button" type="submit">{% if user.email %}{% translate 'Recevoir un lien de confirmation' %}{% else %}Enregistrer mon adresse et recevoir le lien{% endif %} ↗</button>
+    </form>
+    <p class="small">{% translate 'Le lien expire après une heure. Consultez aussi vos courriers indésirables.' %}</p>
+    {% if return_to_credits %}<p><a class="text-link" href="{% url 'espace:credits' %}">← Revenir à mes avoirs</a></p>{% endif %}
+  {% endif %}
+</section>
+{% endblock %}

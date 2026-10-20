@@ -18,6 +18,29 @@ from .models import BenefitMail, CustomerBenefit
 logger = logging.getLogger(__name__)
 
 
+def local_capture_enabled():
+    return bool(getattr(settings, 'EMAIL_TEST_MODE', False) or
+                settings.EMAIL_BACKEND == 'courriels.backend.LocalMailboxBackend')
+
+
+def notification_state(benefit):
+    """Describe recorded processing, without claiming delivery to an inbox.
+
+    A previous local capture stays a local capture after SMTP is configured.
+    Notifications predating delivery_mode are deliberately reported as unknown.
+    """
+    pending = benefit.notifications.filter(sent_at__isnull=True, cancelled_at__isnull=True).exists()
+    last = benefit.notifications.filter(sent_at__isnull=False).order_by('-sent_at', '-pk').first()
+    processed_at = benefit.notified_at
+    mode = 'unknown'
+    if last and last.payload.get('revision') == benefit.updated_at.isoformat():
+        processed_at = last.sent_at
+        recorded = last.payload.get('delivery_mode')
+        if recorded in ('local_test', 'provider'):
+            mode = recorded
+    return {'pending': pending, 'processed_at': processed_at, 'mode': mode}
+
+
 def conditions(benefit):
     text = f'Code personnel : {benefit.code}\n{benefit.label}\n{benefit.get_kind_display()} : {benefit.value_label}\n'
     text += 'Créé le ' + timezone.localtime(benefit.created_at).strftime('%d/%m/%Y à %H:%M %Z') + '.\n'
@@ -81,7 +104,7 @@ def deliver_pending(limit=30, benefit_id=None):
                 notice.attempts += 1
                 notice.last_attempt_at = timezone.now()
                 notice.save(update_fields=['attempts', 'last_attempt_at'])
-                test = bool(getattr(settings, 'EMAIL_TEST_MODE', False))
+                test = local_capture_enabled()
                 context = {
                     'subject': 'Un avoir ou un bon vous attend', 'title': 'Une attention de votre boutique.',
                     'intro': 'La Caverne des Monts a préparé un avantage personnel pour votre prochaine commande.',
@@ -101,7 +124,8 @@ def deliver_pending(limit=30, benefit_id=None):
                     logger.warning('Customer benefit notification delivery failed (notice %s).', notice.pk)
                     continue
                 notice.sent_at = timezone.now()
-                notice.save(update_fields=['sent_at'])
+                notice.payload = {**payload, 'delivery_mode': 'local_test' if test else 'provider'}
+                notice.save(update_fields=['sent_at', 'payload'])
                 CustomerBenefit.objects.filter(pk=benefit.pk).update(notified_at=notice.sent_at)
                 sent += 1
         except (BenefitMail.DoesNotExist, CustomerBenefit.DoesNotExist):

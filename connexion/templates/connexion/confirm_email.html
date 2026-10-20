@@ -1,1 +1,17 @@
-{% extends 'base.html' %}{% load i18n %}{% block title %}{% translate 'Confirmer mon adresse e-mail' %}{% endblock %}{% block content %}<section class="auth">{% if valid %}<h1>{% translate 'Confirmer mon adresse e-mail' %}</h1><p>{{ user.email }}</p><form method="post">{% csrf_token %}<button class="button">{% translate 'Confirmer mon adresse e-mail' %} ↗</button></form>{% else %}<h1>{% translate 'Ce lien n’est plus valable.' %}</h1><p>{% translate 'Il a expiré, a déjà été utilisé ou correspond à un autre compte.' %}</p><a class="button" href="{% url 'connexion:verify_email' %}">{% translate 'Recevoir un nouveau lien' %}</a>{% endif %}</section>{% endblock %}
+{% extends 'base.html' %}{% load i18n %}
+{% block title %}{% translate 'Confirmer mon adresse e-mail' %}{% endblock %}
+{% block content %}
+<section class="auth">
+  {% if valid %}
+    <h1>{% translate 'Confirmer mon adresse e-mail' %}</h1>
+    <p>Dernière étape : confirmez que cette adresse est bien la vôtre.</p>
+    <p>{{ user.email }}</p>
+    <form method="post">{% csrf_token %}<button class="button" type="submit">{% translate 'Confirmer mon adresse e-mail' %} ↗</button></form>
+    <p class="small">Votre adresse reste non confirmée tant que vous n’avez pas cliqué sur ce bouton.</p>
+  {% else %}
+    <h1>{% translate 'Ce lien n’est plus valable.' %}</h1>
+    <p>{% translate 'Il a expiré, a déjà été utilisé ou correspond à un autre compte.' %}</p>
+    <a class="button" href="{% url 'connexion:verify_email' %}">{% translate 'Recevoir un nouveau lien' %}</a>
+  {% endif %}
+</section>
+{% endblock %}

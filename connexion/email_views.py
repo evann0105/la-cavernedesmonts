@@ -1,4 +1,6 @@
 from django import forms
+from django.conf import settings
+from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -7,7 +9,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods
 from django.utils.translation import gettext_lazy as _
 from .security import check_current_password, PasswordCheckLimited, lockout
-from .email_verification import local_email_bypass,email_verified,email_ready,send_verification,token_matches,confirm_token
+from .email_verification import email_verified,email_ready,send_verification,token_matches,confirm_token
 
 
 class VerificationEmailForm(forms.Form):
@@ -31,8 +33,11 @@ class VerificationEmailForm(forms.Form):
 @login_required
 @require_http_methods(['GET','POST'])
 def verify_email(request):
-    if local_email_bypass():
-        return redirect('espace:account')
+    # The development login shortcut must not prevent voluntary proof of e-mail.
+    requested_next = request.POST.get('next') if request.method == 'POST' else request.GET.get('next')
+    if requested_next == reverse('espace:credits'):
+        request.session['email_verification_return_to'] = 'espace:credits'
+    return_to_credits = request.session.get('email_verification_return_to') == 'espace:credits'
     verified=email_verified(request.user)
     form=VerificationEmailForm(request.POST if request.method=='POST' and not request.user.email else None,user=request.user)
     if request.method=='POST' and not verified:
@@ -42,13 +47,15 @@ def verify_email(request):
             except PasswordCheckLimited:
                 return lockout(request)
             if not valid:
-                return render(request,'connexion/verify_email.html',{'form':form,'ready':email_ready()})
+                return render(request,'connexion/verify_email.html',{'form':form,'ready':email_ready(),'return_to_credits':return_to_credits})
             request.user.email=form.cleaned_data['email'];request.user.save(update_fields=['email'])
         result=send_verification(request.user)
         labels={'sent':_('Le lien de confirmation a été envoyé. Consultez votre boîte mail et vos courriers indésirables.'),'limited':_('Veuillez patienter avant de demander un nouveau lien. Maximum cinq demandes par heure.'),'unavailable':_('L’envoi des e-mails est momentanément indisponible. Contactez la boutique.'),'verified':_('Votre adresse e-mail est déjà confirmée.')}
+        if result == 'sent' and settings.DEBUG and settings.EMAIL_TEST_MODE:
+            labels['sent'] = _('Le lien de confirmation a été généré dans la boîte e-mail de test du site. Aucun e-mail n’a été envoyé à votre boîte personnelle.')
         messages.info(request,labels[result])
         return redirect('connexion:verify_email')
-    return render(request,'connexion/verify_email.html',{'form':form,'verified':verified,'ready':email_ready()})
+    return render(request,'connexion/verify_email.html',{'form':form,'verified':verified,'ready':email_ready(),'return_to_credits':return_to_credits})
 
 
 @never_cache
@@ -59,7 +66,8 @@ def confirm_email(request,token):
     if request.method=='POST' and valid:
         if confirm_token(request.user,token):
             messages.success(request,_('Adresse e-mail confirmée. Bienvenue dans votre compte !'))
-            return redirect('espace:account')
+            destination = request.session.pop('email_verification_return_to', None)
+            return redirect('espace:credits' if destination == 'espace:credits' else 'espace:account')
         valid=False
     response=render(request,'connexion/confirm_email.html',{'valid':valid},status=200 if valid else 400)
     response['Referrer-Policy']='no-referrer'

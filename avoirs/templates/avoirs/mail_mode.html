@@ -1,0 +1,12 @@
+{% if benefit_email_capture %}
+<section class="benefit-panel" aria-label="Mode e-mail de test">
+  <h2>Mode e-mail de test</h2>
+  <p>Aucun e-mail n’est envoyé au client. Les messages sont enregistrés dans la boîte e-mail de test du site. Le code reste disponible dans son espace « Mes avoirs ».</p>
+  {% if email_test_mode and can_manage_catalog %}<a class="text-link" href="{% url 'test_email_inbox' %}">Ouvrir la boîte e-mail de test ↗</a>{% endif %}
+</section>
+{% elif not benefit_mail_delivery_enabled %}
+<section class="benefit-panel" aria-label="Envoi des e-mails désactivé">
+  <h2>Envoi des e-mails désactivé</h2>
+  <p>Les messages demandés restent en attente. Les codes sont disponibles dans l’espace « Mes avoirs » du client.</p>
+</section>
+{% endif %}

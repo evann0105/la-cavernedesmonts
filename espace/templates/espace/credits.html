@@ -4,7 +4,16 @@
 <div class="customer-benefits">
   <p class="customer-benefits-intro">Retrouvez ici les avoirs et les bons personnels offerts par la boutique. Saisissez votre code à l’étape de commande, avant de passer au paiement.</p>
   {% if not benefits_email_verified %}
-    <section class="hub-paper"><h2>Confirmez votre adresse e-mail</h2><p>Vos codes personnels sont protégés. Confirmez l’adresse de votre compte pour les consulter et les utiliser.</p><a class="text-link" href="{% url 'connexion:verify_email' %}">Confirmer mon adresse ↗</a></section>
+    <section class="hub-paper"><h2>Confirmez votre adresse e-mail</h2><p>Vos codes personnels sont protégés. Confirmez l’adresse de votre compte pour les consulter et les utiliser.</p>
+      {% if user.email %}
+        <p>Demandez le lien pour <strong>{{ user.email }}</strong>, puis ouvrez-le et confirmez votre adresse pour retrouver vos avoirs ici.</p>
+        {% if email_test_mode %}<p>Mode test : le lien sera conservé dans la boîte e-mail de test du site, sans envoi à votre boîte personnelle.</p>{% if can_manage_catalog %}<p><a class="text-link" href="{% url 'test_email_inbox' %}">Ouvrir la boîte e-mail de test ↗</a></p>{% endif %}{% endif %}
+        <form method="post" action="{% url 'connexion:verify_email' %}">{% csrf_token %}<input type="hidden" name="next" value="{% url 'espace:credits' %}"><button class="button" type="submit">Recevoir mon lien de confirmation ↗</button></form>
+      {% else %}
+        <p>Aucune adresse e-mail n’est renseignée dans votre compte. Ajoutez-la avec votre mot de passe actuel, puis confirmez-la depuis le lien reçu.</p>
+        {% url 'espace:credits' as credits_url %}<a class="button" href="{% url 'connexion:verify_email' %}?next={{ credits_url|urlencode }}">Ajouter mon adresse e-mail ↗</a>
+      {% endif %}
+    </section>
   {% else %}
     <div class="benefit-grid">
       {% for benefit in benefits %}

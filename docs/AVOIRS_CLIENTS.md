@@ -32,6 +32,13 @@ Le client retrouve ses avantages dans **Mon compte → Mes avoirs** (`/avoirs/`)
 après confirmation de son adresse e-mail. Il copie le code puis le saisit dans
 le récapitulatif de commande, avant le paiement. La remise et le montant des
 articles après remise sont affichés avant de partir vers Stripe.
+Si son adresse est déjà renseignée, « Recevoir mon lien de confirmation »
+demande le mail directement depuis Mes avoirs. Sinon, il renseigne d’abord
+son adresse et son mot de passe actuel. Le lien reçu ouvre une page avec un
+bouton de confirmation ; une simple ouverture ne valide pas l’adresse.
+Dans le même navigateur, le client revient ensuite à Mes avoirs. Cette
+vérification volontaire fonctionne aussi en développement, indépendamment
+du raccourci local de connexion.
 La carte client affiche aussi la date de création, le message de la vendeuse,
 la période de validité, le temps restant et les conditions. La création et la
 modification des codes restent réservées à la page d’administration.
@@ -80,6 +87,11 @@ un doublon de message, sans créer ni consommer un second code.
 Le mode e-mail de test existant capture les messages dans la boîte locale. En
 production, utiliser le prestataire de messagerie configuré et les clés Stripe
 prévues ; aucune clé ni adresse de vrai client n’est intégrée aux tests.
+La fiche distingue une capture locale d’une transmission au prestataire ; le
+mode de chaque nouvel envoi réussi est conservé dans sa trace chiffrée, même
+si la configuration change ensuite. Une transmission ne garantit pas la
+réception dans la boîte du destinataire. Les anciennes traces sans mode sont
+signalées comme telles, sans renvoi automatique lors du passage au SMTP.
 
 ## Validation avant mise en service
 

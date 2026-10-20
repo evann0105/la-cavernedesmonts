@@ -93,7 +93,7 @@ class LocalEmailBypassTests(TestCase):
         self.assertFalse(email_verified(user))
         self.assertFalse(EmailVerification.objects.filter(user=user).exists())
         self.assertEqual(self.client.get(reverse('espace:personal')).status_code,200)
-        self.assertRedirects(self.client.get(reverse('connexion:verify_email')),reverse('espace:account'))
+        self.assertEqual(self.client.get(reverse('connexion:verify_email')).status_code,200)
         self.assertEqual(self.client.get('/gestion/produits/').status_code,403)
         with override_settings(DEBUG=False):
             self.assertRedirects(self.client.get(reverse('espace:account')),reverse('connexion:verify_email'))
@@ -113,3 +113,93 @@ class LocalEmailBypassTests(TestCase):
         user.is_active=True;user.is_staff=True;user.is_superuser=True;user.save()
         self.assertEqual(self.client.get('/gestion/produits/').status_code,200)
         self.assertFalse(email_verified(user))
+
+
+@override_settings(DEBUG=True, LOCAL_SKIP_EMAIL_VERIFICATION=True, EMAIL_DELIVERY_ENABLED=True,
+                   EMAIL_TEST_MODE=False, EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+                   DEFAULT_FROM_EMAIL='boutique@example.test', SITE_URL='http://localhost:8001')
+class VoluntaryLocalVerificationTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('voluntary-local', email='voluntary@example.test', password='Test-pass-123')
+        self.client.force_login(self.user, backend='connexion.backends.EmailOrUsernameBackend')
+
+    def token_from_message(self):
+        return re.search(r'/confirmer-email/([^/]+)/', mail.outbox[-1].body).group(1)
+
+    def test_local_get_is_passive_and_explicit_post_really_verifies_before_returning_to_credits(self):
+        url = reverse('connexion:verify_email')
+        self.assertEqual(self.client.get(url).status_code, 200)
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertFalse(EmailVerification.objects.filter(user=self.user).exists())
+        self.assertRedirects(self.client.post(url, {'next': reverse('espace:credits')}), url)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[-1].to, [self.user.email])
+        self.assertFalse(email_verified(self.user))
+        confirmation = reverse('connexion:confirm_email', args=[self.token_from_message()])
+        self.assertEqual(self.client.get(confirmation).status_code, 200)
+        self.assertFalse(email_verified(self.user))
+        self.assertRedirects(self.client.post(confirmation), reverse('espace:credits'))
+        self.assertTrue(email_verified(self.user))
+        self.assertNotIn('email_verification_return_to', self.client.session)
+
+    def test_credits_request_button_uses_post_and_csrf(self):
+        page = self.client.get(reverse('espace:credits'))
+        self.assertContains(page, 'Recevoir mon lien de confirmation')
+        self.assertContains(page, 'method="post" action="' + reverse('connexion:verify_email') + '"')
+        self.assertContains(page, '<input type="hidden" name="next" value="' + reverse('espace:credits') + '">', html=True)
+        strict = Client(enforce_csrf_checks=True)
+        strict.force_login(self.user, backend='connexion.backends.EmailOrUsernameBackend')
+        self.assertEqual(strict.post(reverse('connexion:verify_email'), {'next': reverse('espace:credits')}).status_code, 403)
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertFalse(email_verified(self.user))
+
+    def test_missing_email_is_requested_with_current_password_then_confirmation_still_required(self):
+        self.user.email = ''
+        self.user.save(update_fields=['email'])
+        page = self.client.get(reverse('espace:credits'))
+        self.assertContains(page, 'Ajouter mon adresse e-mail')
+        self.assertNotContains(page, 'Recevoir mon lien de confirmation')
+        verification = reverse('connexion:verify_email')
+        page = self.client.get(verification, {'next': reverse('espace:credits')})
+        self.assertContains(page, 'Mot de passe actuel')
+        self.assertEqual(len(mail.outbox), 0)
+        invalid = self.client.post(verification, {'email': 'added@example.test', 'password': 'wrong'})
+        self.assertEqual(invalid.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, '')
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertRedirects(self.client.post(verification, {'email': 'ADDED@example.test', 'password': 'Test-pass-123'}), verification)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, 'added@example.test')
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertFalse(email_verified(self.user))
+        confirmation = reverse('connexion:confirm_email', args=[self.token_from_message()])
+        self.assertRedirects(self.client.post(confirmation), reverse('espace:credits'))
+        self.assertTrue(email_verified(self.user))
+
+    def test_external_or_corrupted_return_destination_never_redirects_outside_account(self):
+        verification = reverse('connexion:verify_email')
+        self.assertEqual(self.client.get(verification, {'next': 'https://outside.example.test/'}).status_code, 200)
+        self.assertNotIn('email_verification_return_to', self.client.session)
+        self.assertRedirects(self.client.post(verification, {'next': '//outside.example.test/'}), verification)
+        session = self.client.session
+        session['email_verification_return_to'] = 'https://outside.example.test/'
+        session.save()
+        confirmation = reverse('connexion:confirm_email', args=[self.token_from_message()])
+        self.assertRedirects(self.client.post(confirmation), reverse('espace:account'))
+
+    @override_settings(EMAIL_TEST_MODE=True)
+    def test_capture_mode_does_not_claim_real_email_delivery(self):
+        response = self.client.post(reverse('connexion:verify_email'), follow=True)
+        self.assertContains(response, 'Le lien de confirmation a été généré dans la boîte e-mail de test du site.')
+        self.assertContains(response, 'Aucun e-mail n’a été envoyé à votre boîte personnelle.')
+        self.assertNotContains(response, 'Le lien de confirmation a été envoyé. Consultez votre boîte mail')
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertFalse(email_verified(self.user))
+
+    @override_settings(EMAIL_TEST_MODE=True)
+    def test_capture_inbox_link_is_only_shown_to_catalog_managers(self):
+        self.assertNotContains(self.client.get(reverse('connexion:verify_email')), 'Ouvrir la boîte e-mail de test')
+        manager = User.objects.create_superuser('voluntary-manager', email='manager@example.test', password='Test-pass-123')
+        self.client.force_login(manager, backend='connexion.backends.EmailOrUsernameBackend')
+        self.assertContains(self.client.get(reverse('connexion:verify_email')), 'Ouvrir la boîte e-mail de test')

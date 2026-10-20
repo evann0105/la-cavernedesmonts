@@ -12,6 +12,7 @@ from django.views.decorators.http import require_POST
 from config.encrypted_fields import email_digest
 from retours.access import returns_required
 from .forms import BenefitForm
+from .mail import local_capture_enabled, notification_state
 from .models import CustomerBenefit
 from .services import save_benefit, notify_benefit
 
@@ -21,6 +22,30 @@ STATUSES = {
     'reserved': 'En cours de commande', 'used': 'Utilisés',
     'expired': 'Expirés', 'inactive': 'Désactivés',
 }
+
+
+def _mail_context():
+    return {
+        'benefit_email_capture': local_capture_enabled(),
+        'benefit_mail_delivery_enabled': bool(settings.EMAIL_DELIVERY_ENABLED),
+    }
+
+
+def _notification_feedback(benefit):
+    state = notification_state(benefit)
+    if state['pending']:
+        if local_capture_enabled():
+            return 'Le message est en attente de capture dans la boîte e-mail de test. Aucun e-mail ne sera envoyé au client.'
+        if not settings.EMAIL_DELIVERY_ENABLED:
+            return 'Le message est en attente : l’envoi des e-mails est désactivé.'
+        return 'Le message est en attente d’envoi. Sa réception par le client n’est pas encore confirmée.'
+    if state['processed_at']:
+        if state['mode'] == 'local_test':
+            return 'Le message est disponible dans la boîte e-mail de test. Aucun e-mail n’a été envoyé au client.'
+        if state['mode'] == 'provider':
+            return 'Le message a été pris en charge par le service d’envoi. Sa réception par le client n’est pas encore confirmée.'
+        return 'Un ancien traitement du message est enregistré, mais son mode d’envoi n’est pas connu. Sa réception n’est pas confirmée.'
+    return 'Consultez le statut du message sur cette fiche avant de le renvoyer.'
 
 
 def _customers(query):
@@ -78,7 +103,7 @@ def management(request):
     return render(request, 'avoirs/management.html', {
         'benefits': page, 'query': query, 'status': status,
         'status_tabs': [(key, label, counts[key]) for key, label in STATUSES.items()],
-        'counts': counts,
+        'counts': counts, **_mail_context(),
     })
 
 
@@ -96,12 +121,12 @@ def create(request):
         except (ValidationError, ValueError) as exc:
             _error(form, exc)
         else:
-            messages.success(request, 'Le code a été créé. Le message au client est préparé pour l’envoi.' if form.cleaned_data['notify'] else 'Le code a été créé sans envoyer de message au client.')
+            messages.success(request, 'Le code a été créé. ' + (_notification_feedback(benefit) if form.cleaned_data['notify'] else 'Aucun e-mail n’a été demandé.'))
             return redirect('avoirs:detail', pk=benefit.pk)
     return render(request, 'avoirs/form.html', {
         'form': form, 'customer_query': customer_query,
         'customers': _customers(customer_query) if customer_query else [],
-        'creating': True,
+        'creating': True, **_mail_context(),
     })
 
 
@@ -111,7 +136,7 @@ def detail(request, pk):
     return render(request, 'avoirs/detail.html', {
         'benefit': benefit, 'can_edit': benefit.status not in ('reserved', 'used'),
         'redemptions': benefit.redemptions.select_related('order').order_by('-created_at'),
-        'notification_pending': benefit.notifications.filter(sent_at__isnull=True, cancelled_at__isnull=True).exists(),
+        'notification': notification_state(benefit), **_mail_context(),
         'events': benefit.events.select_related('actor').order_by('-created_at')[:30],
         'notification_key': uuid.uuid4(),
         'can_notify': benefit.status not in ('used', 'inactive', 'expired') and not (benefit.bound_user_id and not benefit.user_id) and (not benefit.user_id or email_digest(benefit.user.email) == benefit.recipient_email_hash),
@@ -131,9 +156,9 @@ def edit(request, pk):
         except (ValidationError, ValueError) as exc:
             _error(form, exc)
         else:
-            messages.success(request, 'Les conditions du code ont été enregistrées.' + (' Le message au client est préparé pour l’envoi.' if form.cleaned_data['notify'] else ''))
+            messages.success(request, 'Les conditions du code ont été enregistrées. ' + (_notification_feedback(benefit) if form.cleaned_data['notify'] else 'Aucun nouvel e-mail n’a été demandé.'))
             return redirect('avoirs:detail', pk=benefit.pk)
-    return render(request, 'avoirs/form.html', {'form': form, 'benefit': benefit, 'creating': False})
+    return render(request, 'avoirs/form.html', {'form': form, 'benefit': benefit, 'creating': False, **_mail_context()})
 
 
 @returns_required
@@ -160,5 +185,5 @@ def notify(request, pk):
     except (ValidationError, ValueError) as exc:
         messages.error(request, ' '.join(exc.messages) if isinstance(exc, ValidationError) else str(exc))
     else:
-        messages.success(request, 'Le message au client est préparé pour l’envoi.' + (' Retrouvez-le dans la boîte e-mail de test.' if settings.EMAIL_TEST_MODE else ''))
+        messages.success(request, _notification_feedback(benefit))
     return redirect('avoirs:detail', pk=pk)

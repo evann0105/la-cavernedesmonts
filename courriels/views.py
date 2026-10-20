@@ -1,12 +1,36 @@
 import json
+import re
 import uuid
 from functools import wraps
 from pathlib import Path
+from urllib.parse import urlsplit
 from django.conf import settings
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
+from django.urls import Resolver404, resolve
 from django.views.decorators.http import require_GET
 from core.catalog_access import catalog_required
+
+
+def confirmation_path(body):
+    """Expose only this site's confirmation page outside the isolated preview.
+
+    Visiting it does not confirm an address: the signed token, recipient login
+    and explicit CSRF-protected confirmation still have to pass their checks.
+    Never turn arbitrary links from a captured message into mailbox actions.
+    """
+    origin = urlsplit(settings.SITE_URL)
+    for candidate in re.findall(r'https?://[^\s<>"\']+', body):
+        try:
+            url = urlsplit(candidate)
+            if ((url.scheme, url.netloc) != (origin.scheme, origin.netloc)
+                    or url.query or url.fragment):
+                continue
+            if resolve(url.path).view_name == 'connexion:confirm_email':
+                return url.path
+        except (ValueError, Resolver404):
+            continue
+    return ''
 
 
 def local_only(view):
@@ -30,6 +54,7 @@ def inbox(request):
         try:
             letter = json.loads(path.read_text(encoding='utf-8'))
             letter['id'] = uuid.UUID(path.stem)
+            letter['confirmation_path'] = confirmation_path(letter.get('body', ''))
             letters.append(letter)
         except (OSError, ValueError):
             continue

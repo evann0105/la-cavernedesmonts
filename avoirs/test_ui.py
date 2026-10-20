@@ -15,7 +15,9 @@ from paiement.models import Order
 from .models import BenefitRedemption, CustomerBenefit
 
 
-@override_settings(EMAIL_DELIVERY_ENABLED=False, LOCAL_SKIP_EMAIL_VERIFICATION=False)
+@override_settings(EMAIL_DELIVERY_ENABLED=False, EMAIL_TEST_MODE=False,
+                   EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+                   LOCAL_SKIP_EMAIL_VERIFICATION=False)
 class CustomerBenefitUITests(TestCase):
     def setUp(self):
         self.seller = get_user_model().objects.create_superuser('benefit-seller', email='seller@example.test', password='test-password')

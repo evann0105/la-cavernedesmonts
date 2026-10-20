@@ -10,7 +10,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.urls import reverse
-from connexion.email_verification import send_verification, confirm_token
+from connexion.email_verification import send_verification, confirm_token, email_verified
 from .backend import LocalMailboxBackend
 from .messages import MODELS, build_message
 
@@ -63,3 +63,37 @@ class MailboxTests(TestCase):
         token=re.search(r'/confirmer-email/([^/]+)/',item['body']).group(1)
         self.assertIn(token,item['html'])
         self.assertTrue(confirm_token(customer,token));self.assertFalse(confirm_token(customer,token))
+
+    @override_settings(EMAIL_BACKEND='courriels.backend.LocalMailboxBackend', EMAIL_DELIVERY_ENABLED=True, SITE_URL='http://localhost:8001')
+    def test_mailbox_confirmation_action_keeps_recipient_and_explicit_confirmation_checks(self):
+        import re
+        self.manager.email = 'manager@example.test'
+        self.manager.save(update_fields=['email'])
+        self.assertEqual(send_verification(self.manager), 'sent')
+        item = json.loads(next(self.root.glob('*.json')).read_text())
+        path = re.search(r'http://localhost:8001(/accounts/confirmer-email/[^/]+/)', item['body']).group(1)
+        inbox = self.client.get(reverse('test_email_inbox'))
+        self.assertContains(inbox, 'Ouvrir le lien de confirmation')
+        self.assertContains(inbox, 'href="' + path + '"')
+        self.assertEqual(self.client.get(path).status_code, 200)
+        self.assertFalse(email_verified(self.manager))
+        self.assertEqual(self.client.post(path).status_code, 302)
+        self.assertTrue(email_verified(self.manager))
+
+    @override_settings(SITE_URL='http://localhost:8001')
+    def test_only_same_origin_confirmation_links_become_mailbox_actions(self):
+        from .views import confirmation_path
+        path = reverse('connexion:confirm_email', args=['signed-token'])
+        self.assertEqual(confirmation_path('Confirmer : http://localhost:8001' + path), path)
+        for url in (
+            'https://other.example' + path,
+            'http://localhost:8001@other.example' + path,
+            'https://localhost:8001' + path,
+            'http://localhost:8001' + path + '?next=https://other.example',
+            'http://localhost:8001' + path + '#fragment',
+            'http://localhost:8001/accounts/logout/',
+            'http://localhost:8001/does-not-exist/',
+            'http://[invalid' + path,
+        ):
+            with self.subTest(url=url):
+                self.assertEqual(confirmation_path(url), '')

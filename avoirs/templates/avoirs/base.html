@@ -2,4 +2,4 @@
 {% block title %}Avoirs clients — La Caverne des Monts{% endblock %}
 {% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'avoirs/css/benefits.css' %}?v=20261020-client-details">{% endblock %}
 {% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a><span aria-hidden="true"> / </span><a href="{% url 'avoirs:management' %}">Avoirs clients</a>{% block benefit_breadcrumb %}{% endblock %}</nav>{% endblock %}
-{% block catalog_content %}<div class="benefit-shell">{% block benefit_content %}{% endblock %}</div>{% endblock %}
+{% block catalog_content %}<div class="benefit-shell">{% include 'avoirs/mail_mode.html' %}{% block benefit_content %}{% endblock %}</div>{% endblock %}
