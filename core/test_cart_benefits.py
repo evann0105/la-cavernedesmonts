@@ -122,8 +122,8 @@ class CartCustomerBenefitTests(TestCase):
         self.amounts(response, '79.90', '0', '79.90')
         self.assert_no_reservation()
 
-    @override_settings(DEBUG=True, LOCAL_SKIP_EMAIL_VERIFICATION=True)
-    def test_real_email_verification_is_required_and_rechecked_after_selection(self):
+    @override_settings(DEBUG=False, LOCAL_SKIP_EMAIL_VERIFICATION=True)
+    def test_production_requires_real_email_verification_and_rechecks_selected_code(self):
         benefit = self.grant()
         EmailVerification.objects.filter(user=self.customer).delete()
         response = self.apply(benefit)
@@ -135,6 +135,23 @@ class CartCustomerBenefitTests(TestCase):
         response = self.client.get(self.cart)
         self.assertTrue(response.context['benefit_error'])
         self.amounts(response, '79.90', '0', '79.90')
+        self.assert_no_reservation()
+
+    @override_settings(DEBUG=True, LOCAL_SKIP_EMAIL_VERIFICATION=True)
+    def test_local_seller_assigned_code_applies_in_cart_and_survives_checkout_without_confirmation(self):
+        benefit = self.grant()
+        self.assertEqual((benefit.user_id, benefit.bound_user_id), (self.customer.pk, self.customer.pk))
+        EmailVerification.objects.filter(user=self.customer).delete()
+        response = self.apply(benefit)
+        self.assertEqual(self.client.session[SESSION_KEY], benefit.pk)
+        self.amounts(response, '79.90', '50', '29.90')
+        self.assertNotContains(response, 'Confirmez votre adresse e-mail')
+        self.assertNotContains(response, 'Confirmer mon adresse')
+        checkout = self.client.get(self.checkout)
+        self.assertEqual(checkout.context['benefit'].pk, benefit.pk)
+        self.amounts(checkout, '79.90', '50', '29.90')
+        self.assertNotContains(checkout, 'Confirmez votre adresse e-mail')
+        self.assertFalse(EmailVerification.objects.filter(user=self.customer).exists())
         self.assert_no_reservation()
 
     def test_guest_cannot_apply_personal_credit(self):

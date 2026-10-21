@@ -29,20 +29,27 @@ nouveau compte avec la même adresse ne récupère pas automatiquement le code.
 ## Utilisation par le client
 
 Le client retrouve ses avantages dans **Mon compte → Mes avoirs** (`/avoirs/`),
-après confirmation de son adresse e-mail. Il copie le code puis le saisit dans
+depuis son compte destinataire. Il copie le code puis le saisit dans
 le champ **Code d’avoir ou de réduction** du panier, avant de passer à la
 commande. Le même champ reste accessible au récapitulatif de commande. La
 remise et le montant des articles après remise sont affichés dès le panier,
 puis conservés avant de partir vers Stripe. Le montant reste contrôlé côté
 serveur et se recalcule lorsque la quantité change. Le client peut retirer le
 code ; vider le panier retire la sélection sans consommer le code.
-Si son adresse est déjà renseignée, « Recevoir mon lien de confirmation »
-demande le mail directement depuis Mes avoirs. Sinon, il renseigne d’abord
-son adresse et son mot de passe actuel. Le lien reçu ouvre une page avec un
-bouton de confirmation ; une simple ouverture ne valide pas l’adresse.
-Dans le même navigateur, le client revient ensuite à Mes avoirs. Cette
-vérification volontaire fonctionne aussi en développement, indépendamment
-du raccourci local de connexion.
+En production, l’adresse du compte doit être confirmée avant d’afficher ou
+utiliser les codes personnels. Le lien de confirmation ouvre une page avec un
+bouton ; une simple ouverture du lien ne valide pas l’adresse.
+
+Pendant les essais locaux (`DEBUG=True` et `LOCAL_SKIP_EMAIL_VERIFICATION=True`),
+aucune confirmation e-mail n’est demandée pour les codes que la vendeuse a
+explicitement liés au compte connecté. L’adresse du compte doit correspondre
+au destinataire. Les codes uniquement associés à une adresse, sans compte
+lié, restent invisibles et inutilisables sans vraie confirmation : la vendeuse
+peut les attribuer explicitement au compte dans « Modifier les conditions ».
+Ce raccourci ne marque jamais l’adresse comme confirmée et ne s’applique pas
+avec `DEBUG=False`. Le panier et la réservation du paiement appliquent la même
+règle que Mes avoirs.
+
 La carte client affiche aussi la date de création, le message de la vendeuse,
 la période de validité, le temps restant et les conditions. La création et la
 modification des codes restent réservées à la page d’administration.

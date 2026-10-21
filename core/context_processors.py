@@ -6,8 +6,9 @@ def catalog_access(request):
     from django.conf import settings
     from .catalog_access import can_manage_catalog
     from connexion.email_verification import email_verified
+    from avoirs.access import email_confirmation_required
     from retours.access import manager
-    return {'can_manage_returns':manager(request.user), 'email_test_mode': settings.DEBUG and settings.EMAIL_TEST_MODE, 'can_manage_catalog': can_manage_catalog(request.user), 'email_confirmed': email_verified(request.user)}
+    return {'can_manage_returns':manager(request.user), 'email_test_mode': settings.DEBUG and settings.EMAIL_TEST_MODE, 'can_manage_catalog': can_manage_catalog(request.user), 'email_confirmed': email_verified(request.user), 'benefit_email_required': email_confirmation_required()}
 
 
 def back_navigation(request):

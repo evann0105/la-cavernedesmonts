@@ -104,13 +104,35 @@ class CustomerBenefitCheckoutTests(TestCase):
         self.assertContains(response, 'réservé à son destinataire')
         self.assertNotIn('checkout_customer_benefit', self.client.session)
         EmailVerification.objects.filter(user=self.customer).delete()
-        with override_settings(DEBUG=True, LOCAL_SKIP_EMAIL_VERIFICATION=True):
-            self.assertContains(self.apply(), 'Confirmez votre adresse')
+        for flags in ({'DEBUG': False, 'LOCAL_SKIP_EMAIL_VERIFICATION': True},
+                      {'DEBUG': True, 'LOCAL_SKIP_EMAIL_VERIFICATION': False}):
+            with self.subTest(flags=flags), override_settings(**flags):
+                self.assertContains(self.apply(), 'Confirmez votre adresse')
         self.assertNotIn('checkout_customer_benefit', self.client.session)
         self.client.logout()
         self.client.post(reverse('core:cart_add', args=[self.product.slug]), {'variant': self.variant.pk, 'quantity': 2})
         self.assertContains(self.apply(), 'Connectez-vous')
         self.assertFalse(BenefitRedemption.objects.exists())
+
+    @override_settings(DEBUG=True, LOCAL_SKIP_EMAIL_VERIFICATION=True)
+    def test_local_bound_code_can_be_paid_without_fake_verification_or_rechecking_trial_mode_at_settlement(self):
+        EmailVerification.objects.filter(user=self.customer).delete()
+        self.assertEqual((self.benefit.user_id, self.benefit.bound_user_id), (self.customer.pk, self.customer.pk))
+        response = self.apply()
+        self.assertEqual(self.client.session['checkout_customer_benefit'], self.benefit.pk)
+        self.assertNotContains(response, 'Confirmez votre adresse e-mail')
+        order, coupon, _ = self.start()
+        self.assertEqual(coupon.call_args.kwargs['amount_off'], 1050)
+        self.assertEqual(order.benefit_redemption.state, 'held')
+        with override_settings(DEBUG=False, LOCAL_SKIP_EMAIL_VERIFICATION=False), \
+             patch('paiement.stock_checkout.stripe.checkout.Session.list_line_items', return_value=self.rows(order)):
+            self.assertTrue(settle(self.paid(order)))
+        order.refresh_from_db()
+        self.assertEqual(order.status, 'paid')
+        self.assertEqual(order.benefit_redemption.state, 'used')
+        self.variant.refresh_from_db()
+        self.assertEqual((self.variant.quantity, self.variant.reserved), (8, 0))
+        self.assertFalse(EmailVerification.objects.filter(user=self.customer).exists())
 
     def test_insufficient_basket_and_dates_reject_without_reserving_stock(self):
         for fields in ({'minimum_subtotal': 71}, {'starts_at': timezone.now() + timedelta(days=1)},

@@ -2,8 +2,8 @@
 {% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'avoirs/css/benefits.css' %}?v=20261020-client-details">{% endblock %}
 {% block account_content %}
 <div class="customer-benefits">
-  <p class="customer-benefits-intro">Retrouvez ici les avoirs et les bons personnels offerts par la boutique. Saisissez votre code à l’étape de commande, avant de passer au paiement.</p>
-  {% if not benefits_email_verified %}
+  <p class="customer-benefits-intro">Retrouvez ici les avoirs et les bons personnels offerts par la boutique. Saisissez votre code dans le panier ou à l’étape de commande, avant de passer au paiement.</p>
+  {% if not benefits_access_allowed %}
     <section class="hub-paper"><h2>Confirmez votre adresse e-mail</h2><p>Vos codes personnels sont protégés. Confirmez l’adresse de votre compte pour les consulter et les utiliser.</p>
       {% if user.email %}
         <p>Demandez le lien pour <strong>{{ user.email }}</strong>, puis ouvrez-le et confirmez votre adresse pour retrouver vos avoirs ici.</p>
@@ -28,7 +28,7 @@
             <div><dt>Valable jusqu’au</dt><dd>{% if benefit.ends_at %}<time datetime="{{ benefit.ends_at|date:'c' }}">{{ benefit.ends_at|date:'d/m/Y à H:i' }}</time>{% else %}Sans date de fin{% endif %}</dd></div>
           </dl>
           {% if benefit.validity_label %}<p class="benefit-validity">{{ benefit.validity_label }}</p>{% endif %}
-          <section class="benefit-client-conditions"><h3>Conditions d’utilisation</h3><p>À partir de <strong>{{ benefit.effective_minimum|floatformat:2 }} € d’articles</strong>, après les réductions du catalogue et hors frais de livraison.</p><ul><li>Utilisable sur une seule commande, avec votre adresse e-mail confirmée.</li><li>Un seul code client par commande.</li><li>La remise porte sur les articles, hors livraison.</li>{% if benefit.kind == 'credit' %}<li>Votre avoir s’utilise intégralement : le montant des articles doit atteindre au moins celui de l’avoir.</li>{% elif benefit.kind == 'amount' %}<li>La réduction est limitée au montant des articles ; aucun reliquat n’est créé.</li>{% endif %}</ul></section>
+          <section class="benefit-client-conditions"><h3>Conditions d’utilisation</h3><p>À partir de <strong>{{ benefit.effective_minimum|floatformat:2 }} € d’articles</strong>, après les réductions du catalogue et hors frais de livraison.</p><ul><li>{% if benefit_email_required %}Utilisable sur une seule commande, avec votre adresse e-mail confirmée.{% else %}Utilisable sur une seule commande, depuis le compte auquel la boutique a attribué ce code.{% endif %}</li><li>Un seul code client par commande.</li><li>La remise porte sur les articles, hors livraison.</li>{% if benefit.kind == 'credit' %}<li>Votre avoir s’utilise intégralement : le montant des articles doit atteindre au moins celui de l’avoir.</li>{% elif benefit.kind == 'amount' %}<li>La réduction est limitée au montant des articles ; aucun reliquat n’est créé.</li>{% endif %}</ul></section>
           <div class="benefit-card-footer"><code>{{ benefit.code }}</code>{% if benefit.available %}<button class="benefit-copy" type="button" data-copy-benefit="{{ benefit.code }}">Copier le code</button>{% endif %}</div>
           <p class="benefit-copy-feedback" data-copy-feedback aria-live="polite"></p>
         </article>

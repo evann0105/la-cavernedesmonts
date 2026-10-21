@@ -16,7 +16,7 @@
       {% if code_return_to == 'cart' %}{% url 'core:cart' as code_next_url %}{% else %}{% url 'paiement:checkout' as code_next_url %}{% endif %}
       <a href="{% url 'two_factor:login' %}?next={{ code_next_url|urlencode }}">Me connecter →</a>
     </p>
-  {% elif not email_confirmed %}
+  {% elif benefit_email_required and not email_confirmed %}
     <p class="customer-code__account">Confirmez votre adresse e-mail avant d’utiliser votre code personnel.
       {% if code_return_to == 'cart' %}{% url 'core:cart' as code_next_url %}{% else %}{% url 'paiement:checkout' as code_next_url %}{% endif %}
       <a href="{% url 'connexion:verify_email' %}?next={{ code_next_url|urlencode }}">Confirmer mon adresse →</a>

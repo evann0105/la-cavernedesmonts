@@ -142,9 +142,12 @@ class VoluntaryLocalVerificationTests(TestCase):
         self.assertTrue(email_verified(self.user))
         self.assertNotIn('email_verification_return_to', self.client.session)
 
-    def test_credits_request_button_uses_post_and_csrf(self):
-        page = self.client.get(reverse('espace:credits'))
-        self.assertContains(page, 'Recevoir mon lien de confirmation')
+    @override_settings(LOCAL_SKIP_EMAIL_VERIFICATION=False)
+    def test_required_confirmation_redirects_then_request_button_uses_post_and_csrf(self):
+        verification = reverse('connexion:verify_email')
+        self.assertRedirects(self.client.get(reverse('espace:credits')), verification)
+        page = self.client.get(verification, {'next': reverse('espace:credits')})
+        self.assertContains(page, 'Recevoir un lien de confirmation')
         self.assertContains(page, 'method="post" action="' + reverse('connexion:verify_email') + '"')
         self.assertContains(page, '<input type="hidden" name="next" value="' + reverse('espace:credits') + '">', html=True)
         strict = Client(enforce_csrf_checks=True)
@@ -163,11 +166,13 @@ class VoluntaryLocalVerificationTests(TestCase):
         self.assertRedirects(self.client.post(confirmation), reverse('core:cart'))
         self.assertTrue(email_verified(self.user))
 
-    def test_missing_email_is_requested_with_current_password_then_confirmation_still_required(self):
+    def test_missing_email_can_be_added_with_password_and_voluntarily_confirmed_in_local_mode(self):
         self.user.email = ''
         self.user.save(update_fields=['email'])
         page = self.client.get(reverse('espace:credits'))
-        self.assertContains(page, 'Ajouter mon adresse e-mail')
+        self.assertEqual(page.status_code, 200)
+        self.assertNotContains(page, 'Ajouter mon adresse e-mail')
+        self.assertNotContains(page, 'Confirmez votre adresse e-mail')
         self.assertNotContains(page, 'Recevoir mon lien de confirmation')
         verification = reverse('connexion:verify_email')
         page = self.client.get(verification, {'next': reverse('espace:credits')})

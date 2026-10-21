@@ -88,13 +88,16 @@ class BenefitDomainTests(BenefitFixtures, TestCase):
         benefit = self.benefit(kind='amount', value=Decimal('80'), minimum_subtotal=0)
         self.assertEqual(quote(benefit, self.client_user, 2000)['discount_amount'], 2000)
 
-    def test_unverified_customer_cannot_use_even_when_local_access_bypass_enabled(self):
+    def test_unverified_customer_cannot_use_when_either_local_bypass_flag_is_disabled(self):
         benefit = self.benefit()
         from connexion.models import EmailVerification
         EmailVerification.objects.filter(user=self.client_user).delete()
-        with override_settings(DEBUG=True, LOCAL_SKIP_EMAIL_VERIFICATION=True):
-            with self.assertRaises(BenefitError):
+        for flags in ({'DEBUG': False, 'LOCAL_SKIP_EMAIL_VERIFICATION': True},
+                      {'DEBUG': True, 'LOCAL_SKIP_EMAIL_VERIFICATION': False}):
+            with self.subTest(flags=flags), override_settings(**flags), self.assertRaises(BenefitError):
                 quote(benefit, self.client_user, 8000)
+        self.assertFalse(benefit.redemptions.exists())
+        self.assertFalse(EmailVerification.objects.filter(user=self.client_user).exists())
 
     def test_other_verified_customer_cannot_use_code(self):
         with self.assertRaises(BenefitError):

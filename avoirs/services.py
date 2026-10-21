@@ -6,10 +6,9 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection, transaction
 from django.utils import timezone
-from django.utils.crypto import constant_time_compare
 
 from config.encrypted_fields import email_digest
-from connexion.email_verification import email_verified
+from .access import customer_matches, email_confirmation_required
 from .models import BenefitEvent, BenefitMail, BenefitRedemption, CustomerBenefit, generate_code
 
 
@@ -29,16 +28,12 @@ def _require_transaction():
         raise RuntimeError('Cette opération doit être réalisée dans une transaction verrouillant la commande.')
 
 
-def _customer_matches(benefit, user):
-    return (email_verified(user) and (not benefit.bound_user_id or benefit.bound_user_id == user.pk)
-            and (not benefit.user_id or benefit.user_id == user.pk)
-            and constant_time_compare(benefit.recipient_email_hash, email_digest(user.email)))
-
-
 def quote(benefit, user, subtotal, at=None, order=None):
     """Validate a customer-specific code without consuming it; return integer cents."""
-    if not _customer_matches(benefit, user):
-        raise BenefitError('Ce code est réservé à son destinataire. Connectez-vous au compte dont l’adresse e-mail est confirmée.')
+    if not customer_matches(benefit, user):
+        if email_confirmation_required():
+            raise BenefitError('Ce code est réservé à son destinataire. Connectez-vous au compte dont l’adresse e-mail est confirmée.')
+        raise BenefitError('Ce code est réservé à son destinataire. Connectez-vous au compte client auquel la boutique l’a attribué pour l’utiliser.')
     if isinstance(subtotal, bool) or not isinstance(subtotal, int) or subtotal <= 0:
         raise BenefitError('Ajoutez des articles au panier avant d’utiliser ce code.')
     live = benefit.redemptions.filter(state__in=['held', 'used']).first()

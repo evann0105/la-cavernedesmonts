@@ -39,7 +39,7 @@ class BenefitForm(forms.ModelForm):
             'active': 'Activer ce code',
         }
         help_texts = {
-            'recipient_email': 'Réservé à cette adresse, après sa confirmation dans le compte client.',
+            'recipient_email': 'Réservé au client destinataire. Utilisez l’adresse e-mail de son compte.',
             'label': 'Par exemple : Merci pour votre fidélité ou Avoir commercial.',
             'value': 'Exemple : 15 pour une réduction de 15 % ou un montant de 15 €.',
             'minimum_subtotal': 'Montant des articles après les réductions du catalogue, hors livraison.',

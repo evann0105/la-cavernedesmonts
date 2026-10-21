@@ -138,12 +138,35 @@ class CustomerBenefitUITests(TestCase):
         self.assertContains(response, 'Saisissez votre code')
 
     @override_settings(DEBUG=True, LOCAL_SKIP_EMAIL_VERIFICATION=True)
-    def test_local_access_bypass_never_exposes_codes_without_real_verification(self):
+    def test_local_access_bypass_does_not_expose_unbound_codes_or_request_confirmation(self):
+        EmailVerification.objects.filter(user=self.customer).delete()
+        self.assertIsNone(self.benefit.user_id)
+        self.assertIsNone(self.benefit.bound_user_id)
+        self.client.force_login(self.customer, backend='connexion.backends.EmailOrUsernameBackend')
+        response = self.client.get(reverse('espace:credits'))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'Confirmez votre adresse e-mail')
+        self.assertNotContains(response, 'Recevoir mon lien de confirmation')
+        self.assertNotContains(response, self.benefit.code)
+        self.benefit.refresh_from_db()
+        self.assertIsNone(self.benefit.user_id)
+        self.assertIsNone(self.benefit.bound_user_id)
+        self.assertFalse(EmailVerification.objects.filter(user=self.customer).exists())
+
+    @override_settings(DEBUG=True, LOCAL_SKIP_EMAIL_VERIFICATION=True)
+    def test_local_customer_sees_seller_assigned_codes_without_confirming_email(self):
+        self.client.post(reverse('avoirs:create'), self.data(label='Attribution explicite en essais'))
+        assigned = CustomerBenefit.objects.get(label='Attribution explicite en essais')
+        self.assertEqual((assigned.user_id, assigned.bound_user_id), (self.customer.pk, self.customer.pk))
         EmailVerification.objects.filter(user=self.customer).delete()
         self.client.force_login(self.customer, backend='connexion.backends.EmailOrUsernameBackend')
         response = self.client.get(reverse('espace:credits'))
-        self.assertContains(response, 'Confirmez votre adresse e-mail')
+        self.assertContains(response, assigned.code)
         self.assertNotContains(response, self.benefit.code)
+        self.assertNotContains(response, 'Confirmez votre adresse e-mail')
+        self.assertNotContains(response, 'Recevoir mon lien de confirmation')
+        self.assertIn('no-store', response.headers['Cache-Control'])
+        self.assertFalse(EmailVerification.objects.filter(user=self.customer).exists())
 
     def test_email_does_not_expose_benefit_assigned_to_another_account(self):
         benefit = CustomerBenefit.objects.create(user=self.other, recipient_email=self.customer.email, label='Bound elsewhere', kind='amount', value=9)

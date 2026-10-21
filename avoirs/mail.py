@@ -13,6 +13,7 @@ from django.utils import timezone
 
 from courriels.messages import render_message
 from config.encrypted_fields import email_digest
+from .access import email_confirmation_required
 from .models import BenefitMail, CustomerBenefit
 
 logger = logging.getLogger(__name__)
@@ -53,15 +54,22 @@ def conditions(benefit):
         text += 'Valable avant le ' + timezone.localtime(benefit.ends_at).strftime('%d/%m/%Y à %H:%M %Z') + '.\n'
     else:
         text += 'Sans date d’expiration fixée.\n'
-    text += ('Ce code est lié à votre adresse e-mail. Connectez-vous au compte utilisant cette adresse et confirmez-la pour retrouver le code dans « Mes avoirs ». '
-             'Saisissez-le lors de la commande, avant le paiement. Un seul code client par commande. '
+    if email_confirmation_required():
+        text += 'Ce code est lié à votre adresse e-mail. Connectez-vous au compte utilisant cette adresse et confirmez-la pour retrouver le code dans « Mes avoirs ». '
+    else:
+        text += 'Connectez-vous au compte client auquel la boutique a attribué ce code pour le retrouver dans « Mes avoirs ». Aucune confirmation par e-mail n’est demandée pendant les essais locaux. '
+    text += ('Saisissez-le dans le panier ou lors de la commande, avant le paiement. Un seul code client par commande. '
              'Il est utilisable une seule fois et ne sera consommé qu’après confirmation du paiement. '
              'La remise porte sur les articles et ne réduit pas les frais de livraison.\n')
     if benefit.kind == 'credit':
         text += 'L’avoir doit être utilisé en totalité dans une seule commande : le montant des articles doit être au moins égal à celui de l’avoir.\n'
     elif benefit.kind == 'amount':
         text += 'Le bon de réduction est plafonné au montant des articles ; aucun reliquat n’est créé.\n'
-    text += 'Si vous n’avez pas encore de compte, créez-le avec cette même adresse e-mail puis confirmez-la. Cet avantage ne remplace pas un remboursement légal dû.'
+    if email_confirmation_required():
+        text += 'Si vous n’avez pas encore de compte, créez-le avec cette même adresse e-mail puis confirmez-la. '
+    elif not benefit.user_id:
+        text += 'Si vous n’avez pas encore de compte, créez-le avec cette même adresse e-mail puis demandez à la boutique de lui attribuer le code. '
+    text += 'Cet avantage ne remplace pas un remboursement légal dû.'
     return text
 
 
