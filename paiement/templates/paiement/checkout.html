@@ -34,7 +34,7 @@
       {% if benefit_selected %}<p class="small">Votre code est réservé pendant le paiement et utilisé après confirmation. Pour l’utiliser sur une autre commande, retirez-le ici : le paiement en cours sera d’abord annulé de façon sécurisée.</p>{% endif %}
       <form method="post">{% csrf_token %}<button class="button checkout-pay" name="action" value="pay"{% if benefit_error %} disabled{% endif %}>Continuer vers le paiement sécurisé →</button></form>
       {% else %}
-      <div class="notice"><h2>Préparons votre commande ensemble.</h2><p>Le paiement en ligne sera bientôt disponible. Pour le moment, contactez-nous pour confirmer les tailles, les disponibilités et la livraison. Votre panier est conservé et aucun paiement n’a été effectué.</p><a class="button" href="tel:+33450404617">Appeler la boutique ↗</a></div>
+      <div class="notice"><h2>Préparons votre commande ensemble.</h2><p>Le paiement en ligne sera bientôt disponible. Pour le moment, contactez-nous pour confirmer les tailles, les disponibilités et la livraison. Votre panier est conservé et aucun paiement n’a été effectué.</p><a class="button" href="{{ shop.phone_href }}">Appeler la boutique ↗</a></div>
       {% endif %}
       <p class="small checkout-legal"><a href="{% url 'espace:sales_terms' %}">Conditions générales de vente</a> · <a href="{% url 'espace:withdrawal' %}">Rétractation et garanties</a> · <a href="{% url 'espace:privacy' %}">Vos données personnelles</a></p>
     </div>

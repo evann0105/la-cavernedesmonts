@@ -3,6 +3,7 @@ import hmac
 import hashlib
 import stripe
 from django.conf import settings
+from boutique.configuration import configuration
 from django.db.models import Prefetch, Count, Q
 from django.http import HttpResponse
 from django.contrib import messages
@@ -43,7 +44,7 @@ def entry(request):
             deliver_pending()
         messages.info(request,'Si les informations correspondent à une commande payée, un lien privé est envoyé à cette adresse. Consultez aussi les courriers indésirables.')
         return redirect('retours:entry')
-    return render(request,'retours/entry.html',{'title':'Retours et rétractation','form':form,'return_address':settings.RETURN_ADDRESS,'costs_text':settings.RETURN_COSTS_TEXT})
+    return render(request,'retours/entry.html',{'title':'Retours et rétractation','form':form,'return_address':configuration()['return_address'],'costs_text':settings.RETURN_COSTS_TEXT})
 
 
 @private
@@ -71,7 +72,7 @@ def order_returns(request,pk):
             return confidential(redirect(url))
         except ReturnError as error:form.add_error(None,str(error))
     records=order.returns.prefetch_related('lines','events', Prefetch('shipments', queryset=ReturnShipment.objects.defer('proof')))
-    return confidential(render(request,'retours/order.html',{'title':'Retour de votre commande','order':order,'form':form,'can_request':order.status in ('paid','demo') and any(r['remaining']>0 for r in form.rows),'records':records,'return_address':settings.RETURN_ADDRESS,'costs_text':settings.RETURN_COSTS_TEXT}))
+    return confidential(render(request,'retours/order.html',{'title':'Retour de votre commande','order':order,'form':form,'can_request':order.status in ('paid','demo') and any(r['remaining']>0 for r in form.rows),'records':records,'return_address':configuration()['return_address'],'costs_text':settings.RETURN_COSTS_TEXT}))
 
 
 @returns_required

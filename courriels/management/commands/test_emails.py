@@ -1,5 +1,6 @@
 from pathlib import Path
 from django.conf import settings
+from boutique.configuration import configuration
 from django.core.management.base import BaseCommand, CommandError
 from courriels.backend import LocalMailboxBackend
 from courriels.messages import MODELS, build_message
@@ -15,7 +16,7 @@ class Command(BaseCommand):
         for kind in MODELS:
             details = 'Exemple : commande TEST-001\nPolaire · M · Bleu · 1 unité\nMontant fictif : 35,00 €' if kind in ('order','shipping','refund') else ''
             if kind == 'return_requested':
-                details = 'Dossier TEST-RETOUR · 1 × Polaire · M · Bleu\nDéclaration de rétractation enregistrée. Renvoyez les articles dans les 14 jours suivant la déclaration.\nAdresse de retour :\n' + settings.RETURN_ADDRESS + '\nJoignez la référence du dossier au colis.\n' + settings.RETURN_COSTS_TEXT
+                details = 'Dossier TEST-RETOUR · 1 × Polaire · M · Bleu\nDéclaration de rétractation enregistrée. Renvoyez les articles dans les 14 jours suivant la déclaration.\nAdresse de retour :\n' + configuration()['return_address'] + '\nJoignez la référence du dossier au colis.\n' + settings.RETURN_COSTS_TEXT
             message = build_message(kind, 'client@example.test', 'https://example.test/exemple-sans-action', details, test=True, withdrawal_url='https://example.test/retractation' if kind=='order' else '')
             messages.append(message)
         count = LocalMailboxBackend().send_messages(messages)

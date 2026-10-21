@@ -219,16 +219,16 @@ def _store_graph():
     origin = site_origin()
     if not origin:
         return None
-    from espace.legal import profile
+    from boutique.configuration import configuration
     from boutique.services import public_hours
-    legal = profile()
+    current = configuration()
     shop = {'@type': 'ClothingStore', '@id': origin + '/#boutique', 'name': SHOP_NAME,
-            'url': origin + '/', 'address': legal.get('address', ''),
-            'telephone': legal.get('phone', ''), 'email': legal.get('email', '')}
-    address = re.fullmatch(r'(.+),\s*(\d{5})\s+([^,]+),\s*France', legal.get('address', '').strip())
-    if address:
-        shop['address'] = {'@type': 'PostalAddress', 'streetAddress': address[1],
-                           'postalCode': address[2], 'addressLocality': address[3], 'addressCountry': 'FR'}
+            'url': origin + '/', 'address': {
+                '@type': 'PostalAddress',
+                'streetAddress': ', '.join(filter(None, (current['store_address_line1'], current['store_address_line2']))),
+                'postalCode': current['store_postal_code'], 'addressLocality': current['store_city'],
+                'addressCountry': current['store_country'],
+            }, 'telephone': current['phone'], 'email': current['email']}
     logo = public_absolute_url(static('core/img/logo.png'), allow_external=True)
     if logo:
         shop['logo'] = logo

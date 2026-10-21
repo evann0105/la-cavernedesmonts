@@ -38,14 +38,19 @@ def short_legal_form(value):
     return value
 
 
-def profile():
+def profile(shop_configuration=None):
+    from boutique.configuration import configuration, legal_overrides
     data = {**DEFAULTS, **getattr(settings, 'SHOP_LEGAL', {})}
+    current = shop_configuration if shop_configuration is not None else configuration()
+    data.update(legal_overrides(current))
+    data['return_address'] = current['return_address']
+    data['configuration_revision'] = current['revision']
     data['legal_form'] = short_legal_form(data['legal_form'])
     return data
 
 
-def blockers():
-    data = profile()
+def blockers(data=None):
+    data = profile() if data is None else data
     missing = [label for key,label in REQUIRED.items() if not isinstance(data.get(key),str) or not data[key].strip()]
     if data.get('mediator_url'):
         try: URLValidator(schemes=['https'])(data['mediator_url'])
@@ -59,7 +64,7 @@ def blockers():
     ]:
         if not getattr(settings,flag,False): missing.append(label)
     from facturation.profile import blockers as invoice_blockers
-    missing.extend(invoice_blockers())
+    missing.extend(invoice_blockers(legal_data=data))
     return missing
 
 
@@ -67,14 +72,16 @@ def sales_ready():
     return not blockers()
 
 
-def context():
+def context(legal_data=None):
     from paiement.shipping import free_shipping_threshold
-    return {'legal':profile(), 'legal_version':VERSION, 'legal_draft':not sales_ready(),
+    data = profile() if legal_data is None else legal_data
+    version = VERSION + (f'.boutique-{data["configuration_revision"]}' if data.get('configuration_revision') else '')
+    return {'legal':data, 'legal_version':version, 'legal_draft':bool(blockers(data)),
             'free_shipping_threshold':free_shipping_threshold()}
 
 
-def contract_snapshot():
-    ctx = context()
+def contract_snapshot(legal_data=None):
+    ctx = context(legal_data)
     pages = [('Conditions générales de vente','terms'),('Retours et formulaire type','withdrawal')]
     text_parts = []
     for title,page in pages:
@@ -82,4 +89,4 @@ def contract_snapshot():
         html = re.sub(r'</(?:p|h[1-6]|section|div)>', '\n\n', html)
         text_parts.append(title+'\n'+unescape(strip_tags(html)))
     text = '\n\n'.join(text_parts)
-    return {'version':VERSION, 'text':text}
+    return {'version':ctx['legal_version'], 'text':text}

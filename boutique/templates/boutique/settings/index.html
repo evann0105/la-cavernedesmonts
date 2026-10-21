@@ -1,0 +1,31 @@
+{% extends 'core/catalog/base.html' %}{% load static %}
+{% block title %}Réglages de la boutique — La Caverne des Monts{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'boutique/settings.css' %}?v=20261021-configuration">{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a><span aria-hidden="true"> / </span><span aria-current="page">Réglages de la boutique</span></nav>{% endblock %}
+{% block catalog_content %}
+<div class="shop-settings">
+  <header class="settings-heading"><div><p class="eyebrow">BOUTIQUE · VOS INFORMATIONS</p><h1>Réglages de la boutique.</h1><p>Vos coordonnées et vos adresses, bien rangées et à jour sur le site.</p></div><a class="settings-text-link" href="{% url 'core:location' %}">Voir la boutique <span aria-hidden="true">↗</span></a></header>
+  <div class="settings-grid">
+    {% for section in sections %}
+      <a class="settings-card" href="{% url section.urlname %}">
+        <div class="settings-card-top"><span class="settings-card-number" aria-hidden="true">0{{ forloop.counter }}</span><span aria-hidden="true">↗</span></div>
+        <h2>{{ section.title }}</h2><p class="settings-card-description">{{ section.description }}</p>
+        <div class="settings-card-current">
+          {% if section.key == 'contacts' %}
+            {% if configuration.phone %}<span>{{ configuration.phone }}</span>{% endif %}{% if configuration.email %}<span>{{ configuration.email }}</span>{% endif %}
+          {% elif section.key == 'store' %}
+            {% if configuration.store_address %}<span>{{ configuration.store_address|linebreaksbr }}</span>{% endif %}
+          {% elif section.key == 'returns' %}
+            {% if configuration.return_address %}<span>{{ configuration.return_address|linebreaksbr }}</span>{% endif %}
+          {% elif section.key == 'company' %}
+            {% if configuration.business_name %}<span>{{ configuration.business_name }}{% if configuration.legal_form %} · {{ configuration.legal_form }}{% endif %}</span>{% endif %}
+          {% endif %}
+        </div>
+        <span class="settings-card-action">Modifier ces informations <span aria-hidden="true">→</span></span>
+      </a>
+    {% endfor %}
+  </div>
+  <p class="settings-history-note">Les nouvelles commandes, factures et communications utilisent les informations enregistrées. Les documents et messages déjà créés conservent leurs informations.</p>
+  <section class="settings-related" aria-labelledby="settings-related-title"><div><h2 id="settings-related-title">À retrouver aussi</h2><p>Les horaires et la sélection de l’accueil ont leur propre espace.</p></div><nav aria-label="Autres réglages de la boutique"><a class="settings-text-link" href="{% url 'boutique:hours' %}">Horaires du magasin <span aria-hidden="true">↗</span></a><a class="settings-text-link" href="{% url 'core:catalog_homepage' %}">Personnaliser l’accueil <span aria-hidden="true">↗</span></a></nav></section>
+</div>
+{% endblock %}

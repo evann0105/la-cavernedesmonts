@@ -1,6 +1,7 @@
 import logging
 from datetime import timedelta
 from django.conf import settings
+from boutique.configuration import configuration
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
@@ -51,7 +52,7 @@ def return_notice(record, kind, label):
         if name:
             details += 'Déclarant : ' + name + '\n'
         details += ('Déclaration reçue le '+timezone.localtime(record.created_at).strftime('%d/%m/%Y à %H:%M:%S %Z')+'.\nNature : '+record.get_kind_display()+'\nPrécision : '+(record.reason or 'Aucune')+'\nVotre déclaration de rétractation / demande de retour a été enregistrée. Elle ne signifie pas que le remboursement a déjà été effectué.\n' +
-                    ('Pour une rétractation, renvoyez les articles dans les 14 jours suivant votre déclaration.\n' if record.kind=='withdrawal' else 'Pour un défaut ou une erreur, contactez la boutique avant le renvoi pour organiser sa prise en charge.\n') + 'Adresse de retour :\n' + settings.RETURN_ADDRESS +
+                    ('Pour une rétractation, renvoyez les articles dans les 14 jours suivant votre déclaration.\n' if record.kind=='withdrawal' else 'Pour un défaut ou une erreur, contactez la boutique avant le renvoi pour organiser sa prise en charge.\n') + 'Adresse de retour :\n' + configuration()['return_address'] +
                     '\nJoignez la référence du dossier au colis. Conservez votre preuve d’expédition.\n' + settings.RETURN_COSTS_TEXT)
     enqueue(order,f'{kind}-{record.pk}',kind,details,request=record,
             recipient=order.customer_email if kind == 'return_requested' else None)

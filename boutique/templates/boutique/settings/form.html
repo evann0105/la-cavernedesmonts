@@ -1,0 +1,32 @@
+{% extends 'core/catalog/base.html' %}{% load static %}
+{% block title %}{{ section.title }} — Réglages de la boutique{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'boutique/settings.css' %}?v=20261021-linked-address">{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a><span aria-hidden="true"> / </span><a href="{% url 'boutique:settings' %}">Réglages de la boutique</a><span aria-hidden="true"> / </span><span aria-current="page">{{ section.title }}</span></nav>{% endblock %}
+{% block catalog_content %}
+<div class="shop-settings">
+  <header class="settings-heading"><div><p class="eyebrow">RÉGLAGES DE LA BOUTIQUE</p><h1>{{ section.title }}.</h1><p>{{ section.description }}</p></div><a class="settings-text-link" href="{% url 'boutique:settings' %}">← Tous les réglages</a></header>
+  <nav class="settings-tabs" aria-label="Sections des réglages">{% for tab in sections %}<a href="{% url tab.urlname %}"{% if tab.key == section.key %} aria-current="page"{% endif %}>{{ tab.title }}</a>{% endfor %}</nav>
+  <div class="settings-editor-layout">
+    <form method="post" class="settings-form" data-shop-settings-form>
+      {% csrf_token %}{% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+      {% if form.errors %}<div class="settings-errors" role="alert"><p><strong>Les modifications n’ont pas été enregistrées.</strong> Vérifiez les champs signalés ci-dessous.</p>{{ form.non_field_errors }}{% for hidden in form.hidden_fields %}{{ hidden.errors }}{% endfor %}</div>{% endif %}
+      <section class="settings-panel" aria-labelledby="settings-fields-title">
+        <div class="settings-panel-heading"><h2 id="settings-fields-title">Les informations à renseigner</h2><p>Les champs marqués d’un astérisque sont obligatoires.</p></div>
+        <div class="settings-fields">
+          {% for field in form.visible_fields %}
+            <div class="settings-field{% if field.widget_type == 'checkbox' %} settings-field--checkbox settings-field--wide{% elif field.widget_type == 'textarea' or field.name == 'store_address_line1' or field.name == 'store_address_line2' %} settings-field--wide{% endif %}{% if field.errors %} settings-field--invalid{% endif %}">
+              {% if field.widget_type == 'checkbox' %}<label for="{{ field.id_for_label }}">{{ field }}<span>{{ field.label }}</span></label>{% else %}<label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span aria-hidden="true"> *</span>{% endif %}</label>{{ field }}{% endif %}
+              {% if field.help_text %}<p class="settings-help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</p>{% endif %}
+              {{ field.errors }}
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+      <div class="settings-form-actions"><button class="button" type="submit">Enregistrer les modifications <span aria-hidden="true">↗</span></button><a class="settings-text-link" href="{% url 'boutique:settings' %}">Annuler</a></div>
+    </form>
+    <aside class="settings-impact" aria-labelledby="settings-impact-title"><span class="settings-impact-mark" aria-hidden="true">↗</span><h2 id="settings-impact-title">Après l’enregistrement</h2><p>{{ section.impact }}</p><div class="settings-impact-history"><h3>Vos anciens documents sont conservés.</h3><p>Les nouvelles commandes, factures et communications utiliseront ces informations. Les documents et messages déjà créés ne sont pas réécrits.</p></div><a class="settings-text-link" href="{% url 'core:location' %}">Voir les informations publiques <span aria-hidden="true">↗</span></a></aside>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}{{ block.super }}<script src="{% static 'boutique/settings.js' %}?v=20261021-linked-address" defer></script>{% endblock %}

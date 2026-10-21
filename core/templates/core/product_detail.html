@@ -40,7 +40,7 @@
         <div class="purchase-row"><div class="quantity-field"><label for="quantity">{% translate 'Quantité' %}</label><input type="number" id="quantity" name="quantity" value="1" min="1" max="10" required></div><button type="submit" class="button"{% if variants and not has_available_variant %} disabled{% endif %}>{% translate 'Ajouter à mon panier' %} <span aria-hidden="true">↗</span></button></div>
       </form>
       {% elif product.availability == 'unavailable' %}<p>{% translate 'Contactez la boutique pour connaître les prochaines disponibilités.' %}</p>{% else %}<p class="notice">{% translate 'Brouillon : ce produit n’est pas proposé à la vente.' %}</p>{% endif %}
-      <a class="product-advice" href="tel:+33450404617"><span class="advice-icon" aria-hidden="true">↗</span><span><strong>{% translate 'Besoin d’un conseil ?' %}</strong><span>{% translate 'Parlons de votre prochain coup de cœur.' %}</span><b>04 50 40 46 17</b></span></a>
+      <a class="product-advice" href="{{ shop.phone_href }}"><span class="advice-icon" aria-hidden="true">↗</span><span><strong>{% translate 'Besoin d’un conseil ?' %}</strong><span>{% translate 'Parlons de votre prochain coup de cœur.' %}</span><b>{{ shop.phone }}</b></span></a>
       {% shop_reviews compact=True %}
       <div class="product-information">
         {% if product.brand or product.composition or product.brand_contact %}<details open class="product-technical"><summary>Composition et marque</summary>

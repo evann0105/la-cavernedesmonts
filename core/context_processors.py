@@ -31,6 +31,8 @@ def back_navigation(request):
         fallback = reverse('core:product_list')
     elif name.startswith('paiement:'):
         fallback = reverse('core:cart')
+    elif name.startswith('boutique:settings_'):
+        fallback = reverse('boutique:settings')
     elif name.startswith('boutique:'):
         fallback = reverse('espace:account')
     # A normal link also works without JavaScript and never replays a submitted form.

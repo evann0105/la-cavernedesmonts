@@ -1,11 +1,11 @@
 from django.template.loader import render_to_string
-from django.test import SimpleTestCase, override_settings
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from espace.legal import context, contract_snapshot
 
 
-class ConsumerTermsFinalisationTests(SimpleTestCase):
+class ConsumerTermsFinalisationTests(TestCase):
     def terms(self):
         return render_to_string('espace/legal/terms_copy.html', context())
 

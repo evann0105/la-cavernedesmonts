@@ -48,11 +48,11 @@ def profile_blockers(value):
     return errors
 
 
-def _candidate():
+def _candidate(legal_data=None):
     config = getattr(settings, 'SHOP_INVOICING', {})
     if not isinstance(config, dict):
         config = {}
-    seller = legal_profile()
+    seller = legal_profile() if legal_data is None else legal_data
     return {
         'seller': {key: str(seller.get(key) or '').strip() for key in SELLER_FIELDS},
         'vat_mode': config.get('vat_mode', ''),
@@ -63,12 +63,12 @@ def _candidate():
     }
 
 
-def blockers():
-    return profile_blockers(_candidate())
+def blockers(legal_data=None):
+    return profile_blockers(_candidate(legal_data))
 
 
-def capture_profile():
-    value = _candidate()
+def capture_profile(legal_data=None):
+    value = _candidate(legal_data)
     if profile_blockers(value):
         return {}
     if value['vat_mode'] == 'franchise':

@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import F, Q
 from django.utils import timezone
 from zoneinfo import ZoneInfo
+from .configuration import DEFAULTS as CONFIGURATION_DEFAULTS
 
 
 class OpeningHours(models.Model):
@@ -156,3 +157,39 @@ class OpeningPeriodDay(WeeklyDay):
             models.CheckConstraint(condition=Q(weekday__gte=0, weekday__lte=6), name='period_weekday_in_week'),
             daily_time_constraint('valid_period_daily_times'),
         ]
+
+
+class ShopConfiguration(models.Model):
+    id = models.PositiveSmallIntegerField(primary_key=True, default=1, editable=False)
+    phone = models.CharField('Téléphone de la boutique', max_length=64, default=CONFIGURATION_DEFAULTS['phone'])
+    email = models.EmailField('Adresse e-mail publique', max_length=254, default=CONFIGURATION_DEFAULTS['email'])
+    store_address_line1 = models.CharField('Numéro et rue', max_length=255, default=CONFIGURATION_DEFAULTS['store_address_line1'])
+    store_address_line2 = models.CharField('Complément d’adresse', max_length=255, blank=True, default=CONFIGURATION_DEFAULTS['store_address_line2'])
+    store_postal_code = models.CharField('Code postal', max_length=20, default=CONFIGURATION_DEFAULTS['store_postal_code'])
+    store_city = models.CharField('Ville', max_length=120, default=CONFIGURATION_DEFAULTS['store_city'])
+    store_country = models.CharField('Pays', max_length=80, default=CONFIGURATION_DEFAULTS['store_country'])
+    business_name = models.CharField('Nom juridique de l’entreprise', max_length=255, default=CONFIGURATION_DEFAULTS['business_name'])
+    legal_form = models.CharField('Forme juridique', max_length=80, default=CONFIGURATION_DEFAULTS['legal_form'])
+    siren = models.CharField('SIREN', max_length=20, default=CONFIGURATION_DEFAULTS['siren'])
+    siret = models.CharField('SIRET', max_length=25, default=CONFIGURATION_DEFAULTS['siret'])
+    registration = models.CharField('Immatriculation', max_length=255, default=CONFIGURATION_DEFAULTS['registration'])
+    publisher = models.CharField('Responsable de publication', max_length=255, blank=True, default='')
+    business_address = models.TextField('Adresse professionnelle distincte', max_length=2000, blank=True, default=CONFIGURATION_DEFAULTS['business_address'])
+    business_same_as_store = models.BooleanField('L’adresse professionnelle est celle du magasin', default=False)
+    return_address = models.TextField('Adresse de retour distincte', max_length=2000, blank=True, default=CONFIGURATION_DEFAULTS['return_address'])
+    returns_same_as_store = models.BooleanField('Utiliser la même adresse que le magasin pour les retours', default=False)
+    revision = models.PositiveIntegerField(default=1, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+                                   on_delete=models.SET_NULL, editable=False)
+
+    class Meta:
+        verbose_name = 'Réglages de la boutique'
+        verbose_name_plural = 'Réglages de la boutique'
+        constraints = [
+            models.CheckConstraint(condition=Q(id=1), name='one_shop_configuration'),
+            models.CheckConstraint(condition=Q(revision__gte=1), name='shop_configuration_positive_revision'),
+        ]
+
+    def __str__(self):
+        return 'Réglages de la boutique'

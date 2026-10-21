@@ -17,7 +17,7 @@
 </section>
 <div class="summit-reassurance wrap" aria-label="{% translate 'Une boutique à votre écoute' %}">
   <a href="{% url 'core:location' %}"><span class="reassurance-icon" aria-hidden="true">⌂</span><span><strong>{% translate 'Une vraie boutique' %}</strong><small>{% translate 'À Lélex, au cœur du Jura' %}</small></span></a>
-  <a href="tel:+33450404617"><span class="reassurance-icon" aria-hidden="true">↗</span><span><strong>{% translate 'Des conseils humains' %}</strong><small>{% translate 'Une question ? Parlons-en.' %}</small></span></a>
+  <a href="{{ shop.phone_href }}"><span class="reassurance-icon" aria-hidden="true">↗</span><span><strong>{% translate 'Des conseils humains' %}</strong><small>{% translate 'Une question ? Parlons-en.' %}</small></span></a>
   <a href="{% url 'core:product_list' %}"><span class="reassurance-icon" aria-hidden="true">✳</span><span><strong>{% translate 'Pour toute la famille' %}</strong><small>{% translate 'Les petits comme les grands' %}</small></span></a>
 </div>
 <section id="instants" class="summit-manifesto wrap">
@@ -52,5 +52,5 @@
 </section>
 <section class="store-teaser wrap" aria-labelledby="store-teaser-title"><div class="store-teaser-photo">{% include 'partials/store_photo.html' %}</div><div class="store-teaser-copy"><p class="eyebrow">{% translate 'RENDEZ-VOUS À LÉLEX' %}</p><h2 id="store-teaser-title">{% translate 'La montagne nous rassemble.' %}</h2><p>{% translate 'Derrière cette vitrine, des découvertes et le plaisir de vous conseiller. Poussez la porte, prenez votre temps.' %}</p><a class="button" href="{% url 'core:location' %}">{% translate 'Découvrir notre magasin' %} <span aria-hidden="true">↗</span></a></div></section>
 {% shop_reviews %}
-<section class="summit-contact wrap"><div><p class="eyebrow">LA CAVERNE DES MONTS · LÉLEX</p><h2>{% translate 'De vraies personnes.' %}<br><span>{% translate 'De bons conseils.' %}</span></h2></div><div><p>{% translate 'Une hésitation sur une taille ? Une idée cadeau ?' %}<br>{% translate 'On prend le temps de vous répondre.' %}</p><a class="button" href="tel:+33450404617">04 50 40 46 17 <span aria-hidden="true">↗</span></a></div></section>
+<section class="summit-contact wrap"><div><p class="eyebrow">LA CAVERNE DES MONTS · LÉLEX</p><h2>{% translate 'De vraies personnes.' %}<br><span>{% translate 'De bons conseils.' %}</span></h2></div><div><p>{% translate 'Une hésitation sur une taille ? Une idée cadeau ?' %}<br>{% translate 'On prend le temps de vous répondre.' %}</p><a class="button" href="{{ shop.phone_href }}">{{ shop.phone }} <span aria-hidden="true">↗</span></a></div></section>
 {% endblock %}

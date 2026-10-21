@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import stripe
 from django.core.exceptions import ImproperlyConfigured
-from django.test import SimpleTestCase, TestCase, override_settings
+from django.test import TestCase, override_settings
 
 from core.models import Product
 from retours.services import submit
@@ -17,7 +17,7 @@ from .tests import CONFIG, SimpleNamespace
 
 
 @override_settings(FREE_SHIPPING_THRESHOLD_EUR='99.00', STRIPE_SHIPPING_RATE='shr_test')
-class ShippingPolicyTests(SimpleTestCase):
+class ShippingPolicyTests(TestCase):
     def test_threshold_is_inclusive_and_uses_exact_cents(self):
         from .shipping import shipping_option, shipping_summary
         for amount, remaining, free in (

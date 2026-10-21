@@ -22,10 +22,13 @@ def get_session(order_id, language='fr'):
                 # No payload means no request was ever sent to Stripe.
                 finish_locked(order,False);order.status='expired';order.save()
                 return None
-            from espace.legal import contract_snapshot
+            from espace.legal import contract_snapshot, profile as legal_profile
             from facturation.profile import capture_profile
-            order.terms_snapshot = contract_snapshot()
-            order.invoice_profile = capture_profile()
+            # Read the live identity once: both purchase records must describe
+            # the same seller even if the shop is edited in another session.
+            merchant = legal_profile()
+            order.terms_snapshot = contract_snapshot(merchant)
+            order.invoice_profile = capture_profile(merchant)
             order.checkout_payload={
                 'consent_collection':{'terms_of_service':'required'},
                 'custom_text':{

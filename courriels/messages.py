@@ -22,6 +22,8 @@ def context_for(kind, url, details='', test=False):
 
 
 def render_message(context):
+    from boutique.configuration import configuration
+    context = {**context, 'shop': configuration()}
     return (render_to_string('courriels/message.txt', context), render_to_string('courriels/message.html', context))
 
 

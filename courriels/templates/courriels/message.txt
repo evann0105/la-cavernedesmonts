@@ -15,4 +15,5 @@ Besoin de retourner un article ? Déclarer ma rétractation : {{ withdrawal_url 
 Pour un achat de biens à distance, vous disposez généralement de 14 jours après réception pour déclarer votre rétractation. Consultez les conditions de vente.
 {% endif %}
 La Caverne des Monts
-Votre boutique à Lélex, au cœur du Jura.
+{{ shop.store_address }}
+{{ shop.phone }} · {{ shop.email }}
