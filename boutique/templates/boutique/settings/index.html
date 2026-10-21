@@ -26,6 +26,6 @@
     {% endfor %}
   </div>
   <p class="settings-history-note">Les nouvelles commandes, factures et communications utilisent les informations enregistrées. Les documents et messages déjà créés conservent leurs informations.</p>
-  <section class="settings-related" aria-labelledby="settings-related-title"><div><h2 id="settings-related-title">À retrouver aussi</h2><p>Les horaires et la sélection de l’accueil ont leur propre espace.</p></div><nav aria-label="Autres réglages de la boutique"><a class="settings-text-link" href="{% url 'boutique:hours' %}">Horaires du magasin <span aria-hidden="true">↗</span></a><a class="settings-text-link" href="{% url 'core:catalog_homepage' %}">Personnaliser l’accueil <span aria-hidden="true">↗</span></a></nav></section>
+  <section class="settings-related" aria-labelledby="settings-related-title"><div><h2 id="settings-related-title">À retrouver aussi</h2><p>La livraison, les horaires et la sélection de l’accueil ont leur propre espace.</p></div><nav aria-label="Autres réglages de la boutique"><a class="settings-text-link" href="{% url 'boutique:shipping_overview' %}">Livraison <span aria-hidden="true">↗</span></a><a class="settings-text-link" href="{% url 'boutique:hours' %}">Horaires du magasin <span aria-hidden="true">↗</span></a><a class="settings-text-link" href="{% url 'core:catalog_homepage' %}">Personnaliser l’accueil <span aria-hidden="true">↗</span></a></nav></section>
 </div>
 {% endblock %}

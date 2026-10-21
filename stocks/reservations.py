@@ -13,8 +13,10 @@ class StockUnavailable(ValueError):
     pass
 
 
-def reserve(session_key, user_id, snapshot, benefit=None, benefit_quote=None):
+def reserve(session_key, user_id, snapshot, benefit=None, benefit_quote=None, shipping_quote=None):
     identity = [session_key, user_id, snapshot]
+    if shipping_quote is not None:
+        identity.append({'shipping': shipping_quote})
     if benefit is not None:
         # An existing hold keeps its original conditions even if the seller
         # resaves the offer without changing it during the payment attempt.
@@ -22,15 +24,29 @@ def reserve(session_key, user_id, snapshot, benefit=None, benefit_quote=None):
         identity.append([benefit.pk, revision])
     fingerprint = hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest()
     with transaction.atomic():
-        order, created = Order.objects.get_or_create(checkout_fingerprint=fingerprint, defaults={'session_key':session_key,'user_id':user_id,'items':snapshot,'subtotal':sum(i['unit_amount']*i['quantity'] for i in snapshot),'reservation_expires_at':timezone.now()+timedelta(minutes=35)})
+        order, created = Order.objects.get_or_create(checkout_fingerprint=fingerprint, defaults={'session_key':session_key,'user_id':user_id,'items':snapshot,'subtotal':sum(i['unit_amount']*i['quantity'] for i in snapshot),'shipping_snapshot':shipping_quote or {},'reservation_expires_at':timezone.now()+timedelta(minutes=35)})
         order = Order.objects.select_for_update().get(pk=order.pk)
         if not created:
             if benefit is not None:
                 from avoirs.services import reserve_locked
                 from django.contrib.auth import get_user_model
                 redemption = reserve_locked(order, benefit, get_user_model().objects.get(pk=user_id))
-                _check_benefit_quote(redemption, benefit_quote)
+                _check_benefit_quote(redemption, benefit_quote, order)
             return order
+        from boutique.shipping import configuration as delivery_configuration, ShippingUnavailable
+        if shipping_quote is not None or delivery_configuration()['managed']:
+            from paiement.shipping import validate_snapshot
+            try:
+                validate_snapshot(shipping_quote, order.subtotal)
+            except ShippingUnavailable as error:
+                raise StockUnavailable(str(error)) from error
+            from paiement.benefits import validate_discounted_total
+            from avoirs.services import BenefitError
+            if benefit is None:
+                try:
+                    validate_discounted_total(order.subtotal, 0, order.shipping_snapshot['amount'])
+                except BenefitError as error:
+                    raise StockUnavailable(str(error)) from error
         products = {p.pk:p for p in Product.objects.select_for_update().filter(pk__in=[i['product'] for i in snapshot]).order_by('pk')}
         variants = {v.pk:v for v in Variant.objects.select_for_update().filter(pk__in=[i.get('variant') for i in snapshot]).order_by('pk')}
         from core.pricing import load_pricing_context, price_quote
@@ -53,13 +69,14 @@ def reserve(session_key, user_id, snapshot, benefit=None, benefit_quote=None):
             from avoirs.services import reserve_locked
             from django.contrib.auth import get_user_model
             redemption = reserve_locked(order, benefit, get_user_model().objects.get(pk=user_id))
-            _check_benefit_quote(redemption, benefit_quote)
+            _check_benefit_quote(redemption, benefit_quote, order)
         return order
 
 
-def _check_benefit_quote(redemption, expected):
+def _check_benefit_quote(redemption, expected, order):
     from paiement.benefits import validate_discounted_total
-    validate_discounted_total(redemption.snapshot['subtotal'], redemption.discount_amount)
+    validate_discounted_total(redemption.snapshot['subtotal'], redemption.discount_amount,
+                              shipping_cents=order.shipping_snapshot.get('amount'))
     if expected is not None and (redemption.discount_amount != expected['discount_amount'] or
             redemption.snapshot['benefit_revision'] != expected['revision']):
         from avoirs.services import BenefitError

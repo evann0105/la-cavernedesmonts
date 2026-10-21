@@ -16,12 +16,16 @@ def summary_context(request, subtotal, benefit, quoted, error):
     }
 
 
-def validate_discounted_total(subtotal, discount):
+def validate_discounted_total(subtotal, discount, shipping_cents=None):
     from .shipping import free_shipping_threshold
     # EUR card payments require at least 50 cents. Below the free-shipping
     # threshold delivery is still unknown, so do not assume its charge is zero.
-    if subtotal >= int(free_shipping_threshold() * 100) and 0 < subtotal - discount < 50:
-        raise BenefitError('Cette remise laisserait moins de 0,50 € à payer, un montant trop faible pour le paiement par carte. Ajoutez un article ou contactez la boutique pour utiliser votre avoir.')
+    remaining = subtotal - discount + shipping_cents if shipping_cents is not None else subtotal - discount
+    from boutique.shipping import configuration as delivery_configuration
+    known = shipping_cents is not None or (not delivery_configuration()['managed']
+                                          and subtotal >= int(free_shipping_threshold() * 100))
+    if known and 0 < remaining < 50:
+        raise BenefitError('Le total laisserait moins de 0,50 € à payer, un montant trop faible pour le paiement par carte. Ajoutez un article ou contactez la boutique.')
 
 
 def selection(request, subtotal, order=None):
@@ -34,7 +38,8 @@ def selection(request, subtotal, order=None):
         return None, None, 'Ce code n’est plus disponible. Retirez-le pour poursuivre.'
     try:
         quoted = quote(benefit, request.user, subtotal, order=order)
-        validate_discounted_total(subtotal, quoted['discount_amount'])
+        from .shipping import request_shipping_cost
+        validate_discounted_total(subtotal, quoted['discount_amount'], request_shipping_cost(request, subtotal, order))
     except BenefitError as error:
         return benefit, None, str(error)
     return benefit, quoted, ''

@@ -20,6 +20,7 @@ class Order(models.Model):
     paid_line_totals = models.JSONField(null=True, blank=True, default=None, editable=False, help_text='Montants réellement payés par ligne, après remise, en centimes.')
     checkout_fingerprint = models.CharField(max_length=64, null=True, blank=True, unique=True, editable=False)
     checkout_payload = models.JSONField(default=dict, blank=True, editable=False)
+    shipping_snapshot = models.JSONField(default=dict, blank=True, editable=False)
     terms_snapshot = models.JSONField(default=dict, blank=True, editable=False)
     terms_accepted_at = models.DateTimeField(null=True, blank=True, editable=False)
     reservation_expires_at = models.DateTimeField(null=True, blank=True)

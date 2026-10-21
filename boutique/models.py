@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import F, Q
 from django.utils import timezone
 from zoneinfo import ZoneInfo
+from decimal import Decimal
 from .configuration import DEFAULTS as CONFIGURATION_DEFAULTS
 
 
@@ -193,3 +194,87 @@ class ShopConfiguration(models.Model):
 
     def __str__(self):
         return 'Réglages de la boutique'
+
+
+def shipping_days_constraint(minimum, maximum, name):
+    return models.CheckConstraint(condition=(
+        Q(**{minimum + '__isnull': True, maximum + '__isnull': True})
+        | Q(**{minimum + '__isnull': False, maximum + '__isnull': False,
+               minimum + '__gte': 0, maximum + '__lte': 60,
+               maximum + '__gte': F(minimum)})
+    ), name=name)
+
+
+class ShippingConfiguration(models.Model):
+    id = models.PositiveSmallIntegerField(primary_key=True, default=1, editable=False)
+    enabled = models.BooleanField('Autoriser la livraison en ligne', default=True)
+    free_shipping_enabled = models.BooleanField('Livraison offerte à partir d’un seuil', default=True)
+    free_shipping_threshold = models.DecimalField('Seuil de livraison offerte (€)', max_digits=10,
+                                                   decimal_places=2, default=Decimal('99.00'))
+    preparation_days_min = models.PositiveSmallIntegerField('Préparation minimum (jours ouvrés)', null=True, blank=True)
+    preparation_days_max = models.PositiveSmallIntegerField('Préparation maximum (jours ouvrés)', null=True, blank=True)
+    carrier_name = models.CharField('Nom du transporteur', max_length=150, blank=True)
+    service_name = models.CharField('Nom du service', max_length=150, default='Livraison standard')
+    carrier_website = models.URLField('Site du transporteur', max_length=500, blank=True)
+    public_notice = models.TextField('Information pour les clients', max_length=1500, blank=True)
+    revision = models.PositiveIntegerField(default=1, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+                                   on_delete=models.SET_NULL, editable=False)
+
+    class Meta:
+        verbose_name = 'Réglages de livraison'
+        verbose_name_plural = 'Réglages de livraison'
+        constraints = [
+            models.CheckConstraint(condition=Q(id=1), name='one_shipping_configuration'),
+            models.CheckConstraint(condition=Q(revision__gte=1), name='shipping_config_positive_revision'),
+            models.CheckConstraint(condition=Q(free_shipping_threshold__gte=0), name='shipping_threshold_nonnegative'),
+            shipping_days_constraint('preparation_days_min', 'preparation_days_max', 'shipping_preparation_days_valid'),
+        ]
+
+    def __str__(self):
+        return 'Réglages de livraison'
+
+
+class ShippingZone(models.Model):
+    configuration = models.ForeignKey(ShippingConfiguration, default=1,
+                                       related_name='zones', on_delete=models.PROTECT)
+    title = models.CharField('Nom de la zone', max_length=150)
+    price = models.DecimalField('Frais de livraison standard (€)', max_digits=10,
+                                 decimal_places=2, null=True, blank=True)
+    free_shipping_eligible = models.BooleanField('Livraison offerte possible', default=True)
+    delivery_days_min = models.PositiveSmallIntegerField('Acheminement minimum (jours ouvrés)', null=True, blank=True)
+    delivery_days_max = models.PositiveSmallIntegerField('Acheminement maximum (jours ouvrés)', null=True, blank=True)
+    active = models.BooleanField('Zone active', default=False)
+    revision = models.PositiveIntegerField(default=1, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+                                   on_delete=models.SET_NULL, editable=False)
+
+    class Meta:
+        ordering = ['title', 'pk']
+        verbose_name = 'Zone de livraison'
+        verbose_name_plural = 'Zones de livraison'
+        constraints = [
+            models.CheckConstraint(condition=Q(price__isnull=True) | Q(price__gte=0), name='shipping_zone_price_nonnegative'),
+            models.CheckConstraint(condition=Q(revision__gte=1), name='shipping_zone_positive_revision'),
+            shipping_days_constraint('delivery_days_min', 'delivery_days_max', 'shipping_zone_days_valid'),
+            models.CheckConstraint(condition=Q(active=False) | Q(price__isnull=False, delivery_days_min__isnull=False,
+                                                                 delivery_days_max__isnull=False), name='active_shipping_zone_complete'),
+        ]
+
+    def __str__(self):
+        return self.title
+
+
+class ShippingCountry(models.Model):
+    zone = models.ForeignKey(ShippingZone, related_name='countries', on_delete=models.CASCADE)
+    code = models.CharField('Pays', max_length=2, unique=True)
+
+    class Meta:
+        ordering = ['code']
+        verbose_name = 'Pays de livraison'
+        verbose_name_plural = 'Pays de livraison'
+
+    def __str__(self):
+        return self.code

@@ -19,8 +19,9 @@ logger = logging.getLogger(__name__)
 
 def ready():
     from espace.legal import sales_ready
+    from .shipping import shipping_ready
     return all((sales_ready(), settings.EMAIL_DELIVERY_ENABLED, not settings.EMAIL_TEST_MODE, settings.PAYMENTS_ENABLED, settings.SHOP_READY, settings.STRIPE_SECRET_KEY,
-                settings.STRIPE_WEBHOOK_SECRET, settings.STRIPE_SHIPPING_RATE,
+                settings.STRIPE_WEBHOOK_SECRET, shipping_ready(),
                 settings.DEBUG or settings.SITE_URL.startswith('https://')))
 
 
@@ -42,8 +43,10 @@ def checkout(request):
     subtotal = total(items)
     subtotal_cents = int(subtotal * 100)
     previous = current_order(request)
+    from .shipping import request_context as shipping_context, request_shipping_cost, COUNTRY_SESSION_KEY, DISPLAYED_SESSION_KEY
+    delivery = shipping_context(request, subtotal, order=previous)
     benefit, quoted, benefit_error = selection(request, subtotal_cents, order=previous)
-    enabled = ready() and all(i['variant'] and i['product'].availability != 'unavailable' for i in items)
+    enabled = ready() and not delivery['shipping_error'] and all(i['variant'] and i['product'].availability != 'unavailable' for i in items)
     displayed_prices = [
         {'product': item['product'].pk, 'variant': item['variant'].pk if item['variant'] else None,
          'quantity': item['quantity'], 'unit_amount': int(item['unit_price'] * 100)}
@@ -52,8 +55,26 @@ def checkout(request):
     if request.method == 'GET':
         request.session['checkout_displayed_prices'] = displayed_prices
         request.session['checkout_displayed_benefit'] = displayed_quote(benefit, quoted)
+        request.session[DISPLAYED_SESSION_KEY] = delivery['shipping_quote']
     if request.method == 'POST':
         action = request.POST.get('action', 'pay')
+        if action == 'set_shipping_destination':
+            from boutique.shipping import configuration as delivery_configuration, quote as delivery_quote, ShippingUnavailable
+            destination = 'core:cart' if request.POST.get('return_to') == 'cart' else 'paiement:checkout'
+            country = request.POST.get('shipping_country', '').strip().upper()
+            try:
+                candidate_delivery = delivery_quote(subtotal_cents, country, config=delivery_configuration())
+                if previous and previous.status == 'pending' and previous.shipping_snapshot != candidate_delivery:
+                    paid_order = release_for_cart_change(request)
+                    if paid_order:
+                        return redirect('paiement:confirmation', order_id=paid_order.pk)
+                request.session[COUNTRY_SESSION_KEY] = country
+                request.session.pop(DISPLAYED_SESSION_KEY, None)
+            except (ShippingUnavailable, StockUnavailable) as error:
+                messages.error(request, str(error))
+            except stripe.StripeError:
+                messages.error(request, 'Le paiement en cours doit être vérifié avant de changer la destination. Votre panier est conservé.')
+            return redirect(destination)
         if action in ('apply_benefit', 'remove_benefit'):
             # Only these two known destinations are allowed, never a supplied URL.
             destination = 'core:cart' if request.POST.get('return_to') == 'cart' else 'paiement:checkout'
@@ -65,7 +86,8 @@ def checkout(request):
                     if not candidate:
                         raise BenefitError('Ce code n’est pas disponible pour votre compte. Vérifiez le code et son destinataire.')
                     candidate_quote = quote(candidate, request.user, subtotal_cents, order=previous)
-                    validate_discounted_total(subtotal_cents, candidate_quote['discount_amount'])
+                    validate_discounted_total(subtotal_cents, candidate_quote['discount_amount'],
+                                              request_shipping_cost(request, subtotal_cents, previous))
                 target_id = candidate.pk if candidate else None
                 if previous and previous.status == 'pending' and redemption_identity(previous) != target_id:
                     paid_order = release_for_cart_change(request)
@@ -90,6 +112,12 @@ def checkout(request):
         if benefit_error:
             messages.error(request, benefit_error)
             return redirect('paiement:checkout')
+        try:
+            validate_discounted_total(subtotal_cents, quoted['discount_amount'] if quoted else 0,
+                                      delivery['shipping_quote']['amount'] if delivery['shipping_quote'] else None)
+        except BenefitError as error:
+            messages.error(request, str(error))
+            return redirect('paiement:checkout')
         previous_prices = request.session.get('checkout_displayed_prices')
         if previous_prices is not None and previous_prices != displayed_prices:
             messages.info(request, 'Le prix ou le contenu de votre panier a changé. Vérifiez le nouveau récapitulatif avant de payer.')
@@ -97,16 +125,19 @@ def checkout(request):
         if request.session.get('checkout_displayed_benefit') != displayed_quote(benefit, quoted):
             messages.info(request, 'Les conditions de votre code ont changé. Vérifiez le nouveau récapitulatif avant de payer.')
             return redirect('paiement:checkout')
+        if delivery['shipping_quote'] is not None and request.session.get(DISPLAYED_SESSION_KEY) != delivery['shipping_quote']:
+            messages.info(request, 'La destination ou les frais de livraison ont changé. Vérifiez le nouveau récapitulatif avant de payer.')
+            return redirect('paiement:checkout')
         if not request.session.session_key:request.session.save()
         snapshot = [{'product':i['product'].pk, 'variant':i['variant'].pk, 'name':i['product'].name, 'size':i['size'], 'color':i['color'], 'quantity':i['quantity'], 'unit_amount':int(i['unit_price']*100)} for i in items]
         try:
             previous = current_order(request)
-            if previous and previous.status == 'pending' and (previous.items != snapshot or previous.user_id != (request.user.pk if request.user.is_authenticated else None) or redemption_identity(previous) != (benefit.pk if benefit else None)):
+            if previous and previous.status == 'pending' and (previous.items != snapshot or previous.user_id != (request.user.pk if request.user.is_authenticated else None) or redemption_identity(previous) != (benefit.pk if benefit else None) or previous.shipping_snapshot != (delivery['shipping_quote'] or {})):
                 paid_order = release_for_cart_change(request)
                 if paid_order:
                     return redirect('paiement:confirmation', order_id=paid_order.pk)
             order=reserve(request.session.session_key,request.user.pk if request.user.is_authenticated else None,snapshot,
-                          benefit=benefit, benefit_quote=displayed_quote(benefit, quoted))
+                          benefit=benefit, benefit_quote=displayed_quote(benefit, quoted), shipping_quote=delivery['shipping_quote'])
             request.session['checkout_order']=str(order.pk)
             session=get_session(order.pk,getattr(request,'LANGUAGE_CODE','fr'))
             if session is None:
@@ -126,9 +157,10 @@ def checkout(request):
             logger.warning('Stripe Checkout unavailable; pending stock reservation preserved.')
             messages.error(request, _('Le paiement est momentanément indisponible. Votre panier est conservé ; réessayez pour reprendre la même tentative.'))
         return redirect('paiement:checkout')
-    from .shipping import shipping_summary
+    discount = summary_context(request, subtotal, benefit, quoted, benefit_error)['discount']
+    delivery = shipping_context(request, subtotal, discount=discount, order=previous)
     return render(request,'paiement/checkout.html',{
-        'enabled':enabled, 'total':subtotal, 'cart_items':items, 'shipping':shipping_summary(subtotal),
+        'enabled':enabled, 'total':subtotal, 'cart_items':items, **delivery,
         **summary_context(request, subtotal, benefit, quoted, benefit_error), 'code_return_to': 'checkout',
     })
 

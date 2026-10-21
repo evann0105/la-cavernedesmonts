@@ -27,6 +27,11 @@ def get_session(order_id, language='fr'):
             # Read the live identity once: both purchase records must describe
             # the same seller even if the shop is edited in another session.
             merchant = legal_profile()
+            if order.shipping_snapshot:
+                from .shipping import snapshot_delivery_text
+                merchant = {**merchant, 'delivery': snapshot_delivery_text(order.shipping_snapshot),
+                            'delivery_revision': order.shipping_snapshot['config_revision'],
+                            'delivery_managed': True, 'delivery_blockers': []}
             order.terms_snapshot = contract_snapshot(merchant)
             order.invoice_profile = capture_profile(merchant)
             order.checkout_payload={
@@ -38,8 +43,8 @@ def get_session(order_id, language='fr'):
                 'allow_promotion_codes':True,'mode':'payment','payment_method_types':['card'],'locale':language,
                 'expires_at':int(order.reservation_expires_at.timestamp()),
                 'line_items':[{'price_data':{'currency':'eur','unit_amount':i['unit_amount'],'product_data':{'name':f"{i['name']} — {i['size']} · {i['color']}",'metadata':{'order_id':str(order.pk),'order_item':str(n)}}},'quantity':i['quantity']} for n,i in enumerate(order.items)],
-                'shipping_address_collection':{'allowed_countries':['FR']},
-                'shipping_options':[shipping_option(order.subtotal)],
+                'shipping_address_collection':{'allowed_countries':[order.shipping_snapshot['country']] if order.shipping_snapshot else ['FR']},
+                'shipping_options':[shipping_option(order.subtotal, snapshot=order.shipping_snapshot)],
                 'billing_address_collection':'required',
                 'success_url':settings.SITE_URL+reverse('paiement:confirmation',args=[order.pk]),
                 'cancel_url':settings.SITE_URL+reverse('core:cart'),
@@ -103,6 +108,8 @@ def settle(session):
         from .line_totals import payment_confirmed
         if payment_confirmed(session):
             if session.get('currency') != 'eur' or session.get('amount_subtotal') != order.subtotal:return False
+            from .shipping import payment_matches_shipping
+            if not payment_matches_shipping(order, session):return False
             if order.status == 'paid':return True
             if order.status == 'expired':return False
             from .line_totals import capture_line_totals

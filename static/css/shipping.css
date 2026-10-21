@@ -38,3 +38,15 @@
     padding: 16px;
   }
 }
+.shipping-destination { margin: 16px 0; }
+.shipping-destination label { display: block; margin-bottom: 8px; font-size: 14px; }
+.shipping-destination__fields { display: flex; gap: 10px; align-items: stretch; }
+.shipping-destination select { min-width: 0; flex: 1; width: 100%; border: 1px solid #b8c4ad; border-radius: 9px; background: #fff; color: #243e36; padding: 12px; font: inherit; }
+.shipping-destination .button { padding: 12px 16px; min-height: 46px; font-size: 13px; }
+.shipping-total { display: flex; justify-content: space-between; gap: 15px; border-top: 1px solid #d1dbc6; padding: 15px 0 4px; margin-top: 15px; }
+.shipping-summary__error { color: #903e29; line-height: 1.6; }
+.shipping-managed [aria-busy="true"], .shipping-managed.is-recalculating { opacity: .65; }
+@media (max-width: 420px) { .shipping-destination__fields { flex-direction: column; } }
+.shipping-information { max-width: 1050px; }
+.shipping-information__copy { border: 1px solid #d5decb; background: #f0f3e9; border-radius: 20px; padding: clamp(20px, 3vw, 35px); margin: 25px 0; line-height: 1.8; }
+.shipping-information > p { line-height: 1.8; }

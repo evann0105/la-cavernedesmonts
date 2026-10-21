@@ -1,9 +1,16 @@
 from django.urls import path
 from . import views
 from . import configuration_views
+from . import shipping_views
 
 app_name = 'boutique'
 urlpatterns = [
+    path('livraison/', shipping_views.information, name='shipping_information'),
+    path('gestion/livraison/', shipping_views.overview, name='shipping_overview'),
+    path('gestion/livraison/regles/', shipping_views.policy, name='shipping_policy'),
+    path('gestion/livraison/transporteur/', shipping_views.carrier, name='shipping_carrier'),
+    path('gestion/livraison/zones/ajouter/', shipping_views.zone_add, name='shipping_zone_add'),
+    path('gestion/livraison/zones/<int:pk>/', shipping_views.zone_edit, name='shipping_zone_edit'),
     path('gestion/boutique/reglages/', configuration_views.settings, name='settings'),
     path('gestion/boutique/reglages/coordonnees/', configuration_views.contacts, name='settings_contacts'),
     path('gestion/boutique/reglages/magasin/', configuration_views.store, name='settings_store'),

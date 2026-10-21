@@ -196,7 +196,7 @@ def location(request):
 @never_cache
 @require_GET
 def cart(request):
-    from paiement.shipping import shipping_summary
+    from paiement.shipping import request_context as shipping_context
     from paiement.benefits import SESSION_KEY, selection, summary_context
     from paiement.cart_checkout import current_order
     items = lines(request)
@@ -204,9 +204,11 @@ def cart(request):
     if not items:
         request.session.pop(SESSION_KEY, None)
         request.session.pop('checkout_displayed_benefit', None)
-    benefit, quoted, error = selection(request, int(subtotal * 100), order=current_order(request))
+    order = current_order(request)
+    benefit, quoted, error = selection(request, int(subtotal * 100), order=order)
+    discount = summary_context(request, subtotal, benefit, quoted, error)['discount']
     return render(request, 'core/cart.html', {
-        'cart_items': items, 'total': subtotal, 'shipping': shipping_summary(subtotal),
+        'cart_items': items, 'total': subtotal, **shipping_context(request, subtotal, discount, order),
         **summary_context(request, subtotal, benefit, quoted, error), 'code_return_to': 'cart',
     })
 

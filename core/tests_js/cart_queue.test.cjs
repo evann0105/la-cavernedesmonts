@@ -17,12 +17,12 @@ function cartFixture() {
     documentElement: { lang: 'fr' }, activeElement: null,
     getElementById(id) {
       if (id === 'contenu') return main;
-      return [current.quantity, current.code].find(input => input.id === id) || null;
+      return [current.quantity, current.code, current.country].find(input => input.id === id) || null;
     },
     querySelector: () => null,
     createElement() { status = { textContent: '', setAttribute() {} }; return status; },
   };
-  function state(quantityValue = '1') {
+  function state(quantityValue = '1', countryValue = 'FR') {
     const quantity = {
       id: 'qty-1', value: String(quantityValue), defaultValue: String(quantityValue),
       checkValidity() { return /^(?:[0-9]|10)$/.test(this.value); },
@@ -31,6 +31,8 @@ function cartFixture() {
       reportValidity() { this.validityReported = true; },
     };
     const code = { id: 'customer-code-input-cart', value: '',
+      focus() { document.activeElement = this; } };
+    const country = { id: 'shipping-country-cart', value: countryValue,
       focus() { document.activeElement = this; } };
     const quantitySubmit = { hidden: false }, lineTotal = { textContent: '80,00 €' }, total = { textContent: '80,00 €' };
     const discount = { textContent: '− 8,00 €', dataset: { cartDiscountAmount: '8.00' } };
@@ -49,7 +51,7 @@ function cartFixture() {
       elements: { quantity: { value: '0', checkValidity: () => true }, key: { value: 'variant:1' } },
       matches: selector => matches(selector, ['[data-cart-remove]']), closest: selector => selector === '.cart-line' ? line : null };
     const forms = {}, buttons = {};
-    const next = { quantity, code, quantitySubmit, quantityForm, removeForm, line, total, discount, net, summary, forms, buttons };
+    const next = { quantity, code, country, quantitySubmit, quantityForm, removeForm, line, total, discount, net, summary, forms, buttons };
     for (const action of ['apply_benefit', 'remove_benefit']) {
       const form = { action: '/paiement/',
         matches: selector => matches(selector, ['[data-cart-code-form]']),
@@ -67,6 +69,21 @@ function cartFixture() {
       forms[action] = form;
       buttons[action] = { name: 'action', value: action, form };
     }
+    const destinationForm = { action: '/panier/destination/',
+      matches: selector => matches(selector, ['[data-cart-destination-form]']),
+      querySelector(selector) {
+        if (selector === '[name="shipping_country"]') return country;
+        return selector === '[name="action"]' ? next.destinationButton : null;
+      },
+      requestSubmit(button) {
+        assert.equal(current, next, 'queued destination must use the replacement form');
+        assert.equal(button.form, this);
+        requestSubmitCalls.push({ action: button.value, country: current.country.value });
+        submit(this, button);
+      },
+    };
+    next.destinationForm = destinationForm;
+    next.destinationButton = { name: 'action', value: 'set_shipping_country', form: destinationForm };
     return next;
   }
   function select(selector, value = current) {
@@ -74,6 +91,8 @@ function cartFixture() {
     if (selector === '.cart-summary .total strong') return value.total;
     if (selector === '.quantity-form input:invalid') return value.quantity.checkValidity() ? null : value.quantity;
     if (selector === '[name="benefit_code"]') return value.code;
+    if (selector === '[name="shipping_country"]') return value.country;
+    if (selector === '[data-cart-destination-form] [name="action"]') return value.destinationButton;
     if (selector === '[data-cart-code-summary]') return value.summary;
     if (selector.includes('[data-cart-code-form]') && selector.includes('[name="action"]')) {
       return value.buttons[/\[value="([^"]+)"\]/.exec(selector)?.[1]] || null;
@@ -94,6 +113,7 @@ function cartFixture() {
     let prevented = false;
     handlers.submit({ target: form, submitter: button, preventDefault() { prevented = true; } });
     if (!prevented && form.matches('[data-cart-code-form]')) submissions.push({ action: button.value, code: current.code.value });
+    if (!prevented && form.matches('[data-cart-destination-form]')) submissions.push({ action: button.value, country: current.country.value });
     return prevented;
   }
   class FormData { constructor(form) { this.quantity = form.elements.quantity.value; } }
@@ -110,18 +130,23 @@ function cartFixture() {
     startTimer() { const callback = scheduled; scheduled = undefined; callback?.(); },
     remove() { return submit(current.removeForm); },
     submitCode(action = 'apply_benefit') { return submit(current.forms[action], current.buttons[action]); },
+    submitDestination(country) {
+      if (country !== undefined) current.country.value = country;
+      return submit(current.destinationForm, current.destinationButton);
+    },
     clickCheckout() {
       let prevented = false;
       handlers.click({ target: { closest: selector => selector === '[data-cart-checkout]' ? {} : null }, preventDefault() { prevented = true; } });
       return prevented;
     },
-    async respond(index, { ok = true, quantity = requests[index].quantity } = {}) {
-      const next = state(quantity), key = `response-${index}`;
+    async respond(index, { ok = true, quantity = requests[index].quantity, country = 'FR' } = {}) {
+      const next = state(quantity, country), key = `response-${index}`;
       pages.set(key, { getElementById: id => id === 'contenu' ? { childNodes: [next] } : null, querySelector: selector => select(selector, next) });
       requests[index].resolve({ ok, text: async () => key });
       await tick();
     },
     focusCode() { document.activeElement = current.code; },
+    focusCountry() { document.activeElement = current.country; },
   };
 }
 
@@ -226,4 +251,85 @@ test('a code submits normally when quantities are already confirmed', () => {
   assert.equal(cart.submitCode(), false);
   assert.deepEqual(cart.requests, []);
   assert.deepEqual(cart.submissions, [{ action: 'apply_benefit', code: 'CDM-DIRECT' }]);
+});
+
+test('changing destination waits for an in-flight quantity and uses the replacement form', async () => {
+  const cart = cartFixture();
+  cart.setQuantity('2'); cart.startTimer();
+  const previousForm = cart.current.destinationForm;
+  assert.equal(cart.submitDestination('BE'), true);
+  assert.equal(cart.requests.length, 1);
+  assert.deepEqual(cart.submissions, []);
+  assert.deepEqual(cart.requestSubmitCalls, []);
+  await cart.respond(0);
+  assert.notEqual(cart.current.destinationForm, previousForm);
+  assert.equal(cart.current.country.value, 'BE');
+  assert.deepEqual(cart.submissions, [{ action: 'set_shipping_country', country: 'BE' }]);
+  assert.deepEqual(cart.requestSubmitCalls, [{ action: 'set_shipping_country', country: 'BE' }]);
+});
+
+test('changing destination flushes a debounced quantity before submitting', async () => {
+  const cart = cartFixture();
+  cart.setQuantity('3');
+  assert.equal(cart.submitDestination('CH'), true);
+  assert.equal(cart.requests.length, 1);
+  assert.equal(cart.requests[0].quantity, '3');
+  assert.deepEqual(cart.submissions, []);
+  await cart.respond(0);
+  assert.deepEqual(cart.submissions, [{ action: 'set_shipping_country', country: 'CH' }]);
+  assert.equal(cart.requestSubmitCalls.length, 1);
+});
+
+test('a queued destination waits for every newer quantity and submits once', async () => {
+  const cart = cartFixture();
+  cart.setQuantity('2'); cart.startTimer(); cart.submitDestination('BE');
+  cart.setQuantity('4');
+  await cart.respond(0);
+  assert.equal(cart.requests.length, 2);
+  assert.equal(cart.requests[1].quantity, '4');
+  assert.deepEqual(cart.submissions, []);
+  assert.deepEqual(cart.requestSubmitCalls, []);
+  await cart.respond(1);
+  assert.deepEqual(cart.submissions, [{ action: 'set_shipping_country', country: 'BE' }]);
+  assert.equal(cart.requestSubmitCalls.length, 1);
+});
+
+test('country selected during a quantity update survives the server cart replacement', async () => {
+  const cart = cartFixture();
+  cart.setQuantity('2'); cart.startTimer();
+  const previousCountry = cart.current.country;
+  cart.current.country.value = 'CH'; cart.focusCountry();
+  await cart.respond(0, { country: 'FR' });
+  assert.notEqual(cart.current.country, previousCountry);
+  assert.equal(cart.current.country.value, 'CH');
+  assert.deepEqual(cart.submissions, []);
+});
+
+test('a failed quantity update never submits a queued destination and blocks retry', async () => {
+  const cart = cartFixture();
+  cart.setQuantity('2'); cart.startTimer(); cart.submitDestination('BE');
+  await cart.respond(0, { ok: false });
+  assert.deepEqual(cart.requestSubmitCalls, []);
+  assert.deepEqual(cart.submissions, []);
+  assert.equal(cart.current.country.value, 'BE');
+  assert.equal(cart.current.quantitySubmit.hidden, false);
+  assert.equal(cart.submitDestination(), true);
+  assert.match(cart.status.textContent, /Confirmez le panier/);
+  assert.equal(cart.clickCheckout(), true);
+  assert.deepEqual(cart.submissions, []);
+});
+
+test('invalid quantity prevents changing destination without making a request', () => {
+  const cart = cartFixture(); cart.setQuantity('1.5');
+  assert.equal(cart.submitDestination('BE'), true);
+  assert.equal(cart.current.quantity.validityReported, true);
+  assert.deepEqual(cart.requests, []);
+  assert.deepEqual(cart.submissions, []);
+});
+
+test('a destination submits normally when quantities are already confirmed', () => {
+  const cart = cartFixture();
+  assert.equal(cart.submitDestination('BE'), false);
+  assert.deepEqual(cart.requests, []);
+  assert.deepEqual(cart.submissions, [{ action: 'set_shipping_country', country: 'BE' }]);
 });

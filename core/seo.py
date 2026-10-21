@@ -19,6 +19,8 @@ DEFAULT_TITLE = 'La Caverne des Monts — Vêtements et accessoires à Lélex'
 DEFAULT_DESCRIPTION = ('Polaires, vestes, vêtements et accessoires pour femme, homme et enfant. '
                        'Découvrez La Caverne des Monts, boutique à Lélex dans le Jura.')
 PUBLIC_PAGES = {
+    'boutique:shipping_information': ('Livraison et délais — La Caverne des Monts',
+                                    'Consultez les destinations, les frais et les délais de livraison de La Caverne des Monts.'),
     'accueil:home': (DEFAULT_TITLE, DEFAULT_DESCRIPTION),
     'core:location': ('Notre boutique à Lélex — La Caverne des Monts',
                       'Retrouvez La Caverne des Monts à Lélex : adresse, contact et horaires du magasin de vêtements et accessoires pour toute la famille.'),

@@ -35,6 +35,9 @@ def order_confirmation(order):
         shipping=order.shipping_details;address=shipping.get('address') or {}
         details += '\nLivraison : '+str(shipping.get('name') or '')+' · '+', '.join(str(address.get(k) or '') for k in ('line1','line2','postal_code','city','country') if address.get(k))
     details += '\nAchat ponctuel, sans abonnement ni renouvellement automatique.'
+    if order.shipping_snapshot:
+        from paiement.shipping import snapshot_delivery_text
+        details += '\n' + snapshot_delivery_text(order.shipping_snapshot)
     enqueue(order,f'order-{order.pk}','order',details,withdrawal=True)
 
 

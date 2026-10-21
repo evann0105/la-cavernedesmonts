@@ -45,6 +45,11 @@ def profile(shop_configuration=None):
     data.update(legal_overrides(current))
     data['return_address'] = current['return_address']
     data['configuration_revision'] = current['revision']
+    from boutique.shipping import configuration as delivery_configuration, legal_delivery
+    delivery = delivery_configuration()
+    if delivery['managed']:
+        data.update(delivery=legal_delivery(delivery), delivery_managed=True,
+                    delivery_revision=delivery['revision'], delivery_blockers=delivery['blockers'])
     data['legal_form'] = short_legal_form(data['legal_form'])
     return data
 
@@ -65,6 +70,7 @@ def blockers(data=None):
         if not getattr(settings,flag,False): missing.append(label)
     from facturation.profile import blockers as invoice_blockers
     missing.extend(invoice_blockers(legal_data=data))
+    missing.extend(data.get('delivery_blockers', []))
     return missing
 
 
@@ -76,6 +82,8 @@ def context(legal_data=None):
     from paiement.shipping import free_shipping_threshold
     data = profile() if legal_data is None else legal_data
     version = VERSION + (f'.boutique-{data["configuration_revision"]}' if data.get('configuration_revision') else '')
+    if data.get('delivery_revision'):
+        version += f'.livraison-{data["delivery_revision"]}'
     return {'legal':data, 'legal_version':version, 'legal_draft':bool(blockers(data)),
             'free_shipping_threshold':free_shipping_threshold()}
 

@@ -6,6 +6,7 @@
   let busy = false;
   let syncFailed = false;
   let pendingCodeSubmit = null;
+  let pendingDeliverySubmit = null;
   const money = new Intl.NumberFormat(document.documentElement.lang || 'fr', {
     style: 'currency', currency: 'EUR',
   });
@@ -39,6 +40,9 @@
   }
 
   function discountPreview(recalculating) {
+    const deliveryTotal = main.querySelector('[data-cart-shipping-total]');
+    if (deliveryTotal) deliveryTotal.textContent = recalculating
+      ? 'Recalcul…' : money.format(Number(deliveryTotal.dataset.cartShippingTotal));
     const summary = main.querySelector('[data-cart-code-summary]');
     if (!summary) return;
     summary.setAttribute('aria-busy', String(recalculating));
@@ -89,10 +93,13 @@
       // Quantities may change while the customer is typing a code. Preserve
       // that input when the authoritative cart HTML replaces the old summary.
       const typedCode = main.querySelector('[name="benefit_code"]')?.value;
+      const selectedCountry = main.querySelector('[name="shipping_country"]')?.value;
       const nextMain = page.getElementById('contenu');
       main.replaceChildren(...nextMain.childNodes);
       const codeInput = main.querySelector('[name="benefit_code"]');
       if (codeInput && typedCode !== undefined) codeInput.value = typedCode;
+      const countryInput = main.querySelector('[name="shipping_country"]');
+      if (countryInput && selectedCountry !== undefined) countryInput.value = selectedCountry;
       const bag = document.querySelector('.header .bag');
       const nextBag = page.querySelector('.header .bag');
       if (bag && nextBag) bag.replaceChildren(...nextBag.childNodes);
@@ -104,6 +111,7 @@
     } catch (error) {
       pending.clear();
       pendingCodeSubmit = null;
+      pendingDeliverySubmit = null;
       syncFailed = true;
       main.querySelectorAll('.quantity-form input[name="quantity"]').forEach(input => {
         input.value = input.defaultValue;
@@ -115,6 +123,15 @@
     } finally {
       busy = false;
       main.removeAttribute('aria-busy');
+      if (!syncFailed && !pending.size && pendingDeliverySubmit) {
+        const intent = pendingDeliverySubmit;
+        pendingDeliverySubmit = null;
+        const button = main.querySelector('[data-cart-destination-form] [name="action"]');
+        if (button?.form) {
+          button.form.querySelector('[name="shipping_country"]').value = intent.country;
+          button.form.requestSubmit(button);
+        }
+      }
       // A code submission waits for all quantity writes. Reuse the NEW form
       // and its CSRF token, so both actions see the same server-side subtotal.
       if (!syncFailed && !pending.size && pendingCodeSubmit) {
@@ -138,6 +155,24 @@
   });
   main.addEventListener('submit', event => {
     const form = event.target;
+    if (form.matches('[data-cart-destination-form]')) {
+      const invalid = main.querySelector('.quantity-form input:invalid');
+      if (invalid) { event.preventDefault(); invalid.reportValidity(); return; }
+      if (syncFailed) {
+        event.preventDefault();
+        status.textContent = 'Confirmez le panier avec « Mettre à jour » avant de changer la destination.';
+        return;
+      }
+      if (busy || pending.size) {
+        event.preventDefault();
+        pendingCodeSubmit = null;
+        pendingDeliverySubmit = {country: form.querySelector('[name="shipping_country"]').value};
+        status.textContent = 'Confirmation du panier avant de recalculer la livraison…';
+        clearTimeout(timer);
+        update();
+      }
+      return;
+    }
     if (form.matches('[data-cart-code-form]')) {
       const invalid = main.querySelector('.quantity-form input:invalid');
       if (invalid) { event.preventDefault(); invalid.reportValidity(); return; }
@@ -151,6 +186,7 @@
         const action = (event.submitter || form.querySelector('[name="action"]'))?.value;
         if (!['apply_benefit', 'remove_benefit'].includes(action)) return;
         pendingCodeSubmit = { action, code: form.querySelector('[name="benefit_code"]')?.value || '' };
+        pendingDeliverySubmit = null;
         status.textContent = 'Confirmation du panier avant de mettre à jour votre code…';
         clearTimeout(timer);
         update();

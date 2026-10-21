@@ -1,4 +1,25 @@
-{% if shipping %}
+{% load l10n %}
+{% if shipping.managed %}
+<div class="shipping-summary shipping-managed" aria-label="Livraison" data-cart-shipping-summary>
+  <h3 class="shipping-summary__title">Votre livraison</h3>
+  {% if shipping.countries %}
+  <form method="post" action="{% url 'paiement:checkout' %}" class="shipping-destination" data-cart-destination-form>{% csrf_token %}
+    {% if code_return_to == 'cart' %}<input type="hidden" name="return_to" value="cart">{% endif %}
+    <label for="shipping-country-{{ code_return_to }}">Pays de livraison</label>
+    <div class="shipping-destination__fields"><select id="shipping-country-{{ code_return_to }}" name="shipping_country" required><option value="">Choisir le pays</option>{% for code,label in shipping.countries %}<option value="{{ code }}"{% if shipping.country == code %} selected{% endif %}>{{ label }}</option>{% endfor %}</select><button class="button" type="submit" name="action" value="set_shipping_destination">Actualiser</button></div>
+  </form>
+  {% endif %}
+  {% if shipping.error %}<p class="shipping-summary__error" role="alert">{{ shipping.error }}</p>{% else %}
+    <p class="shipping-summary__detail">{{ shipping.service_name }} · {{ shipping.carrier_name }}<br>{{ shipping.country_label }} : <strong>{% if shipping.amount_eur == 0 %}Offerte{% else %}{{ shipping.amount_eur|floatformat:2 }} €{% endif %}</strong></p>
+    <p class="shipping-summary__detail">Délai annoncé : <strong>{{ shipping.delivery_min_days }} à {{ shipping.delivery_max_days }} jours ouvrés</strong>, préparation comprise, après confirmation du paiement.</p>
+    {% if shipping.threshold != None and not shipping.is_free %}<p class="shipping-summary__note">Livraison offerte dès {{ shipping.threshold|floatformat:'-2' }} € d’articles pour cette destination. Encore {{ shipping.remaining|floatformat:2 }} € pour en profiter.</p>{% endif %}
+    <div class="shipping-total"><span>Total avec livraison</span><strong data-cart-shipping-total="{{ shipping.total|unlocalize }}">{{ shipping.total|floatformat:2 }} €</strong></div>
+    <p class="shipping-summary__note">Le pays indiqué dans l’adresse au paiement doit correspondre à cette destination.</p>
+  {% endif %}
+  {% if shipping.notice %}<p class="shipping-summary__note">{{ shipping.notice|linebreaksbr }}</p>{% endif %}
+  <p class="shipping-summary__note">Les seuils sont calculés sur les articles, avant code client et hors livraison. <a href="{% url 'boutique:shipping_information' %}">Tarifs et délais de livraison</a></p>
+</div>
+{% elif shipping %}
 <div class="shipping-summary{% if shipping.is_free %} shipping-summary--free{% endif %}" aria-label="Livraison">
   {% if shipping.is_free %}
     <p class="shipping-summary__title">Livraison standard offerte</p>
