@@ -73,10 +73,15 @@ class CustomerBenefitCheckoutTests(TestCase):
             client_reference_id=str(order.pk), metadata={'order_id': str(order.pk)})
 
     def test_fifteen_percent_at_exact_threshold_is_displayed_and_sent_as_frozen_discount(self):
-        response = self.apply()
+        response = self.client.post(self.checkout, {
+            'action': 'apply_benefit', 'benefit_code': self.benefit.code,
+            'return_to': 'cart',
+        }, follow=True)
+        self.assertTemplateUsed(response, 'core/cart.html')
         self.assertContains(response, '10,50 €')
         self.assertContains(response, '59,50 €')
         self.assertFalse(BenefitRedemption.objects.exists())
+        self.assertContains(self.client.get(self.checkout), '59,50 €')
         order, coupon, create = self.start()
         self.assertEqual(coupon.call_args.kwargs['amount_off'], 1050)
         self.assertEqual(coupon.call_args.kwargs['max_redemptions'], 1)

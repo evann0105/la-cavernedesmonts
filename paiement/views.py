@@ -36,7 +36,7 @@ def checkout(request):
         return redirect('core:cart')
     from stocks.reservations import reserve, StockUnavailable
     from .stock_checkout import get_session, settle
-    from .benefits import SESSION_KEY, selection, displayed_quote, redemption_identity, validate_discounted_total
+    from .benefits import SESSION_KEY, selection, displayed_quote, redemption_identity, validate_discounted_total, summary_context
     from avoirs.models import CustomerBenefit
     from avoirs.services import BenefitError, quote
     subtotal = total(items)
@@ -55,6 +55,8 @@ def checkout(request):
     if request.method == 'POST':
         action = request.POST.get('action', 'pay')
         if action in ('apply_benefit', 'remove_benefit'):
+            # Only these two known destinations are allowed, never a supplied URL.
+            destination = 'core:cart' if request.POST.get('return_to') == 'cart' else 'paiement:checkout'
             try:
                 candidate = None
                 if action == 'apply_benefit':
@@ -79,7 +81,7 @@ def checkout(request):
                 messages.error(request, str(error))
             except stripe.StripeError:
                 messages.error(request, 'Le paiement en cours doit être vérifié avant de changer de code. Votre panier et votre code sont conservés.')
-            return redirect('paiement:checkout')
+            return redirect(destination)
         if action != 'pay':
             return HttpResponse(status=400)
         if not enabled:
@@ -125,12 +127,9 @@ def checkout(request):
             messages.error(request, _('Le paiement est momentanément indisponible. Votre panier est conservé ; réessayez pour reprendre la même tentative.'))
         return redirect('paiement:checkout')
     from .shipping import shipping_summary
-    from decimal import Decimal
-    discount = Decimal(quoted['discount_amount']) / 100 if quoted else Decimal('0.00')
     return render(request,'paiement/checkout.html',{
         'enabled':enabled, 'total':subtotal, 'cart_items':items, 'shipping':shipping_summary(subtotal),
-        'benefit':benefit, 'benefit_selected':request.session.get(SESSION_KEY) is not None,
-        'benefit_error':benefit_error, 'discount':discount, 'discounted_total':subtotal-discount,
+        **summary_context(request, subtotal, benefit, quoted, benefit_error), 'code_return_to': 'checkout',
     })
 
 

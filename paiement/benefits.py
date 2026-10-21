@@ -1,8 +1,19 @@
 """Session selection is only a hint; every price and recipient is revalidated."""
+from decimal import Decimal
+
 from avoirs.models import CustomerBenefit
 from avoirs.services import BenefitError, quote
 
 SESSION_KEY = 'checkout_customer_benefit'
+
+
+def summary_context(request, subtotal, benefit, quoted, error):
+    """The cart and checkout show the same server-validated article discount."""
+    discount = Decimal(quoted['discount_amount']) / 100 if quoted else Decimal('0.00')
+    return {
+        'benefit': benefit, 'benefit_selected': request.session.get(SESSION_KEY) is not None,
+        'benefit_error': error, 'discount': discount, 'discounted_total': subtotal - discount,
+    }
 
 
 def validate_discounted_total(subtotal, discount):

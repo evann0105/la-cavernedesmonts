@@ -30,8 +30,12 @@ nouveau compte avec la même adresse ne récupère pas automatiquement le code.
 
 Le client retrouve ses avantages dans **Mon compte → Mes avoirs** (`/avoirs/`),
 après confirmation de son adresse e-mail. Il copie le code puis le saisit dans
-le récapitulatif de commande, avant le paiement. La remise et le montant des
-articles après remise sont affichés avant de partir vers Stripe.
+le champ **Code d’avoir ou de réduction** du panier, avant de passer à la
+commande. Le même champ reste accessible au récapitulatif de commande. La
+remise et le montant des articles après remise sont affichés dès le panier,
+puis conservés avant de partir vers Stripe. Le montant reste contrôlé côté
+serveur et se recalcule lorsque la quantité change. Le client peut retirer le
+code ; vider le panier retire la sélection sans consommer le code.
 Si son adresse est déjà renseignée, « Recevoir mon lien de confirmation »
 demande le mail directement depuis Mes avoirs. Sinon, il renseigne d’abord
 son adresse et son mot de passe actuel. Le lien reçu ouvre une page avec un

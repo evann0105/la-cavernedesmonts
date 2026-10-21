@@ -153,6 +153,16 @@ class VoluntaryLocalVerificationTests(TestCase):
         self.assertEqual(len(mail.outbox), 0)
         self.assertFalse(email_verified(self.user))
 
+    def test_confirmation_from_cart_returns_to_the_same_cart(self):
+        verification = reverse('connexion:verify_email')
+        response = self.client.get(verification, {'next': reverse('core:cart')})
+        self.assertContains(response, 'Revenir à mon panier')
+        self.assertEqual(self.client.session['email_verification_return_to'], 'core:cart')
+        self.client.post(verification)
+        confirmation = reverse('connexion:confirm_email', args=[self.token_from_message()])
+        self.assertRedirects(self.client.post(confirmation), reverse('core:cart'))
+        self.assertTrue(email_verified(self.user))
+
     def test_missing_email_is_requested_with_current_password_then_confirmation_still_required(self):
         self.user.email = ''
         self.user.save(update_fields=['email'])

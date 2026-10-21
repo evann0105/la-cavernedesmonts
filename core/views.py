@@ -11,6 +11,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.templatetags.static import static
 from django.views.decorators.http import require_POST
 from django.views.decorators.http import require_GET
+from django.views.decorators.cache import never_cache
 from django.http import JsonResponse
 from django.utils import timezone
 from .models import Product, Category
@@ -192,11 +193,22 @@ def location(request):
     return render(request, 'core/location.html')
 
 
+@never_cache
+@require_GET
 def cart(request):
     from paiement.shipping import shipping_summary
+    from paiement.benefits import SESSION_KEY, selection, summary_context
+    from paiement.cart_checkout import current_order
     items = lines(request)
     subtotal = total(items)
-    return render(request, 'core/cart.html', {'cart_items': items, 'total': subtotal, 'shipping': shipping_summary(subtotal)})
+    if not items:
+        request.session.pop(SESSION_KEY, None)
+        request.session.pop('checkout_displayed_benefit', None)
+    benefit, quoted, error = selection(request, int(subtotal * 100), order=current_order(request))
+    return render(request, 'core/cart.html', {
+        'cart_items': items, 'total': subtotal, 'shipping': shipping_summary(subtotal),
+        **summary_context(request, subtotal, benefit, quoted, error), 'code_return_to': 'cart',
+    })
 
 
 @require_POST

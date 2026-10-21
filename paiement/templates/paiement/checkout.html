@@ -4,6 +4,7 @@
 {% block styles %}{{ block.super }}
 <link rel="stylesheet" href="{% static 'css/shipping.css' %}?v=20261018-shipping">
 <link rel="stylesheet" href="{% static 'paiement/css/checkout.css' %}?v=20261020-avoirs">
+<link rel="stylesheet" href="{% static 'paiement/css/customer-code.css' %}?v=20261021-cart-code">
 {% endblock %}
 {% block content %}
 <section class="wrap section checkout">
@@ -26,27 +27,7 @@
       <p class="small">Prix en euros TTC. Les frais et le montant total sont présentés avant validation du paiement. Achat ponctuel, sans abonnement ni renouvellement automatique.</p>
     </div>
     <div class="checkout-next">
-      <section class="checkout-code" aria-labelledby="benefit-title">
-        <h2 id="benefit-title">Un avoir ou un bon de réduction ?</h2>
-        {% if benefit_error %}<p class="checkout-code-error" role="alert">{{ benefit_error }}</p>{% endif %}
-        {% if benefit_selected %}
-        <p class="checkout-selected-code">{% if benefit %}<strong>{{ benefit.code }}</strong><span>{{ benefit.value_label }}{% if not benefit_error %} · appliqué aux articles{% endif %}</span>{% else %}Code à retirer{% endif %}</p>
-        <form method="post">{% csrf_token %}<button class="underlined" name="action" value="remove_benefit">Retirer ce code</button></form>
-        {% endif %}
-        {% if not request.user.is_authenticated %}
-        <p>Connectez-vous au compte destinataire pour utiliser votre code personnel.</p>
-        <a class="underlined" href="{% url 'two_factor:login' %}?next={% url 'paiement:checkout' %}">Me connecter →</a>
-        {% elif not email_confirmed %}
-        <p>Confirmez votre adresse e-mail avant d’utiliser un code personnel.</p>
-        <a class="underlined" href="{% url 'connexion:verify_email' %}">Confirmer mon adresse →</a>
-        {% else %}
-        <form method="post" class="checkout-code-form">{% csrf_token %}
-          <label for="benefit-code">Votre code personnel</label>
-          <div><input id="benefit-code" name="benefit_code" maxlength="32" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CDM-…"><button class="button" name="action" value="apply_benefit">Appliquer</button></div>
-        </form>
-        <p class="small">Retrouvez vos codes et leurs conditions dans <a class="underlined" href="{% url 'espace:credits' %}">Mes avoirs</a>. Un seul code par commande, hors frais de livraison.</p>
-        {% endif %}
-      </section>
+      {% include 'paiement/partials/customer_code.html' with code_return_to='checkout' %}
       {% if enabled %}
       <p>Les quantités sont réservées au départ vers Stripe, pour environ 35 minutes. Ajouter un article au panier ne le réserve pas.</p>
       <p>Vous allez être redirigé vers la page sécurisée de Stripe. Vous y renseignerez votre adresse et consulterez les frais de livraison avant de confirmer le paiement. Vos coordonnées bancaires ne sont pas enregistrées sur notre site.</p>
