@@ -9,11 +9,15 @@ class BackNavigationTests(TestCase):
     def test_local_previous_page_keeps_filters(self):
         response = self.client.get('/magasins/', HTTP_REFERER='http://testserver/produits/?categorie=femmes&tri=prix')
         self.assertEqual(response.context['back_url'], '/produits/?categorie=femmes&tri=prix')
+        self.assertTrue(response.context['back_use_history'])
+        self.assertContains(response, 'href="/" data-back-history class="page-back-link"')
 
     def test_external_and_same_page_referers_use_home(self):
         for referer in ('https://example.com/', '//evil.example/', 'javascript:alert(1)', 'http://testserver/produits/', 'http://testserver/accounts/login/'):
             response = self.client.get('/produits/', HTTP_REFERER=referer)
             self.assertEqual(response.context['back_url'], '/')
+            self.assertFalse(response.context['back_use_history'])
+            self.assertNotContains(response, 'data-back-history')
 
     def test_old_location_address_redirects_to_current_shop_page(self):
         self.assertRedirects(self.client.get('/localisation/'), '/magasins/', status_code=301)

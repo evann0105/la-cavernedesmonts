@@ -19,7 +19,7 @@ def back_navigation(request):
     match = request.resolver_match
     name = match.view_name if match else ''
     if name == 'accueil:home':
-        return {'back_url': None}
+        return {'back_url': None, 'back_fallback': None, 'back_use_history': False}
     fallback = reverse('accueil:home')
     if name == 'core:catalog_promotions' or name.startswith('core:sales_'):
         fallback = reverse('espace:account') if name == 'core:sales_dashboard' else reverse('core:sales_dashboard')
@@ -39,7 +39,9 @@ def back_navigation(request):
         fallback = reverse('boutique:settings')
     elif name.startswith('boutique:'):
         fallback = reverse('espace:account')
-    # A normal link also works without JavaScript and never replays a submitted form.
+    # The href remains a stable parent without JavaScript. A safe internal
+    # referrer only enables browser Back; following a referrer link would push
+    # another entry and make repeated clicks bounce between the same pages.
     referer = request.META.get('HTTP_REFERER', '')
     if url_has_allowed_host_and_scheme(referer, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
         try:
@@ -48,7 +50,8 @@ def back_navigation(request):
             target = previous.path + (('?' + previous.query) if previous.query else '')
             if (not previous.netloc or (previous.scheme, previous.netloc) == (current.scheme, current.netloc)) and target.startswith('/') and not target.startswith('//') and target != request.get_full_path():
                 if not previous.path.startswith(('/accounts/', '/account/', '/admin/')):
-                    return {'back_url': target + (('#' + previous.fragment) if previous.fragment else '')}
+                    return {'back_url': target + (('#' + previous.fragment) if previous.fragment else ''),
+                            'back_fallback': fallback, 'back_use_history': True}
         except ValueError:
             pass
-    return {'back_url': fallback}
+    return {'back_url': fallback, 'back_fallback': fallback, 'back_use_history': False}

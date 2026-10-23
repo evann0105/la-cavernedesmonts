@@ -1,3 +1,16 @@
+// Walk the browser history instead of creating a new visit to the referrer.
+// The server only enables this for an internal, non-authentication page.
+// Keep the initial navigation intent if the cart later refreshes #contenu.
+const backHistoryAllowed = Boolean(document.querySelector('.page-back-link[data-back-history]'));
+document.addEventListener('click', event => {
+  const link = event.target?.closest?.('.page-back-link');
+  if (!link || !backHistoryAllowed || event.defaultPrevented || event.button !== 0 ||
+      event.ctrlKey || event.metaKey || event.shiftKey || event.altKey ||
+      (link.target && link.target !== '_self') || window.history.length <= 1) return;
+  event.preventDefault();
+  window.history.back();
+});
+
 const toggle = document.querySelector('.menu-toggle');
 const menu = document.getElementById('mobile-nav');
 if (toggle && menu) {
