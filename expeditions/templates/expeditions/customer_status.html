@@ -1,0 +1,12 @@
+{% load static %}{% if shipment.show %}
+<link rel="stylesheet" href="{% static 'expeditions/customer.css' %}?v=20261023">
+<section class="customer-shipment" aria-label="Préparation et expédition">
+  <p class="customer-shipment__kicker">{% if shipment.is_demo %}SIMULATION · {% endif %}VOTRE COLIS</p>
+  <h3>{{ shipment.label }}</h3>
+  {% if shipment.state == 'preparing' %}<p>La boutique prépare votre commande. Le suivi sera disponible après son expédition.</p>
+  {% elif shipment.state == 'ready' %}<p>Votre commande est prête. Elle reste à remettre au transporteur.</p>
+  {% elif shipment.state == 'shipped' %}<p>{% if shipment.is_demo %}Expédition simulée{% else %}Expédition enregistrée{% endif %} le {{ shipment.shipped_at|date:'d/m/Y à H:i' }} · {{ shipment.carrier_name }}</p><p>Numéro de suivi : <strong class="customer-shipment__number">{{ shipment.tracking_number }}</strong></p>
+    {% if shipment.tracking_url and not shipment.is_demo %}<p><a class="customer-shipment__link" href="{{ shipment.tracking_url }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Suivre mon colis sur La Poste ↗</a></p>{% endif %}
+    <p class="customer-shipment__note">{% if shipment.is_demo %}Aucun colis réel n’est envoyé et aucun suivi réel n’est interrogé.{% else %}Le suivi du transporteur peut prendre un peu de temps pour apparaître. L’enregistrement de l’expédition ne confirme pas la livraison.{% endif %}</p>
+  {% endif %}
+</section>{% endif %}

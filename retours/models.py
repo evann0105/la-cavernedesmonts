@@ -158,6 +158,7 @@ class ReturnMail(models.Model):
     request = models.ForeignKey(ReturnRequest, null=True, on_delete=models.PROTECT)
     payload = EncryptedJSONField(default=dict)
     sent_at = models.DateTimeField(null=True)
+    superseded_at = models.DateTimeField(null=True, blank=True, editable=False)
     attempts = models.PositiveIntegerField(default=0)
     last_attempt_at = models.DateTimeField(null=True)
 

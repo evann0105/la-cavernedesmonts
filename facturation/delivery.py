@@ -6,6 +6,7 @@ from .services import _address, _complete_buyer, _display_date
 
 
 def build_delivery_slip(order):
+    from expeditions.public import public_status
     historical = order.invoice_profile if isinstance(order.invoice_profile, dict) else {}
     shipping = _address(order.shipping_details)
     rows = []
@@ -26,4 +27,5 @@ def build_delivery_slip(order):
         'quantity': sum(row['quantity'] for row in rows),
         'order_reference': str(order.pk), 'ordered_at_display': _display_date(order.created_at),
         'is_demo': order.is_demo,
+        'shipment': public_status(order),
     }

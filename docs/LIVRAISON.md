@@ -69,3 +69,10 @@ récapitulatif du contenu du colis, sans affranchissement.
 Les noms français de pays proviennent de [Unicode CLDR](https://github.com/unicode-org/cldr-json).
 La notice d’attribution et la licence sont conservées dans
 [licenses/UNICODE.txt](licenses/UNICODE.txt).
+
+## Préparer et expédier les commandes
+
+Colissimo / La Poste est confirmé par la boutique le 23 octobre 2026 ; le
+nouveau contrat et son accès API sont attendus. Le parcours manuel de
+préparation, suivi et avis au client est décrit dans [EXPEDITIONS.md](EXPEDITIONS.md).
+Renseigner le transporteur dans les réglages ne connecte pas son compte.

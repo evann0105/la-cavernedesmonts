@@ -1,0 +1,2 @@
+{% csrf_token %}{% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+{% if form.errors %}<div class="fulfillment-form-errors" role="alert"><p><strong>L’action n’a pas été enregistrée.</strong> Vérifiez les informations signalées.</p>{{ form.non_field_errors }}{% for hidden in form.hidden_fields %}{{ hidden.errors }}{% endfor %}</div>{% endif %}

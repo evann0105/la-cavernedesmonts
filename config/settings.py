@@ -42,6 +42,7 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1", "[:
 INSTALLED_APPS = [
     "courriels",
     "retours",
+    "expeditions",
     "avoirs",
     'django.contrib.admin',
     'django.contrib.auth',

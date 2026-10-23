@@ -45,6 +45,7 @@ urlpatterns = [
     path('', include(secure_urls)),
     path('paiement/', include('paiement.urls')),
     path('', include('facturation.urls')),
+    path('', include('expeditions.urls')),
     path('admin/', admin.site.urls),
     path('', include('retours.urls')),
     path('', include('espace.urls')),

@@ -62,24 +62,62 @@ def return_notice(record, kind, label):
 
 
 def deliver_pending(limit=30, order_id=None):
-    if not settings.EMAIL_DELIVERY_ENABLED:return 0
+    if not settings.EMAIL_DELIVERY_ENABLED or limit <= 0:return 0
     sent = 0
+    attempted = 0
     cutoff = timezone.now()-timedelta(minutes=5)
-    queued = ReturnMail.objects.filter(sent_at__isnull=True)
+    queued = ReturnMail.objects.filter(sent_at__isnull=True, superseded_at__isnull=True)
+    local_demo_delivery = (settings.DEBUG and settings.EMAIL_TEST_MODE
+                           and settings.EMAIL_BACKEND == 'courriels.backend.LocalMailboxBackend')
+    if not local_demo_delivery:
+        # These notices may wait for a later local capture. They must not occupy
+        # every worker slot when the shop changes to its production mail setup.
+        queued = queued.exclude(order__status='demo', key__startswith='fulfillment-')
     if order_id is not None:queued=queued.filter(order_id=order_id)
-    ids = queued.filter(Q(last_attempt_at__isnull=True) | Q(last_attempt_at__lt=cutoff)).order_by('pk').values_list('pk',flat=True)[:limit]
+    # Refused recipients are deferred without spending a delivery slot. Bound
+    # the reviews as well so a broken backlog cannot monopolise this worker.
+    scan_limit = max(limit * 10, 100)
+    ids = queued.filter(Q(last_attempt_at__isnull=True) | Q(last_attempt_at__lt=cutoff)).order_by('pk').values_list('pk',flat=True)[:scan_limit]
     for pk in list(ids):
+        if attempted >= limit:
+            break
         try:
             with transaction.atomic():
+                # Match fulfillment/refund mutations: order first, outbox second.
+                # A pending old tracking notice cannot be sent while it is corrected.
+                from paiement.models import Order
+                order_id_for_mail = ReturnMail.objects.filter(pk=pk).values_list('order_id', flat=True).first()
+                if order_id_for_mail is None:
+                    continue
+                Order.objects.select_for_update().get(pk=order_id_for_mail)
                 mail = ReturnMail.objects.select_for_update().select_related('order').get(pk=pk)
-                if mail.sent_at:continue
+                if mail.sent_at or mail.superseded_at:continue
                 payload = mail.payload
+                fulfillment_notice = payload['kind'] in ('shipping_ready', 'shipping', 'shipping_update') and 'fulfillment_id' in payload
+                if payload.get('fulfillment_superseded'):
+                    mail.superseded_at = timezone.now()
+                    mail.save(update_fields=['superseded_at'])
+                    continue
+                if fulfillment_notice:
+                    if not payload.get('recipient') or payload['recipient'] != mail.order.customer_email:
+                        logger.warning('Shipping notification recipient requires review (mail %s).', pk)
+                        mail.last_attempt_at = timezone.now()
+                        mail.save(update_fields=['last_attempt_at'])
+                        continue
+                    # A fictitious order may only reach the private local test box.
+                    if mail.order.is_demo and not local_demo_delivery:
+                        mail.last_attempt_at = timezone.now()
+                        mail.save(update_fields=['last_attempt_at'])
+                        continue
                 # A queued acknowledgement must never be redirected after a
                 # change of email. Keep it pending for explicit review.
                 if (payload['kind'] == 'return_requested' and payload.get('recipient') is not None
                         and payload['recipient'] != mail.order.customer_email):
                     logger.warning('Withdrawal acknowledgement recipient requires review (mail %s).', pk)
+                    mail.last_attempt_at = timezone.now()
+                    mail.save(update_fields=['last_attempt_at'])
                     continue
+                attempted += 1
                 mail.attempts += 1;mail.last_attempt_at = timezone.now()
                 mail.save(update_fields=['attempts','last_attempt_at'])
                 url = payload.get('url') or order_link(mail.order)
@@ -91,6 +129,12 @@ def deliver_pending(limit=30, order_id=None):
                 except Exception:
                     logger.warning('Transactional email delivery failed (mail %s).',pk)
                     continue
-                mail.sent_at = timezone.now();mail.save(update_fields=['sent_at']);sent += 1
+                mail.sent_at = timezone.now()
+                if fulfillment_notice:
+                    mail.payload = {**payload, 'delivery_mode': 'local' if settings.EMAIL_BACKEND == 'courriels.backend.LocalMailboxBackend' else 'email'}
+                    mail.save(update_fields=['sent_at', 'payload'])
+                else:
+                    mail.save(update_fields=['sent_at'])
+                sent += 1
         except ReturnMail.DoesNotExist:continue
     return sent

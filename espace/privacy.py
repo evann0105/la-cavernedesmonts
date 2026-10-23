@@ -44,11 +44,13 @@ def subject_export(user):
         # a reused email address, even after that account was deleted.
         benefit_scope |= Q(user_id__isnull=True, bound_user_id__isnull=True,
                            recipient_email_hash=email_digest(user.email))
-    orders = list(Order.objects.filter(user_id=user.pk).select_related('benefit_redemption').order_by('created_at', 'pk'))
+    orders = list(Order.objects.filter(user_id=user.pk).select_related('benefit_redemption', 'fulfillment').order_by('created_at', 'pk'))
     invoices = {invoice.order_id: invoice for invoice in Invoice.objects.filter(
         order_id__in=[order.pk for order in orders]).only('order_id', 'number', 'issued_at', 'snapshot')}
     records = []
     for order in orders:
+        from expeditions.public import public_status
+        shipment = public_status(order)
         redemption = getattr(order, 'benefit_redemption', None)
         # Export the terms recorded for this person's own checkout, even if an
         # unused benefit was later reassigned. Never read its new recipient or
@@ -91,6 +93,8 @@ def subject_export(user):
             'reference': str(order.pk), 'statut': order.get_status_display(),
             'cree_le': order.created_at, 'paye_le': order.paid_at,
             'email_commande': order.customer_email, 'livraison': order.shipping_details,
+            'expedition': ({key: shipment[key] for key in ('state', 'label', 'ready_at', 'shipped_at',
+                           'carrier_name', 'tracking_number', 'tracking_url')} if shipment['show'] else None),
             'facturation': getattr(order, 'billing_details', {}),
             'facture_emise': ({'numero': invoices[order.pk].number, 'emise_le': invoices[order.pk].issued_at,
                                'document': invoices[order.pk].snapshot} if order.pk in invoices else None),

@@ -28,6 +28,7 @@
   {% endif %}
   {% if can_manage_returns %}
   <section class="account-admin-section" aria-labelledby="account-service-title"><h3 id="account-service-title">Service client</h3><div class="hub-cards">
+    <a class="hub-card" href="{% url 'expeditions:overview' %}"><h3>Préparer et expédier</h3><p>Vérifier les commandes, préparer les colis et prévenir les clients avec leur suivi.</p></a>
     <a class="hub-card" href="{% url 'facturation:management' %}"><h3>Commandes et factures</h3><p>Suivre les commandes et imprimer les documents du colis.</p></a>
     <a class="hub-card" href="{% url 'retours:manage' %}"><h3>Retours et remboursements</h3><p>Recevoir les articles et suivre le traitement des dossiers.</p></a>
     <a class="hub-card" href="{% url 'avoirs:management' %}"><h3>Avoirs clients</h3><p>Créer des codes personnels, choisir leurs montants et conditions, puis suivre leur utilisation.</p></a>

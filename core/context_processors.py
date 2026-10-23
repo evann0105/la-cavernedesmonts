@@ -31,6 +31,8 @@ def back_navigation(request):
         fallback = reverse('core:product_list')
     elif name.startswith('paiement:'):
         fallback = reverse('core:cart')
+    elif name.startswith('expeditions:'):
+        fallback = reverse('espace:account') if name == 'expeditions:overview' else reverse('expeditions:overview')
     elif name.startswith('boutique:shipping_') and name != 'boutique:shipping_information':
         fallback = reverse('espace:account') if name == 'boutique:shipping_overview' else reverse('boutique:shipping_overview')
     elif name.startswith('boutique:settings_'):

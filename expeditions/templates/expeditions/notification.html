@@ -1,0 +1,15 @@
+<section class="fulfillment-panel fulfillment-notification" aria-labelledby="fulfillment-notification-title"><h2 id="fulfillment-notification-title">Message au client</h2>
+{% if shipment.notice.pending %}
+  {% if shipment.notice.failed %}<span class="fulfillment-status fulfillment-status--warning">En attente après un échec</span><p>Le dernier essai d’envoi n’a pas été confirmé. Le message reste en attente de traitement ; aucune réception par le client n’est présumée.</p>
+  {% elif not shipment_mail_delivery_enabled %}<span class="fulfillment-status fulfillment-status--warning">Envoi désactivé</span><p>Le message est enregistré mais son envoi est désactivé. Il reste en attente.</p>
+  {% elif shipment_email_capture or order.is_demo %}<span class="fulfillment-status">En attente de capture</span><p>Le message doit encore être enregistré dans la boîte e-mail de test. Aucun e-mail n’est envoyé au client.</p>
+  {% else %}<span class="fulfillment-status">En attente d’envoi</span><p>Le message est enregistré dans la file d’envoi. Sa prise en charge et sa réception ne sont pas encore confirmées.</p>{% endif %}
+{% elif shipment.notice.processed_at %}
+  {% if shipment.notice.mode == 'local' %}<span class="fulfillment-status fulfillment-status--ready">Message de test disponible</span><p>Le message a été capturé dans la boîte e-mail de test le {{ shipment.notice.processed_at|date:'d/m/Y à H:i' }}. Aucun e-mail n’a été envoyé au client.</p>
+  {% elif shipment.notice.mode == 'email' %}<span class="fulfillment-status fulfillment-status--ready">Pris en charge par le service d’envoi</span><p>Le traitement est enregistré le {{ shipment.notice.processed_at|date:'d/m/Y à H:i' }}. La réception dans la boîte du client n’est pas confirmée par le site.</p>
+  {% else %}<span class="fulfillment-status">Traitement enregistré</span><p>Un traitement a été enregistré le {{ shipment.notice.processed_at|date:'d/m/Y à H:i' }}, mais son mode d’envoi n’est pas connu. Aucune réception par le client n’est présumée.</p>{% endif %}
+{% else %}<p>Aucun avis de préparation ou d’expédition n’a encore été demandé pour cette commande.</p>{% endif %}
+{% if shipment_email_capture and not order.is_demo %}<p class="fulfillment-muted">Mode e-mail de test actif : les prochains messages restent dans la boîte de test du site.</p>{% endif %}
+{% if email_test_mode and can_manage_catalog %}<a class="fulfillment-text-link" href="{% url 'test_email_inbox' %}">Ouvrir la boîte e-mail de test <span aria-hidden="true">↗</span></a>{% endif %}
+{% if shipment.can_resend_notice %}<form method="post" class="fulfillment-form fulfillment-resend-form">{% include 'expeditions/form_start.html' with form=resend_notice_form %}<p>Le nouvel avis reprend le suivi actuellement enregistré et utilise uniquement l’adresse e-mail de la commande.</p><button class="button outline" type="submit">{% if order.is_demo or shipment_email_capture %}Préparer un nouvel avis de test{% else %}Renvoyer l’avis au client{% endif %}</button></form>{% endif %}
+</section>

@@ -78,12 +78,12 @@ def account(request):
 
 @private
 def orders(request):
-    return render(request,'espace/orders.html',{'title':_('Mes commandes'),'orders':Order.objects.filter(user=request.user).order_by('-created_at')})
+    return render(request,'espace/orders.html',{'title':_('Mes commandes'),'orders':Order.objects.filter(user=request.user).select_related('fulfillment').order_by('-created_at')})
 
 
 @private
 def order_detail(request, pk):
-    order=get_object_or_404(Order, pk=pk, user=request.user)
+    order=get_object_or_404(Order.objects.select_related('fulfillment'), pk=pk, user=request.user)
     return render(request,'espace/order.html',{'title':_('Détail de la commande'),'order':order})
 
 
