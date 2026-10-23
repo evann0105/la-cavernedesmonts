@@ -5,6 +5,12 @@ retrouve les commandes payées à préparer, les commandes prêtes et les comman
 expédiées. La recherche utilise la référence de commande. Les simulations ont
 leur propre onglet en développement et ne sont pas accessibles en production.
 
+Dans **À préparer** et **Prêtes**, les commandes payées depuis le plus longtemps
+sont affichées en premier, avec leur temps d’attente avant expédition. Pour les
+simulations et les anciennes commandes sans date de paiement, la création sert
+de point de départ. Ce temps est une durée écoulée, sans présumer un retard de
+livraison. Dans **Expédiées**, les derniers départs sont affichés en premier.
+
 ## Parcours quotidien
 
 1. Ouvrir la commande dans **À préparer**. Contrôler le destinataire, l’adresse,

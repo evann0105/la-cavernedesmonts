@@ -3,6 +3,7 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
 from decimal import Decimal
+from datetime import timedelta
 from unittest.mock import patch
 from urllib.parse import urlsplit
 
@@ -697,3 +698,184 @@ class FulfillmentConcurrencyTests(FulfillmentFixture, TransactionTestCase):
         self.assertEqual(summary(Order.objects.get(pk=order_id))['revision'], 2)
         self.assertEqual(len(self.notices('shipping')), 1)
         self.assertEqual(Fulfillment.objects.count(), 1)
+
+
+@override_settings(**TEST_SETTINGS)
+class FulfillmentPrioritiesTests(FulfillmentFixture, TestCase):
+    def setUp(self):
+        super().setUp()
+        # The shared fixture exercises domain operations elsewhere. Keep it out
+        # of this class's dated worklists without deleting purchase history.
+        self.order.status = 'expired'
+        self.order.save(update_fields=['status'])
+        self.anchor = timezone.now().replace(microsecond=0)
+
+    def dated_order(self, *, created_at, paid_at=None, status='paid',
+                    state='preparing', ready_at=None, shipped_at=None, identifier=None):
+        values = {
+            'session_key': 'priority-' + uuid.uuid4().hex,
+            'status': status, 'paid_at': paid_at,
+            'customer_email': 'priority-customer@example.test',
+            'items': deepcopy(self.order.items), 'subtotal': self.order.subtotal,
+            'total_paid': self.order.total_paid,
+            'shipping_details': deepcopy(self.order.shipping_details),
+        }
+        if identifier is not None:
+            values['pk'] = uuid.UUID(int=identifier)
+        order = Order.objects.create(**values)
+        Order.objects.filter(pk=order.pk).update(created_at=created_at)
+        order.created_at = created_at
+        if state != 'preparing':
+            Fulfillment.objects.create(
+                order=order, state=state, revision=1 if state == 'ready' else 2,
+                ready_at=ready_at or paid_at or created_at,
+                shipped_at=shipped_at, carrier='colissimo',
+                tracking_number=TRACKING if state == 'shipped' else '',
+            )
+        return order
+
+    def worklist(self, *, state='preparing', scope='paid', page=1):
+        response = self.client.get(reverse('expeditions:overview'),
+                                   {'state': state, 'scope': scope, 'page': page})
+        self.assertEqual(response.status_code, 200)
+        return response
+
+    def row_ids(self, response):
+        return [row['order'].pk for row in response.context['rows']]
+
+    def test_preparing_oldest_payment_first_even_when_newer_purchase_was_created_earlier(self):
+        recent = self.dated_order(created_at=self.anchor - timedelta(days=8),
+                                  paid_at=self.anchor - timedelta(hours=1))
+        older = self.dated_order(created_at=self.anchor - timedelta(days=3),
+                                 paid_at=self.anchor - timedelta(days=2))
+        response = self.worklist()
+        self.assertEqual(self.row_ids(response), [older.pk, recent.pk])
+        self.assertFalse(Fulfillment.objects.exists())
+        self.assertFalse(ReturnMail.objects.exists())
+
+    def test_equal_payment_dates_use_creation_then_stable_uuid_order(self):
+        paid = self.anchor - timedelta(days=1)
+        same_creation = self.anchor - timedelta(days=2)
+        later_uuid = self.dated_order(created_at=same_creation, paid_at=paid, identifier=20)
+        oldest_creation = self.dated_order(created_at=self.anchor - timedelta(days=3),
+                                          paid_at=paid, identifier=30)
+        earlier_uuid = self.dated_order(created_at=same_creation, paid_at=paid, identifier=10)
+        self.assertEqual(self.row_ids(self.worklist()),
+                         [oldest_creation.pk, earlier_uuid.pk, later_uuid.pk])
+
+    def test_ready_worklist_uses_purchase_age_instead_of_last_preparation_time(self):
+        older_purchase = self.dated_order(
+            created_at=self.anchor - timedelta(days=5),
+            paid_at=self.anchor - timedelta(days=4), state='ready',
+            ready_at=self.anchor - timedelta(hours=1))
+        recent_purchase = self.dated_order(
+            created_at=self.anchor - timedelta(days=3),
+            paid_at=self.anchor - timedelta(days=2), state='ready',
+            ready_at=self.anchor - timedelta(days=1))
+        response = self.worklist(state='ready')
+        self.assertEqual(self.row_ids(response), [older_purchase.pk, recent_purchase.pk])
+        self.assertEqual(response.context['rows'][0]['waiting']['since'], older_purchase.paid_at)
+
+    def test_demo_orders_without_payment_date_fall_back_to_oldest_creation(self):
+        newer = self.dated_order(created_at=self.anchor - timedelta(minutes=15), status='demo')
+        older = self.dated_order(created_at=self.anchor - timedelta(days=3), status='demo')
+        self.dated_order(created_at=self.anchor - timedelta(days=10),
+                         paid_at=self.anchor - timedelta(days=9))
+        response = self.worklist(scope='demo')
+        self.assertEqual(self.row_ids(response), [older.pk, newer.pk])
+        self.assertEqual(response.context['rows'][0]['waiting']['since'], older.created_at)
+
+    def test_legacy_paid_orders_without_payment_date_are_sorted_by_creation_among_other_orders(self):
+        recent_legacy = self.dated_order(created_at=self.anchor - timedelta(hours=1))
+        paid = self.dated_order(created_at=self.anchor - timedelta(days=3),
+                                paid_at=self.anchor - timedelta(days=2))
+        old_legacy = self.dated_order(created_at=self.anchor - timedelta(days=4))
+        response = self.worklist()
+        self.assertEqual(self.row_ids(response), [old_legacy.pk, paid.pk, recent_legacy.pk])
+        self.assertEqual(response.context['rows'][0]['waiting']['since'], old_legacy.created_at)
+
+    def test_shipped_worklist_uses_latest_departure_and_does_not_show_waiting(self):
+        old_purchase_recent_departure = self.dated_order(
+            created_at=self.anchor - timedelta(days=8), paid_at=self.anchor - timedelta(days=7),
+            state='shipped', shipped_at=self.anchor - timedelta(hours=1))
+        newer_purchase_older_departure = self.dated_order(
+            created_at=self.anchor - timedelta(days=4), paid_at=self.anchor - timedelta(days=3),
+            state='shipped', shipped_at=self.anchor - timedelta(days=2))
+        latest_departure = self.dated_order(
+            created_at=self.anchor - timedelta(days=6), paid_at=self.anchor - timedelta(days=5),
+            state='shipped', shipped_at=self.anchor - timedelta(minutes=5))
+        response = self.worklist(state='shipped')
+        self.assertEqual(self.row_ids(response), [latest_departure.pk,
+                         old_purchase_recent_departure.pk, newer_purchase_older_departure.pk])
+        self.assertTrue(all(row['waiting'] is None for row in response.context['rows']))
+        self.assertNotContains(response, 'En attente d’expédition depuis')
+
+    def test_all_states_preserves_newest_purchase_order_with_null_payment_fallback(self):
+        older_paid = self.dated_order(
+            created_at=self.anchor - timedelta(days=4), paid_at=self.anchor - timedelta(days=2),
+            state='ready', ready_at=self.anchor - timedelta(days=1))
+        recent_legacy = self.dated_order(created_at=self.anchor - timedelta(hours=1))
+        newest_paid = self.dated_order(created_at=self.anchor - timedelta(days=5),
+                                       paid_at=self.anchor - timedelta(minutes=30))
+        response = self.worklist(state='all')
+        self.assertEqual(self.row_ids(response), [newest_paid.pk, recent_legacy.pk, older_paid.pk])
+
+    def test_pagination_keeps_the_twenty_five_oldest_on_first_page(self):
+        oldest_first = []
+        for index in range(26):
+            paid_at = self.anchor - timedelta(hours=26 - index)
+            order = self.dated_order(created_at=paid_at - timedelta(minutes=1), paid_at=paid_at)
+            oldest_first.append(order.pk)
+        first = self.worklist()
+        self.assertEqual(first.context['page_obj'].paginator.count, 26)
+        self.assertEqual(self.row_ids(first), oldest_first[:25])
+        self.assertNotIn(oldest_first[-1], self.row_ids(first))
+        self.assertEqual(self.row_ids(self.worklist(page=2)), oldest_first[25:])
+
+    def test_waiting_label_uses_payment_instead_of_creation_and_clamps_future_dates(self):
+        older_paid = self.dated_order(created_at=self.anchor - timedelta(days=10),
+                                      paid_at=self.anchor - timedelta(hours=2))
+        future_paid = self.dated_order(created_at=self.anchor - timedelta(minutes=5),
+                                       paid_at=self.anchor + timedelta(minutes=10))
+        with patch('expeditions.views.timezone.now', return_value=self.anchor):
+            response = self.worklist()
+        rows = response.context['rows']
+        self.assertEqual([row['order'].pk for row in rows], [older_paid.pk, future_paid.pk])
+        self.assertEqual(rows[0]['waiting'], {'since': older_paid.paid_at,
+                         'label': 'En attente d’expédition depuis 2 heures'})
+        self.assertEqual(rows[1]['waiting'], {'since': future_paid.paid_at,
+                         'label': 'En attente d’expédition depuis moins d’une minute'})
+        self.assertContains(response, 'En attente d’expédition depuis 2 heures')
+        self.assertNotContains(response, 'En retard')
+        self.assertNotContains(response, 'Temps d’attente négatif')
+
+    def test_waiting_labels_share_one_reference_time_for_the_worklist(self):
+        from .priorities import waiting_time
+        for hours in (2, 3):
+            self.dated_order(created_at=self.anchor - timedelta(days=5),
+                             paid_at=self.anchor - timedelta(hours=hours))
+        with patch('expeditions.views.waiting_time', wraps=waiting_time) as duration:
+            self.worklist()
+        self.assertEqual(duration.call_count, 2)
+        reference_times = [call.args[1] for call in duration.call_args_list]
+        self.assertIs(reference_times[0], reference_times[1])
+
+    def test_waiting_time_boundaries_use_complete_minutes_hours_and_days(self):
+        from .priorities import waiting_time
+        cases = [
+            (timedelta(seconds=0), 'moins d’une minute'),
+            (timedelta(seconds=59, microseconds=999999), 'moins d’une minute'),
+            (timedelta(minutes=1), '1 minute'),
+            (timedelta(minutes=2), '2 minutes'),
+            (timedelta(minutes=59, seconds=59), '59 minutes'),
+            (timedelta(hours=1), '1 heure'),
+            (timedelta(hours=2), '2 heures'),
+            (timedelta(hours=23, minutes=59, seconds=59), '23 heures'),
+            (timedelta(days=1), '1 jour'),
+            (timedelta(days=2), '2 jours'),
+        ]
+        for elapsed, expected in cases:
+            with self.subTest(elapsed=elapsed):
+                self.assertEqual(waiting_time(self.anchor - elapsed, self.anchor), expected)
+        self.assertEqual(waiting_time(self.anchor + timedelta(days=1), self.anchor),
+                         'moins d’une minute')

@@ -6,13 +6,16 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
+from django.db.models.functions import Coalesce
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_GET, require_http_methods
 
 from facturation.delivery import build_delivery_slip
 from paiement.models import Order
 from retours.access import returns_required
 from .forms import FORM_CLASSES
+from .priorities import waiting_time
 from .selectors import summary
 from .services import change_state, FulfillmentError, RevisionConflict
 
@@ -62,7 +65,10 @@ def overview(request):
     if state not in dict(STATES) and state != 'all':
         state = 'preparing'
     query = request.GET.get('q', '').strip()[:100]
-    orders = Order.objects.filter(status=scope).select_related('fulfillment').prefetch_related('returns').order_by('-paid_at', '-created_at', '-pk')
+    # A checkout created earlier but paid later must not jump ahead of an
+    # already paid purchase. Simulations and legacy rows may have no paid_at.
+    orders = Order.objects.filter(status=scope).select_related('fulfillment').prefetch_related('returns').annotate(
+        fulfillment_priority_at=Coalesce('paid_at', 'created_at'))
     preparing = Q(fulfillment__isnull=True) | Q(fulfillment__state='preparing')
     counts = orders.aggregate(preparing=Count('pk', filter=preparing),
         ready=Count('pk', filter=Q(fulfillment__state='ready')),
@@ -71,14 +77,30 @@ def overview(request):
         orders = orders.filter(preparing)
     elif state != 'all':
         orders = orders.filter(fulfillment__state=state)
+    if state in ('preparing', 'ready'):
+        orders = orders.order_by('fulfillment_priority_at', 'created_at', 'pk')
+        ordering_label = 'Les commandes les plus anciennes sont affichées en premier.'
+    elif state == 'shipped':
+        orders = orders.annotate(fulfillment_departure_at=Coalesce(
+            'fulfillment__shipped_at', 'paid_at', 'created_at')).order_by(
+                '-fulfillment_departure_at', '-created_at', '-pk')
+        ordering_label = 'Les derniers départs sont affichés en premier.'
+    else:
+        orders = orders.order_by('-fulfillment_priority_at', '-created_at', '-pk')
+        ordering_label = 'Les commandes les plus récentes sont affichées en premier.'
     if query:
         # Customer names, addresses and emails are encrypted; search only the reference.
         orders = orders.filter(id__icontains=query) if re.fullmatch(r'[0-9a-fA-F-]+', query) else orders.none()
     page = Paginator(orders, 25).get_page(request.GET.get('page'))
     rows = []
+    now = timezone.now()
     for order in page:
         shipping = order.shipping_details if isinstance(order.shipping_details, dict) else {}
-        rows.append({'order': order, 'shipment': summary(order),
+        shipment = summary(order)
+        since = order.paid_at or order.created_at
+        waiting = None if shipment['state'] == 'shipped' else {
+            'since': since, 'label': 'En attente d’expédition depuis ' + waiting_time(since, now)}
+        rows.append({'order': order, 'shipment': shipment, 'waiting': waiting,
                      'customer_name': str(shipping.get('name') or ''),
                      'quantity': sum(item['quantity'] for item in order.items
                          if isinstance(item, dict) and type(item.get('quantity')) is int and item['quantity'] > 0)
@@ -87,6 +109,7 @@ def overview(request):
     return _private(render(request, 'expeditions/overview.html', {
         'rows': rows, 'page_obj': page, 'scope': scope, 'state': state,
         'state_tabs': tabs, 'query': query, 'allow_demo': bool(settings.DEBUG), **_mail_mode(),
+        'ordering_label': ordering_label,
     }))
 
 

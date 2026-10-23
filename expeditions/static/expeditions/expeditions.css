@@ -22,6 +22,7 @@
 .fulfillment-search .button { min-height: 46px; padding: 10px 22px; font-size: 13px; }
 .fulfillment-results-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
 .fulfillment-results-heading p { margin: 0; font-size: 13px; color: var(--fulfillment-muted); }
+.fulfillment-results-heading .fulfillment-ordering-hint { margin-top: 6px; font-size: 12px; }
 .fulfillment-order-list { display: grid; gap: 16px; }
 .fulfillment-order-card { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px; border: 1px solid var(--fulfillment-line); border-radius: 15px; background: #fff; }
 .fulfillment-order-main { min-width: 0; }
@@ -31,6 +32,8 @@
 .fulfillment-order-card p { margin: 0; font-size: 13px; line-height: 1.7; color: var(--fulfillment-muted); overflow-wrap: anywhere; }
 .fulfillment-order-card .fulfillment-order-followup, .fulfillment-order-card .fulfillment-order-warning { margin-top: 9px; font-size: 12px; }
 .fulfillment-order-card .fulfillment-order-warning { color: #85502c; }
+.fulfillment-order-card .fulfillment-order-waiting { margin-top: 10px; color: var(--fulfillment-ink); font-weight: 600; }
+.fulfillment-order-waiting time { display: inline; }
 .fulfillment-order-card > .button { flex-shrink: 0; font-size: 13px; padding: 11px 18px; }
 .fulfillment-status { display: inline-flex; align-items: center; padding: 5px 10px; border-radius: 20px; background: #f0eee2; color: #75623a; font-size: 12px; line-height: 1.4; white-space: nowrap; }
 .fulfillment-status--ready { background: #e8efdd; color: #476034; }
