@@ -1,4 +1,4 @@
-"""Price-free packing slip from the original order, without carrier requests."""
+"""Original items and current parcel address, without prices or carrier requests."""
 from copy import deepcopy
 
 from espace.legal import profile as legal_profile
@@ -6,9 +6,10 @@ from .services import _address, _complete_buyer, _display_date
 
 
 def build_delivery_slip(order):
+    from expeditions.contacts import effective_shipping
     from expeditions.public import public_status
     historical = order.invoice_profile if isinstance(order.invoice_profile, dict) else {}
-    shipping = _address(order.shipping_details)
+    shipping = _address(effective_shipping(order))
     rows = []
     raw_items = order.items if isinstance(order.items, list) else []
     for item in raw_items:

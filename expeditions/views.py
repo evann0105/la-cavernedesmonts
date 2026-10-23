@@ -8,13 +8,15 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.db.models.functions import Coalesce
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_http_methods
 
 from facturation.delivery import build_delivery_slip
 from paiement.models import Order
 from retours.access import returns_required
-from .forms import FORM_CLASSES
+from .forms import FORM_CLASSES, AddressCorrectionForm, EmailCorrectionForm
+from .contacts import correct_contacts, locked_country
 from .priorities import waiting_time
 from .selectors import summary
 from .services import change_state, FulfillmentError, RevisionConflict
@@ -57,6 +59,24 @@ def _forms(order, info, action='', data=None):
             for key, cls in FORM_CLASSES.items()}
 
 
+def _resolution(info, order):
+    """Link an explicit blocker to its own record, never to an unrelated list."""
+    info = {**info, 'resolution_url': '', 'resolution_label': ''}
+    if not info.get('blocked_reason'):
+        return info
+    kind = info.get('blocked_kind')
+    if kind == 'return' and info.get('blocked_return_id'):
+        info.update(resolution_url=reverse('retours:manage_detail', args=[info['blocked_return_id']]),
+                    resolution_label='Ouvrir le dossier concerné')
+    elif kind in ('address', 'email') and info.get('can_correct_contacts'):
+        info.update(resolution_url=reverse('expeditions:contacts', args=[order.pk]) + '?section=' + kind,
+                    resolution_label='Vérifier et corriger ' + ('l’adresse de livraison' if kind == 'address' else 'l’adresse e-mail'))
+    elif kind in ('items', 'order'):
+        info.update(resolution_url=reverse('facturation:purchase_order', args=[order.pk]),
+                    resolution_label='Vérifier le bon de commande')
+    return info
+
+
 @returns_required
 @require_GET
 def overview(request):
@@ -95,8 +115,8 @@ def overview(request):
     rows = []
     now = timezone.now()
     for order in page:
-        shipping = order.shipping_details if isinstance(order.shipping_details, dict) else {}
-        shipment = summary(order)
+        shipment = _resolution(summary(order), order)
+        shipping = shipment.get('contact_shipping') or {}
         since = order.paid_at or order.created_at
         waiting = None if shipment['state'] == 'shipped' else {
             'since': since, 'label': 'En attente d’expédition depuis ' + waiting_time(since, now)}
@@ -118,7 +138,7 @@ def overview(request):
 def detail(request, pk):
     statuses = ('paid', 'demo') if settings.DEBUG else ('paid',)
     order = get_object_or_404(Order.objects.select_related('fulfillment', 'invoice').prefetch_related('returns'), pk=pk, status__in=statuses)
-    info = summary(order)
+    info = _resolution(summary(order), order)
     action = request.POST.get('action', '') if request.method == 'POST' else ''
     forms = _forms(order, info, action=action, data=request.POST if request.method == 'POST' else None)
     status = 200
@@ -160,4 +180,52 @@ def detail(request, pk):
         'order': order, 'shipment': info, 'packing': packing,
         **{key + '_form': form for key, form in forms.items()},
         'submitted_action': action, 'submitted_form': forms.get(action), **_mail_mode(),
+    }, status=status))
+
+
+@returns_required
+@require_http_methods(['GET', 'POST'])
+def contacts(request, pk):
+    statuses = ('paid', 'demo') if settings.DEBUG else ('paid',)
+    order = get_object_or_404(Order.objects.select_related('fulfillment').prefetch_related('returns'),
+                              pk=pk, status__in=statuses)
+    info = _resolution(summary(order), order)
+    posted_kind = request.POST.get('kind', '') if request.method == 'POST' else ''
+    section = posted_kind if request.method == 'POST' else request.GET.get('section', 'address')
+    if section not in ('address', 'email'):
+        section = 'address'
+    shipping = info.get('contact_shipping') or {}
+    address = shipping.get('address') if isinstance(shipping.get('address'), dict) else {}
+    initial = {'revision': info['revision'], 'name': shipping.get('name', ''),
+               **{key: address.get(key, '') for key in ('line1', 'line2', 'postal_code', 'city', 'state', 'country')},
+               'email': info.get('contact_email', '')}
+    form_class = AddressCorrectionForm if section == 'address' else EmailCorrectionForm
+    options = {'locked_country': locked_country(order)} if section == 'address' else {}
+    form = form_class(request.POST if request.method == 'POST' and posted_kind in ('address', 'email') else None,
+                      initial=initial, auto_id='id_contact_' + section + '_%s', **options)
+    status = 200
+    if request.method == 'POST':
+        if posted_kind not in ('address', 'email'):
+            messages.error(request, 'Choisissez une correction d’adresse de livraison ou d’adresse e-mail.')
+            status = 400
+        elif form.is_valid():
+            data = form.cleaned_data
+            values = ({'name': data['name'], 'address': {key: data.get(key, '') for key in
+                       ('line1', 'line2', 'postal_code', 'city', 'state', 'country')}}
+                      if section == 'address' else data['email'])
+            try:
+                correct_contacts(order.pk, actor=request.user, expected_revision=data['revision'],
+                                 kind=section, values=values, reason=data['reason'], confirmed=data['confirmed'])
+            except RevisionConflict as exc:
+                _form_error(form, exc)
+                status = 409
+            except (FulfillmentError, ValidationError) as exc:
+                _form_error(form, exc)
+            else:
+                label = 'L’adresse de livraison du colis' if section == 'address' else 'L’adresse e-mail des prochains avis d’expédition'
+                messages.success(request, label + ' a été corrigée. La commande doit être vérifiée en préparation. Aucun e-mail n’a été envoyé pour cette correction.')
+                return _private(redirect('expeditions:detail', pk=order.pk))
+    return _private(render(request, 'expeditions/contacts.html', {
+        'order': order, 'shipment': info, 'contact_section': section,
+        'contact_form': form, **_mail_mode(),
     }, status=status))

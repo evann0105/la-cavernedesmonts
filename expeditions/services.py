@@ -27,11 +27,12 @@ def _authorized(actor):
 
 
 def recipient_email(order):
-    email = (order.customer_email or '').strip()
+    from .contacts import effective_email
+    email = effective_email(order)
     try:
         validate_email(email)
     except ValidationError:
-        raise FulfillmentError('L’adresse e-mail enregistrée avec cette commande manque ou doit être vérifiée. Aucun avis d’expédition ne peut être envoyé.')
+        raise FulfillmentError('L’adresse e-mail de notification manque ou doit être corrigée. Aucun avis d’expédition ne peut être envoyé.')
     return email
 
 
@@ -43,30 +44,45 @@ def _order_reason(order):
     return ''
 
 
-def blocked_reason(order):
-    """Read-only conservative check before preparation and physical shipment."""
+def blocking_issue(order):
+    """Stable read-only blocker, including the relevant return dossier when known."""
     reason = _order_reason(order)
     if reason:
-        return reason
+        return {'kind': 'order', 'message': reason, 'return_id': None}
+    # RelatedManager uses prefetched returns without changing their priority.
     returns = list(order.returns.all())
-    if any(record.refund_state == 'succeeded' for record in returns):
-        return 'Un remboursement a déjà été confirmé sur cette commande. Vérifiez le dossier avant toute expédition.'
-    if any(record.state != 'completed' for record in returns):
-        return 'Un dossier de retour ou de remboursement est encore ouvert. Vérifiez-le avant de préparer ou d’expédier cette commande.'
+    refunded = next((record for record in returns if record.refund_state == 'succeeded'), None)
+    if refunded is not None:
+        return {'kind': 'return', 'return_id': refunded.pk,
+                'message': 'Un remboursement a déjà été confirmé sur cette commande. Vérifiez le dossier avant toute expédition.'}
+    opened = next((record for record in returns if record.state != 'completed'), None)
+    if opened is not None:
+        return {'kind': 'return', 'return_id': opened.pk,
+                'message': 'Un dossier de retour ou de remboursement est encore ouvert. Vérifiez-le avant de préparer ou d’expédier cette commande.'}
     items = order.items
     if (not isinstance(items, list) or not items or any(
             not isinstance(item, dict) or not isinstance(item.get('name'), str)
             or not item['name'].strip() or type(item.get('quantity')) is not int
             or item['quantity'] <= 0 for item in items)):
-        return 'Les articles et quantités de la commande doivent être vérifiés avant de préparer le colis.'
-    shipping = order.shipping_details
+        return {'kind': 'items', 'return_id': None,
+                'message': 'Les articles et quantités de la commande doivent être vérifiés avant de préparer le colis.'}
+    from .contacts import effective_shipping
+    shipping = effective_shipping(order)
     if not isinstance(shipping, dict):
-        return 'L’adresse de livraison enregistrée avec la commande est incomplète.'
+        return {'kind': 'address', 'return_id': None,
+                'message': 'L’adresse de livraison de cette préparation est incomplète.'}
     address = shipping.get('address')
-    if (not str(shipping.get('name') or '').strip() or not isinstance(address, dict)
-            or any(not str(address.get(key) or '').strip() for key in ('line1', 'postal_code', 'city', 'country'))):
-        return 'Le nom et l’adresse de livraison enregistrés avec la commande doivent être complétés ou vérifiés avant de préparer le colis.'
-    return ''
+    if (not isinstance(shipping.get('name'), str) or not shipping['name'].strip()
+            or not isinstance(address, dict) or any(
+                not isinstance(address.get(key), str) or not address[key].strip()
+                for key in ('line1', 'postal_code', 'city', 'country'))):
+        return {'kind': 'address', 'return_id': None,
+                'message': 'Le nom et l’adresse de livraison doivent être complétés ou vérifiés avant de préparer le colis.'}
+    return {'kind': '', 'message': '', 'return_id': None}
+
+
+def blocked_reason(order):
+    return blocking_issue(order)['message']
 
 
 def _tracking(carrier, carrier_name, tracking_number):
@@ -110,6 +126,8 @@ def change_state(order_id, actor, expected_revision, action, carrier='colissimo'
     else:
         # Reuse the already locked original purchase for mail and validation.
         fulfillment.order = order
+    # Reuse these locked operational contacts for all checks and notifications.
+    order.fulfillment = fulfillment
     previous = fulfillment.state
     now = timezone.now()
     if action == 'ready':

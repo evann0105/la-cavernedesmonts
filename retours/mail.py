@@ -99,7 +99,8 @@ def deliver_pending(limit=30, order_id=None):
                     mail.save(update_fields=['superseded_at'])
                     continue
                 if fulfillment_notice:
-                    if not payload.get('recipient') or payload['recipient'] != mail.order.customer_email:
+                    from expeditions.contacts import effective_email
+                    if not payload.get('recipient') or payload['recipient'] != effective_email(mail.order):
                         logger.warning('Shipping notification recipient requires review (mail %s).', pk)
                         mail.last_attempt_at = timezone.now()
                         mail.save(update_fields=['last_attempt_at'])

@@ -25,9 +25,9 @@ livraison. Dans **Expédiées**, les derniers départs sont affichés en premier
    Recopier son numéro de suivi et confirmer la remise au transporteur avant
    de **confirmer l’expédition**. Le client reçoit un avis avec son suivi.
 
-Les messages utilisent uniquement l’adresse e-mail enregistrée avec la commande.
-L’adresse actuelle du compte client ne peut pas remplacer silencieusement ce
-destinataire. Si le suivi est erroné, le corriger avec un motif interne : le
+Les avis d’expédition utilisent l’adresse e-mail enregistrée avec la commande,
+sauf correction explicite et historisée des coordonnées d’expédition. L’adresse
+actuelle du compte client ne peut pas remplacer silencieusement ce destinataire. Si le suivi est erroné, le corriger avec un motif interne : le
 nouveau suivi apparaît au client et un avis de correction est préparé. Les
 anciens avis encore en attente sont écartés ; les messages déjà envoyés restent
 dans l’historique. Le bouton de renvoi ne duplique pas un avis déjà en attente.
@@ -70,3 +70,27 @@ puis confirmer les formats d’étiquettes, options, poids et règles du contrat
 La clé doit être installée côté serveur par un canal sécurisé, sans être
 communiquée dans le chat, stockée dans le navigateur ou ajoutée au dépôt Git.
 Aucun compte ni affranchissement payant n’est connecté par cette fonctionnalité.
+
+## Résoudre une commande bloquée
+
+Le bouton de résolution correspond au problème : adresse de livraison, e-mail
+pour les avis d’expédition, articles à vérifier ou dossier de retour précis.
+Un dossier de retour ou remboursement reste bloquant ; une correction des
+coordonnées ne le clôture pas et ne permet pas de contourner ce contrôle.
+
+Avant l’expédition, la page **Coordonnées d’expédition** permet de corriger
+l’adresse du colis ou l’e-mail des prochains avis d’expédition, séparément.
+La boutique doit vérifier l’information avec le client et renseigner un motif.
+Les anciennes et nouvelles coordonnées, la date et l’auteur restent dans
+l’historique privé et chiffré de la préparation. Une commande déjà prête revient
+à préparer pour vérifier le colis et réimprimer le bon de livraison.
+
+La correction s’applique au bon de livraison et aux futurs avis d’expédition.
+Elle ne remplace pas les coordonnées d’achat, ne modifie ni le compte du
+client, ni le paiement, ni les factures ou les bons de commande. Les messages
+transactionnels de commande et de retour conservent leur destinataire initial.
+Les anciens avis d’expédition encore en attente sont écartés, sans les rediriger.
+Aucun message n’est envoyé automatiquement au moment de corriger les coordonnées.
+Le pays confirmé lors de l’achat ne peut pas être changé par cette page.
+Après l’expédition, ces corrections sont fermées : contacter le transporteur
+pour une demande concernant un colis déjà remis.

@@ -1,5 +1,6 @@
 """Explicit seller confirmations; shipment rules remain in the domain service."""
 from django import forms
+from boutique.shipping_countries import COUNTRY_CHOICES
 
 
 class ActionForm(forms.Form):
@@ -35,7 +36,7 @@ class TrackingFields(ActionForm):
     tracking_number = forms.CharField(label='Numéro de suivi du colis', max_length=120,
         widget=forms.TextInput(attrs={'autocomplete': 'off', 'spellcheck': 'false'}),
         help_text='Recopiez le numéro de l’étiquette fournie par le transporteur. Aucun numéro de suivi n’est créé par le site.')
-    notify_customer = forms.BooleanField(label='Prévenir le client à l’adresse e-mail de sa commande', initial=True,
+    notify_customer = forms.BooleanField(label='Prévenir le client à l’adresse e-mail d’expédition affichée sur cette fiche', initial=True,
         help_text='Obligatoire. Le message reprend le transporteur et le suivi ; son statut d’envoi reste consultable ici.')
 
     def clean(self):
@@ -70,3 +71,59 @@ FORM_CLASSES = {
     'ready': ReadyForm, 'reopen': ReopenForm, 'ship': ShipForm,
     'update_tracking': UpdateTrackingForm, 'resend_notice': ResendNoticeForm,
 }
+
+
+class ContactCorrectionForm(forms.Form):
+    kind_name = ''
+    kind = forms.ChoiceField(widget=forms.HiddenInput)
+    revision = forms.IntegerField(min_value=0, widget=forms.HiddenInput)
+    reason = forms.CharField(label='Motif de la correction', max_length=1000,
+        widget=forms.Textarea(attrs={'rows': 3}),
+        help_text='Ce motif reste dans l’historique privé de la boutique, avec les anciennes et les nouvelles coordonnées.')
+    confirmed = forms.BooleanField(label='Le client m’a confirmé ces nouvelles coordonnées.',
+        help_text='Vérifiez les informations auprès du client avant d’enregistrer la correction.')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['kind'].choices = [(self.kind_name, self.kind_name)]
+        self.initial['kind'] = self.kind_name
+
+
+class AddressCorrectionForm(ContactCorrectionForm):
+    kind_name = 'address'
+    name = forms.CharField(label='Nom du destinataire', max_length=200,
+        widget=forms.TextInput(attrs={'autocomplete': 'shipping name'}))
+    line1 = forms.CharField(label='Adresse de livraison', max_length=255,
+        widget=forms.TextInput(attrs={'autocomplete': 'shipping address-line1'}))
+    line2 = forms.CharField(label='Complément d’adresse', max_length=255, required=False,
+        widget=forms.TextInput(attrs={'autocomplete': 'shipping address-line2'}))
+    postal_code = forms.CharField(label='Code postal', max_length=20,
+        widget=forms.TextInput(attrs={'autocomplete': 'shipping postal-code'}))
+    city = forms.CharField(label='Ville', max_length=120,
+        widget=forms.TextInput(attrs={'autocomplete': 'shipping address-level2'}))
+    state = forms.CharField(label='Région / province', max_length=120, required=False,
+        widget=forms.TextInput(attrs={'autocomplete': 'shipping address-level1'}))
+    country = forms.ChoiceField(label='Pays de livraison', choices=[('', 'Choisir un pays'), *sorted(COUNTRY_CHOICES, key=lambda pair: pair[1].casefold())],
+        help_text='Le pays prévu lors du paiement doit être conservé lorsqu’il est connu : la correction ne recalcule pas les frais de livraison.')
+
+    def __init__(self, *args, **kwargs):
+        country = kwargs.pop('locked_country', '')
+        super().__init__(*args, **kwargs)
+        if country:
+            self.fields['country'].disabled = True
+            self.initial['country'] = country
+            self.fields['country'].help_text = 'Ce pays était prévu lors du paiement et reste inchangé. La correction ne recalcule pas les frais de livraison.'
+
+
+class EmailCorrectionForm(ContactCorrectionForm):
+    kind_name = 'email'
+    email = forms.EmailField(label='Adresse e-mail pour les prochains avis d’expédition', max_length=254,
+        widget=forms.EmailInput(attrs={'autocomplete': 'off', 'spellcheck': 'false'}))
+    email_confirmation = forms.EmailField(label='Confirmer la nouvelle adresse e-mail', max_length=254,
+        widget=forms.EmailInput(attrs={'autocomplete': 'off', 'spellcheck': 'false'}))
+
+    def clean(self):
+        data = super().clean()
+        if data.get('email') and data.get('email_confirmation') and data['email'].casefold() != data['email_confirmation'].casefold():
+            self.add_error('email_confirmation', 'Les deux adresses e-mail doivent être identiques.')
+        return data

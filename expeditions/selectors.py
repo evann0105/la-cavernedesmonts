@@ -1,7 +1,8 @@
 """Read-only admin summaries and a small separate customer-facing projection."""
 from django.core.exceptions import ObjectDoesNotExist
 from .mail import notification_state
-from .services import FulfillmentError, blocked_reason, recipient_email
+from .contacts import effective_email, effective_shipping, locked_country
+from .services import FulfillmentError, _order_reason, blocking_issue, recipient_email
 from .tracking import tracking_url
 
 
@@ -18,7 +19,8 @@ def _fulfillment(order):
 def summary(order):
     fulfillment = _fulfillment(order)
     state = fulfillment.state if fulfillment else 'preparing'
-    reason = blocked_reason(order)
+    issue = blocking_issue(order)
+    reason = issue['message']
     try:
         recipient_email(order)
         recipient_available = True
@@ -38,8 +40,16 @@ def summary(order):
         'carrier_label': fulfillment.carrier_label if fulfillment else 'Colissimo / La Poste',
         'tracking_number': fulfillment.tracking_number if fulfillment else '',
         'tracking_url': tracking_url(fulfillment) if state == 'shipped' else '',
-        'blocked_reason': ship_reason if state == 'ready' else reason,
+        'blocked_reason': ship_reason,
+        'blocked_kind': issue['kind'] or ('email' if mail_reason else ''),
+        'blocked_return_id': issue['return_id'],
         'ship_blocked_reason': ship_reason, 'recipient_available': recipient_available,
+        'contact_shipping': effective_shipping(order, fulfillment),
+        'contact_email': effective_email(order, fulfillment),
+        'contact_country_locked': locked_country(order),
+        'shipping_is_corrected': bool(fulfillment and fulfillment.delivery_address_override),
+        'recipient_is_corrected': bool(fulfillment and fulfillment.notification_email_override),
+        'can_correct_contacts': state != 'shipped' and not _order_reason(order),
         'can_ready': state == 'preparing' and not reason,
         'can_reopen': state == 'ready',
         'can_ship': state == 'ready' and not ship_reason,

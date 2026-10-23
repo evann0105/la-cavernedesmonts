@@ -1,4 +1,4 @@
-"""Queue frozen order-recipient notifications; delivery belongs to the worker."""
+"""Queue frozen dispatch-recipient notifications; delivery belongs to the worker."""
 from django.utils import timezone
 from retours.access import order_link
 from retours.mail import enqueue
@@ -28,6 +28,7 @@ def supersede_pending(fulfillment):
 
 
 def enqueue_notice(fulfillment, kind, resend=False):
+    from .contacts import effective_email
     order = fulfillment.order
     suffix = 'resend' if resend else kind
     key = f'{notice_prefix(order)}{suffix}-r{fulfillment.revision}'
@@ -60,7 +61,7 @@ def enqueue_notice(fulfillment, kind, resend=False):
         details += f"{item['quantity']} × {item['name']} — {item.get('size', '')} {item.get('color', '')}\n"
     url = tracking_url(fulfillment) if kind != 'shipping_ready' else ''
     details += '\nVotre commande et vos retours : ' + order_link(order)
-    enqueue(order, key, kind, details, recipient=order.customer_email,
+    enqueue(order, key, kind, details, recipient=effective_email(order, fulfillment),
             url=url or order_link(order))
     notice = ReturnMail.objects.get(key=key)
     notice.payload = {**notice.payload, 'fulfillment_id': fulfillment.pk,

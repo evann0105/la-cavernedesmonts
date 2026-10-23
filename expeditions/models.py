@@ -3,7 +3,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import F, Q
 from django.core.validators import MaxLengthValidator
-from config.encrypted_fields import EncryptedTextField
+from config.encrypted_fields import EncryptedEmailField, EncryptedJSONField, EncryptedTextField
 
 
 class Fulfillment(models.Model):
@@ -18,6 +18,9 @@ class Fulfillment(models.Model):
     carrier_name = models.CharField('Nom de l’autre transporteur', max_length=150, blank=True)
     tracking_number = EncryptedTextField('Numéro de suivi', blank=True, default='',
                                          validators=[MaxLengthValidator(120)])
+    # Operational corrections never rewrite the customer's original purchase.
+    delivery_address_override = EncryptedJSONField('Adresse de livraison corrigée', default=dict, blank=True)
+    notification_email_override = EncryptedEmailField('E-mail de notification corrigé', blank=True, default='')
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                                    on_delete=models.SET_NULL, editable=False)
@@ -57,6 +60,7 @@ class FulfillmentEvent(models.Model):
     label = models.CharField(max_length=200)
     # 2,000 customer-entered characters plus the old/new tracking audit text.
     note = EncryptedTextField('Note interne', blank=True, default='', validators=[MaxLengthValidator(3000)])
+    contact_snapshot = EncryptedJSONField('Historique des coordonnées', default=dict, blank=True)
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                               on_delete=models.SET_NULL, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)

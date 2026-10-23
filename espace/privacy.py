@@ -49,8 +49,24 @@ def subject_export(user):
         order_id__in=[order.pk for order in orders]).only('order_id', 'number', 'issued_at', 'snapshot')}
     records = []
     for order in orders:
+        from expeditions.contacts import effective_email, effective_shipping
+        from expeditions.models import FulfillmentEvent
         from expeditions.public import public_status
         shipment = public_status(order)
+        contact_changes = []
+        for event in FulfillmentEvent.objects.filter(
+                fulfillment__order=order, action__in=('contact_address', 'contact_email')).order_by('created_at', 'pk'):
+            snapshot = event.contact_snapshot if isinstance(event.contact_snapshot, dict) else {}
+            change = {'date': event.created_at}
+            for key in ('before', 'after'):
+                contact = snapshot.get(key) if isinstance(snapshot.get(key), dict) else {}
+                shipping = contact.get('shipping') if isinstance(contact.get('shipping'), dict) else {}
+                address = shipping.get('address') if isinstance(shipping.get('address'), dict) else {}
+                change[key] = {'email': contact.get('email', ''), 'shipping': {
+                    'name': shipping.get('name', ''), 'address': {
+                        field: address.get(field, '') for field in
+                        ('line1', 'line2', 'postal_code', 'city', 'state', 'country')}}}
+            contact_changes.append(change)
         redemption = getattr(order, 'benefit_redemption', None)
         # Export the terms recorded for this person's own checkout, even if an
         # unused benefit was later reassigned. Never read its new recipient or
@@ -93,6 +109,9 @@ def subject_export(user):
             'reference': str(order.pk), 'statut': order.get_status_display(),
             'cree_le': order.created_at, 'paye_le': order.paid_at,
             'email_commande': order.customer_email, 'livraison': order.shipping_details,
+            'coordonnees_expedition': {'livraison': effective_shipping(order),
+                                      'email_avis': effective_email(order),
+                                      'historique': contact_changes},
             'expedition': ({key: shipment[key] for key in ('state', 'label', 'ready_at', 'shipped_at',
                            'carrier_name', 'tracking_number', 'tracking_url')} if shipment['show'] else None),
             'facturation': getattr(order, 'billing_details', {}),

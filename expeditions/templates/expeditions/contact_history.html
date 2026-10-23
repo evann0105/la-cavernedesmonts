@@ -1,0 +1,6 @@
+{% if event.contact_snapshot %}<div class="fulfillment-contact-history">
+{% if event.action == 'contact_address' %}
+<div><span>Adresse précédente</span>{% include 'expeditions/address.html' with shipping=event.contact_snapshot.before.shipping %}</div><div><span>Nouvelle adresse du colis</span>{% include 'expeditions/address.html' with shipping=event.contact_snapshot.after.shipping %}</div>
+{% elif event.action == 'contact_email' %}
+<div><span>E-mail d’expédition précédent</span><p>{{ event.contact_snapshot.before.email|default:'Non renseigné' }}</p></div><div><span>Nouvel e-mail d’expédition</span><p>{{ event.contact_snapshot.after.email|default:'Non renseigné' }}</p></div>
+{% endif %}</div>{% endif %}
