@@ -22,6 +22,7 @@ class Events {
 
 function form(elements = [{ name: 'heading', type: 'text', value: 'Texte enregistré' }], attributes = {}) {
   const result = new Events();
+  elements.forEach(control => { control.hasAttribute ||= () => false; });
   result.elements = elements;
   result.valid = true;
   result.status = { textContent: '', dataset: {} };
@@ -245,4 +246,181 @@ test('overlap names remain plain text and dates are displayed in Paris time', as
   assert.deepEqual(name.children, []);
   assert.match(period.textContent, /12:00/);
   assert.match(period.textContent, /13:00/);
+});
+
+function faqReorder() {
+  let focused = null;
+  class Node extends Events {
+    constructor(attribute = '') {
+      super();
+      this.attributes = new Map(attribute ? [[attribute, '']] : []);
+      this.children = [];
+      this.parentElement = null;
+      this.dataset = {};
+      this.textContent = '';
+      this.hidden = false;
+      this.classes = new Set();
+      this.classList = { add: value => this.classes.add(value), remove: value => this.classes.delete(value) };
+    }
+    hasAttribute(name) { return this.attributes.has(name); }
+    setAttribute(name, value) { this.attributes.set(name, value); }
+    getAttribute(name) { return this.attributes.get(name) ?? null; }
+    removeAttribute(name) { this.attributes.delete(name); }
+    matches(selector) {
+      const match = selector.match(/^\[([^=\]]+)(?:="([^"]+)")?\]$/);
+      return !!match && this.hasAttribute(match[1]) && (match[2] === undefined || this.getAttribute(match[1]) === match[2]);
+    }
+    closest(selector) {
+      for (let node = this; node; node = node.parentElement) if (node.matches(selector)) return node;
+      return null;
+    }
+    querySelectorAll(selector) {
+      const selectors = selector.split(',').map(value => value.trim());
+      const results = [];
+      const visit = node => {
+        for (const child of node.children) {
+          if (selectors.some(value => child.matches(value))) results.push(child);
+          visit(child);
+        }
+      };
+      visit(this);
+      return results;
+    }
+    querySelector(selector) { return this.querySelectorAll(selector)[0] || null; }
+    contains(node) {
+      for (; node; node = node.parentElement) if (node === this) return true;
+      return false;
+    }
+    insertBefore(node, reference) {
+      if (node === reference) return;
+      if (node.parentElement) node.parentElement.children.splice(node.parentElement.children.indexOf(node), 1);
+      const position = reference ? this.children.indexOf(reference) : this.children.length;
+      this.children.splice(position, 0, node);
+      node.parentElement = this;
+    }
+    append(...nodes) { nodes.forEach(node => this.insertBefore(node, null)); }
+    get nextElementSibling() { return this.parentElement?.children[this.parentElement.children.indexOf(this) + 1] || null; }
+    getBoundingClientRect() { return { top: (this.parentElement?.children.indexOf(this) || 0) * 100, height: 100 }; }
+    focus() { focused = this; }
+  }
+  const list = new Node('data-editorial-faq-order-list');
+  const rows = [1, 2, 3].map(id => {
+    const row = new Node('data-editorial-faq-row');
+    row.dataset.entryId = String(id);
+    row.position = new Node('data-editorial-faq-position');
+    row.question = new Node('data-editorial-faq-question');
+    row.question.textContent = `Question ${id}`;
+    row.handle = new Node('data-editorial-faq-handle');
+    row.controls = new Node('data-editorial-faq-controls');
+    for (const direction of ['up', 'down']) {
+      const button = new Node('data-editorial-faq-move');
+      button.setAttribute('data-editorial-faq-move', direction);
+      button.dataset.editorialFaqMove = direction;
+      row[direction] = button;
+      row.controls.append(button);
+    }
+    row.append(row.handle, row.position, row.question, row.controls);
+    return row;
+  });
+  list.append(...rows);
+  const order = { name: 'order', type: 'hidden', value: '[1, 2, 3]',
+    hasAttribute: name => name === 'data-editorial-dirty-value' };
+  const editor = form([order]);
+  editor.elements.namedItem = name => name === 'order' ? order : null;
+  order.dispatchEvent = event => { editor.emit(event.type); };
+  const reset = new Node('data-editorial-faq-reset');
+  const save = new Node('data-editorial-faq-save');
+  const status = new Node('data-editorial-faq-order-status');
+  editor.querySelector = selector => ({ '[data-editorial-faq-order-list]': list,
+    '[data-editorial-faq-reset]': reset, '[data-editorial-faq-save]': save,
+    '[data-editorial-faq-order-status]': status, '[data-editorial-dirty-status]': editor.status })[selector] || null;
+  const window = new Events();
+  window.name = '';
+  const document = {
+    querySelector: selector => selector === '[data-editorial-faq-reorder]' ? editor : null,
+    querySelectorAll: selector => selector === '[data-editorial-dirty-form]' ? [editor] : [],
+  };
+  class Event { constructor(type, options = {}) { this.type = type; Object.assign(this, options); } }
+  vm.runInNewContext(source, { window, document, Event, queueMicrotask });
+  return { editor, list, order, rows, reset, status, window, focus: () => focused,
+    ids: () => list.children.map(row => Number(row.dataset.entryId)),
+    warned: () => window.emit('beforeunload').defaultPrevented,
+    move: (row, direction) => list.emit('click', { target: row[direction] }),
+    drag: row => list.emit('dragstart', { target: row.handle, dataTransfer: { setData() {} } }),
+    over: (row, after = false) => list.emit('dragover', { target: row,
+      clientY: row.getBoundingClientRect().top + (after ? 75 : 25) }),
+  };
+}
+
+test('FAQ arrows update the complete submitted order, announce position and keep button focus', () => {
+  const ui = faqReorder();
+  assert.equal(ui.warned(), false);
+  ui.move(ui.rows[2], 'up');
+  assert.deepEqual(ui.ids(), [1, 3, 2]);
+  assert.equal(ui.order.value, '[1,3,2]');
+  assert.equal(ui.rows[2].position.textContent, '2');
+  assert.match(ui.status.textContent, /Question 3 — position 2 sur 3/);
+  assert.equal(ui.focus(), ui.rows[2].up);
+  assert.equal(ui.warned(), true);
+});
+
+test('FAQ boundary controls leave the order unchanged and a moved boundary button retains focus', () => {
+  const ui = faqReorder();
+  ui.move(ui.rows[0], 'up');
+  ui.move(ui.rows[2], 'down');
+  assert.deepEqual(ui.ids(), [1, 2, 3]);
+  assert.equal(ui.warned(), false);
+  ui.move(ui.rows[2], 'up');
+  ui.move(ui.rows[2], 'up');
+  assert.deepEqual(ui.ids(), [3, 1, 2]);
+  assert.equal(ui.rows[2].up.getAttribute('aria-disabled'), 'true');
+  assert.equal(ui.focus(), ui.rows[2].up);
+  ui.move(ui.rows[2], 'up');
+  assert.deepEqual(ui.ids(), [3, 1, 2]);
+});
+
+test('cancelling FAQ moves restores original DOM order and removes the unsaved-change warning', () => {
+  const ui = faqReorder();
+  ui.move(ui.rows[0], 'down');
+  ui.move(ui.rows[2], 'up');
+  assert.equal(ui.warned(), true);
+  ui.reset.emit('click');
+  assert.deepEqual(ui.ids(), [1, 2, 3]);
+  assert.equal(ui.order.value, '[1,2,3]');
+  assert.equal(ui.warned(), false);
+  assert.equal(ui.reset.getAttribute('aria-disabled'), 'true');
+});
+
+test('FAQ dragging supports before/after placement and only accepts a local row handle', () => {
+  const ui = faqReorder();
+  const denied = ui.list.emit('dragstart', { target: ui.rows[0].question });
+  assert.equal(denied.defaultPrevented, true);
+  ui.over(ui.rows[2], true);
+  ui.list.emit('drop');
+  assert.deepEqual(ui.ids(), [1, 2, 3]);
+  ui.drag(ui.rows[0]);
+  ui.over(ui.rows[2], true);
+  ui.list.emit('drop');
+  assert.deepEqual(ui.ids(), [2, 3, 1]);
+  assert.equal(ui.order.value, '[2,3,1]');
+  assert.equal(ui.focus(), ui.rows[0].up);
+  assert.equal(ui.rows[0].classes.has('is-dragging'), false);
+  assert.equal(ui.rows[2].getAttribute('data-drop-position'), null);
+  ui.drag(ui.rows[0]);
+  ui.over(ui.rows[1], false);
+  ui.list.emit('drop');
+  assert.deepEqual(ui.ids(), [1, 2, 3]);
+  assert.equal(ui.warned(), false);
+});
+
+test('cancelling a FAQ drag leaves order untouched and clears its visual markers', () => {
+  const ui = faqReorder();
+  ui.drag(ui.rows[0]);
+  ui.over(ui.rows[2], true);
+  ui.list.emit('dragend');
+  assert.deepEqual(ui.ids(), [1, 2, 3]);
+  assert.equal(ui.order.value, '[1,2,3]');
+  assert.equal(ui.warned(), false);
+  assert.equal(ui.rows[0].classes.has('is-dragging'), false);
+  assert.equal(ui.rows[2].getAttribute('data-drop-position'), null);
 });

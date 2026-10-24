@@ -64,7 +64,7 @@ def announcement_overlaps(starts_at, ends_at, *, exclude_pk=None, at=None):
         return SiteAnnouncement.objects.none()
     # Only a remaining overlap can affect the banner the seller is preparing.
     # Completed periods are history, not a current publication conflict.
-    entries = SiteAnnouncement.objects.filter(enabled=True, starts_at__lt=ends_at,
+    entries = SiteAnnouncement.objects.filter(enabled=True, archived_at__isnull=True, starts_at__lt=ends_at,
                                               ends_at__gt=max(starts_at, at))
     if exclude_pk is not None:
         entries = entries.exclude(pk=exclude_pk)
@@ -74,7 +74,7 @@ def announcement_overlaps(starts_at, ends_at, *, exclude_pk=None, at=None):
 def announcement_rows(entries, displayed, *, at):
     """All status labels share the same clock and the exact public winner."""
     entries = list(entries)
-    labels = {'draft': 'Brouillon', 'scheduled': 'Prévue', 'ended': 'Terminée',
+    labels = {'archived': 'Archivée', 'draft': 'Brouillon', 'scheduled': 'Prévue', 'ended': 'Terminée',
               'displayed': 'Affichée sur le site',
               'superseded': 'Non affichée · autre annonce prioritaire'}
     rows = []
@@ -83,6 +83,7 @@ def announcement_rows(entries, displayed, *, at):
         if state == 'active':
             state = 'displayed' if displayed and entry.pk == displayed.pk else 'superseded'
         overlaps = sum(1 for other in entries if entry.enabled and other.enabled and
+            entry.archived_at is None and other.archived_at is None and
             entry.ends_at > at and other.ends_at > at and other.pk != entry.pk and entry.starts_at < other.ends_at and other.starts_at < entry.ends_at)
         rows.append({'announcement': entry, 'display_state': state,
                      'display_label': labels[state], 'overlap_count': overlaps})
@@ -97,5 +98,5 @@ def public_faq():
 def active_announcement(at=None):
     from .models import SiteAnnouncement
     at = timezone.now() if at is None else at
-    return SiteAnnouncement.objects.filter(enabled=True, starts_at__lte=at, ends_at__gt=at).order_by(
+    return SiteAnnouncement.objects.filter(enabled=True, archived_at__isnull=True, starts_at__lte=at, ends_at__gt=at).order_by(
         '-priority', '-starts_at', '-pk').first()

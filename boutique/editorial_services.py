@@ -4,9 +4,10 @@ from copy import deepcopy
 from datetime import datetime
 
 from django.contrib.admin.models import ADDITION, CHANGE, LogEntry
+from django.core import signing
 from django.core.exceptions import PermissionDenied
 from django.core.files.base import File
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, connection, transaction
 from django.db.models.fields.files import FieldFile
 from django.utils import timezone
 
@@ -258,6 +259,7 @@ def save_faq(cleaned_data, actor, pk=None):
            integers=('position',), booleans=('enabled',))
     validated = _validate(FAQForm(cleaned_data))
     with transaction.atomic():
+        _faq_write_lock()
         instance, is_new = _locked_entry(FAQEntry, pk, expected)
         for name in ('question', 'answer', 'target', 'link_label', 'position', 'enabled'):
             setattr(instance, name, validated[name])
@@ -272,6 +274,163 @@ def save_announcement(cleaned_data, actor, pk=None):
     validated = _validate(AnnouncementForm(cleaned_data))
     with transaction.atomic():
         instance, is_new = _locked_entry(SiteAnnouncement, pk, expected)
+        if instance.archived_at is not None:
+            raise EditorialConflict('Cette annonce a été archivée. Restaurez-la depuis les archives avant de la modifier.')
         for name in ('name', 'kind', 'message', 'starts_at', 'ends_at', 'enabled', 'priority', 'target', 'link_label'):
             setattr(instance, name, validated[name])
         return _persist(instance, is_new, actor, 'Annonce du site')
+
+
+FAQ_ORDER_SALT = 'boutique.editorial.faq-order.v1'
+FAQ_WRITE_LOCK = 1128552006
+
+
+def _faq_write_lock():
+    """Serialize all FAQ writers, including inserts when the collection is empty."""
+    with connection.cursor() as cursor:
+        if connection.vendor == 'postgresql':
+            cursor.execute('SELECT pg_advisory_xact_lock(%s)', [FAQ_WRITE_LOCK])
+        elif connection.vendor == 'sqlite':
+            # The legacy SQLite migration environment has no advisory locks;
+            # acquire its transaction-wide writer lock without changing rows.
+            table = connection.ops.quote_name(FAQEntry._meta.db_table)
+            cursor.execute(f'UPDATE {table} SET position = position WHERE 1 = 0')
+        else:
+            raise EditorialError('La réorganisation nécessite une base compatible avec le verrouillage des questions.')
+
+
+def faq_order_snapshot(entries, actor):
+    _authorized(actor)
+    return signing.dumps({'actor': actor.pk, 'entries': [[entry.pk, entry.revision] for entry in entries]},
+                         salt=FAQ_ORDER_SALT, compress=True)
+
+
+def _faq_snapshot(token, actor):
+    if not isinstance(token, str) or len(token) > 60000:
+        raise EditorialError('Rechargez la liste des questions avant de continuer.')
+    try:
+        payload = signing.loads(token, salt=FAQ_ORDER_SALT, max_age=86400)
+    except signing.SignatureExpired as exc:
+        raise EditorialConflict('Cette liste a expiré. Rechargez-la avant de modifier son ordre.') from exc
+    except signing.BadSignature as exc:
+        raise EditorialError('La liste des questions n’a pas pu être vérifiée. Rechargez-la.') from exc
+    if not isinstance(payload, dict) or set(payload) != {'actor', 'entries'} or payload['actor'] != actor.pk:
+        raise EditorialError('Cette liste ne correspond pas à votre session. Rechargez-la.')
+    entries = payload['entries']
+    if (not isinstance(entries, list) or len(entries) > 1000 or any(
+            not isinstance(row, list) or len(row) != 2 or
+            any(type(value) is not int or value <= 0 for value in row) for row in entries)):
+        raise EditorialError('La liste des questions est invalide. Rechargez-la.')
+    revisions = {pk: revision for pk, revision in entries}
+    if len(revisions) != len(entries):
+        raise EditorialError('La liste des questions est invalide. Rechargez-la.')
+    return revisions
+
+
+def reorder_faq(order, snapshot, actor):
+    _authorized(actor)
+    if (not isinstance(order, list) or len(order) > 1000 or
+            any(type(pk) is not int or pk <= 0 for pk in order) or len(set(order)) != len(order)):
+        raise EditorialError('Chaque question doit apparaître une seule fois dans la liste.')
+    expected = _faq_snapshot(snapshot, actor)
+    if set(order) != set(expected):
+        raise EditorialError('La liste doit contenir toutes les questions, une seule fois chacune.')
+    with transaction.atomic():
+        _faq_write_lock()
+        entries = list(FAQEntry.objects.select_for_update().order_by('pk'))
+        if {entry.pk: entry.revision for entry in entries} != expected:
+            raise EditorialConflict('Les questions ont changé dans un autre onglet. Rechargez la liste avant de réorganiser.')
+        by_id = {entry.pk: entry for entry in entries}
+        result = []
+        for position, pk in enumerate(order, 1):
+            entry = by_id[pk]
+            if entry.position != position:
+                entry.position = position
+                _persist(entry, False, actor, 'Ordre des questions fréquentes')
+            result.append(entry)
+        return result
+
+
+def set_faq_visibility(pk, revision, enabled, actor):
+    _authorized(actor)
+    expected = _revision({'revision': revision})
+    if type(enabled) is not bool:
+        raise EditorialError('Choisissez d’afficher ou de masquer la question.')
+    if type(pk) is not int or pk <= 0:
+        raise EditorialError('Cette question n’existe pas.')
+    with transaction.atomic():
+        _faq_write_lock()
+        entry, _ = _locked_entry(FAQEntry, pk, expected)
+        if entry.enabled != enabled:
+            entry.enabled = enabled
+            _persist(entry, False, actor, 'Question fréquente ' + ('affichée' if enabled else 'masquée'))
+        return entry
+
+
+def _existing_announcement(pk, revision):
+    expected = _revision({'revision': revision})
+    if type(pk) is not int or pk <= 0:
+        raise EditorialError('Cette annonce n’existe pas.')
+    entry, _ = _locked_entry(SiteAnnouncement, pk, expected)
+    return entry
+
+
+def duplicate_announcement(pk, revision, actor):
+    _authorized(actor)
+    with transaction.atomic():
+        source = _existing_announcement(pk, revision)
+        names = ('kind', 'message', 'starts_at', 'ends_at', 'priority', 'target', 'link_label')
+        copied = SiteAnnouncement(**{name: getattr(source, name) for name in names},
+            name=('Copie de ' + source.name)[:120], enabled=False, archived_at=None)
+        return _persist(copied, True, actor, 'Annonce dupliquée en brouillon')
+
+
+def archive_announcement(pk, revision, actor):
+    _authorized(actor)
+    with transaction.atomic():
+        entry = _existing_announcement(pk, revision)
+        if entry.archived_at is not None:
+            raise EditorialError('Cette annonce est déjà archivée.')
+        entry.enabled = False
+        entry.archived_at = timezone.now()
+        return _persist(entry, False, actor, 'Annonce archivée')
+
+
+def restore_announcement(pk, revision, actor):
+    _authorized(actor)
+    with transaction.atomic():
+        entry = _existing_announcement(pk, revision)
+        if entry.archived_at is None:
+            raise EditorialError('Cette annonce n’est pas archivée.')
+        entry.archived_at = None
+        entry.enabled = False
+        return _persist(entry, False, actor, 'Annonce restaurée en brouillon')
+
+
+def pause_announcement(pk, revision, actor):
+    _authorized(actor)
+    with transaction.atomic():
+        entry = _existing_announcement(pk, revision)
+        if entry.archived_at is not None:
+            raise EditorialConflict('Cette annonce a été archivée. Restaurez-la avant de la modifier.')
+        if entry.enabled:
+            entry.enabled = False
+            _persist(entry, False, actor, 'Annonce mise en pause')
+        return entry
+
+
+def move_faq(pk, direction, snapshot, actor):
+    _authorized(actor)
+    if type(pk) is not int or pk <= 0 or direction not in ('up', 'down'):
+        raise EditorialError('Choisissez de monter ou de descendre une question de la liste.')
+    # Dict insertion order preserves the exact signed display order. Reordering
+    # below rechecks all revisions and membership under the shared FAQ lock.
+    order = list(_faq_snapshot(snapshot, actor))
+    if pk not in order:
+        raise EditorialError('Cette question n’appartient pas à la liste affichée. Rechargez-la.')
+    position = order.index(pk)
+    destination = position + (-1 if direction == 'up' else 1)
+    if destination < 0 or destination >= len(order):
+        raise EditorialError('Cette question est déjà à cette extrémité de la liste.')
+    order[position], order[destination] = order[destination], order[position]
+    return reorder_faq(order, snapshot, actor)

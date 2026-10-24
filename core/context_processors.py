@@ -26,9 +26,12 @@ def back_navigation(request):
             fallback = reverse('editorial:page_edit', kwargs={'key': match.kwargs['key']})
         elif name in {'editorial:page_version_preview', 'editorial:page_restore'}:
             fallback = reverse('editorial:page_history', kwargs={'key': match.kwargs['key']})
-        elif name in {'editorial:faq_edit', 'editorial:faq_create'}:
+        elif name in {'editorial:faq_edit', 'editorial:faq_create', 'editorial:faq_reorder',
+                      'editorial:faq_toggle', 'editorial:faq_move'}:
             fallback = reverse('editorial:faq_list')
-        elif name in {'editorial:announcement_edit', 'editorial:announcement_create'}:
+        elif name in {'editorial:announcement_edit', 'editorial:announcement_create',
+                      'editorial:announcement_archive', 'editorial:announcement_restore',
+                      'editorial:announcement_duplicate', 'editorial:announcement_pause'}:
             fallback = reverse('editorial:announcements')
         elif name != 'editorial:faq':
             fallback = reverse('espace:account') if name == 'editorial:overview' else reverse('editorial:overview')

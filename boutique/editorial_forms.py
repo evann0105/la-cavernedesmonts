@@ -1,4 +1,6 @@
 """Small forms for editorial text, photos, questions and dated banners."""
+import json
+import re
 from dataclasses import dataclass
 from zoneinfo import ZoneInfo
 
@@ -107,3 +109,34 @@ class AnnouncementForm(RevisionForm):
         if bool(data.get('target')) != bool(data.get('link_label')):
             self.add_error('link_label', 'Choisissez une page et un texte pour le lien, ou laissez les deux champs vides.')
         return data
+
+
+class FAQReorderForm(forms.Form):
+    order = forms.CharField(widget=forms.HiddenInput, max_length=20000)
+    snapshot = forms.CharField(widget=forms.HiddenInput, max_length=60000)
+
+    def clean_order(self):
+        try:
+            values = json.loads(self.cleaned_data['order'])
+        except (TypeError, ValueError):
+            raise forms.ValidationError('L’ordre des questions est invalide. Rechargez la page.')
+        if (not isinstance(values, list) or len(values) > 1000 or
+                any(type(value) is not int or value <= 0 for value in values) or len(values) != len(set(values))):
+            raise forms.ValidationError('Chaque question doit apparaître une seule fois dans la liste.')
+        return values
+
+
+class FAQVisibilityForm(RevisionForm):
+    enabled = forms.TypedChoiceField(choices=(('1', 'Afficher'), ('0', 'Masquer')),
+                                    coerce=lambda value: value == '1', widget=forms.HiddenInput)
+
+
+class FAQMoveForm(forms.Form):
+    move = forms.CharField(max_length=32)
+    snapshot = forms.CharField(max_length=60000, widget=forms.HiddenInput)
+
+    def clean_move(self):
+        match = re.fullmatch(r'([1-9][0-9]*):(up|down)', self.cleaned_data['move'])
+        if not match:
+            raise forms.ValidationError('Choisissez de monter ou de descendre une question de la liste.')
+        return int(match.group(1)), match.group(2)

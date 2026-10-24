@@ -138,6 +138,7 @@ class SiteAnnouncement(models.Model):
     starts_at = models.DateTimeField('Début d’affichage')
     ends_at = models.DateTimeField('Fin d’affichage')
     enabled = models.BooleanField('Activer cette annonce aux dates choisies', default=False)
+    archived_at = models.DateTimeField('Date d’archivage', null=True, blank=True, editable=False)
     priority = models.PositiveSmallIntegerField('Priorité', choices=PRIORITY_CHOICES, default=0)
     target = models.CharField('Page liée', max_length=20, choices=ANNOUNCEMENT_TARGET_CHOICES, blank=True)
     link_label = models.CharField('Texte du lien', max_length=100, blank=True)
@@ -156,6 +157,7 @@ class SiteAnnouncement(models.Model):
             models.CheckConstraint(condition=Q(kind__in=tuple(key for key, label in KIND_CHOICES)), name='editorial_announcement_kind_valid'),
             models.CheckConstraint(condition=Q(target__in=tuple(key for key, label in ANNOUNCEMENT_TARGET_CHOICES)), name='editorial_announcement_target_valid'),
             models.CheckConstraint(condition=Q(revision__gte=1), name='editorial_announcement_revision_positive'),
+            models.CheckConstraint(condition=Q(archived_at__isnull=True) | Q(enabled=False), name='editorial_announcement_archive_inactive'),
             models.CheckConstraint(condition=(Q(target='', link_label='') | (~Q(target='') & ~Q(link_label=''))), name='editorial_announcement_link_paired'),
         ]
 
@@ -168,6 +170,8 @@ class SiteAnnouncement(models.Model):
                 errors[name] = 'Indiquez une date et une heure avec leur fuseau horaire.'
         if not errors and self.starts_at and self.ends_at and self.ends_at <= self.starts_at:
             errors['ends_at'] = 'La fin doit être postérieure au début.'
+        if self.archived_at is not None and self.enabled:
+            errors['enabled'] = 'Restaurez cette annonce avant de l’activer.'
         if bool(self.target) != bool(self.link_label.strip()):
             errors['link_label'] = 'Choisissez une page et un texte pour le lien, ou laissez les deux champs vides.'
         if errors:
@@ -175,6 +179,8 @@ class SiteAnnouncement(models.Model):
 
     def status_at(self, at=None):
         at = timezone.now() if at is None else at
+        if self.archived_at is not None:
+            return 'archived'
         if not self.enabled:
             return 'draft'
         if at < self.starts_at:
@@ -189,7 +195,7 @@ class SiteAnnouncement(models.Model):
 
     @property
     def status_label(self):
-        return {'draft': 'Brouillon', 'scheduled': 'Prévue', 'active': 'En cours', 'ended': 'Terminée'}[self.status]
+        return {'archived': 'Archivée', 'draft': 'Brouillon', 'scheduled': 'Prévue', 'active': 'En cours', 'ended': 'Terminée'}[self.status]
 
     @property
     def link_url(self):

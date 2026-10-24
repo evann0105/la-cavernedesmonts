@@ -45,6 +45,31 @@ Le site vérifie le calendrier à chaque affichage d’une page. Un bandeau déj
 
 Une annonce informe les clients : elle ne change pas les horaires et ne ferme pas les commandes. Utiliser **Horaires et vacances** pour programmer une fermeture du magasin, et **Livraison et délais** pour adapter les délais annoncés.
 
+## Reprendre et ranger les annonces
+
+La liste distingue **Annonces** et **Archives**, avec un compteur pour chaque onglet. Dans les annonces, les filtres **Toutes**, **En cours**, **À venir**, **Brouillons** et **Terminées** permettent de retrouver les messages. « En cours » regroupe les annonces dont la période a commencé ; leur étiquette précise laquelle est réellement affichée.
+
+- **Dupliquer** crée une nouvelle annonce en brouillon et ouvre son formulaire. Le message, le lien, la priorité et les dates sont repris ; l’originale reste en place. Vérifier les nouvelles dates puis activer la copie lorsqu’elle est prête.
+- **Mettre en pause** désactive une annonce sans changer son message ni ses dates. Elle rejoint les brouillons. Pour la réactiver, ouvrir **Modifier**, vérifier les dates, puis cocher l’activation et enregistrer.
+- **Archiver** retire une annonce de l’affichage public et la range dans les archives. Le message est conservé. Si elle était affichée, le prochain affichage du site utilise une autre annonce éligible, ou aucun bandeau.
+- **Restaurer en brouillon**, depuis les archives, replace l’annonce dans la liste principale sans l’activer. Les dates sont conservées : les vérifier avant une nouvelle activation.
+
+Aucune de ces actions ne supprime définitivement une annonce. Une annonce archivée peut aussi être dupliquée pour préparer une nouvelle période en gardant son original dans les archives.
+
+## Organiser les questions fréquentes
+
+Les boutons **Monter** et **Descendre** de la liste principale déplacent directement une réponse d’une place, y compris une réponse masquée. Ce changement est enregistré immédiatement et la page revient à la question déplacée.
+
+Pour préparer plusieurs déplacements avant de les enregistrer, **Organiser l’ordre** ouvre une page dédiée, avec des lignes compactes. Les réponses publiées et masquées y figurent ensemble ; seules les réponses publiées apparaissent aux clients.
+
+1. Déplacer une question avec **Monter** ou **Descendre**, accessibles sur téléphone et au clavier. Sur ordinateur, on peut aussi la glisser avec sa poignée.
+2. Vérifier la liste. **Annuler les déplacements** rétablit l’ordre chargé à l’ouverture de la page.
+3. Choisir **Enregistrer cet ordre** pour appliquer la nouvelle organisation sur le site.
+
+Les déplacements ne sont pas enregistrés automatiquement. L’avertissement de modifications non enregistrées protège aussi cette page. Si une question est modifiée ou ajoutée ailleurs entre-temps, l’enregistrement demande de recharger la liste pour éviter d’écraser des changements récents.
+
+Les boutons **Afficher** et **Masquer** de la liste principale publient ou masquent directement une réponse, sans ouvrir son formulaire. La réponse et sa place restent conservées.
+
 ## Repères de l’interface
 
 Les pages utilisent les mêmes onglets et le même fil d’Ariane. Les formulaires séparent les textes, les photos et les réglages de publication. Les textes ne sont pas interprétés comme du HTML. Les questions fréquentes et les annonces sont toujours mises à jour à l’enregistrement de leur propre formulaire, selon leur activation et leurs dates.

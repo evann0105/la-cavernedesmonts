@@ -137,11 +137,117 @@
     }
   }
 
+  const reorderForm = document.querySelector('[data-editorial-faq-reorder]');
+  if (reorderForm) {
+    const list = reorderForm.querySelector('[data-editorial-faq-order-list]');
+    const order = reorderForm.elements.namedItem('order');
+    const reset = reorderForm.querySelector('[data-editorial-faq-reset]');
+    const save = reorderForm.querySelector('[data-editorial-faq-save]');
+    const status = reorderForm.querySelector('[data-editorial-faq-order-status]');
+    if (list && order && reset && save && status) {
+      const rows = () => Array.from(list.querySelectorAll('[data-editorial-faq-row]')).filter(row => row.parentElement === list);
+      const originalRows = rows();
+      const originalOrder = JSON.stringify(originalRows.map(row => Number(row.dataset.entryId)));
+      const sync = (notify = true) => {
+        const currentRows = rows();
+        order.value = JSON.stringify(currentRows.map(row => Number(row.dataset.entryId)));
+        currentRows.forEach((row, index) => {
+          const position = row.querySelector('[data-editorial-faq-position]');
+          position.textContent = String(index + 1);
+          position.setAttribute('aria-label', `Position ${index + 1}`);
+          row.querySelector('[data-editorial-faq-move="up"]').setAttribute('aria-disabled', String(index === 0));
+          row.querySelector('[data-editorial-faq-move="down"]').setAttribute('aria-disabled', String(index === currentRows.length - 1));
+        });
+        reset.setAttribute('aria-disabled', String(order.value === originalOrder));
+        if (notify) order.dispatchEvent(new Event('input', {bubbles: true}));
+      };
+      const announcePosition = row => {
+        const currentRows = rows();
+        const question = row.querySelector('[data-editorial-faq-question]').textContent.trim();
+        status.textContent = `${question} — position ${currentRows.indexOf(row) + 1} sur ${currentRows.length}. Enregistrez pour appliquer cet ordre.`;
+      };
+      list.querySelectorAll('[data-editorial-faq-controls], [data-editorial-faq-handle]').forEach(control => { control.hidden = false; });
+      reset.hidden = false;
+      save.hidden = false;
+      // Canonicalize the hidden JSON before the shared unsaved-change baseline.
+      sync(false);
+      list.addEventListener('click', event => {
+        const button = event.target.closest('[data-editorial-faq-move]');
+        if (!button || !list.contains(button) || button.getAttribute('aria-disabled') === 'true') return;
+        const row = button.closest('[data-editorial-faq-row]');
+        const currentRows = rows();
+        const index = currentRows.indexOf(row);
+        const direction = button.dataset.editorialFaqMove;
+        if (direction === 'up' && index > 0) list.insertBefore(row, currentRows[index - 1]);
+        else if (direction === 'down' && index >= 0 && index < currentRows.length - 1) list.insertBefore(currentRows[index + 1], row);
+        else return;
+        sync();
+        announcePosition(row);
+        // aria-disabled keeps the same arrow focusable at the first/last position.
+        button.focus({preventScroll: true});
+      });
+      reset.addEventListener('click', () => {
+        if (reset.getAttribute('aria-disabled') === 'true') return;
+        list.append(...originalRows);
+        sync();
+        status.textContent = 'Les déplacements ont été annulés. L’ordre initial est rétabli.';
+      });
+
+      let dragged = null;
+      let destination = null;
+      let insertAfter = false;
+      const clearDestination = () => {
+        if (destination) destination.removeAttribute('data-drop-position');
+        destination = null;
+      };
+      const finishDrag = () => {
+        if (dragged) dragged.classList.remove('is-dragging');
+        dragged = null;
+        clearDestination();
+      };
+      list.addEventListener('dragstart', event => {
+        const handle = event.target.closest('[data-editorial-faq-handle]');
+        if (!handle || !list.contains(handle)) { event.preventDefault(); return; }
+        dragged = handle.closest('[data-editorial-faq-row]');
+        dragged.classList.add('is-dragging');
+        if (event.dataTransfer) {
+          event.dataTransfer.effectAllowed = 'move';
+          event.dataTransfer.setData('text/plain', dragged.dataset.entryId);
+        }
+      });
+      list.addEventListener('dragover', event => {
+        const target = event.target.closest('[data-editorial-faq-row]');
+        if (!dragged || !target || target === dragged || target.parentElement !== list) { clearDestination(); return; }
+        event.preventDefault();
+        if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+        const bounds = target.getBoundingClientRect();
+        clearDestination();
+        destination = target;
+        insertAfter = event.clientY >= bounds.top + bounds.height / 2;
+        target.setAttribute('data-drop-position', insertAfter ? 'after' : 'before');
+      });
+      list.addEventListener('drop', event => {
+        if (!dragged || !destination) return;
+        event.preventDefault();
+        const row = dragged;
+        const before = order.value;
+        const reference = insertAfter ? destination.nextElementSibling : destination;
+        if (reference !== row) list.insertBefore(row, reference);
+        finishDrag();
+        sync();
+        if (order.value !== before) announcePosition(row);
+        row.querySelector('[data-editorial-faq-move="up"]').focus({preventScroll: true});
+      });
+      list.addEventListener('dragend', finishDrag);
+      window.addEventListener('pageshow', () => sync());
+    }
+  }
+
   // The baseline stays unchanged when navigating back from a preview. Reverting
   // every edit removes the warning, and opening another tab never suppresses it.
   document.querySelectorAll('[data-editorial-dirty-form]').forEach(form => {
     const snapshot = () => JSON.stringify(Array.from(form.elements).filter(control => {
-      return control.name && !['hidden', 'submit', 'button', 'reset'].includes(control.type);
+      return control.name && (!['hidden', 'submit', 'button', 'reset'].includes(control.type) || (control.type === 'hidden' && control.hasAttribute('data-editorial-dirty-value')));
     }).map(control => {
       if (control.type === 'file') return [control.name, Array.from(control.files || []).map(file => [file.name, file.size, file.type, file.lastModified])];
       if (['checkbox', 'radio'].includes(control.type)) return [control.name, control.value, control.checked];

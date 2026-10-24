@@ -1,0 +1,22 @@
+{% extends 'editorial/manage/base.html' %}
+{% block editorial_heading %}<header class="editorial-heading"><div><p class="eyebrow">QUESTIONS FRÉQUENTES · ORGANISER</p><h1>Choisir l’ordre des réponses.</h1><p>Placez les questions les plus utiles en premier. Le site sera mis à jour lorsque vous enregistrerez cet ordre.</p></div><a class="editorial-text-link" href="{% url 'editorial:faq_list' %}">← Toutes les questions</a></header>{% endblock %}
+{% block editorial_body %}
+<form method="post" class="editorial-form editorial-reorder-form" data-editorial-faq-reorder data-editorial-dirty-form{% if form.is_bound %} data-editorial-dirty-on-load{% endif %}>
+  {% csrf_token %}<input type="hidden" name="order" id="id_order" value="{{ form.order.value|default:'[]' }}" data-editorial-dirty-value>{{ form.snapshot }}
+  {% if form.errors %}<div class="editorial-errors" role="alert"><strong>L’ordre n’a pas été enregistré.</strong>{{ form.non_field_errors }}{% for field in form %}{{ field.errors }}{% endfor %}<a class="editorial-text-link" href="{% url 'editorial:faq_reorder' %}">Recharger la liste <span aria-hidden="true">↗</span></a></div>{% endif %}
+  {% if entries %}
+  <div class="editorial-list-intro"><p id="editorial-order-help">Utilisez « Monter » et « Descendre », ou glissez une question avec sa poignée sur ordinateur. Les réponses masquées restent dans la liste et conservent leur place.</p></div>
+  <noscript><p class="editorial-notice">Activez JavaScript pour déplacer les questions ici. Vous pouvez aussi modifier leur ordre depuis le formulaire de chaque question.</p></noscript>
+  <ol class="editorial-reorder-list" data-editorial-faq-order-list aria-describedby="editorial-order-help">
+    {% for entry in entries %}<li class="editorial-reorder-row" data-editorial-faq-row data-entry-id="{{ entry.pk }}" tabindex="-1">
+      <span class="editorial-reorder-handle" data-editorial-faq-handle draggable="true" aria-hidden="true" title="Glisser pour déplacer" hidden>⠿</span>
+      <span class="editorial-reorder-position" data-editorial-faq-position aria-label="Position {{ forloop.counter }}">{{ forloop.counter }}</span>
+      <div class="editorial-reorder-copy"><h2 data-editorial-faq-question>{{ entry.question }}</h2><span class="editorial-status{% if entry.enabled %} editorial-status--active{% endif %}">{{ entry.status_label }}</span></div>
+      <div class="editorial-reorder-controls" hidden data-editorial-faq-controls><button type="button" data-editorial-faq-move="up" aria-label="Monter : {{ entry.question }}" aria-disabled="{% if forloop.first %}true{% else %}false{% endif %}"><span aria-hidden="true">↑</span> Monter</button><button type="button" data-editorial-faq-move="down" aria-label="Descendre : {{ entry.question }}" aria-disabled="{% if forloop.last %}true{% else %}false{% endif %}"><span aria-hidden="true">↓</span> Descendre</button></div>
+    </li>{% endfor %}
+  </ol>
+  <p class="editorial-reorder-announcement" role="status" aria-live="polite" aria-atomic="true" data-editorial-faq-order-status></p>
+  <div class="editorial-save-panel"><p class="editorial-save-status" data-editorial-dirty-status role="status" aria-live="polite">{% if form.is_bound %}Modifications non enregistrées.{% else %}Aucune modification non enregistrée.{% endif %}</p><div class="editorial-form-actions"><button class="button" type="submit" hidden data-editorial-faq-save>Enregistrer cet ordre</button><button class="editorial-text-link editorial-reset-order" type="button" data-editorial-faq-reset aria-disabled="true" hidden>Annuler les déplacements</button><a class="editorial-text-link" href="{% url 'editorial:faq_list' %}">Retour à la liste</a></div></div>
+  {% else %}<section class="editorial-empty"><h2>Aucune question à organiser.</h2><p>Ajoutez vos premières réponses avant de choisir leur ordre.</p><a class="button" href="{% url 'editorial:faq_create' %}">Ajouter une question <span aria-hidden="true">+</span></a></section>{% endif %}
+</form>
+{% endblock %}

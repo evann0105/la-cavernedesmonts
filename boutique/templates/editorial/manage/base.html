@@ -1,10 +1,10 @@
 {% extends 'core/catalog/base.html' %}{% load static %}
 {% block title %}{{ page_title|default:'Pages et annonces' }} — La Caverne des Monts{% endblock %}
-{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'boutique/editorial-management.css' %}?v=20261024-pages-polish">{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'boutique/editorial-management.css' %}?v=20261024-pages-organisation">{% endblock %}
 {% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a><span aria-hidden="true"> / </span>{% if current_page == 'overview' %}<span aria-current="page">Pages et annonces</span>{% else %}<a href="{% url 'editorial:overview' %}">Pages et annonces</a><span aria-hidden="true"> / </span><span aria-current="page">{{ page_title }}</span>{% endif %}</nav>{% endblock %}
 {% block catalog_content %}<div class="editorial-manager">
 {% block editorial_heading %}{% endblock %}
 {% if current_page != 'overview' %}<nav class="editorial-tabs" aria-label="Pages et annonces"><a href="{% url 'editorial:page_edit' key='about' %}"{% if page_key == 'about' %} aria-current="page"{% endif %}>À propos</a><a href="{% url 'editorial:page_edit' key='store' %}"{% if page_key == 'store' %} aria-current="page"{% endif %}>Le magasin</a><a href="{% url 'editorial:faq_list' %}"{% if current_page == 'faq' %} aria-current="page"{% endif %}>Questions fréquentes</a><a href="{% url 'editorial:announcements' %}"{% if current_page == 'announcements' %} aria-current="page"{% endif %}>Annonces programmées</a></nav>{% endif %}
 {% block editorial_body %}{% endblock %}
 </div>{% endblock %}
-{% block scripts %}{{ block.super }}<script src="{% static 'boutique/editorial-management.js' %}?v=20261024-pages-polish" defer></script>{% endblock %}
+{% block scripts %}{{ block.super }}<script src="{% static 'boutique/editorial-management.js' %}?v=20261024-pages-organisation" defer></script>{% endblock %}
