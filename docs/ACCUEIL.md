@@ -13,11 +13,13 @@ Les boutons proposent les destinations du site et les coordonnées de la boutiqu
 
 ## Photos du diaporama
 
-Dans **Bannière principale → Photos du diaporama**, la photo principale occupe la première place. Ajoutez jusqu’à cinq photos supplémentaires en les sélectionnant ensemble. À partir de deux photos, l’accueil propose un diaporama. Vous pouvez remplacer chaque photo, ajouter un cadrage pour téléphone, saisir sa description, changer son ordre ou la retirer.
+Dans **Bannière principale → Photos du diaporama**, la photo principale occupe la première place. Sélectionnez jusqu’à cinq photos supplémentaires ensemble : elles apparaissent dans des cartes de préparation. Renseignez leur description et, si utile, une version recadrée pour téléphone avant le seul enregistrement. À partir de deux photos, l’accueil propose un diaporama. Vous pouvez remplacer chaque photo, ajouter un cadrage pour téléphone, saisir sa description ou la retirer. Les boutons **Monter / Descendre** changent leur ordre sans renumérotation manuelle. La photo principale reste en première position.
 
 Le cadrage pour téléphone d’une photo ne crée pas une diapositive supplémentaire. Sans cadrage mobile, la même photo sert sur tous les écrans. Les titres, le logo et les boutons restent fixes pendant le changement de photo.
 
-Le défilement automatique se règle sur cette page et peut être désactivé. Les visiteurs disposent de flèches, de repères et d’un bouton de pause. Le défilement s’interrompt lors d’une interaction et ne démarre pas automatiquement si la personne a demandé de réduire les animations. Avec une seule photo ou sans JavaScript, la première photo reste affichée.
+**Prévisualiser** montre les photos enregistrées et celles en cours de préparation, dans l’ordre choisi. Les formats **Ordinateur / Téléphone** affichent le cadrage et les textes réels de l’accueil. Les changements et fichiers de cet aperçu restent dans le navigateur jusqu’à **Enregistrer le diaporama**. Une photo marquée pour retrait n’apparaît plus dans l’aperçu.
+
+Le défilement automatique se règle sur cette page et peut être désactivé. Les visiteurs disposent de flèches, de repères et d’un bouton de pause. Sur écran tactile, un glissement horizontal change de photo ; le défilement vertical et le zoom par pincement restent disponibles. Le défilement s’interrompt lors d’une interaction et ne démarre pas automatiquement si la personne a demandé de réduire les animations. Avec une seule photo ou sans JavaScript, la première photo reste affichée.
 
 Si deux onglets modifient l’accueil, le plus ancien formulaire demande de recharger la page avant d’enregistrer : il ne remplace pas silencieusement les changements les plus récents.
 

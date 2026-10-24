@@ -1,13 +1,16 @@
 """Small private editorial screens; defaults and publication rules live in services."""
 from django.contrib import messages
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.shortcuts import redirect, render
+from django.templatetags.static import static
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.http import require_GET, require_http_methods
 
 from core.catalog_access import catalog_required
-from .configuration import configuration
+from .configuration import configuration, public_configuration
 from .forms import SectionForm, SectionsVisibilityForm, FeaturedProductsForm
 from .models import HeroSlide
 from .schema import SECTION_SPECS, SECTIONS
@@ -164,20 +167,22 @@ def featured(request):
     }, status=status))
 
 
+def _slide_row(form, request):
+    instance = form.instance
+    image = instance.image if instance.pk else None
+    mobile = instance.mobile_image if instance.pk else None
+    mobile_clear = form['mobile_image'].html_name + '-clear'
+    return {'form': form, 'image_url': image.url if image else '',
+            'mobile_url': mobile.url if mobile else '',
+            'saved_alt': instance.alt if instance.pk else '',
+            'is_new': not bool(instance.pk),
+            'mobile_clear_name': mobile_clear,
+            'mobile_clear_checked': bool(request.POST.get(mobile_clear))}
+
+
 def _slide_rows(formset, request):
     """Capture saved previews before ModelForm validation updates its instances."""
-    rows = []
-    for form in formset.forms:
-        instance = form.instance
-        image = instance.image if instance.pk else None
-        mobile = instance.mobile_image if instance.pk else None
-        mobile_clear = form['mobile_image'].html_name + '-clear'
-        rows.append({'form': form, 'image_url': image.url if image else '',
-                     'mobile_url': mobile.url if mobile else '',
-                     'saved_alt': instance.alt if instance.pk else '',
-                     'mobile_clear_name': mobile_clear,
-                     'mobile_clear_checked': bool(request.POST.get(mobile_clear))})
-    return rows
+    return [_slide_row(form, request) for form in formset.forms]
 
 
 @catalog_required
@@ -190,6 +195,26 @@ def slides(request):
     formset = SlideFormSet(data, files, prefix='slides',
         queryset=HeroSlide.objects.filter(configuration_id=1).order_by('position', 'pk'))
     rows = _slide_rows(formset, request)
+    saved_slide_count = HeroSlide.objects.filter(configuration_id=1).count()
+    public = public_configuration()
+    preview_bootstrap = {'hero': public['hero'],
+        'primary': current['images']['hero_image'],
+        'mobile_primary': current['images']['hero_mobile_image'],
+        'logo_url': static('core/img/logo.png'),
+        'slideshow': current['slideshow']}
+    preview_home = {'hero': preview_bootstrap['hero'],
+        'images': {'hero_image': preview_bootstrap['primary'],
+                   'hero_mobile_image': preview_bootstrap['mobile_primary']},
+        'slideshow': {'enabled': False},
+        'hero_slides': [{'primary': True, 'image': preview_bootstrap['primary'],
+                         'mobile_image': preview_bootstrap['mobile_primary'],
+                         'alt': preview_bootstrap['hero']['image_alt']}],
+        'scroll_target': '#preview-end'}
+    # No request/context processors: preview rendering cannot fetch client data
+    # or create a second authenticated browsing surface.
+    preview_html = render_to_string('accueil/manage/banner_preview.html', {
+        'home': preview_home, 'user': AnonymousUser(), 'cart_count': 0,
+    })
     status = 200
     if request.method == 'POST':
         settings_valid = form.is_valid()
@@ -207,7 +232,10 @@ def slides(request):
                 return _private(redirect('homepage:slides'))
     return _private(render(request, 'accueil/manage/slides.html', {
         'configuration': current, 'form': form, 'formset': formset, 'slide_rows': rows,
-        'saved_slide_count': len(rows), 'upload_retry': bool(request.method == 'POST' and request.FILES),
+        'empty_slide_row': _slide_row(formset.empty_form, request),
+        'preview_bootstrap': preview_bootstrap,
+        'preview_html': preview_html,
+        'saved_slide_count': saved_slide_count, 'upload_retry': bool(request.method == 'POST' and request.FILES),
         'has_slide_errors': formset.total_error_count() > 0,
         'current_page': 'hero', 'page_title': 'Photos du diaporama',
     }, status=status))

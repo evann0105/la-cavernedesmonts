@@ -23,6 +23,7 @@
     let pending = null;
     let timer = null;
     let hovered = false;
+    let pointerInteracting = false;
     let focused = hero.contains(document.activeElement);
     const initialBounds = hero.getBoundingClientRect();
     let inView = initialBounds.bottom > 0 && initialBounds.top < window.innerHeight;
@@ -41,7 +42,7 @@
 
     function canPlay() {
       return playing && (!hovered || explicitHoverPlayback) && (!focused || explicitFocusPlayback)
-        && !document.hidden && inView && failed.size < slides.length - 1;
+        && !pointerInteracting && !document.hidden && inView && failed.size < slides.length - 1;
     }
 
     function paintPlayback() {
@@ -161,6 +162,71 @@
       // Repeated manual requests advance the latest intent, not a queued slide.
       const base = pending && !pending.automatic ? pending.index : current;
       requestPhoto(adjacentIndex(base, direction), {instant});
+    }
+
+    // Observe, rather than capture, touch gestures so vertical scrolling and
+    // pinch zoom remain native. Only a clear single-finger horizontal gesture
+    // requests a photo; pictures never follow the finger or move the text.
+    if ('PointerEvent' in window) {
+      const contacts = new Set();
+      let gesture = null;
+      const passiveCapture = {passive: true, capture: true};
+      const isContact = event => event.pointerType === 'touch' || event.pointerType === 'pen';
+      const isInteractive = target => typeof target.closest === 'function' && target.closest(
+        'a, button, input, select, textarea, label, form, [contenteditable]:not([contenteditable="false"]), [role="button"], [role="link"], [data-slideshow-controls]'
+      );
+      const hasTextSelection = () => {
+        const selection = typeof window.getSelection === 'function' ? window.getSelection() : null;
+        return Boolean(selection && !selection.isCollapsed && selection.toString());
+      };
+      function clearContacts() {
+        contacts.clear();
+        gesture = null;
+        pointerInteracting = false;
+        playbackChanged();
+      }
+      document.addEventListener('pointerdown', event => {
+        if (!isContact(event)) return;
+        contacts.add(event.pointerId);
+        const inside = hero.contains(event.target);
+        if (inside) pointerInteracting = true;
+        if (!pointerInteracting) return;
+        // A second contact anywhere on the page cancels the whole gesture,
+        // including when one of the fingers started outside the photograph.
+        if (contacts.size === 1 && inside && event.isPrimary && event.button === 0
+            && !isInteractive(event.target) && !hasTextSelection()) {
+          gesture = {id: event.pointerId, x: event.clientX, y: event.clientY};
+        } else gesture = null;
+        playbackChanged();
+      }, passiveCapture);
+      document.addEventListener('pointermove', event => {
+        if (!gesture || event.pointerId !== gesture.id) return;
+        const dx = event.clientX - gesture.x;
+        const dy = event.clientY - gesture.y;
+        // Once vertical scrolling wins, changing direction cannot turn it
+        // into a later swipe at the end of that same scroll gesture.
+        if (Math.abs(dy) >= 12 && Math.abs(dy) > Math.abs(dx)) gesture = null;
+      }, passiveCapture);
+      function finishContact(event) {
+        if (!isContact(event) || !contacts.has(event.pointerId)) return;
+        const wasInteracting = pointerInteracting;
+        let direction = 0;
+        if (gesture && gesture.id === event.pointerId && event.type === 'pointerup' && !hasTextSelection()) {
+          const dx = event.clientX - gesture.x;
+          const dy = event.clientY - gesture.y;
+          if (Math.abs(dx) >= 50 && Math.abs(dx) > Math.abs(dy) * 1.25) direction = dx < 0 ? 1 : -1;
+        }
+        gesture = null;
+        contacts.delete(event.pointerId);
+        if (!contacts.size) pointerInteracting = false;
+        if (!wasInteracting) return;
+        if (direction) move(direction, false);
+        playbackChanged();
+      }
+      document.addEventListener('pointerup', finishContact, passiveCapture);
+      document.addEventListener('pointercancel', finishContact, passiveCapture);
+      window.addEventListener('blur', clearContacts);
+      document.addEventListener('visibilitychange', () => { if (document.hidden) clearContacts(); });
     }
 
     previous.addEventListener('click', event => move(-1, event.detail === 0));

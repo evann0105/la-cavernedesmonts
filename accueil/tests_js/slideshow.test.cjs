@@ -34,9 +34,10 @@ class Element {
   }
   removeEventListener(type, listener) { this.listeners.get(type)?.delete(listener); }
   contains(element) { return element === this || this.children.some(child => child.contains(element)); }
+  closest() { return this.interactiveAncestor || null; }
   getBoundingClientRect() { return this.bounds || {top: 0, bottom: 800}; }
   async emit(type, properties = {}) {
-    const event = {target: this, detail: 1, defaultPrevented: false, preventDefault() { this.defaultPrevented = true; }, ...properties};
+    const event = {type, target: this, detail: 1, defaultPrevented: false, preventDefault() { this.defaultPrevented = true; }, ...properties};
     for (const listener of [...(this.listeners.get(type) || [])]) listener(event);
     await flush();
     return event;
@@ -58,7 +59,7 @@ class ImageElement extends Element {
   set src(value) { this._src = value; this.complete = true; this.naturalWidth = this.broken ? 0 : 1200; }
 }
 
-function fixture({count = 3, autoplay = true, reduced = false, hover = true, decodings = {}, broken = [], interval = '6', rootPresent = true} = {}) {
+function fixture({count = 3, autoplay = true, reduced = false, hover = true, decodings = {}, broken = [], interval = '6', rootPresent = true, pointerEvents = true} = {}) {
   const images = Array.from({length: count}, (_, index) => new ImageElement({initial: index === 0, decoding: decodings[index], broken: broken.includes(index)}));
   const sources = images.map((_, index) => new Element({dataset: index ? {srcset: '/media/homepage/mobile.webp'} : {}}));
   const slides = images.map((image, index) => new Element({hidden: index > 0, classes: index ? [] : ['is-active'], attributes: {'aria-hidden': String(index !== 0)},
@@ -89,8 +90,10 @@ function fixture({count = 3, autoplay = true, reduced = false, hover = true, dec
     observe(element) { this.target = element; }
     async setVisible(visible) { this.callback([{target: this.target, isIntersecting: visible}]); await flush(); }
   }
-  const window = new Element({innerHeight: 900, IntersectionObserver: Observer,
+  let selectionText = '';
+  const window = new Element({getSelection: () => ({isCollapsed: !selectionText, toString: () => selectionText}), innerHeight: 900, IntersectionObserver: Observer,
     matchMedia: query => query.includes('reduced-motion') ? reduceQuery : hoverQuery});
+  if (pointerEvents) window.PointerEvent = function PointerEvent() {};
   const timers = new Map();
   let nextTimer = 0;
   const context = vm.createContext({window, document, IntersectionObserver: Observer,
@@ -99,7 +102,8 @@ function fixture({count = 3, autoplay = true, reduced = false, hover = true, dec
   });
   vm.runInContext(script, context, {filename: scriptPath});
   return {hero, slides, images, sources, pages, controls, previous, next, playback, playIcon, pauseIcon, counter, announcement, footer, document,
-    reduceQuery, hoverQuery, observers, timers,
+    reduceQuery, hoverQuery, observers, timers, window,
+    selectText(value) { selectionText = value; },
     active: () => slides.findIndex(slide => slide.classList.contains('is-active')),
     async tick() { const [id, task] = timers.entries().next().value || []; assert.ok(task, 'an autoplay timer should exist'); timers.delete(id); task.callback(); await flush(); },
   };
@@ -301,4 +305,170 @@ test('explicit reduced-motion playback still pauses when its button loses focus 
   await page.hero.emit('focusout', {relatedTarget: page.next});
   await page.hero.emit('focusin', {target: page.next});
   assert.equal(page.timers.size, 0);
+});
+
+
+async function contact(page, type, {id = 1, x = 200, y = 200, ...properties} = {}) {
+  return page.document.emit(type, {pointerId: id, pointerType: 'touch', isPrimary: true, button: 0,
+    clientX: x, clientY: y, target: page.hero, ...properties});
+}
+async function swipe(page, start, end, properties = {}) {
+  await contact(page, 'pointerdown', {...start, ...properties});
+  return contact(page, 'pointerup', {...end, ...properties});
+}
+
+test('a clear horizontal finger swipe moves left to the next photo and right to the previous one', async () => {
+  const page = fixture({autoplay: false});
+  const left = await swipe(page, {x: 240, y: 200}, {x: 100, y: 215});
+  assert.equal(page.active(), 1);
+  assert.equal(page.counter.textContent, 'Photo 2 sur 3');
+  assert.equal(page.hero.classList.contains('is-instant'), false, 'swipes use the existing fade');
+  assert.equal(left.defaultPrevented, false, 'native scrolling must not be cancelled');
+  await swipe(page, {x: 100, y: 200}, {x: 240, y: 205});
+  assert.equal(page.active(), 0);
+});
+
+test('short, diagonal, and vertically scrolling gestures never navigate or prevent scrolling', async () => {
+  const page = fixture({autoplay: false});
+  for (const end of [{x: 151, y: 200}, {x: 100, y: 300}, {x: 100, y: 440}]) {
+    assert.equal((await swipe(page, {x: 200, y: 200}, end)).defaultPrevented, false);
+    assert.equal(page.active(), 0);
+  }
+  await contact(page, 'pointerdown');
+  const scroll = await contact(page, 'pointermove', {x: 180, y: 260});
+  await contact(page, 'pointerup', {x: 40, y: 270});
+  assert.equal(scroll.defaultPrevented, false);
+  assert.equal(page.active(), 0, 'a scroll cannot turn into a swipe after changing direction');
+});
+
+test('pointercancel discards the gesture and resumes the previous autoplay intent', async () => {
+  const page = fixture();
+  await contact(page, 'pointerdown');
+  assert.equal(page.timers.size, 0);
+  await contact(page, 'pointermove', {x: 50});
+  await contact(page, 'pointercancel', {x: 50});
+  assert.equal(page.active(), 0);
+  assert.equal(page.timers.size, 1);
+  await contact(page, 'pointerup', {x: 30});
+  assert.equal(page.active(), 0, 'a later pointerup cannot revive a cancelled gesture');
+});
+
+test('touching links, controls, and form fields pauses temporarily but never starts a swipe', async () => {
+  const page = fixture();
+  for (const label of ['link', 'nested button icon', 'form field', 'editable text', 'slideshow pager']) {
+    const interactive = new Element({textContent: label});
+    const target = new Element({interactiveAncestor: interactive});
+    page.hero.children.push(target);
+    await contact(page, 'pointerdown', {target});
+    assert.equal(page.timers.size, 0, label);
+    const end = await contact(page, 'pointerup', {x: 50, target});
+    assert.equal(page.active(), 0, label);
+    assert.equal(end.defaultPrevented, false, `${label} keeps its native click`);
+    assert.equal(page.timers.size, 1);
+  }
+});
+
+test('existing or newly selected text excludes a swipe without clearing the selection', async () => {
+  const page = fixture({autoplay: false});
+  page.selectText('Conseil boutique');
+  await swipe(page, {x: 240}, {x: 80});
+  assert.equal(page.active(), 0);
+  page.selectText('');
+  await contact(page, 'pointerdown', {x: 240});
+  page.selectText('Nouveau texte sélectionné');
+  await contact(page, 'pointerup', {x: 80});
+  assert.equal(page.active(), 0);
+  assert.equal(page.window.getSelection().toString(), 'Nouveau texte sélectionné');
+});
+
+test('a second contact cancels swiping until all fingers leave, including a second finger outside the hero', async () => {
+  const page = fixture();
+  const elsewhere = new Element();
+  await contact(page, 'pointerdown', {id: 1, x: 240});
+  await contact(page, 'pointerdown', {id: 2, x: 220, isPrimary: false, target: elsewhere});
+  await contact(page, 'pointerup', {id: 1, x: 50});
+  assert.equal(page.active(), 0);
+  assert.equal(page.timers.size, 0, 'pinch interaction remains paused while the other finger is down');
+  await contact(page, 'pointerup', {id: 2, x: 40, isPrimary: false, target: elsewhere});
+  assert.equal(page.active(), 0);
+  assert.equal(page.timers.size, 1);
+  await swipe(page, {id: 3, x: 240}, {id: 3, x: 80});
+  assert.equal(page.active(), 1, 'the next independent single-finger gesture works');
+});
+
+test('a finger already down outside the hero prevents a new inside contact from being treated as a swipe', async () => {
+  const page = fixture({autoplay: false});
+  const elsewhere = new Element();
+  await contact(page, 'pointerdown', {id: 1, target: elsewhere});
+  await contact(page, 'pointerdown', {id: 2, x: 240, isPrimary: false});
+  await contact(page, 'pointerup', {id: 2, x: 40, isPrimary: false});
+  await contact(page, 'pointerup', {id: 1, target: elsewhere});
+  assert.equal(page.active(), 0);
+});
+
+test('holding a finger cancels pending automatic decoding and only resumes after release', async () => {
+  const decoding = deferred();
+  const page = fixture({decodings: {1: decoding}});
+  await page.tick();
+  await contact(page, 'pointerdown');
+  decoding.resolve();
+  await flush();
+  assert.equal(page.active(), 0, 'autoplay cannot replace the picture under the finger');
+  assert.equal(page.timers.size, 0);
+  await contact(page, 'pointerup', {x: 190});
+  assert.equal(page.active(), 0);
+  assert.equal(page.timers.size, 1);
+  await page.tick();
+  assert.equal(page.active(), 1);
+});
+
+test('rapid swipes preserve the most recent navigation intent across delayed image decoding', async () => {
+  const second = deferred();
+  const third = deferred();
+  const page = fixture({decodings: {1: second, 2: third}, autoplay: false});
+  await swipe(page, {x: 240}, {x: 80});
+  await swipe(page, {x: 240}, {x: 80});
+  assert.equal(page.active(), 0);
+  third.resolve();
+  await flush();
+  assert.equal(page.active(), 2);
+  second.resolve();
+  await flush();
+  assert.equal(page.active(), 2, 'the older decode cannot override the last swipe');
+});
+
+test('pen gestures work, mouse drags and non-primary contacts do not, and reduced motion never starts autoplay', async () => {
+  const page = fixture({reduced: true});
+  await swipe(page, {x: 240}, {x: 80}, {pointerType: 'mouse'});
+  assert.equal(page.active(), 0);
+  await swipe(page, {x: 240}, {x: 80}, {isPrimary: false});
+  assert.equal(page.active(), 0);
+  await swipe(page, {x: 240}, {x: 80}, {pointerType: 'pen'});
+  assert.equal(page.active(), 1);
+  assert.equal(page.timers.size, 0);
+});
+
+test('losing the window or hiding the page cancels a contact so autoplay is not left permanently paused', async () => {
+  const page = fixture();
+  await contact(page, 'pointerdown');
+  assert.equal(page.timers.size, 0);
+  await page.window.emit('blur');
+  assert.equal(page.timers.size, 1);
+  await contact(page, 'pointerup', {x: 50});
+  assert.equal(page.active(), 0);
+  await contact(page, 'pointerdown', {id: 2});
+  page.document.hidden = true;
+  await page.document.emit('visibilitychange');
+  assert.equal(page.timers.size, 0);
+  page.document.hidden = false;
+  await page.document.emit('visibilitychange');
+  assert.equal(page.timers.size, 1);
+});
+
+test('without Pointer Events the still-working buttons remain the navigation fallback', async () => {
+  const page = fixture({pointerEvents: false, autoplay: false});
+  await swipe(page, {x: 240}, {x: 80});
+  assert.equal(page.active(), 0);
+  await page.next.emit('click');
+  assert.equal(page.active(), 1);
 });

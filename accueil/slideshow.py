@@ -58,6 +58,14 @@ class HeroSlideForm(forms.ModelForm):
         model = HeroSlide
         fields = ['image', 'mobile_image', 'alt', 'position']
 
+    def has_changed(self):
+        # An editor can prefill order numbers while rearranging cards. An
+        # otherwise empty new card remains a placeholder, not a missing photo.
+        if not self.instance.pk and self.is_bound and not any(
+                self[name].data for name in ('image', 'mobile_image', 'alt')):
+            return False
+        return super().has_changed()
+
 
 class BaseHeroSlideFormSet(BaseModelFormSet):
     @classmethod
@@ -67,8 +75,10 @@ class BaseHeroSlideFormSet(BaseModelFormSet):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('queryset', HeroSlide.objects.filter(configuration_id=1).order_by('position', 'pk'))
         super().__init__(*args, **kwargs)
-        for form in self.forms:
-            form.fields['DELETE'].label = 'Retirer cette photo du diaporama'
+
+    def add_fields(self, form, index):
+        super().add_fields(form, index)
+        form.fields['DELETE'].label = 'Retirer cette photo du diaporama'
 
     def clean(self):
         super().clean()
@@ -78,10 +88,13 @@ class BaseHeroSlideFormSet(BaseModelFormSet):
         seen_ids = set()
         for form in self.forms:
             row = form.cleaned_data
+            if not row:
+                continue
             instance = row.get('id')
-            if instance is None or instance.pk in seen_ids:
-                raise forms.ValidationError('La liste des photos est incomplète ou contient un doublon. Rechargez la page.')
-            seen_ids.add(instance.pk)
+            if instance is not None:
+                if instance.pk in seen_ids:
+                    raise forms.ValidationError('La liste des photos contient un doublon. Rechargez la page.')
+                seen_ids.add(instance.pk)
             if row.get('DELETE'):
                 continue
             position = row.get('position')
@@ -91,7 +104,7 @@ class BaseHeroSlideFormSet(BaseModelFormSet):
 
 
 SlideFormSet = modelformset_factory(HeroSlide, form=HeroSlideForm, formset=BaseHeroSlideFormSet,
-    extra=0, can_delete=True, max_num=5, validate_max=True, absolute_max=10)
+    extra=1, can_delete=True, max_num=5, validate_max=True, absolute_max=10)
 
 
 def _replacement(value, existing, *, required):
@@ -154,15 +167,28 @@ def save_slideshow(cleaned_data, rows, actor):
             # Validate the entire submitted identity set before changing files
             # or rows; a forged management count must never omit a real slide.
             for row in rows:
-                if not isinstance(row, dict) or not isinstance(row.get('id'), HeroSlide):
+                if not isinstance(row, dict):
                     raise HomepageError('La liste des photos est invalide. Rechargez la page.')
-                pk = row['id'].pk
-                if pk not in by_id or pk in seen_ids or type(row.get('DELETE', False)) is not bool:
-                    raise HomepageError('Une photo ne correspond pas au diaporama ou apparaît plusieurs fois. Rechargez la page.')
-                seen_ids.add(pk)
-                if row.get('DELETE', False):
-                    deleted.append(pk)
+                if not row:
                     continue
+                identity = row.get('id')
+                if type(row.get('DELETE', False)) is not bool:
+                    raise HomepageError('Choisissez les photos à retirer à l’aide de leur case de retrait.')
+                if identity is None:
+                    if row.get('DELETE') or not any(row.get(name) for name in ('image', 'mobile_image', 'alt')):
+                        continue
+                    slide = HeroSlide(configuration=configuration)
+                else:
+                    if not isinstance(identity, HeroSlide):
+                        raise HomepageError('La liste des photos est invalide. Rechargez la page.')
+                    pk = identity.pk
+                    if pk not in by_id or pk in seen_ids:
+                        raise HomepageError('Une photo ne correspond pas au diaporama ou apparaît plusieurs fois. Rechargez la page.')
+                    seen_ids.add(pk)
+                    if row.get('DELETE', False):
+                        deleted.append(pk)
+                        continue
+                    slide = by_id[pk]
                 if type(row.get('position')) is not int or not 1 <= row['position'] <= 5:
                     raise HomepageError('Choisissez un ordre entre 1 et 5 pour chaque photo conservée.')
                 if row['position'] in seen_positions:
@@ -174,7 +200,7 @@ def save_slideshow(cleaned_data, rows, actor):
                     alt = forms.CharField(max_length=200).clean(row['alt'])
                 except forms.ValidationError as error:
                     raise HomepageError('Description de la photo : ' + ' '.join(error.messages)) from error
-                kept.append((row['position'], by_id[pk], row, alt))
+                kept.append((row['position'], slide, row, alt))
             if seen_ids != set(by_id):
                 raise HomepageError('La liste des photos est incomplète. Rechargez la page avant d’enregistrer.')
             if len(kept) + len(photos) > 5:
@@ -184,7 +210,7 @@ def save_slideshow(cleaned_data, rows, actor):
                 {'revision': expected_revision, 'autoplay': cleaned_data['autoplay'], 'interval': cleaned_data['interval']},
                 {'new_photos': photos}, configuration=current))
             staged = []
-            for _, slide, row, alt in sorted(kept, key=lambda item: (item[0], item[1].pk)):
+            for _, slide, row, alt in sorted(kept, key=lambda item: item[0]):
                 for name, required in (('image', True), ('mobile_image', False)):
                     previous = getattr(slide, name)
                     replacement, uploaded = _replacement(row.get(name), previous, required=required)
