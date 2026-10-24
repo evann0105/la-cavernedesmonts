@@ -1,8 +1,34 @@
 {% extends 'editorial/manage/base.html' %}
-{% block editorial_heading %}<header class="editorial-heading"><div><p class="eyebrow">LES PAGES · TEXTES ET PHOTO</p><h1>{{ page_spec.title }}.</h1><p>{{ page_spec.description }}</p></div><a class="editorial-text-link" href="{% url 'editorial:overview' %}">← Pages et annonces</a></header>{% endblock %}
+{% block editorial_heading %}
+<header class="editorial-heading"><div><p class="eyebrow">LES PAGES · TEXTES ET PHOTO</p><h1>{{ page_spec.title }}.</h1><p>{{ page_spec.description }}</p></div><a class="editorial-text-link" href="{% url 'editorial:overview' %}">← Pages et annonces</a></header>
+{% endblock %}
 {% block editorial_body %}
-<div class="editorial-editor-layout"><form method="post" enctype="multipart/form-data" class="editorial-form" data-editorial-page-form>{% csrf_token %}{% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}{% if form.errors %}<div class="editorial-errors" role="alert"><strong>Les changements n’ont pas été enregistrés.</strong><p>Vérifiez les champs indiqués ci-dessous.</p>{% if upload_retry %}<p>Sélectionnez à nouveau votre nouvelle photo avant de réenregistrer. Les textes saisis sont conservés.</p>{% endif %}{{ form.non_field_errors }}</div>{% endif %}
-{% for panel in panels %}<section class="editorial-panel" aria-labelledby="editorial-panel-{{ forloop.counter }}"><header><span class="editorial-panel-number" aria-hidden="true">0{{ forloop.counter }}</span><h2 id="editorial-panel-{{ forloop.counter }}">{{ panel.title }}</h2></header><div class="editorial-fields">{% for field in panel.fields %}{% include 'editorial/manage/field.html' %}{% endfor %}</div></section>{% endfor %}
-<div class="editorial-form-actions"><button class="button" type="submit">Enregistrer cette page <span aria-hidden="true">↗</span></button><a class="editorial-text-link" href="{% url 'editorial:overview' %}">Annuler</a></div>
-</form><aside class="editorial-note"><span class="editorial-badge">À votre image</span><h2>Des textes simples et personnels.</h2><p>Racontez ce que vos clients trouveront chez vous. Les paragraphes et retours à la ligne seront conservés sur le site.</p><p>La présentation du site est conservée. Les champs marqués d’un astérisque sont obligatoires.</p>{% if page_key == 'store' %}<a class="editorial-text-link" href="{% url 'boutique:settings' %}">Modifier les coordonnées <span aria-hidden="true">↗</span></a><a class="editorial-text-link" href="{% url 'boutique:hours' %}">Modifier les horaires <span aria-hidden="true">↗</span></a><p class="editorial-small">Ces informations sont reprises automatiquement sur la page du magasin.</p>{% endif %}<a class="editorial-text-link" href="{{ page_spec.public_url }}" target="_blank" rel="noopener">Voir la page enregistrée <span aria-hidden="true">↗</span></a>{% if current.updated_at %}<p class="editorial-small editorial-updated">Dernier enregistrement<br><time datetime="{{ current.updated_at|date:'c' }}">{{ current.updated_at|date:'d/m/Y à H:i' }}</time></p>{% endif %}</aside></div>
+<section class="editorial-publication-summary" aria-label="État de cette page">
+  <div><span class="editorial-status{% if has_draft %} editorial-status--planned{% else %} editorial-status--active{% endif %}">{% if has_draft %}Brouillon enregistré{% else %}Version en ligne{% endif %}</span><p>{% if has_draft %}Vous modifiez votre brouillon. La version en ligne reste visible aux clients jusqu’à sa publication.{% else %}Préparez vos changements, vérifiez l’aperçu, puis publiez quand tout est prêt.{% endif %}</p></div>
+  <div class="editorial-summary-links"><a class="editorial-text-link" href="{% url 'editorial:page_preview' key=page_key %}">Voir {% if has_draft %}le brouillon{% else %}l’aperçu{% endif %} <span aria-hidden="true">↗</span></a><a class="editorial-text-link" href="{% url 'editorial:page_history' key=page_key %}">Versions précédentes <span aria-hidden="true">↗</span></a></div>
+</section>
+<div class="editorial-editor-layout">
+  <form method="post" enctype="multipart/form-data" class="editorial-form" data-editorial-page-form data-editorial-dirty-form{% if form.is_bound %} data-editorial-dirty-on-load{% endif %}>
+    {% csrf_token %}{% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+    {% if form.errors %}<div class="editorial-errors" role="alert"><strong>Les changements n’ont pas été enregistrés.</strong><p>Vérifiez les champs indiqués ci-dessous.</p>{% if upload_retry %}<p>Sélectionnez à nouveau votre nouvelle photo avant de réenregistrer. Les textes saisis sont conservés.</p>{% endif %}{{ form.non_field_errors }}</div>{% endif %}
+    {% for panel in panels %}<section class="editorial-panel" aria-labelledby="editorial-panel-{{ forloop.counter }}"><header><span class="editorial-panel-number" aria-hidden="true">0{{ forloop.counter }}</span><h2 id="editorial-panel-{{ forloop.counter }}">{{ panel.title }}</h2></header><div class="editorial-fields">{% for field in panel.fields %}{% include 'editorial/manage/field.html' %}{% endfor %}</div></section>{% endfor %}
+    <div class="editorial-save-panel">
+      <p class="editorial-save-status" data-editorial-dirty-status role="status" aria-live="polite">{% if form.is_bound %}Modifications non enregistrées.{% else %}Aucune modification non enregistrée.{% endif %}</p>
+      <div class="editorial-form-actions editorial-page-actions">
+        <button class="button editorial-button-secondary" type="submit" name="action" value="save_draft">Enregistrer le brouillon</button>
+        <button class="button editorial-button-secondary" type="submit" name="action" value="preview">Enregistrer et prévisualiser <span aria-hidden="true">↗</span></button>
+        <button class="button" type="submit" name="action" value="publish">Publier les modifications</button>
+      </div>
+      <p class="editorial-help">Seul « Publier les modifications » met cette page à jour pour vos clients.</p>
+    </div>
+  </form>
+  <aside class="editorial-note">
+    <span class="editorial-badge">À votre rythme</span><h2>Préparer, vérifier, publier.</h2>
+    <p>Le brouillon conserve vos textes et votre photo pour y revenir plus tard. L’aperçu permet de vérifier le résultat sur ordinateur ou téléphone.</p>
+    <p>Chaque publication rejoint les versions précédentes. Vous pourrez en restaurer une en brouillon avant de la remettre en ligne.</p>
+    {% if page_key == 'store' %}<a class="editorial-text-link" href="{% url 'boutique:settings' %}">Modifier les coordonnées <span aria-hidden="true">↗</span></a><a class="editorial-text-link" href="{% url 'boutique:hours' %}">Modifier les horaires <span aria-hidden="true">↗</span></a><p class="editorial-small">Ces informations sont reprises automatiquement sur la page du magasin.</p>{% endif %}
+    <a class="editorial-text-link" href="{{ page_spec.public_url }}" target="_blank" rel="noopener">Voir la page en ligne <span aria-hidden="true">↗</span></a>
+    {% if current.updated_at %}<p class="editorial-small editorial-updated">Dernier enregistrement<br><time datetime="{{ current.updated_at|date:'c' }}">{{ current.updated_at|date:'d/m/Y à H:i' }}</time></p>{% endif %}
+  </aside>
+</div>
 {% endblock %}

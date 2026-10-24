@@ -295,7 +295,7 @@ def page_seo(request, product=None, product_metadata=None, structured_data=None)
         if hero.get('custom'):
             image = public_absolute_url(hero.get('url'), allow_external=True) or image
     editorial_page = getattr(request, '_editorial_page', None)
-    if editorial_page and editorial_page.get('revision', 0) and name in {'espace:about', 'core:location'} and not private:
+    if editorial_page and editorial_page.get('published_revision', editorial_page.get('revision', 0)) and name in {'espace:about', 'core:location'} and not private:
         values = editorial_page['values']
         title = clean_text(values.get('page_title', '')) + ' — ' + SHOP_NAME
         description = clean_text(values.get('intro', ''))[:300] or description

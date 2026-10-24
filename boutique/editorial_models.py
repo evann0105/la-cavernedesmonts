@@ -21,6 +21,9 @@ class ContentPage(models.Model):
                            choices=tuple((key, spec['title']) for key, spec in PAGE_SPECS.items()))
     data = models.JSONField(default=dict, blank=True)
     image = models.ImageField('Photo de la page', upload_to=editorial_image_path, blank=True)
+    draft_data = models.JSONField(null=True, blank=True, default=None)
+    draft_image = models.ImageField('Photo du brouillon', upload_to=editorial_image_path, blank=True)
+    published_revision = models.PositiveIntegerField(default=0, editable=False)
     revision = models.PositiveIntegerField(default=1, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
@@ -32,17 +35,55 @@ class ContentPage(models.Model):
         constraints = [
             models.CheckConstraint(condition=Q(key__in=('about', 'store')), name='editorial_page_key_valid'),
             models.CheckConstraint(condition=Q(revision__gte=1), name='editorial_page_revision_positive'),
+            models.CheckConstraint(condition=Q(published_revision__lte=F('revision')), name='editorial_page_public_revision_valid'),
         ]
 
     def clean(self):
         super().clean()
         try:
             validate_page_data(self.key, self.data)
+            if self.draft_data is not None:
+                validate_page_data(self.key, self.draft_data)
         except ValidationError as exc:
             raise ValidationError({'data': exc.messages}) from exc
 
+    @property
+    def has_draft(self):
+        return self.draft_data is not None
+
     def __str__(self):
         return PAGE_SPECS.get(self.key, {}).get('title', self.key)
+
+
+class ContentPageVersion(models.Model):
+    """An immutable record of a publication; media files stay at their original path."""
+    page = models.ForeignKey(ContentPage, related_name='versions', on_delete=models.CASCADE)
+    publication_revision = models.PositiveIntegerField(editable=False)
+    data = models.JSONField(default=dict, blank=True, editable=False)
+    image = models.ImageField(upload_to=editorial_image_path, blank=True, editable=False)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+                                   on_delete=models.SET_NULL, editable=False)
+
+    class Meta:
+        ordering = ['-publication_revision', '-pk']
+        verbose_name = 'Version publiée d’une page'
+        verbose_name_plural = 'Versions publiées des pages'
+        constraints = [models.UniqueConstraint(fields=('page', 'publication_revision'),
+                                               name='editorial_page_version_unique')]
+
+    def clean(self):
+        super().clean()
+        if self.page_id:
+            validate_page_data(self.page.key, self.data)
+
+    def save(self, *args, **kwargs):
+        if not self._state.adding:
+            raise ValidationError('Une version publiée ne peut pas être modifiée. Restaurez-la dans un brouillon.')
+        return super().save(*args, **kwargs)
+
+    def __str__(self):
+        return 'Version d’origine' if self.publication_revision == 0 else f'Version {self.publication_revision}'
 
 
 class FAQEntry(models.Model):

@@ -18,11 +18,15 @@ def back_navigation(request):
 
     match = request.resolver_match
     name = match.view_name if match else ''
-    if name == 'accueil:home':
+    if name in {'accueil:home', 'editorial:page_preview_frame', 'editorial:page_version_frame'}:
         return {'back_url': None, 'back_fallback': None, 'back_use_history': False}
     fallback = reverse('accueil:home')
     if name.startswith('editorial:'):
-        if name in {'editorial:faq_edit', 'editorial:faq_create'}:
+        if name in {'editorial:page_preview', 'editorial:page_history', 'editorial:page_publish'}:
+            fallback = reverse('editorial:page_edit', kwargs={'key': match.kwargs['key']})
+        elif name in {'editorial:page_version_preview', 'editorial:page_restore'}:
+            fallback = reverse('editorial:page_history', kwargs={'key': match.kwargs['key']})
+        elif name in {'editorial:faq_edit', 'editorial:faq_create'}:
             fallback = reverse('editorial:faq_list')
         elif name in {'editorial:announcement_edit', 'editorial:announcement_create'}:
             fallback = reverse('editorial:announcements')

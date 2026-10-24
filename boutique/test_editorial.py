@@ -56,7 +56,7 @@ class EditorialTests(TestCase):
 
     def page_data(self, key='about', **changes):
         current = page_content(key)
-        values = dict(current['values'], revision=str(current['revision']))
+        values = dict(current['values'], revision=str(current['revision']), action='publish')
         values.update(changes)
         return values
 

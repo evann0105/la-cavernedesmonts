@@ -281,4 +281,4 @@ class ShippingCountry(models.Model):
 
 
 # Keep editorial models in their own module without introducing another app.
-from .editorial_models import ContentPage, FAQEntry, SiteAnnouncement  # noqa: E402,F401
+from .editorial_models import ContentPage, ContentPageVersion, FAQEntry, SiteAnnouncement  # noqa: E402,F401

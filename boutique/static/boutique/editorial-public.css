@@ -8,6 +8,7 @@
 .editorial-faq summary { min-height: 44px; padding: 10px 0; font-weight: 600; overflow-wrap: anywhere; }
 .editorial-faq-answer { max-width: 760px; color: #52675a; overflow-wrap: anywhere; }
 .editorial-faq-answer .underlined { white-space: normal; overflow-wrap: anywhere; }
+.editorial-preview :is(a, button, input, select, textarea) { pointer-events: none; }
 .editorial-faq-contact { padding: 28px; max-width: 880px; border: 1px solid #d9e1ce; border-radius: 18px; background: #eef2e7; }
 .editorial-faq-contact h2 { font-size: 27px; }
 @media(max-width:600px) {

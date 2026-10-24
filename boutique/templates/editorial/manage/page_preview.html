@@ -1,0 +1,20 @@
+{% extends 'editorial/manage/base.html' %}
+{% block editorial_heading %}
+<header class="editorial-heading"><div><p class="eyebrow">{{ page_spec.title|upper }} · APERÇU PRIVÉ</p><h1>Vérifier avant de publier.</h1><p>Retrouvez votre page dans sa mise en page, sur ordinateur ou téléphone.</p></div><a class="editorial-text-link" href="{% url 'editorial:page_edit' key=page_spec.key %}">← Revenir aux modifications</a></header>
+{% endblock %}
+{% block editorial_body %}
+<section class="editorial-publication-summary" aria-label="Version prévisualisée">
+  <div>
+    {% if preview_source == 'draft' %}<span class="editorial-status editorial-status--planned">Brouillon · privé</span><p>Ces changements ne sont pas encore en ligne. Publiez ce brouillon lorsque le résultat vous convient.</p>
+    {% elif preview_source == 'version' %}<span class="editorial-status">{% if selected_version.publication_revision == 0 %}Version d’origine{% else %}Version {{ selected_version.publication_revision }}{% endif %}</span><p>Restaurer cette version la copie dans votre brouillon, textes et photo compris. Vous pourrez la modifier avant de la publier.{% if has_draft %} Le brouillon actuel sera remplacé.{% endif %}</p>
+    {% else %}<span class="editorial-status editorial-status--active">Version en ligne</span><p>Vous consultez la version actuellement publiée. Pour préparer un changement, revenez aux modifications.</p>{% endif %}
+  </div>
+  {% if preview_source == 'draft' %}<form method="post" action="{% url 'editorial:page_publish' key=page_spec.key %}" class="editorial-summary-action">{% csrf_token %}<input type="hidden" name="revision" value="{{ revision }}"><button class="button" type="submit">Publier ce brouillon</button></form>
+  {% elif preview_source == 'version' %}<form method="post" action="{% url 'editorial:page_restore' key=page_spec.key pk=selected_version.pk %}" class="editorial-summary-action">{% csrf_token %}<input type="hidden" name="revision" value="{{ revision }}"><button class="button" type="submit">Restaurer en brouillon</button></form>{% endif %}
+</section>
+<section class="editorial-preview" aria-label="Aperçu de la page" data-editorial-responsive-preview>
+  <div class="editorial-preview-toolbar"><div class="editorial-device-controls" role="group" aria-label="Format de l’aperçu" hidden data-editorial-device-controls><button type="button" aria-pressed="true" data-editorial-preview-device="desktop">Ordinateur</button><button type="button" aria-pressed="false" data-editorial-preview-device="phone">Téléphone</button></div><p>Les liens et les formulaires de cet aperçu sont désactivés.</p></div>
+  <div class="editorial-preview-stage" data-editorial-preview-stage><div class="editorial-preview-viewport" data-editorial-preview-viewport><iframe src="{{ preview_frame_url }}" title="Aperçu privé de la page {{ page_spec.title }}" sandbox="allow-same-origin" class="editorial-preview-frame" data-editorial-preview-frame></iframe></div></div>
+</section>
+<div class="editorial-preview-footer"><a class="editorial-text-link" href="{% url 'editorial:page_edit' key=page_spec.key %}">Modifier les textes et la photo <span aria-hidden="true">↗</span></a><a class="editorial-text-link" href="{% url 'editorial:page_history' key=page_spec.key %}">Versions précédentes <span aria-hidden="true">↗</span></a></div>
+{% endblock %}
