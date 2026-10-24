@@ -11,11 +11,13 @@ Le bouton **Voir l’accueil** affiche les modifications déjà enregistrées. E
 
 Les boutons proposent les destinations du site et les coordonnées de la boutique. Les photos JPEG, PNG ou WebP sont vérifiées, orientées et optimisées automatiquement. **Revenir à la photo d’origine** rétablit le visuel initial. Sans photo spécifique au téléphone, la photo principale personnalisée est également affichée sur mobile.
 
-## Photos du diaporama
+## Photos des diaporamas
 
-Dans **Bannière principale → Photos du diaporama**, la photo principale occupe la première place. Sélectionnez jusqu’à cinq photos supplémentaires ensemble : elles apparaissent dans des cartes de préparation. Renseignez leur description et, si utile, une version recadrée pour téléphone avant le seul enregistrement. À partir de deux photos, l’accueil propose un diaporama. Vous pouvez remplacer chaque photo, ajouter un cadrage pour téléphone, saisir sa description ou la retirer. Les boutons **Monter / Descendre** changent leur ordre sans renumérotation manuelle. La photo principale reste en première position.
+Deux diaporamas se règlent séparément : **Bannière principale → Photos du diaporama** pour le haut de l’accueil, et **Sections et contenus → Grand air → Photos du diaporama Grand air** pour la photo du bloc « La journée est belle ». Modifier l’un ne change pas les photos ou le rythme de l’autre.
 
-Le cadrage pour téléphone d’une photo ne crée pas une diapositive supplémentaire. Sans cadrage mobile, la même photo sert sur tous les écrans. Les titres, le logo et les boutons restent fixes pendant le changement de photo.
+Dans chaque diaporama, la photo principale occupe la première place. Sélectionnez jusqu’à cinq photos supplémentaires ensemble : elles apparaissent dans des cartes de préparation. Renseignez leur description et, si utile, une version recadrée pour téléphone avant le seul enregistrement. À partir de deux photos, l’accueil propose un diaporama. Vous pouvez remplacer chaque photo, ajouter un cadrage pour téléphone, saisir sa description ou la retirer. Les boutons **Monter / Descendre** changent leur ordre sans renumérotation manuelle. La photo principale reste en première position.
+
+Le cadrage pour téléphone d’une photo ne crée pas une diapositive supplémentaire. Sans cadrage mobile, la même photo sert sur tous les écrans. Les titres, les légendes et les boutons restent fixes pendant le changement de photo. Le logo reste également fixe dans la bannière principale.
 
 **Prévisualiser** montre les photos enregistrées et celles en cours de préparation, dans l’ordre choisi. Les formats **Ordinateur / Téléphone** affichent le cadrage et les textes réels de l’accueil. Les changements et fichiers de cet aperçu restent dans le navigateur jusqu’à **Enregistrer le diaporama**. Une photo marquée pour retrait n’apparaît plus dans l’aperçu.
 

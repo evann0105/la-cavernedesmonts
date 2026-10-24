@@ -59,7 +59,7 @@ class ImageElement extends Element {
   set src(value) { this._src = value; this.complete = true; this.naturalWidth = this.broken ? 0 : 1200; }
 }
 
-function fixture({count = 3, autoplay = true, reduced = false, hover = true, decodings = {}, broken = [], interval = '6', rootPresent = true, pointerEvents = true} = {}) {
+function fixture({count = 3, autoplay = true, reduced = false, hover = true, decodings = {}, broken = [], interval = '6', rootPresent = true, pointerEvents = true, additionalRoots = []} = {}) {
   const images = Array.from({length: count}, (_, index) => new ImageElement({initial: index === 0, decoding: decodings[index], broken: broken.includes(index)}));
   const sources = images.map((_, index) => new Element({dataset: index ? {srcset: '/media/homepage/mobile.webp'} : {}}));
   const slides = images.map((image, index) => new Element({hidden: index > 0, classes: index ? [] : ['is-active'], attributes: {'aria-hidden': String(index !== 0)},
@@ -81,7 +81,7 @@ function fixture({count = 3, autoplay = true, reduced = false, hover = true, dec
       '[data-slideshow-counter]': counter, '[data-slideshow-announcement]': announcement,
       '[data-slideshow-only-footer]': footer},
     lists: {'[data-slideshow-slide]': slides, '[data-slideshow-page]': pages}, children: [controls]});
-  const document = new Element({hidden: false, activeElement: null, lists: {'[data-home-slideshow]': rootPresent ? [hero] : []}});
+  const document = new Element({hidden: false, activeElement: null, lists: {'[data-home-slideshow]': rootPresent ? [hero, ...additionalRoots] : []}});
   const reduceQuery = new Element({matches: reduced});
   const hoverQuery = new Element({matches: hover});
   const observers = [];
@@ -131,6 +131,37 @@ test('initialization exposes controls but keeps other photographs unloaded', () 
   assert.deepEqual(page.images.map(image => image.src), ['/static/first.webp', '', '']);
   assert.deepEqual([...page.timers.values()].map(task => task.delay), [6000]);
   assert.equal(page.announcement.textContent, '');
+});
+
+test('the banner and grand-air carousel keep navigation and playback independent', async () => {
+  const feature = fixture({rootPresent: false, count: 2, autoplay: false});
+  const page = fixture({count: 3, additionalRoots: [feature.hero]});
+  assert.equal(feature.controls.hidden, false);
+  assert.equal(page.timers.size, 1);
+  await feature.next.emit('click');
+  assert.equal(feature.active(), 1);
+  assert.equal(page.active(), 0);
+  assert.equal(feature.counter.textContent, 'Photo 2 sur 2');
+  assert.equal(page.counter.textContent, 'Photo 1 sur 3');
+  await page.next.emit('click');
+  assert.equal(page.active(), 1);
+  assert.equal(feature.active(), 1);
+  await feature.playback.emit('click');
+  assert.equal(page.timers.size, 2);
+  await page.playback.emit('click');
+  assert.equal(page.timers.size, 1);
+  assert.equal(feature.playback.getAttribute('aria-pressed'), 'true');
+});
+
+test('a swipe inside the grand-air photo never advances the banner', async () => {
+  const feature = fixture({rootPresent: false, count: 2, autoplay: false});
+  const page = fixture({autoplay: false, additionalRoots: [feature.hero]});
+  await page.document.emit('pointerdown', {target: feature.hero, pointerType: 'touch', pointerId: 9, isPrimary: true, button: 0, clientX: 240, clientY: 180});
+  await page.document.emit('pointerup', {target: feature.hero, pointerType: 'touch', pointerId: 9, clientX: 130, clientY: 184});
+  assert.equal(feature.active(), 1);
+  assert.equal(page.active(), 0);
+  assert.equal(feature.counter.textContent, 'Photo 2 sur 2');
+  assert.equal(page.counter.textContent, 'Photo 1 sur 3');
 });
 
 test('manual navigation keeps the first image visible until the next is decoded', async () => {

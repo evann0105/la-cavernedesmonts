@@ -1,10 +1,10 @@
 <section class="slide-editor-preview" data-slides-preview hidden aria-labelledby="slide-preview-title">
-  <header><div><span class="homepage-badge">Aperçu non enregistré</span><h2 id="slide-preview-title">Votre bannière, vue par les visiteurs</h2><p>Vérifiez le cadrage et la lisibilité du texte sur chaque photo. Cet aperçu utilise vos modifications en cours ; il ne les enregistre pas.</p></div><button type="button" class="slide-editor-secondary" data-preview-close>Fermer l’aperçu</button></header>
+  <header><div><span class="homepage-badge">Aperçu non enregistré</span><h2 id="slide-preview-title">{% if slideshow_section == 'feature' %}Votre bloc Grand air, vu par les visiteurs{% else %}Votre bannière, vue par les visiteurs{% endif %}</h2><p>Vérifiez le cadrage et la lisibilité du texte sur chaque photo. Cet aperçu utilise vos modifications en cours ; il ne les enregistre pas.</p></div><button type="button" class="slide-editor-secondary" data-preview-close>Fermer l’aperçu</button></header>
   <div class="slide-preview-toolbar">
     <div role="group" aria-label="Format de l’aperçu" class="slide-preview-modes"><button type="button" data-preview-mode="desktop" aria-pressed="true">Ordinateur</button><button type="button" data-preview-mode="mobile" aria-pressed="false">Téléphone</button></div>
     <div class="slide-preview-navigation" role="group" aria-label="Photo affichée dans l’aperçu"><button type="button" data-preview-prev aria-label="Photo précédente dans l’aperçu">←</button><span data-preview-counter>Photo 1 sur 1</span><button type="button" data-preview-next aria-label="Photo suivante dans l’aperçu">→</button></div>
   </div>
   <p class="homepage-help" data-preview-warning hidden>Les nouvelles photos sans fichier ne sont pas encore visibles dans l’aperçu. Resélectionnez-les sur leur carte.</p>
-  <div class="slide-preview-stage" data-preview-stage><div class="slide-preview-viewport" data-preview-viewport><iframe title="Bannière de l’accueil : aperçu non enregistré" sandbox="allow-same-origin" referrerpolicy="same-origin" tabindex="-1" data-preview-frame></iframe></div></div>
+  <div class="slide-preview-stage" data-preview-stage><div class="slide-preview-viewport" data-preview-viewport><iframe title="{{ slideshow_preview_title }} : aperçu non enregistré" sandbox="allow-same-origin" referrerpolicy="same-origin" tabindex="-1" data-preview-frame></iframe></div></div>
   <p class="slide-preview-caption" data-preview-caption role="status" aria-live="polite"></p>
 </section>

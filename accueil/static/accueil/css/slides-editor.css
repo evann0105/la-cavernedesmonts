@@ -1,4 +1,4 @@
-/* Editing controls stay outside the public banner reproduced in the preview. */
+/* Editing controls stay outside the public section reproduced in the preview. */
 [data-slides-editor] [hidden] { display: none !important; }
 .slide-editor-main-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px 24px; margin-bottom: 24px; }
 .slide-editor-main-actions p { margin: 0; max-width: 560px; font-size: 13px; line-height: 1.7; color: var(--homepage-muted); }
@@ -36,5 +36,6 @@
 .slide-preview-document *, .slide-preview-document *::before, .slide-preview-document *::after { animation: none !important; transition: none !important; }
 .slide-preview-document a, .slide-preview-document button { pointer-events: none; }
 .slide-preview-document .summit-hero-copy:focus-within > div { animation: none; }
+.slide-preview-feature { padding-block: 16px; }
 @media (hover: hover) { .homepage-manager .slide-editor-secondary:not(:disabled):hover, .slide-editor-move button:not(:disabled):hover, .slide-editor-undo:hover, .slide-preview-toolbar button:not(:disabled):hover { border-color: #70875c; background: #e7eedf; color: #243e36; } }
 @media (max-width: 700px) { .slide-editor-card-actions { width: 100%; justify-content: space-between; } .slide-editor-move button { padding-inline: 10px; } .slide-editor-preview { padding: 18px; } .slide-editor-preview > header { flex-direction: column; gap: 16px; } .slide-preview-toolbar { align-items: start; flex-direction: column; } .slide-preview-modes { width: 100%; } .slide-preview-modes button { flex: 1; } .slide-preview-navigation { width: 100%; justify-content: center; } }

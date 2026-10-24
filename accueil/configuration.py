@@ -49,6 +49,13 @@ def _slide_image_metadata(image):
     return {'custom': True, 'url': image.url, 'width': width, 'height': height}
 
 
+def _slideshow_settings(data, key):
+    stored = data.get(key) if isinstance(data.get(key), dict) else {}
+    autoplay, interval = stored.get('autoplay'), stored.get('interval')
+    return {'autoplay': autoplay if type(autoplay) is bool else True,
+            'interval': interval if type(interval) is int and interval in (5, 6, 8, 10) else 6}
+
+
 def configuration(instance=None):
     """A missing singleton is revision zero, never a reason to write on GET."""
     if instance is None:
@@ -72,11 +79,12 @@ def configuration(instance=None):
     visible = {'hero': True}
     visible.update({key: stored_visible[key] if type(stored_visible.get(key)) is bool else True
                     for key in OPTIONAL_SECTIONS})
-    slideshow = data.get('slideshow') if isinstance(data.get('slideshow'), dict) else {}
-    autoplay = slideshow.get('autoplay')
-    interval = slideshow.get('interval')
-    slides = []
-    for slide in HeroSlide.objects.filter(configuration_id=1).order_by('position', 'pk')[:5]:
+    slides_by_section = {'hero': [], 'feature': []}
+    # Both independent carousels share this one bounded-content table read.
+    for slide in HeroSlide.objects.filter(configuration_id=1, section__in=slides_by_section).order_by('section', 'position', 'pk'):
+        slides = slides_by_section[slide.section]
+        if len(slides) >= 5:
+            continue
         image = _slide_image_metadata(slide.image)
         if image is not None:
             slides.append({'id': slide.pk, 'position': slide.position, 'image': image,
@@ -90,9 +98,10 @@ def configuration(instance=None):
                              .values_list('product_id', flat=True)),
         'updated_at': instance.updated_at if instance is not None else None,
         'updated_by': instance.updated_by if instance is not None else None,
-        'slides': slides,
-        'slideshow': {'autoplay': autoplay if type(autoplay) is bool else True,
-                      'interval': interval if type(interval) is int and interval in (5, 6, 8, 10) else 6},
+        'slides': slides_by_section['hero'],
+        'slideshow': _slideshow_settings(data, 'slideshow'),
+        'feature_slides': slides_by_section['feature'],
+        'feature_slideshow': _slideshow_settings(data, 'feature_slideshow'),
     }
 
 
@@ -150,6 +159,14 @@ def public_configuration(shop=None):
         'image': deepcopy(slide['image']), 'mobile_image': deepcopy(slide['mobile_image']),
         'alt': slide['alt']} for slide in current['slides'])
     home['slideshow'] = {**current['slideshow'], 'enabled': len(home['hero_slides']) > 1}
+    home['feature_slides'] = [{'primary': True, 'id': None,
+        'image': deepcopy(current['images']['feature_image']), 'mobile_image': None,
+        'alt': home['feature']['image_alt']}]
+    home['feature_slides'].extend({'primary': False, 'id': slide['id'],
+        'image': deepcopy(slide['image']), 'mobile_image': deepcopy(slide['mobile_image']),
+        'alt': slide['alt']} for slide in current['feature_slides'])
+    home['feature_slideshow'] = {**current['feature_slideshow'],
+        'enabled': bool(current['visible']['feature'] and len(home['feature_slides']) > 1)}
     return home
 
 

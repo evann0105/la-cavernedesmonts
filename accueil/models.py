@@ -59,8 +59,12 @@ class FeaturedHomepageProduct(models.Model):
 
 
 class HeroSlide(models.Model):
+    SECTION_CHOICES = (('hero', 'Grande photo d’accueil'), ('feature', 'Invitation au grand air'))
+
     configuration = models.ForeignKey(HomepageConfiguration, on_delete=models.CASCADE,
                                        related_name='hero_slides')
+    section = models.CharField('Bloc de l’accueil', max_length=10,
+                               choices=SECTION_CHOICES, default='hero')
     image = models.ImageField('Photo supplémentaire', upload_to=homepage_image_path)
     mobile_image = models.ImageField('Cadrage pour téléphone', upload_to=homepage_image_path, blank=True)
     alt = models.CharField('Description de la photo', max_length=200)
@@ -74,6 +78,7 @@ class HeroSlide(models.Model):
         constraints = [
             models.CheckConstraint(condition=Q(configuration_id=1), name='hero_slide_homepage_configuration'),
             models.CheckConstraint(condition=Q(position__gte=1, position__lte=5), name='hero_slide_position_range'),
+            models.CheckConstraint(condition=Q(section__in=['hero', 'feature']), name='homepage_slide_valid_section'),
         ]
 
     def __str__(self):

@@ -187,21 +187,27 @@ def _slide_rows(formset, request):
 
 @catalog_required
 @require_http_methods(['GET', 'POST'])
-def slides(request):
+def slides(request, section='hero'):
+    if section not in dict(HeroSlide.SECTION_CHOICES):
+        raise Http404
+    is_feature = section == 'feature'
+    settings_key = 'feature_slideshow' if is_feature else 'slideshow'
+    primary_key = 'feature_image' if is_feature else 'hero_image'
+    route_name = 'homepage:feature_slides' if is_feature else 'homepage:slides'
     current = configuration()
     data = request.POST if request.method == 'POST' else None
     files = request.FILES if request.method == 'POST' else None
-    form = SlidesForm(data, files, configuration=current)
-    formset = SlideFormSet(data, files, prefix='slides',
-        queryset=HeroSlide.objects.filter(configuration_id=1).order_by('position', 'pk'))
+    form = SlidesForm(data, files, configuration=current, section=section)
+    formset = SlideFormSet(data, files, prefix='slides', section=section)
     rows = _slide_rows(formset, request)
-    saved_slide_count = HeroSlide.objects.filter(configuration_id=1).count()
+    saved_slide_count = HeroSlide.objects.filter(configuration_id=1, section=section).count()
     public = public_configuration()
-    preview_bootstrap = {'hero': public['hero'],
-        'primary': current['images']['hero_image'],
-        'mobile_primary': current['images']['hero_mobile_image'],
+    preview_bootstrap = {'section': section,
+        'hero': {**public['hero'], 'image_alt': public[section]['image_alt']},
+        'primary': current['images'][primary_key],
+        'mobile_primary': current['images'][primary_key if is_feature else 'hero_mobile_image'],
         'logo_url': static('core/img/logo.png'),
-        'slideshow': current['slideshow']}
+        'slideshow': current[settings_key]}
     preview_home = {'hero': preview_bootstrap['hero'],
         'images': {'hero_image': preview_bootstrap['primary'],
                    'hero_mobile_image': preview_bootstrap['mobile_primary']},
@@ -210,9 +216,16 @@ def slides(request):
                          'mobile_image': preview_bootstrap['mobile_primary'],
                          'alt': preview_bootstrap['hero']['image_alt']}],
         'scroll_target': '#preview-end'}
+    if is_feature:
+        preview_home.update(feature=public['feature'],
+            images={'feature_image': preview_bootstrap['primary']},
+            feature_slideshow={'enabled': False},
+            feature_slides=[{'primary': True, 'image': preview_bootstrap['primary'],
+                            'mobile_image': None, 'alt': public['feature']['image_alt']}])
     # No request/context processors: preview rendering cannot fetch client data
     # or create a second authenticated browsing surface.
-    preview_html = render_to_string('accueil/manage/banner_preview.html', {
+    preview_html = render_to_string('accueil/manage/feature_preview.html' if is_feature
+                                   else 'accueil/manage/banner_preview.html', {
         'home': preview_home, 'user': AnonymousUser(), 'cart_count': 0,
     })
     status = 200
@@ -221,7 +234,7 @@ def slides(request):
         slides_valid = formset.is_valid()
         if settings_valid and slides_valid:
             try:
-                save_slideshow(form.cleaned_data, formset.cleaned_data, actor=request.user)
+                save_slideshow(form.cleaned_data, formset.cleaned_data, actor=request.user, section=section)
             except HomepageConflict as exc:
                 _error(form, exc)
                 status = 409
@@ -229,13 +242,22 @@ def slides(request):
                 _error(form, exc)
             else:
                 messages.success(request, 'Les photos du diaporama et ses réglages ont été enregistrés.')
-                return _private(redirect('homepage:slides'))
+                return _private(redirect(route_name))
     return _private(render(request, 'accueil/manage/slides.html', {
         'configuration': current, 'form': form, 'formset': formset, 'slide_rows': rows,
         'empty_slide_row': _slide_row(formset.empty_form, request),
         'preview_bootstrap': preview_bootstrap,
         'preview_html': preview_html,
+        'slideshow_section': section,
+        'primary_image': current['images'][primary_key], 'primary_alt': public[section]['image_alt'],
+        'primary_edit_url': reverse('homepage:section', kwargs={'section': section}),
+        'slideshow_back_url': reverse('homepage:section', kwargs={'section': section}),
+        'slideshow_title': 'Diaporama du grand air' if is_feature else 'Photos du diaporama',
+        'slideshow_location': 'Invitation au grand air' if is_feature else 'Grande photo d’accueil',
+        'slideshow_preview_title': 'Aperçu de l’invitation au grand air' if is_feature else 'Aperçu de la bannière',
+        'preview_section_label': 'le bloc « Grand air »' if is_feature else 'la bannière',
         'saved_slide_count': saved_slide_count, 'upload_retry': bool(request.method == 'POST' and request.FILES),
         'has_slide_errors': formset.total_error_count() > 0,
-        'current_page': 'hero', 'page_title': 'Photos du diaporama',
+        'current_page': 'sections' if is_feature else 'hero',
+        'page_title': 'Diaporama du grand air' if is_feature else 'Photos du diaporama',
     }, status=status))

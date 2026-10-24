@@ -159,7 +159,7 @@ class TemplateElement extends Element {
   }
 }
 
-function fixture({saved = [], extraBlank = true, totalForms, dataTransfer = true, withPreview = true, primaryData = null, observeResize = false} = {}) {
+function fixture({saved = [], extraBlank = true, totalForms, dataTransfer = true, withPreview = true, primaryData = null, observeResize = false, section = 'hero'} = {}) {
   const form = new Element('form', {'data-slides-editor': ''});
   const list = new Element('div', {'data-slide-list': ''});
   const template = new TemplateElement(); template.setAttribute('data-slide-template', '');
@@ -179,15 +179,25 @@ function fixture({saved = [], extraBlank = true, totalForms, dataTransfer = true
   const frame = new Element('iframe', {'data-preview-frame': ''}); frame.srcdoc = '';
   const frameDocument = new Element('document'); frameDocument.body = new Element('body'); frameDocument.append(frameDocument.body);
   const picture = new Element('picture'); const source = new Element('source', {srcset: '/static/original-mobile.webp'});
-  const image = new Element('img', {class: 'summit-landscape', src: '/static/original.webp', srcset: '/static/original.webp 1200w', sizes: '100vw'});
+  const image = new Element('img', {class: section === 'feature' ? 'feature-primary' : 'summit-landscape', src: '/static/original.webp', srcset: '/static/original.webp 1200w', sizes: '100vw'});
   picture.append(source, image);
-  const publicHero = new Element('section', {class: 'summit-hero'});
-  const publicSingleFooter = new Element('div', {class: 'summit-hero-bottom'});
-  publicHero.append(picture, publicSingleFooter); frameDocument.body.append(publicHero);
+  const publicHero = new Element(section === 'feature' ? 'div' : 'section', {class: section === 'feature' ? 'feature-visual' : 'summit-hero'});
+  const publicSingleFooter = new Element('div', {class: section === 'feature' ? 'feature-photo-note' : 'summit-hero-bottom'});
+  if (section === 'feature') {
+    publicSingleFooter.textContent = 'Le bonheur n’est jamais très loin.';
+    publicHero.append(image, publicSingleFooter);
+    const publicSection = new Element('section', {id: 'home-feature'});
+    publicSection.getBoundingClientRect = () => ({bottom: 980});
+    publicSection.append(publicHero); frameDocument.body.append(publicSection);
+  } else { publicHero.append(picture, publicSingleFooter); frameDocument.body.append(publicHero); }
   const controlsTemplate = new Element('template', {id: 'slide-preview-controls-template'});
   controlsTemplate.content = new Element('fragment');
-  const multiFooter = new Element('div', {'data-preview-multi-footer': '', class: 'summit-hero-bottom hero-slideshow-footer'});
+  const multiFooter = new Element('div', {'data-preview-multi-footer': '', class: section === 'feature' ? 'feature-slideshow-footer' : 'summit-hero-bottom hero-slideshow-footer'});
   multiFooter.append(new Element('span', {'data-preview-public-counter': ''}), new Element('span', {'data-preview-public-playback': ''}), new Element('div', {'data-preview-public-pages': ''}));
+  if (section === 'feature') {
+    const caption = new Element('span', {class: 'feature-photo-note'});
+    caption.textContent = publicSingleFooter.textContent; multiFooter.append(caption);
+  }
   controlsTemplate.content.append(multiFooter); frameDocument.body.append(controlsTemplate);
   frameDocument.getElementById = id => frameDocument.querySelector(`#${id}`);
   frameDocument.createElement = tag => new Element(tag);
@@ -202,7 +212,7 @@ function fixture({saved = [], extraBlank = true, totalForms, dataTransfer = true
   const document = new Element('document'); document.append(form);
   const primary = primaryData || {primary: {url: '/static/first.webp'}, mobile_primary: {url: '/static/first-mobile.webp'}, hero: {image_alt: 'Photo principale'}};
   const previewHTML = '<!doctype html><html><head><link rel="stylesheet" href="/static/css/summit.css"></head><body>Saved public banner</body></html>';
-  const dataNode = new Element('script', {id: 'slideshow-preview-data'}); dataNode.textContent = JSON.stringify(primary);
+  const dataNode = new Element('script', {id: 'slideshow-preview-data'}); dataNode.textContent = JSON.stringify({...primary, section});
   const htmlNode = new Element('script', {id: 'slideshow-preview-document'}); htmlNode.textContent = JSON.stringify(withPreview ? previewHTML : null);
   document.append(dataNode, htmlNode);
   document.getElementById = id => document.querySelector(`#${id}`);
@@ -497,5 +507,53 @@ test('the preview switches the real public footer between one photo and multiple
   assert.equal(multi.hidden, true);
   assert.equal(pages.children.length, 1, 'old page markers are replaced instead of accumulating');
   assert.equal(multi.querySelector('[data-preview-public-counter]').textContent, 'Photo 1 sur 1');
+  assert.equal(page.submitted, 0);
+});
+
+
+test('the Grand air preview uses its own visual and primary photo, sizes the whole block and switches to mobile drafts', async () => {
+  const page = fixture({section: 'feature', primaryData: {primary: {url: '/media/grand-air.webp', custom: true}, mobile_primary: {url: '/media/grand-air.webp', custom: true}, hero: {image_alt: 'Grand air'}}});
+  await page.pick([file('draft.webp')]);
+  const row = live(page)[0];
+  row.fields.alt.value = 'Sentier du Jura';
+  row.fields.mobile_image.files = [file('portrait.webp')];
+  await row.fields.mobile_image.emit('change');
+  await page.openPreview();
+  assert.equal(page.frameDocument.querySelector('.summit-landscape'), null, 'the feature photo has no banner image class');
+  assert.equal(page.image.src, 'https://boutique.example/media/grand-air.webp');
+  assert.equal(page.image.alt, 'Grand air');
+  assert.equal(page.preview.querySelector('[data-preview-viewport]').style.height, '996px', 'the whole feature block determines preview height');
+  await page.preview.querySelector('[data-preview-next]').emit('click');
+  assert.equal(page.image.src, row.querySelector('[data-image-preview="desktop"]').querySelector('img').src);
+  await page.preview.querySelector('[data-preview-mode="mobile"]').emit('click');
+  assert.equal(page.image.src, row.querySelector('[data-image-preview="mobile"]').querySelector('img').src);
+  assert.equal(page.image.alt, 'Sentier du Jura');
+  assert.equal(page.preview.querySelector('[data-preview-viewport]').style.height, '988px');
+  assert.equal(page.submitted, 0);
+  assert.deepEqual(page.network, []);
+});
+
+test('the Grand air footer preserves its caption while draft photos enable or remove slideshow controls independently', async () => {
+  const page = fixture({section: 'feature'});
+  await page.openPreview();
+  const multi = page.publicHero.querySelector('[data-preview-multi-footer]');
+  assert.equal(page.publicHero.classList.contains('feature-slideshow'), false);
+  assert.equal(multi.hidden, true);
+  assert.equal(page.publicSingleFooter.hidden, false);
+  await page.pick([file('grand-air.webp')]);
+  assert.equal(page.publicHero.classList.contains('has-slideshow'), true);
+  assert.equal(page.publicHero.classList.contains('feature-slideshow'), true);
+  assert.equal(multi.classList.contains('feature-slideshow-footer'), true);
+  assert.equal(multi.hidden, false);
+  assert.equal(page.publicSingleFooter.hidden, true);
+  assert.equal(multi.querySelector('.feature-photo-note').textContent, 'Le bonheur n’est jamais très loin.');
+  assert.equal(multi.querySelector('[data-preview-public-counter]').textContent, 'Photo 1 sur 2');
+  const row = live(page)[0];
+  row.fields.DELETE.checked = true;
+  await row.fields.DELETE.emit('change');
+  assert.equal(page.publicHero.classList.contains('has-slideshow'), false);
+  assert.equal(page.publicHero.classList.contains('feature-slideshow'), false);
+  assert.equal(multi.hidden, true);
+  assert.equal(page.publicSingleFooter.hidden, false);
   assert.equal(page.submitted, 0);
 });

@@ -19,6 +19,8 @@
     previewData = JSON.parse(document.getElementById('slideshow-preview-data')?.textContent || '{}');
     previewHTML = JSON.parse(document.getElementById('slideshow-preview-document')?.textContent || 'null');
   } catch { /* The ordinary editing form remains fully usable. */ }
+  const featurePreview = previewData?.section === 'feature';
+  const previewRootSelector = featurePreview ? '.feature-visual' : '.summit-hero';
   let previewIndex = 0;
   let previewMode = 'desktop';
   let frameReady = false;
@@ -239,13 +241,13 @@
     try { const url = new URL(value, window.location.href); return ['http:', 'https:', 'blob:'].includes(url.protocol) ? url.href : ''; } catch { return ''; }
   }
   function updatePublicControls(doc) {
-    const hero = doc.querySelector('.summit-hero');
+    const hero = doc.querySelector(previewRootSelector);
     if (!hero) return;
     let multi = hero.querySelector('[data-preview-multi-footer]');
     if (!multi) {
       const source = doc.getElementById('slide-preview-controls-template');
       if (source) {
-        const original = hero.querySelector('.summit-hero-bottom');
+        const original = hero.querySelector(featurePreview ? '.feature-photo-note' : '.summit-hero-bottom');
         if (original) original.setAttribute('data-preview-single-footer', '');
         hero.append(source.content.cloneNode(true));
         multi = hero.querySelector('[data-preview-multi-footer]');
@@ -253,6 +255,7 @@
     }
     const enabled = previewPhotos.length > 1;
     hero.classList.toggle('has-slideshow', enabled);
+    if (featurePreview) hero.classList.toggle('feature-slideshow', enabled);
     const single = hero.querySelector('[data-preview-single-footer]');
     if (single) single.hidden = enabled;
     if (!multi) return;
@@ -276,7 +279,7 @@
   function setPhoto() {
     if (!frameReady || !previewPhotos.length) return;
     const doc = frame.contentDocument;
-    const img = doc?.querySelector('.summit-landscape');
+    const img = featurePreview ? doc?.querySelector(previewRootSelector)?.querySelector('img') : doc?.querySelector('.summit-landscape');
     if (!img) return;
     const photo = previewPhotos[previewIndex];
     // Sources and srcset from the saved primary must not override a draft photo.
@@ -302,7 +305,7 @@
     viewport.style.width = `${width}px`;
     viewport.style.height = `${baseHeight}px`;
     // Read the real public layout after changing the viewport width.
-    const hero = frame.contentDocument?.querySelector('.summit-hero');
+    const hero = frame.contentDocument?.querySelector(featurePreview ? '#home-feature' : '.summit-hero');
     const needed = hero ? Math.ceil(hero.getBoundingClientRect().bottom + (previewMode === 'mobile' ? 8 : 16)) : baseHeight;
     frameHeight = Math.max(baseHeight, needed);
     viewport.style.height = `${frameHeight}px`;

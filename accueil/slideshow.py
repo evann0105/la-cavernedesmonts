@@ -18,6 +18,12 @@ INTERVAL_CHOICES = tuple((seconds, f'{seconds} secondes') for seconds in (5, 6, 
 DEFAULT_ALT = 'Photo d’ambiance de l’accueil'
 
 
+def _section_key(section):
+    if not isinstance(section, str) or section not in dict(HeroSlide.SECTION_CHOICES):
+        raise HomepageError('Ce bloc ne possède pas de diaporama.')
+    return 'slideshow' if section == 'hero' else 'feature_slideshow'
+
+
 class SlideshowPhotoField(MultiPhotoField):
     def clean(self, data, initial=None):
         files = data if isinstance(data, (list, tuple)) else ([data] if data else [])
@@ -34,9 +40,9 @@ class SlidesForm(forms.Form):
     new_photos = SlideshowPhotoField(label='Ajouter des photos au diaporama', required=False,
         help_text='La photo principale reste toujours première. Ajoutez jusqu’à cinq photos après elle : JPEG, PNG ou WebP, 10 Mo et 64 mégapixels maximum par photo. Vous pourrez ensuite préciser leur description et leur cadrage mobile.')
 
-    def __init__(self, data=None, files=None, *, configuration=None, **kwargs):
+    def __init__(self, data=None, files=None, *, configuration=None, section='hero', **kwargs):
         current = current_configuration() if configuration is None else configuration
-        slideshow = current.get('slideshow', {'autoplay': True, 'interval': 6})
+        slideshow = current.get(_section_key(section), {'autoplay': True, 'interval': 6})
         initial = {'revision': current['revision'], **slideshow}
         initial.update(kwargs.pop('initial', {}) or {})
         super().__init__(data, files, initial=initial, **kwargs)
@@ -72,16 +78,28 @@ class BaseHeroSlideFormSet(BaseModelFormSet):
     def get_default_prefix(cls):
         return 'slides'
 
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault('queryset', HeroSlide.objects.filter(configuration_id=1).order_by('position', 'pk'))
+    def __init__(self, *args, section='hero', **kwargs):
+        _section_key(section)
+        self.slideshow_section = section
+        queryset = kwargs.pop('queryset', HeroSlide.objects.all())
+        kwargs['queryset'] = queryset.filter(configuration_id=1, section=section).order_by('position', 'pk')
         super().__init__(*args, **kwargs)
 
     def add_fields(self, form, index):
         super().add_fields(form, index)
+        form.fields['id'].queryset = self.get_queryset()
+        if not form.instance.pk:
+            form.instance.section = self.slideshow_section
         form.fields['DELETE'].label = 'Retirer cette photo du diaporama'
 
     def clean(self):
         super().clean()
+        allowed_ids = {str(slide.pk) for slide in self.get_queryset()}
+        # Deleted forms normally ignore field errors. Their identity still has
+        # to belong to this carousel, even when an invalid row is marked DELETE.
+        if any(form['id'].data not in (None, '') and str(form['id'].data) not in allowed_ids
+               for form in self.forms):
+            raise forms.ValidationError('Une photo ne correspond pas à ce diaporama. Rechargez la page.')
         if any(self.errors):
             return
         seen_positions = set()
@@ -140,9 +158,10 @@ def _cleanup_new_files(records):
             image.storage.delete(image.name)
 
 
-def save_slideshow(cleaned_data, rows, actor):
+def save_slideshow(cleaned_data, rows, actor, section='hero'):
     """Keep the primary photograph, update extra slides, and never send mail."""
     _authorized(actor)
+    settings_key = _section_key(section)
     expected_revision = _revision(cleaned_data)
     if type(cleaned_data.get('autoplay')) is not bool:
         raise HomepageError('Choisissez si les photos doivent défiler automatiquement.')
@@ -160,7 +179,7 @@ def save_slideshow(cleaned_data, rows, actor):
     try:
         with transaction.atomic():
             configuration, is_new = _locked(expected_revision)
-            existing = list(HeroSlide.objects.select_for_update().filter(configuration_id=1).order_by('position', 'pk'))
+            existing = list(HeroSlide.objects.select_for_update().filter(configuration_id=1, section=section).order_by('position', 'pk'))
             by_id = {slide.pk: slide for slide in existing}
             seen_ids, seen_positions = set(), set()
             kept, deleted = [], []
@@ -177,7 +196,7 @@ def save_slideshow(cleaned_data, rows, actor):
                 if identity is None:
                     if row.get('DELETE') or not any(row.get(name) for name in ('image', 'mobile_image', 'alt')):
                         continue
-                    slide = HeroSlide(configuration=configuration)
+                    slide = HeroSlide(configuration=configuration, section=section)
                 else:
                     if not isinstance(identity, HeroSlide):
                         raise HomepageError('La liste des photos est invalide. Rechargez la page.')
@@ -208,7 +227,7 @@ def save_slideshow(cleaned_data, rows, actor):
             current = current_configuration(instance=configuration)
             validated = _validate(SlidesForm(
                 {'revision': expected_revision, 'autoplay': cleaned_data['autoplay'], 'interval': cleaned_data['interval']},
-                {'new_photos': photos}, configuration=current))
+                {'new_photos': photos}, configuration=current, section=section))
             staged = []
             for _, slide, row, alt in sorted(kept, key=lambda item: item[0]):
                 for name, required in (('image', True), ('mobile_image', False)):
@@ -220,15 +239,16 @@ def save_slideshow(cleaned_data, rows, actor):
                 slide.alt = alt
                 staged.append(slide)
             for photo in validated['new_photos']:
-                slide = HeroSlide(configuration=configuration, image=photo, alt=DEFAULT_ALT)
+                slide = HeroSlide(configuration=configuration, section=section, image=photo, alt=DEFAULT_ALT)
                 new_files.append((slide, 'image', ''))
                 staged.append(slide)
             data = deepcopy(configuration.data) if isinstance(configuration.data, dict) else {}
-            data['slideshow'] = {'autoplay': validated['autoplay'], 'interval': validated['interval']}
+            data[settings_key] = {'autoplay': validated['autoplay'], 'interval': validated['interval']}
             configuration.data = data
-            _save(configuration, is_new, actor, 'Diaporama de la grande introduction')
+            _save(configuration, is_new, actor, 'Diaporama de la grande introduction' if section == 'hero'
+                  else 'Diaporama de l’invitation au grand air')
             if deleted:
-                HeroSlide.objects.filter(configuration_id=1, pk__in=deleted).delete()
+                HeroSlide.objects.filter(configuration_id=1, section=section, pk__in=deleted).delete()
             # The parent singleton lock serializes permutations. Compaction is
             # performed only after validating distinct requested positions.
             for position, slide in enumerate(staged, 1):
