@@ -9,7 +9,7 @@ from django.utils.translation import gettext
 
 from core.models import Product
 from core.pricing import with_catalog_prices
-from .models import FeaturedHomepageProduct, HomepageConfiguration
+from .models import FeaturedHomepageProduct, HeroSlide, HomepageConfiguration
 from .schema import (IMAGE_DEFAULTS, IMAGE_FIELDS, OPTIONAL_SECTIONS,
                      SECTION_ANCHORS, SECTION_SPECS, TARGET_CHOICES)
 
@@ -37,6 +37,18 @@ def _image_metadata(instance, field_name):
             'width': width, 'height': height}
 
 
+def _slide_image_metadata(image):
+    if not image or not image.name:
+        return None
+    width, height = 2400, 1600
+    try:
+        if type(image.width) is int and type(image.height) is int and image.width > 0 and image.height > 0:
+            width, height = image.width, image.height
+    except (OSError, ValueError, AttributeError):
+        pass
+    return {'custom': True, 'url': image.url, 'width': width, 'height': height}
+
+
 def configuration(instance=None):
     """A missing singleton is revision zero, never a reason to write on GET."""
     if instance is None:
@@ -60,6 +72,16 @@ def configuration(instance=None):
     visible = {'hero': True}
     visible.update({key: stored_visible[key] if type(stored_visible.get(key)) is bool else True
                     for key in OPTIONAL_SECTIONS})
+    slideshow = data.get('slideshow') if isinstance(data.get('slideshow'), dict) else {}
+    autoplay = slideshow.get('autoplay')
+    interval = slideshow.get('interval')
+    slides = []
+    for slide in HeroSlide.objects.filter(configuration_id=1).order_by('position', 'pk')[:5]:
+        image = _slide_image_metadata(slide.image)
+        if image is not None:
+            slides.append({'id': slide.pk, 'position': slide.position, 'image': image,
+                'mobile_image': _slide_image_metadata(slide.mobile_image),
+                'alt': slide.alt if isinstance(slide.alt, str) and slide.alt.strip() else 'Photo d’ambiance de l’accueil'})
     return {
         'revision': instance.revision if instance is not None else 0,
         'values': values, 'visible': visible,
@@ -68,6 +90,9 @@ def configuration(instance=None):
                              .values_list('product_id', flat=True)),
         'updated_at': instance.updated_at if instance is not None else None,
         'updated_by': instance.updated_by if instance is not None else None,
+        'slides': slides,
+        'slideshow': {'autoplay': autoplay if type(autoplay) is bool else True,
+                      'interval': interval if type(interval) is int and interval in (5, 6, 8, 10) else 6},
     }
 
 
@@ -117,6 +142,14 @@ def public_configuration(shop=None):
     else:
         first = next((section['key'] for section in home['visible_sections'] if section['key'] != 'hero'), '')
         home['scroll_target'] = '#' + SECTION_ANCHORS[first] if first else ''
+    home['hero_slides'] = [{'primary': True, 'id': None,
+        'image': deepcopy(current['images']['hero_image']),
+        'mobile_image': deepcopy(current['images']['hero_mobile_image']),
+        'alt': home['hero']['image_alt']}]
+    home['hero_slides'].extend({'primary': False, 'id': slide['id'],
+        'image': deepcopy(slide['image']), 'mobile_image': deepcopy(slide['mobile_image']),
+        'alt': slide['alt']} for slide in current['slides'])
+    home['slideshow'] = {**current['slideshow'], 'enabled': len(home['hero_slides']) > 1}
     return home
 
 

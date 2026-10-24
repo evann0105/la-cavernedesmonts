@@ -11,6 +11,14 @@ Le bouton **Voir l’accueil** affiche les modifications déjà enregistrées. E
 
 Les boutons proposent les destinations du site et les coordonnées de la boutique. Les photos JPEG, PNG ou WebP sont vérifiées, orientées et optimisées automatiquement. **Revenir à la photo d’origine** rétablit le visuel initial. Sans photo spécifique au téléphone, la photo principale personnalisée est également affichée sur mobile.
 
+## Photos du diaporama
+
+Dans **Bannière principale → Photos du diaporama**, la photo principale occupe la première place. Ajoutez jusqu’à cinq photos supplémentaires en les sélectionnant ensemble. À partir de deux photos, l’accueil propose un diaporama. Vous pouvez remplacer chaque photo, ajouter un cadrage pour téléphone, saisir sa description, changer son ordre ou la retirer.
+
+Le cadrage pour téléphone d’une photo ne crée pas une diapositive supplémentaire. Sans cadrage mobile, la même photo sert sur tous les écrans. Les titres, le logo et les boutons restent fixes pendant le changement de photo.
+
+Le défilement automatique se règle sur cette page et peut être désactivé. Les visiteurs disposent de flèches, de repères et d’un bouton de pause. Le défilement s’interrompt lors d’une interaction et ne démarre pas automatiquement si la personne a demandé de réduire les animations. Avec une seule photo ou sans JavaScript, la première photo reste affichée.
+
 Si deux onglets modifient l’accueil, le plus ancien formulaire demande de recharger la page avant d’enregistrer : il ne remplace pas silencieusement les changements les plus récents.
 
 ## Exploitation

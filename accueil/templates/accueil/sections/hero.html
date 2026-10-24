@@ -1,6 +1,8 @@
 {% load static i18n shop_i18n product_images shop_reviews %}
-<section class="summit-hero" aria-labelledby="summit-title">
-  <picture>{% if home.images.hero_mobile_image.custom %}<source media="(max-width: 600px)" srcset="{{ home.images.hero_mobile_image.url }}" width="{{ home.images.hero_mobile_image.width }}" height="{{ home.images.hero_mobile_image.height }}">{% elif not home.images.hero_image.custom %}<source media="(max-width: 600px)" srcset="{% static 'core/img/hero/montagne-mobile-600.webp' %} 600w, {% static 'core/img/hero/montagne-mobile-960.webp' %} 960w" sizes="calc(100vw - 16px)">{% endif %}<img class="summit-landscape" {% if home.images.hero_image.custom %}src="{{ home.images.hero_image.url }}" width="{{ home.images.hero_image.width }}" height="{{ home.images.hero_image.height }}"{% else %}src="{% static 'core/img/hero/montagne-1536.webp' %}" srcset="{% static 'core/img/hero/montagne-960.webp' %} 960w, {% static 'core/img/hero/montagne-1536.webp' %} 1536w, {% static 'core/img/hero/montagne-2400.webp' %} 2400w, {% static 'core/img/hero/montagne-3840.webp' %} 3840w" sizes="(max-width: 600px) 1110px, (max-width: 900px) 1140px, (max-width: 1322px) 1290px, calc(100vw - 32px)" width="3840" height="2560"{% endif %} alt="{{ home.hero.image_alt }}" fetchpriority="high" decoding="async"></picture>
+<section class="summit-hero{% if home.slideshow.enabled %} has-slideshow{% endif %}" aria-labelledby="summit-title"{% if home.slideshow.enabled %} data-home-slideshow data-autoplay="{{ home.slideshow.autoplay|yesno:'true,false' }}" data-interval="{{ home.slideshow.interval }}" data-position-label="{% translate 'Photo {current} sur {total}' %}" data-play-label="{% translate 'Lancer le défilement des photos' %}" data-pause-label="{% translate 'Mettre le défilement des photos en pause' %}" data-error-label="{% translate 'Cette photo n’est pas disponible.' %}" aria-roledescription="{% translate 'diaporama' %}"{% endif %}>
+  {% if home.slideshow.enabled %}<div class="hero-slideshow-photos" id="hero-slideshow-photos" aria-live="off">
+    {% for slide in home.hero_slides %}<div class="hero-slide{% if forloop.first %} is-active{% endif %}" data-slideshow-slide role="group" aria-roledescription="{% translate 'diapositive' %}" aria-label="{% blocktranslate with current=forloop.counter total=home.hero_slides|length %}Photo {{ current }} sur {{ total }}{% endblocktranslate %}" aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}"{% if not forloop.first %} hidden{% endif %}>{% include 'accueil/sections/hero_photo.html' %}</div>{% endfor %}
+  </div>{% else %}{% include 'accueil/sections/hero_photo.html' with slide=home.hero_slides.0 %}{% endif %}
   <div class="summit-overlay"></div>
   <div class="summit-hero-copy">
     <div><p class="summit-kicker">{{ home.hero.kicker }}</p><h1 id="summit-title">{{ home.hero.title_line1|linebreaksbr }}{% if home.hero.title_line2 or home.hero.title_emphasis %}<br>{% endif %}{% if home.hero.title_line2 %}{{ home.hero.title_line2|linebreaksbr }}{% endif %}{% if home.hero.title_emphasis %} <em>{{ home.hero.title_emphasis|linebreaksbr }}</em>{% endif %}</h1>
@@ -9,5 +11,19 @@
     </div>
     <div class="summit-hero-side"><a class="button summit-cta" href="{{ home.hero.button_url }}">{{ home.hero.button_label }} <span aria-hidden="true">↗</span></a></div>
   </div>
-  {% if home.scroll_target and home.hero.scroll_label %}<div class="summit-hero-bottom"><a href="{{ home.scroll_target }}">{{ home.hero.scroll_label }} <span aria-hidden="true">↓</span></a></div>{% endif %}
+  {% if home.slideshow.enabled %}
+  <div class="summit-hero-bottom hero-slideshow-footer"{% if not home.scroll_target or not home.hero.scroll_label %} data-slideshow-only-footer hidden{% endif %}>
+    <div class="hero-slideshow-controls" data-slideshow-controls role="group" aria-label="{% translate 'Photos de la boutique' %}" hidden>
+      <div class="hero-slideshow-navigation">
+        <button type="button" class="hero-slideshow-button" data-slideshow-prev aria-label="{% translate 'Photo précédente' %}" aria-controls="hero-slideshow-photos"><span aria-hidden="true">←</span></button>
+        <span class="hero-slideshow-counter" data-slideshow-counter>{% blocktranslate with total=home.hero_slides|length %}Photo 1 sur {{ total }}{% endblocktranslate %}</span>
+        <button type="button" class="hero-slideshow-button" data-slideshow-next aria-label="{% translate 'Photo suivante' %}" aria-controls="hero-slideshow-photos"><span aria-hidden="true">→</span></button>
+        <button type="button" class="hero-slideshow-button hero-slideshow-playback" data-slideshow-playback aria-label="{% translate 'Lancer le défilement des photos' %}" aria-pressed="false" aria-controls="hero-slideshow-photos"><span data-slideshow-play-icon aria-hidden="true">▶</span><span data-slideshow-pause-icon aria-hidden="true" hidden>Ⅱ</span></button>
+      </div>
+      <div class="hero-slideshow-pagination" role="group" aria-label="{% translate 'Choisir une photo' %}">{% for slide in home.hero_slides %}<button type="button" class="hero-slideshow-dot" data-slideshow-page="{{ forloop.counter0 }}" aria-label="{% blocktranslate with current=forloop.counter total=home.hero_slides|length %}Afficher la photo {{ current }} sur {{ total }}{% endblocktranslate %}" aria-controls="hero-slideshow-photos"{% if forloop.first %} aria-current="true"{% endif %}><span aria-hidden="true"></span></button>{% endfor %}</div>
+    </div>
+    {% if home.scroll_target and home.hero.scroll_label %}<a href="{{ home.scroll_target }}">{{ home.hero.scroll_label }} <span aria-hidden="true">↓</span></a>{% endif %}
+  </div>
+  <span class="hero-slideshow-announcement" data-slideshow-announcement role="status" aria-live="polite" aria-atomic="true"></span>
+  {% elif home.scroll_target and home.hero.scroll_label %}<div class="summit-hero-bottom"><a href="{{ home.scroll_target }}">{{ home.hero.scroll_label }} <span aria-hidden="true">↓</span></a></div>{% endif %}
 </section>

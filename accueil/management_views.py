@@ -9,8 +9,10 @@ from django.views.decorators.http import require_GET, require_http_methods
 from core.catalog_access import catalog_required
 from .configuration import configuration
 from .forms import SectionForm, SectionsVisibilityForm, FeaturedProductsForm
+from .models import HeroSlide
 from .schema import SECTION_SPECS, SECTIONS
 from .services import save_section, save_visibility, save_featured, HomepageError, HomepageConflict
+from .slideshow import SlidesForm, SlideFormSet, save_slideshow
 
 
 def _private(response):
@@ -61,7 +63,8 @@ def _panels(form, current, section, request):
             items.append(item)
         if items:
             result.append({'title': panel['title'], 'items': items,
-                           'has_errors': any(bool(item['field'].errors) for item in items)})
+                           'has_errors': any(bool(item['field'].errors) for item in items),
+                           'has_images': any('image' in item for item in items)})
     return result
 
 
@@ -158,4 +161,53 @@ def featured(request):
     return _private(render(request, 'accueil/manage/featured.html', {
         'configuration': current, 'form': form, 'positions': positions,
         'product_choices': choices, 'current_page': 'featured', 'page_title': 'Produits mis en avant',
+    }, status=status))
+
+
+def _slide_rows(formset, request):
+    """Capture saved previews before ModelForm validation updates its instances."""
+    rows = []
+    for form in formset.forms:
+        instance = form.instance
+        image = instance.image if instance.pk else None
+        mobile = instance.mobile_image if instance.pk else None
+        mobile_clear = form['mobile_image'].html_name + '-clear'
+        rows.append({'form': form, 'image_url': image.url if image else '',
+                     'mobile_url': mobile.url if mobile else '',
+                     'saved_alt': instance.alt if instance.pk else '',
+                     'mobile_clear_name': mobile_clear,
+                     'mobile_clear_checked': bool(request.POST.get(mobile_clear))})
+    return rows
+
+
+@catalog_required
+@require_http_methods(['GET', 'POST'])
+def slides(request):
+    current = configuration()
+    data = request.POST if request.method == 'POST' else None
+    files = request.FILES if request.method == 'POST' else None
+    form = SlidesForm(data, files, configuration=current)
+    formset = SlideFormSet(data, files, prefix='slides',
+        queryset=HeroSlide.objects.filter(configuration_id=1).order_by('position', 'pk'))
+    rows = _slide_rows(formset, request)
+    status = 200
+    if request.method == 'POST':
+        settings_valid = form.is_valid()
+        slides_valid = formset.is_valid()
+        if settings_valid and slides_valid:
+            try:
+                save_slideshow(form.cleaned_data, formset.cleaned_data, actor=request.user)
+            except HomepageConflict as exc:
+                _error(form, exc)
+                status = 409
+            except (HomepageError, ValidationError) as exc:
+                _error(form, exc)
+            else:
+                messages.success(request, 'Les photos du diaporama et ses réglages ont été enregistrés.')
+                return _private(redirect('homepage:slides'))
+    return _private(render(request, 'accueil/manage/slides.html', {
+        'configuration': current, 'form': form, 'formset': formset, 'slide_rows': rows,
+        'saved_slide_count': len(rows), 'upload_retry': bool(request.method == 'POST' and request.FILES),
+        'has_slide_errors': formset.total_error_count() > 0,
+        'current_page': 'hero', 'page_title': 'Photos du diaporama',
     }, status=status))

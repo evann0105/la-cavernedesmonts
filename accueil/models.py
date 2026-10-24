@@ -56,3 +56,25 @@ class FeaturedHomepageProduct(models.Model):
 
     def __str__(self):
         return f'{self.position} · {self.product}'
+
+
+class HeroSlide(models.Model):
+    configuration = models.ForeignKey(HomepageConfiguration, on_delete=models.CASCADE,
+                                       related_name='hero_slides')
+    image = models.ImageField('Photo supplémentaire', upload_to=homepage_image_path)
+    mobile_image = models.ImageField('Cadrage pour téléphone', upload_to=homepage_image_path, blank=True)
+    alt = models.CharField('Description de la photo', max_length=200)
+    position = models.PositiveSmallIntegerField('Ordre après la photo principale',
+        validators=[MinValueValidator(1), MaxValueValidator(5)])
+
+    class Meta:
+        ordering = ['position', 'pk']
+        verbose_name = 'Photo du diaporama d’accueil'
+        verbose_name_plural = 'Photos du diaporama d’accueil'
+        constraints = [
+            models.CheckConstraint(condition=Q(configuration_id=1), name='hero_slide_homepage_configuration'),
+            models.CheckConstraint(condition=Q(position__gte=1, position__lte=5), name='hero_slide_position_range'),
+        ]
+
+    def __str__(self):
+        return f'Photo supplémentaire {self.position}'

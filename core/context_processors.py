@@ -29,6 +29,8 @@ def back_navigation(request):
         fallback = reverse('espace:account')
     elif name == 'core:homepage_collections':
         fallback = reverse('core:catalog_homepage')
+    elif name == 'homepage:slides':
+        fallback = reverse('homepage:section', kwargs={'section': 'hero'})
     elif name.startswith('homepage:'):
         fallback = reverse('homepage:sections') if name == 'homepage:section' else reverse('core:catalog_homepage')
     elif name.startswith('core:catalog_') and name != 'core:catalog_list':

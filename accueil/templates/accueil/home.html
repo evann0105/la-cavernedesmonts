@@ -1,8 +1,9 @@
 {% extends 'base.html' %}{% load i18n product_images shop_reviews shop_i18n %}
 {% load static %}
 {% block body_class %}summit-home{% endblock %}
-{% block styles %}<link rel="stylesheet" href="{% static 'core/css/shop-reviews.css' %}?v=20260923"><link rel="stylesheet" href="{% static 'core/css/store.css' %}"><link rel="stylesheet" href="{% static 'accueil/css/hero-intro.css' %}?v=20261024-home-customization">{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'core/css/shop-reviews.css' %}?v=20260923"><link rel="stylesheet" href="{% static 'core/css/store.css' %}"><link rel="stylesheet" href="{% static 'accueil/css/hero-intro.css' %}?v=20261024-home-customization">{% if home.slideshow.enabled %}<link rel="stylesheet" href="{% static 'accueil/css/slideshow.css' %}?v=20261024-slideshow">{% endif %}{% endblock %}
 {% block content %}
 {% include 'accueil/sections/hero.html' %}
 {% for section in home.visible_sections %}{% if section.key != 'hero' %}{% include section.template %}{% endif %}{% endfor %}
 {% endblock %}
+{% block scripts %}{% if home.slideshow.enabled %}<script src="{% static 'accueil/js/slideshow.js' %}?v=20261024-slideshow" defer></script>{% endif %}{% endblock %}
