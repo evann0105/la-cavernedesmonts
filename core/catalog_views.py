@@ -177,6 +177,20 @@ def catalog_preview(request, pk):
 @catalog_required
 @require_http_methods(['GET', 'POST'])
 def catalog_homepage(request):
+    # Preserve previously submitted three-card forms while the existing URL
+    # becomes the entry point for the complete homepage settings.
+    if request.method == 'POST':
+        if not any(slot in request.POST for slot in ('femmes', 'hommes', 'enfants')):
+            from django.http import HttpResponseBadRequest
+            return HttpResponseBadRequest('Ouvrez le formulaire de la section à modifier.')
+        return catalog_homepage_collections(request, legacy=True)
+    from accueil.management_views import overview
+    return overview(request)
+
+
+@catalog_required
+@require_http_methods(['GET', 'POST'])
+def catalog_homepage_collections(request, legacy=False):
     from .catalog_forms import HomepageSelectionForm
     from .homepage import WORLD_CARDS, world_cards
     from .models import HomepageSelection
@@ -191,7 +205,7 @@ def catalog_homepage(request):
                 HomepageSelection.objects.update_or_create(slot=spec['slot'], defaults={'product':form.cleaned_data[spec['slot']]})
             LogEntry.objects.log_actions(user_id=request.user.pk, queryset=HomepageSelection.objects.filter(slot__in=[s['slot'] for s in WORLD_CARDS]), action_flag=CHANGE, change_message='Sélection des cartes de l’accueil modifiée.')
         messages.success(request, 'Les trois cartes de « Votre envie du moment » ont été mises à jour.')
-        return redirect('core:catalog_homepage')
+        return redirect('core:catalog_homepage' if legacy else 'core:homepage_collections')
     cards = world_cards()
     choices = {}
     for spec in WORLD_CARDS:

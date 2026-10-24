@@ -1,7 +1,7 @@
 {% load i18n %}
 {% if reviews %}
 <section class="shop-reviews{% if compact %} shop-reviews-compact{% else %} wrap{% endif %}" aria-label="{% translate 'Avis sur la boutique' %}">
-  <div class="shop-reviews-heading"><h2>{% if compact %}{% translate 'Le conseil, vu par nos clients.' %}{% else %}{% translate 'Quelques mots de nos clients.' %}{% endif %}</h2><p>{% translate 'Sélection d’avis sur la boutique de Lélex.' %}</p></div>
+  <div class="shop-reviews-heading"><h2>{% if review_heading is not None %}{{ review_heading|linebreaksbr }}{% elif compact %}{% translate 'Le conseil, vu par nos clients.' %}{% else %}{% translate 'Quelques mots de nos clients.' %}{% endif %}</h2>{% if review_intro is None %}<p>{% translate 'Sélection d’avis sur la boutique de Lélex.' %}</p>{% elif review_intro %}<p>{{ review_intro|linebreaksbr }}</p>{% endif %}</div>
   <div class="shop-reviews-grid">
     {% for review in reviews %}<figure>
       <blockquote lang="fr">« {{ review.quote|linebreaksbr }} »</blockquote>

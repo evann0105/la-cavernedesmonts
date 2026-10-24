@@ -25,6 +25,12 @@ def back_navigation(request):
         fallback = reverse('espace:account') if name == 'core:sales_dashboard' else reverse('core:sales_dashboard')
     elif name == 'core:seo_overview':
         fallback = reverse('espace:account')
+    elif name == 'core:catalog_homepage':
+        fallback = reverse('espace:account')
+    elif name == 'core:homepage_collections':
+        fallback = reverse('core:catalog_homepage')
+    elif name.startswith('homepage:'):
+        fallback = reverse('homepage:sections') if name == 'homepage:section' else reverse('core:catalog_homepage')
     elif name.startswith('core:catalog_') and name != 'core:catalog_list':
         fallback = reverse('core:catalog_list')
     elif name == 'core:product_detail':

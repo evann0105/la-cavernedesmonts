@@ -257,6 +257,21 @@ def _store_graph():
     ]}
 
 
+def _homepage_content(request):
+    current = getattr(request, '_homepage_configuration', None)
+    if current is None:
+        from accueil.configuration import public_configuration
+        current = public_configuration()
+        request._homepage_configuration = current
+    return current
+
+
+def _public_homepage_image(path):
+    # The upload service only creates public, re-encoded WebP photos here.
+    # This exception must not include exports, proofs or arbitrary media files.
+    return bool(re.fullmatch(r'/media/homepage/[a-f0-9]{32}\.webp', path))
+
+
 def page_seo(request, product=None, product_metadata=None, structured_data=None):
     match = request.resolver_match
     name = match.view_name if match else ''
@@ -273,6 +288,10 @@ def page_seo(request, product=None, product_metadata=None, structured_data=None)
     elif _has_noncanonical_query(request, name):
         eligible = False
     image = public_absolute_url(static('core/img/hero/montagne-1536.webp'), allow_external=True)
+    if name == 'accueil:home' and not private:
+        hero = _homepage_content(request).get('images', {}).get('hero_image', {})
+        if hero.get('custom'):
+            image = public_absolute_url(hero.get('url'), allow_external=True) or image
     if product is not None:
         eligible = (name == 'core:product_detail' and bool(product.is_published)
                     and not _has_noncanonical_query(request, name))
@@ -305,6 +324,7 @@ def response_is_indexable(request, response):
     # media (documents, exports, uploaded proofs) never inherit this exception.
     if response.get('Content-Type', '').split(';')[0].startswith('image/') and (
         request.path.startswith(('/static/core/img/', '/media/products/'))
+        or _public_homepage_image(request.path)
     ):
         return True
     if name in {'seo_robots', 'seo_sitemap'}:

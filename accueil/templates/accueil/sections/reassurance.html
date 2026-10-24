@@ -1,0 +1,6 @@
+{% load static i18n shop_i18n product_images shop_reviews %}
+<div id="home-reassurance" class="summit-reassurance wrap" aria-label="{{ home.reassurance.aria_label }}">
+  <a href="{{ home.reassurance.store_url }}"><span class="reassurance-icon" aria-hidden="true">⌂</span><span><strong>{{ home.reassurance.store_title }}</strong><small>{{ home.reassurance.store_description }}</small></span></a>
+  <a href="{{ home.reassurance.advice_url }}"><span class="reassurance-icon" aria-hidden="true">↗</span><span><strong>{{ home.reassurance.advice_title }}</strong><small>{{ home.reassurance.advice_description }}</small></span></a>
+  <a href="{{ home.reassurance.family_url }}"><span class="reassurance-icon" aria-hidden="true">✳</span><span><strong>{{ home.reassurance.family_title }}</strong><small>{{ home.reassurance.family_description }}</small></span></a>
+</div>

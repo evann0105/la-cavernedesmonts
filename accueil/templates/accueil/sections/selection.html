@@ -1,0 +1,5 @@
+{% load static i18n shop_i18n product_images shop_reviews %}
+<section id="home-selection" class="section wrap summit-selection" aria-labelledby="selection-title">
+  <div class="section-heading"><div><p class="eyebrow">{{ home.selection.kicker }}</p><h2 id="selection-title">{{ home.selection.title|linebreaksbr }}</h2></div><a class="button button-outline" href="{{ home.selection.button_url }}">{{ home.selection.button_label }} <span aria-hidden="true">↗</span></a></div>
+  <div class="product-grid">{% for product in products %}{% include 'partials/product_card.html' %}{% endfor %}</div>
+</section>

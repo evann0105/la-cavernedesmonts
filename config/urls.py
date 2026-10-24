@@ -49,6 +49,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('retours.urls')),
     path('', include('espace.urls')),
+    path('', include('accueil.management_urls')),
     path('', include('accueil.urls')),  # Accueil homepage
     path('', include('core.urls')),     # Core routes
     path('page-produit/', include('pages_products.urls')),  # Dedicated product pages

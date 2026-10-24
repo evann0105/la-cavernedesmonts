@@ -1,0 +1,1 @@
+{% if form.errors %}<div class="homepage-errors" role="alert"><p><strong>Les modifications n’ont pas été enregistrées.</strong> Vérifiez les informations signalées.</p><ul>{% for errors in form.errors.values %}{% for error in errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}</ul></div>{% endif %}

@@ -1,0 +1,13 @@
+{% load static i18n shop_i18n product_images shop_reviews %}
+<section class="summit-hero" aria-labelledby="summit-title">
+  <picture>{% if home.images.hero_mobile_image.custom %}<source media="(max-width: 600px)" srcset="{{ home.images.hero_mobile_image.url }}" width="{{ home.images.hero_mobile_image.width }}" height="{{ home.images.hero_mobile_image.height }}">{% elif not home.images.hero_image.custom %}<source media="(max-width: 600px)" srcset="{% static 'core/img/hero/montagne-mobile-600.webp' %} 600w, {% static 'core/img/hero/montagne-mobile-960.webp' %} 960w" sizes="calc(100vw - 16px)">{% endif %}<img class="summit-landscape" {% if home.images.hero_image.custom %}src="{{ home.images.hero_image.url }}" width="{{ home.images.hero_image.width }}" height="{{ home.images.hero_image.height }}"{% else %}src="{% static 'core/img/hero/montagne-1536.webp' %}" srcset="{% static 'core/img/hero/montagne-960.webp' %} 960w, {% static 'core/img/hero/montagne-1536.webp' %} 1536w, {% static 'core/img/hero/montagne-2400.webp' %} 2400w, {% static 'core/img/hero/montagne-3840.webp' %} 3840w" sizes="(max-width: 600px) 1110px, (max-width: 900px) 1140px, (max-width: 1322px) 1290px, calc(100vw - 32px)" width="3840" height="2560"{% endif %} alt="{{ home.hero.image_alt }}" fetchpriority="high" decoding="async"></picture>
+  <div class="summit-overlay"></div>
+  <div class="summit-hero-copy">
+    <div><p class="summit-kicker">{{ home.hero.kicker }}</p><h1 id="summit-title">{{ home.hero.title_line1|linebreaksbr }}{% if home.hero.title_line2 or home.hero.title_emphasis %}<br>{% endif %}{% if home.hero.title_line2 %}{{ home.hero.title_line2|linebreaksbr }}{% endif %}{% if home.hero.title_emphasis %} <em>{{ home.hero.title_emphasis|linebreaksbr }}</em>{% endif %}</h1>
+      <p class="hero-description">{{ home.hero.description|linebreaksbr }}</p>
+      <p class="hero-advice">{{ home.hero.advice|linebreaksbr }}</p>
+    </div>
+    <div class="summit-hero-side"><a class="button summit-cta" href="{{ home.hero.button_url }}">{{ home.hero.button_label }} <span aria-hidden="true">↗</span></a></div>
+  </div>
+  {% if home.scroll_target and home.hero.scroll_label %}<div class="summit-hero-bottom"><a href="{{ home.scroll_target }}">{{ home.hero.scroll_label }} <span aria-hidden="true">↓</span></a></div>{% endif %}
+</section>

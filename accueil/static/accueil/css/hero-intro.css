@@ -109,3 +109,22 @@
   .summit-home .header-actions form .text-button { white-space: nowrap; }
   .summit-home .summit-hero { padding-top: 250px; }
 }
+
+
+/* Authored text may be longer than the original copy or contain long words. */
+.summit-home :is(h1, h2, h3, p, .button, .underlined, .summit-reassurance,
+                .quiet-note, .feature-footnote, .feature-photo-note) {
+  overflow-wrap: anywhere;
+}
+.summit-home :is(.section-heading > div, .feature-copy, .family-heading > div,
+                .store-teaser-copy, .summit-contact > div, .summit-reassurance a) {
+  min-width: 0;
+}
+.summit-home :is(.button, .underlined) { max-width: 100%; white-space: normal; }
+@media (min-width: 901px) {
+  .summit-home .summit-hero {
+    height: auto;
+    min-height: max(700px, min(860px, 92svh));
+    padding-top: 220px;
+  }
+}

@@ -1,0 +1,10 @@
+{% extends 'core/catalog/base.html' %}{% load static %}
+{% block title %}{{ page_title|default:'Personnaliser l’accueil' }} — La Caverne des Monts{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'accueil/css/management.css' %}?v=20261024-editor">{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a><span aria-hidden="true"> / </span>{% if current_page != 'overview' %}<a href="{% url 'core:catalog_homepage' %}">Personnaliser l’accueil</a><span aria-hidden="true"> / </span><span aria-current="page">{{ page_title }}</span>{% else %}<span aria-current="page">Personnaliser l’accueil</span>{% endif %}</nav>{% endblock %}
+{% block catalog_content %}<div class="homepage-manager">
+{% block homepage_heading %}{% endblock %}
+{% if current_page != 'overview' %}<nav class="homepage-tabs" aria-label="Personnalisation de l’accueil"><a href="{% url 'homepage:section' section='hero' %}"{% if current_page == 'hero' %} aria-current="page"{% endif %}>Bannière principale</a><a href="{% url 'homepage:sections' %}"{% if current_page == 'sections' %} aria-current="page"{% endif %}>Sections, textes et photos</a><a href="{% url 'homepage:featured' %}"{% if current_page == 'featured' %} aria-current="page"{% endif %}>Produits mis en avant</a><a href="{% url 'core:homepage_collections' %}">Cartes Femme, Homme, Enfant</a></nav>{% endif %}
+{% block homepage_body %}{% endblock %}
+</div>{% endblock %}
+{% block scripts %}{{ block.super }}<script src="{% static 'accueil/js/management.js' %}?v=20261024-editor" defer></script>{% endblock %}

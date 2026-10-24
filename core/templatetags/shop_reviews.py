@@ -34,8 +34,10 @@ def select_reviews(compact=False):
 
 
 @register.inclusion_tag('core/partials/shop_reviews.html')
-def shop_reviews(compact=False):
+def shop_reviews(compact=False, heading=None, intro=None):
     return {
         'compact': compact,
         'reviews': select_reviews(compact),
+        'review_heading': heading,
+        'review_intro': intro,
     }

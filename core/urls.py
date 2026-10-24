@@ -10,6 +10,7 @@ urlpatterns = [
     path('gestion/soldes/<int:pk>/', sales_views.sales_detail, name='sales_detail'),
     path('gestion/soldes/<int:pk>/annuler/', sales_views.sales_cancel, name='sales_cancel'),
     path('gestion/accueil/', catalog_views.catalog_homepage, name='catalog_homepage'),
+    path('gestion/accueil/collections/', catalog_views.catalog_homepage_collections, name='homepage_collections'),
     path('gestion/produits/', catalog_views.catalog_list, name='catalog_list'),
     path('gestion/produits/ajouter/', catalog_views.catalog_edit, name='catalog_add'),
     path('gestion/produits/<int:pk>/modifier/', catalog_views.catalog_edit, name='catalog_edit'),

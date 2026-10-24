@@ -1,0 +1,7 @@
+{% load static i18n shop_i18n product_images shop_reviews %}
+<section id="instants" class="summit-manifesto wrap">
+  <p class="pill-label">{{ home.manifesto.kicker }}</p>
+  <h2>{{ home.manifesto.title_line1|linebreaksbr }}{% if home.manifesto.title_line2 or home.manifesto.title_emphasis %}<br>{% endif %}{% if home.manifesto.title_line2 %}{{ home.manifesto.title_line2|linebreaksbr }}{% endif %}{% if home.manifesto.title_emphasis %} <span>{{ home.manifesto.title_emphasis|linebreaksbr }}</span>{% endif %}</h2>
+  <p>{{ home.manifesto.description|linebreaksbr }} {% if home.manifesto.description_emphasis %}<span>{{ home.manifesto.description_emphasis|linebreaksbr }}</span>{% endif %}</p>
+  <a class="underlined" href="{{ home.manifesto.button_url }}">{{ home.manifesto.button_label }} <span aria-hidden="true">↗</span></a>
+</section>
