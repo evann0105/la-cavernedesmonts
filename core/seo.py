@@ -19,6 +19,8 @@ DEFAULT_TITLE = 'La Caverne des Monts — Vêtements et accessoires à Lélex'
 DEFAULT_DESCRIPTION = ('Polaires, vestes, vêtements et accessoires pour femme, homme et enfant. '
                        'Découvrez La Caverne des Monts, boutique à Lélex dans le Jura.')
 PUBLIC_PAGES = {
+    'editorial:faq': ('Questions fréquentes — La Caverne des Monts',
+                      'Les réponses de La Caverne des Monts aux questions sur la boutique, les achats et les commandes.'),
     'boutique:shipping_information': ('Livraison et délais — La Caverne des Monts',
                                     'Consultez les destinations, les frais et les délais de livraison de La Caverne des Monts.'),
     'accueil:home': (DEFAULT_TITLE, DEFAULT_DESCRIPTION),
@@ -269,7 +271,7 @@ def _homepage_content(request):
 def _public_homepage_image(path):
     # The upload service only creates public, re-encoded WebP photos here.
     # This exception must not include exports, proofs or arbitrary media files.
-    return bool(re.fullmatch(r'/media/homepage/[a-f0-9]{32}\.webp', path))
+    return bool(re.fullmatch(r'/media/(?:homepage|editorial)/[a-f0-9]{32}\.webp', path))
 
 
 def page_seo(request, product=None, product_metadata=None, structured_data=None):
@@ -292,6 +294,14 @@ def page_seo(request, product=None, product_metadata=None, structured_data=None)
         hero = _homepage_content(request).get('images', {}).get('hero_image', {})
         if hero.get('custom'):
             image = public_absolute_url(hero.get('url'), allow_external=True) or image
+    editorial_page = getattr(request, '_editorial_page', None)
+    if editorial_page and editorial_page.get('revision', 0) and name in {'espace:about', 'core:location'} and not private:
+        values = editorial_page['values']
+        title = clean_text(values.get('page_title', '')) + ' — ' + SHOP_NAME
+        description = clean_text(values.get('intro', ''))[:300] or description
+        photo = editorial_page.get('image', {})
+        if photo.get('custom'):
+            image = public_absolute_url(photo.get('url'), allow_external=True) or image
     if product is not None:
         eligible = (name == 'core:product_detail' and bool(product.is_published)
                     and not _has_noncanonical_query(request, name))

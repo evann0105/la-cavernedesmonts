@@ -68,7 +68,12 @@ def info(request, page):
         from .legal_views import document
         return document(request, 'terms')
     titles = {'contact':_('Contactez-nous'), 'about':_('À propos'), 'terms':_('Conditions d’utilisation'), 'sitemap':_('Plan du site')}
-    return render(request, 'espace/'+page+'.html', {'title':titles[page], 'categories':Category.objects.all(), 'sitemap_products':Product.objects.filter(is_published=True).only('name', 'slug').order_by('name') if page == 'sitemap' else []})
+    editorial_page = None
+    if page == 'about':
+        from boutique.editorial_public import page as public_page
+        editorial_page = public_page(request, 'about')
+        titles['about'] = editorial_page['values']['page_title']
+    return render(request, 'espace/'+page+'.html', {'title':titles[page], 'editorial_page': editorial_page, 'categories':Category.objects.all(), 'sitemap_products':Product.objects.filter(is_published=True).only('name', 'slug').order_by('name') if page == 'sitemap' else []})
 
 
 @private

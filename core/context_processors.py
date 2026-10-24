@@ -21,7 +21,14 @@ def back_navigation(request):
     if name == 'accueil:home':
         return {'back_url': None, 'back_fallback': None, 'back_use_history': False}
     fallback = reverse('accueil:home')
-    if name == 'core:catalog_promotions' or name.startswith('core:sales_'):
+    if name.startswith('editorial:'):
+        if name in {'editorial:faq_edit', 'editorial:faq_create'}:
+            fallback = reverse('editorial:faq_list')
+        elif name in {'editorial:announcement_edit', 'editorial:announcement_create'}:
+            fallback = reverse('editorial:announcements')
+        elif name != 'editorial:faq':
+            fallback = reverse('espace:account') if name == 'editorial:overview' else reverse('editorial:overview')
+    elif name == 'core:catalog_promotions' or name.startswith('core:sales_'):
         fallback = reverse('espace:account') if name == 'core:sales_dashboard' else reverse('core:sales_dashboard')
     elif name == 'core:seo_overview':
         fallback = reverse('espace:account')

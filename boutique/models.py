@@ -278,3 +278,7 @@ class ShippingCountry(models.Model):
 
     def __str__(self):
         return self.code
+
+
+# Keep editorial models in their own module without introducing another app.
+from .editorial_models import ContentPage, FAQEntry, SiteAnnouncement  # noqa: E402,F401

@@ -190,7 +190,8 @@ def location_legacy(request):
 
 
 def location(request):
-    return render(request, 'core/location.html')
+    from boutique.editorial_public import page
+    return render(request, 'core/location.html', {'editorial_page': page(request, 'store')})
 
 
 @never_cache

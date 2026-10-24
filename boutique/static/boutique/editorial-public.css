@@ -1,0 +1,22 @@
+.site-announcement { position: relative; z-index: 11; padding: 8px 24px; background: #e5ecd8; color: #203e32; }
+.site-announcement-inner { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 4px 20px; max-width: 1320px; margin: auto; font-size: 14px; line-height: 1.5; }
+.site-announcement-label { font-size: 11px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; }
+.site-announcement p { margin: 0; max-width: 860px; overflow-wrap: anywhere; }
+.site-announcement a { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+.summit-home.has-site-announcement .header { top: auto; margin-top: 34px; }
+.editorial-faq { max-width: 880px; margin-bottom: 44px; }
+.editorial-faq summary { min-height: 44px; padding: 10px 0; font-weight: 600; overflow-wrap: anywhere; }
+.editorial-faq-answer { max-width: 760px; color: #52675a; overflow-wrap: anywhere; }
+.editorial-faq-answer .underlined { white-space: normal; overflow-wrap: anywhere; }
+.editorial-faq-contact { padding: 28px; max-width: 880px; border: 1px solid #d9e1ce; border-radius: 18px; background: #eef2e7; }
+.editorial-faq-contact h2 { font-size: 27px; }
+@media(max-width:600px) {
+  .site-announcement { padding: 10px 20px; }
+  .site-announcement-inner { justify-content: flex-start; gap: 2px 12px; font-size: 13px; }
+  .site-announcement p { flex-basis: 100%; }
+  .summit-home.has-site-announcement .header { margin-top: 22px; }
+  .editorial-faq-contact { padding: 22px; }
+}
+
+.about-story > div, .store-intro-bottom > p, .store-story > div { min-width: 0; }
+.about-story :is(h2, p), .store-intro :is(h1, p), .store-story :is(h2, h3, p), .store-visit-title :is(h2, p), .store-closing p { overflow-wrap: anywhere; }

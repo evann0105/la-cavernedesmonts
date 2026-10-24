@@ -98,6 +98,7 @@ TEMPLATES = [
                 'core.context_processors.basket',
                 'core.context_processors.catalog_access',
                 'boutique.context_processors.shop_information',
+                'boutique.editorial_public.announcement',
                 'core.context_processors.back_navigation',
                 'core.seo.metadata',
             ],
