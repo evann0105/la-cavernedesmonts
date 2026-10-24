@@ -21,7 +21,7 @@ class SaleSelectionForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['categories'].queryset = Category.objects.order_by('name')
+        self.fields['categories'].queryset = Category.objects.all()
         self.fields['article_type'].choices = [('', 'Tous les types')] + list(Product._meta.get_field('article_type').choices)
         for name in ('price_min', 'price_max'):
             self.fields[name].widget.attrs.update({'step': '0.01', 'min': '0', 'inputmode': 'decimal'})

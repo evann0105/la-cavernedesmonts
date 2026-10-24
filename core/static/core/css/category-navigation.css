@@ -1,0 +1,71 @@
+/* Category labels are seller-managed; long names and extra collections must fit. */
+.desktop-nav { min-width: 0; flex-wrap: wrap; justify-content: center; }
+.desktop-nav > a, .desktop-nav .category-menu-more > summary {
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: calc(18ch + 30px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.desktop-nav > a:last-child { max-width: none; }
+.desktop-nav .category-menu-more {
+  position: relative;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.desktop-nav .category-menu-more > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 9px 15px;
+  font-size: 16px;
+  border-radius: 30px;
+  list-style: none;
+}
+.desktop-nav .category-menu-more > summary::-webkit-details-marker { display: none; }
+.desktop-nav .category-menu-more > summary:hover,
+.desktop-nav .category-menu-more > summary:focus-visible,
+.desktop-nav .category-menu-more[open] > summary { background: #fff; color: var(--ink); }
+.desktop-nav .category-menu-more[open] > summary span { transform: rotate(180deg); }
+.category-menu-links {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(340px, 80vw);
+  max-height: min(480px, 60vh);
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #dfe5d8;
+  border-radius: 18px;
+  background: #f8faf4;
+  color: #203c32;
+  box-shadow: 0 12px 32px #112b271f;
+}
+.desktop-nav .category-menu-links a {
+  display: block;
+  min-height: 44px;
+  max-width: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  padding: 11px 14px;
+  border-radius: 10px;
+}
+.mobile-nav a { overflow-wrap: anywhere; }
+
+/* Keep the four original labels complete on smaller desktop screens. Links
+   retain their width; an unusually large menu may wrap inside its own pill. */
+@media (min-width: 1201px) and (max-width: 1450px) {
+  .header-inner { gap: 15px; }
+  .desktop-nav { flex: 1 1 auto; }
+  .header-actions { flex: 0 0 220px; width: 220px; gap: 10px; }
+  .desktop-nav > a, .desktop-nav .category-menu-more > summary {
+    padding: 9px 10px;
+    font-size: 15px;
+    max-width: calc(18ch + 20px);
+  }
+  .desktop-nav > a:last-child { max-width: none; }
+}

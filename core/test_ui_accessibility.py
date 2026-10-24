@@ -12,6 +12,7 @@ class References(HTMLParser):
         super().__init__()
         self.ids = set()
         self.descriptions = set()
+        self.current_pages = []
         self.feed(html)
 
     def handle_starttag(self, tag, attrs):
@@ -19,6 +20,8 @@ class References(HTMLParser):
         if 'id' in attrs:
             self.ids.add(attrs['id'])
         self.descriptions.update(attrs.get('aria-describedby', '').split())
+        if tag == 'a' and attrs.get('aria-current') == 'page':
+            self.current_pages.append(attrs.get('href'))
 
 
 class AccessiblePagesTests(TestCase):
@@ -26,7 +29,7 @@ class AccessiblePagesTests(TestCase):
         self.user = User.objects.create_user('ui-manager', is_staff=True, is_superuser=True)
         verify_test_user(self.user)
         self.client.force_login(self.user, backend='connexion.backends.EmailOrUsernameBackend')
-        category = Category.objects.create(name='Femmes', slug='femmes')
+        category = Category.objects.create(name='Femmes', slug='femmes', show_in_menu=True)
         self.product = Product.objects.create(name='Polaire de contrôle', slug='controle', price='40', category=category)
 
     def test_form_help_references_resolve_for_customer_and_manager(self):
@@ -40,8 +43,9 @@ class AccessiblePagesTests(TestCase):
 
     def test_navigation_marks_selected_category_only(self):
         response = self.client.get(reverse('core:product_list'), {'categorie': 'femmes'})
-        self.assertContains(response, '?categorie=femmes" aria-current="page"', count=2)
-        self.assertNotContains(response, '?categorie=hommes" aria-current="page"')
+        refs = References(response.content.decode())
+        self.assertEqual(refs.current_pages.count(reverse('core:product_list') + '?categorie=femmes'), 2)
+        self.assertNotIn(reverse('core:product_list') + '?categorie=hommes', refs.current_pages)
 
     def test_nested_address_page_keeps_account_navigation_current(self):
         response = self.client.get(reverse('espace:address_add'))

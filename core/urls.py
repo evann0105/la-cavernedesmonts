@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views, catalog_views, promotion_views, sales_views, seo_admin
+from . import views, catalog_views, promotion_views, sales_views, seo_admin, category_views, catalog_bulk, catalog_duplication
 
 app_name = 'core'
 
@@ -11,6 +11,13 @@ urlpatterns = [
     path('gestion/soldes/<int:pk>/annuler/', sales_views.sales_cancel, name='sales_cancel'),
     path('gestion/accueil/', catalog_views.catalog_homepage, name='catalog_homepage'),
     path('gestion/accueil/collections/', catalog_views.catalog_homepage_collections, name='homepage_collections'),
+    path('gestion/rubriques/', category_views.category_list, name='category_list'),
+    path('gestion/rubriques/ajouter/', category_views.category_create, name='category_create'),
+    path('gestion/rubriques/deplacer/', category_views.category_move, name='category_move'),
+    path('gestion/rubriques/<int:pk>/modifier/', category_views.category_edit, name='category_edit'),
+    path('gestion/rubriques/<int:pk>/menu/', category_views.category_visibility, name='category_visibility'),
+    path('gestion/produits/modifier-ensemble/', catalog_bulk.catalog_bulk, name='catalog_bulk'),
+    path('gestion/produits/<int:pk>/dupliquer/', catalog_duplication.catalog_duplicate, name='catalog_duplicate'),
     path('gestion/produits/', catalog_views.catalog_list, name='catalog_list'),
     path('gestion/produits/ajouter/', catalog_views.catalog_edit, name='catalog_add'),
     path('gestion/produits/<int:pk>/modifier/', catalog_views.catalog_edit, name='catalog_edit'),

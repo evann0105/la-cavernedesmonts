@@ -97,6 +97,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.basket',
                 'core.context_processors.catalog_access',
+                'core.category_navigation.category_navigation',
                 'boutique.context_processors.shop_information',
                 'boutique.editorial_public.announcement',
                 'core.context_processors.back_navigation',

@@ -1,0 +1,14 @@
+{% extends 'core/catalog/base.html' %}
+{% block title %}{% if category %}Modifier une rubrique{% else %}Créer une rubrique{% endif %} — La Caverne des Monts{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a> / <a href="{% url 'core:category_list' %}">Rubriques et menu</a> / {% if category %}Modifier{% else %}Créer une rubrique{% endif %}</nav>{% endblock %}
+{% block catalog_content %}
+<div class="category-management category-management-editor">
+  <div class="catalog-heading"><div><p class="eyebrow">LES COLLECTIONS À VOTRE IMAGE</p><h1>{% if category %}Modifier une rubrique.{% else %}Créer une rubrique.{% endif %}</h1><p>{% if category %}{{ category.name }}{% else %}Donnez un nom à votre collection, puis choisissez sa place dans le menu.{% endif %}</p></div><a class="underlined" href="{% url 'core:category_list' %}">← Toutes les rubriques</a></div>
+  <form method="post" class="catalog-form">{% csrf_token %}{{ form.revision }}
+    {% if form.errors %}<div class="catalog-error" role="alert"><p>La rubrique n’a pas été enregistrée. Vérifiez les informations ci-dessous.</p>{{ form.non_field_errors }}{{ form.revision.errors }}{% if form.non_field_errors %}<a href="{% if category %}{% url 'core:category_edit' category.pk %}{% else %}{% url 'core:category_create' %}{% endif %}">Recharger le formulaire</a>{% endif %}</div>{% endif %}
+    <section class="catalog-panel"><h2>01 · Le nom de la rubrique</h2>{% include 'core/catalog/field.html' with field=form.name %}{% if category %}<p class="help">Vous pouvez changer le nom sans modifier l’adresse de cette collection. Les liens déjà partagés restent valables.</p>{% endif %}</section>
+    <section class="catalog-panel"><h2>02 · Sa place dans le menu</h2>{% include 'core/catalog/field.html' with field=form.menu_label %}{% include 'core/catalog/field.html' with field=form.show_in_menu %}<p class="help">L’ordre se règle avec « Monter / Descendre » dans la liste des rubriques.{% if not category %} Cette nouvelle rubrique sera placée à la fin.{% endif %}</p></section>
+    <div class="catalog-save"><a href="{% url 'core:category_list' %}">Annuler</a><button class="button" type="submit">{% if category %}Enregistrer la rubrique{% else %}Créer la rubrique{% endif %} ✓</button></div>
+  </form>
+</div>
+{% endblock %}

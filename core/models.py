@@ -6,9 +6,21 @@ from django.utils.translation import gettext_lazy as _
 class Category(models.Model):
 	name = models.CharField(max_length=120)
 	slug = models.SlugField(max_length=140, unique=True)
+	menu_label = models.CharField('Libellé dans le menu', max_length=40, blank=True)
+	show_in_menu = models.BooleanField('Afficher dans le menu', default=False)
+	position = models.PositiveIntegerField('Ordre', default=100)
+	revision = models.PositiveIntegerField(default=1, editable=False)
 
 	class Meta:
 		verbose_name_plural = 'Categories'
+		ordering = ['position', 'name', 'pk']
+
+	@property
+	def navigation_label(self):
+		from django.utils.translation import gettext
+		defaults = {'femmes': 'Femme', 'hommes': 'Homme', 'enfants': 'Enfant', 'accessoires': 'Petits bonheurs'}
+		label = self.menu_label or self.name
+		return gettext(label) if label == defaults.get(self.slug) else label
 
 	def __str__(self):
 		return self.name

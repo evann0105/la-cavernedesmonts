@@ -18,7 +18,12 @@ class Command(BaseCommand):
             if cat_slug not in category_names:
                 raise CommandError(f'Catégorie explicite manquante ou inconnue pour {slug}.')
             cat = category_names[cat_slug]
-            category, _ = Category.objects.get_or_create(slug=cat_slug, defaults={'name': cat})
+            initial_menu = {'femmes': (10, 'Femme'), 'hommes': (20, 'Homme'),
+                            'enfants': (30, 'Enfant'), 'accessoires': (40, 'Petits bonheurs')}
+            position, menu_label = initial_menu[cat_slug]
+            # Defaults only: a later import must preserve the merchant's menu.
+            category, _ = Category.objects.get_or_create(slug=cat_slug,
+                defaults={'name': cat, 'position': position, 'menu_label': menu_label, 'show_in_menu': True})
             description = 'Les petits plaisirs font les beaux souvenirs. Une touche de douceur pour prolonger les journées à la montagne jusque chez vous.' if 'chaussettes' in slug else 'L’air frais sur le visage, le plaisir de prendre son temps. Une pièce à emporter pour retrouver un peu de l’esprit montagne au fil des jours.'
             if 'softshell-homme' in slug:
                 description += '\nBlouson Peak Mountain avec doublure intérieure en polaire. Coloris bleu marine, zips contrastants orange.'

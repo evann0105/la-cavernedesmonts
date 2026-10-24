@@ -1,5 +1,7 @@
 # Gérer les produits
 
+Pour les nouveaux outils de duplication, modifications groupées et rubriques/menu, voir [Catalogue pratique](CATALOGUE_PRATIQUE.md).
+
 ## Accès
 
 Connectez-vous puis choisissez **Gérer les produits** (dans le menu sur mobile), ou ouvrez `/gestion/produits/`.

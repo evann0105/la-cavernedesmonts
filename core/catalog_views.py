@@ -22,7 +22,7 @@ def catalog_list(request):
     category = request.GET.get('categorie', '')
     status = request.GET.get('statut', '')
     if query:
-        products = products.filter(Q(name__icontains=query) | Q(description__icontains=query))
+        products = products.filter(Q(name__icontains=query) | Q(description__icontains=query) | Q(brand__icontains=query))
     if category:
         products = products.filter(Q(category__slug=category) | Q(collections__slug=category)).distinct()
     if status == 'duplicate':

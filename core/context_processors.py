@@ -35,6 +35,8 @@ def back_navigation(request):
             fallback = reverse('editorial:announcements')
         elif name != 'editorial:faq':
             fallback = reverse('espace:account') if name == 'editorial:overview' else reverse('editorial:overview')
+    elif name.startswith('core:category_'):
+        fallback = reverse('core:catalog_list') if name == 'core:category_list' else reverse('core:category_list')
     elif name == 'core:catalog_promotions' or name.startswith('core:sales_'):
         fallback = reverse('espace:account') if name == 'core:sales_dashboard' else reverse('core:sales_dashboard')
     elif name == 'core:seo_overview':
