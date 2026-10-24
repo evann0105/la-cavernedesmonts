@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Q, Max
+from django.db.models import Max
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 from .catalog_access import catalog_required
@@ -11,31 +11,47 @@ from .models import Category, Product, ProductImage, ProductColor
 from .views import product_detail
 from stocks.forms import InitialStockForms, VariantPriceForms
 from stocks.models import Variant
-from .pricing import with_catalog_prices
 
 
 @catalog_required
 @require_http_methods(['GET'])
 def catalog_list(request):
-    products = with_catalog_prices(Product.objects.select_related('category', 'duplicate_of')).order_by('-created_at', '-pk')
-    query = request.GET.get('q', '').strip()[:100]
-    category = request.GET.get('categorie', '')
-    status = request.GET.get('statut', '')
-    if query:
-        products = products.filter(Q(name__icontains=query) | Q(description__icontains=query) | Q(brand__icontains=query))
-    if category:
-        products = products.filter(Q(category__slug=category) | Q(collections__slug=category)).distinct()
-    if status == 'duplicate':
-        products = products.filter(duplicate_of__isnull=False)
-    if status in ('published', 'draft'):
-        products = products.filter(is_published=status == 'published')
-    return render(request, 'core/catalog/list.html', {'page_obj':Paginator(products, 20).get_page(request.GET.get('page')), 'categories':Category.objects.all(), 'query':query, 'selected':category, 'status':status, 'total_count':Product.objects.count(), 'published_count':Product.objects.filter(is_published=True).count(), 'draft_count':Product.objects.filter(is_published=False).count()})
+    from urllib.parse import urlencode
+    from django.urls import reverse
+    from .catalog_query import normalize_catalog_filters, catalog_queryset
+    from .catalog_bulk import MAX_PRODUCTS
+
+    filters = normalize_catalog_filters(request.GET)
+    products = catalog_queryset(filters)
+    page = Paginator(products, 20).get_page(request.GET.get('page'))
+    params = {key: value for key, value in filters.items() if value}
+    filter_query = urlencode(params)
+    list_url = reverse('core:catalog_list')
+    return_to = list_url + '?' + urlencode({**params, 'page': page.number})
+    for product in page:
+        product.catalog_return_to = return_to + f'#catalog-product-{product.pk}'
+        for public, private in [('needs_photo', '_needs_photo'), ('needs_brand', '_needs_brand'),
+                                ('needs_stock', '_needs_stock'), ('out_of_stock', '_out_of_stock')]:
+            setattr(product, public, getattr(product, private))
+    return render(request, 'core/catalog/list.html', {
+        'page_obj': page, 'categories': Category.objects.all(), 'query': filters['q'],
+        'selected': filters['categorie'], 'status': filters['statut'],
+        'attention': filters['attention'], 'sort': filters['tri'], 'filter_query': filter_query,
+        'return_to': return_to, 'selection_key': f'catalogue-selection-v2-{request.user.pk}',
+        'selection_limit': MAX_PRODUCTS, 'selection_applied': request.session.pop('catalogue_applied_products', []),
+        'selection_results_url': reverse('core:catalog_selection_results') + ('?' + filter_query if filter_query else ''),
+        'selectable_count': products.filter(duplicate_of__isnull=True).count(),
+        'total_count': Product.objects.count(), 'published_count': Product.objects.filter(is_published=True).count(),
+        'draft_count': Product.objects.filter(is_published=False).count(),
+    })
 
 
 @catalog_required
 @require_http_methods(['GET', 'POST'])
 @transaction.atomic
 def catalog_edit(request, pk=None):
+    from .catalog_navigation import catalog_return
+    request.catalog_return_to = return_to = catalog_return(request)
     products = Product.objects.select_for_update() if request.method == 'POST' else Product.objects.all()
     product = get_object_or_404(products, pk=pk) if pk else Product(is_published=False)
     previous_product_price = product.price
@@ -155,6 +171,8 @@ def catalog_edit(request, pk=None):
                     ProductImage.objects.create(product=product, image=image, alt=product.name, order=order+index)
                 LogEntry.objects.log_actions(user_id=request.user.pk, queryset=Product.objects.filter(pk=product.pk), action_flag=CHANGE if pk else ADDITION, change_message='Produit enregistré depuis la gestion de la boutique.')
             messages.success(request, 'Produit enregistré. Il est visible dans la boutique.' if product.is_published else 'Produit enregistré en brouillon. Il reste invisible aux clients.')
+            if return_to:
+                return redirect(return_to)
             if product.is_published:
                 return redirect('core:product_detail', slug=product.slug)
             return redirect('core:catalog_preview', pk=product.pk)
@@ -170,6 +188,8 @@ def catalog_edit(request, pk=None):
 @catalog_required
 @require_http_methods(['GET'])
 def catalog_preview(request, pk):
+    from .catalog_navigation import catalog_return
+    request.catalog_return_to = catalog_return(request)
     product = get_object_or_404(Product, pk=pk)
     return product_detail(request, product.slug, catalog_preview=True)
 

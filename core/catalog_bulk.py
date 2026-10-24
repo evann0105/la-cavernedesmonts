@@ -19,7 +19,7 @@ from .models import Category, Product
 
 SELECTION_SALT = 'catalogue-bulk-selection-v1'
 CONFIRMATION_SALT = 'catalogue-bulk-confirmation-v1'
-MAX_PRODUCTS = 100
+MAX_PRODUCTS = 500
 MAX_AGE = 7200
 
 
@@ -34,10 +34,11 @@ def _authorize(actor):
 
 def _ids(values):
     if not isinstance(values, (list, tuple)) or not 1 <= len(values) <= MAX_PRODUCTS:
-        raise ValidationError('Sélectionnez entre 1 et 100 produits.')
+        raise ValidationError(f'Sélectionnez entre 1 et {MAX_PRODUCTS} produits.')
     result = []
     for value in values:
-        if isinstance(value, bool) or not isinstance(value, (int, str)) or not str(value).isdigit():
+        if (isinstance(value, bool) or not isinstance(value, (int, str))
+                or not str(value).isascii() or not str(value).isdecimal() or len(str(value)) > 19):
             raise ValidationError('La sélection de produits est invalide. Revenez au catalogue.')
         number = int(value)
         if number <= 0 or number > 9223372036854775807:
@@ -63,7 +64,7 @@ def _fingerprint(product):
     # approve a different product state. Ignore stock quantities: no stock is edited.
     fields = {field.attname: field.value_from_object(product) for field in product._meta.concrete_fields}
     fields['main_image'] = str(product.main_image or '')
-    fields['collections'] = sorted(product.collections.values_list('pk', flat=True))
+    fields['collections'] = sorted(item.pk for item in product.collections.all())
     fields['variant_prices'] = sorted((item.pk, str(item.price) if item.price is not None else None) for item in product.stock_variants.all())
     raw = json.dumps(fields, sort_keys=True, separators=(',', ':'), cls=DjangoJSONEncoder)
     return hashlib.sha256(raw.encode()).hexdigest()
@@ -176,7 +177,7 @@ def _preview_rows(products, changes):
             after = changes[name]
             comparable_after = Decimal(after) if name == 'price' else after
             details.append({'label': LABELS[name], 'before': _label(name, before, categories), 'after': _label(name, after, categories), 'changed': before != comparable_after})
-        before_ids = set(product.collections.values_list('pk', flat=True))
+        before_ids = {item.pk for item in product.collections.all()}
         after_ids = (before_ids | set(changes.get('collections_add', []))) - set(changes.get('collections_remove', []))
         if 'collections_add' in changes or 'collections_remove' in changes:
             details.append({'label': 'Rubriques complémentaires', 'before': ', '.join(sorted(categories[item] for item in before_ids)) or 'Aucune', 'after': ', '.join(sorted(categories[item] for item in after_ids)) or 'Aucune', 'changed': before_ids != after_ids})
@@ -239,15 +240,22 @@ def apply_bulk_confirmation(actor, token):
 @catalog_required
 @require_http_methods(['GET', 'POST'])
 def catalog_bulk(request):
+    from .catalog_navigation import catalog_return
+    from django.urls import reverse
+
+    return_to = catalog_return(request)
     if request.method == 'GET':
-        return redirect('core:catalog_list')
+        return redirect(return_to or reverse('core:catalog_list'))
     action = request.POST.get('action', 'start')
-    context = {'step': 'edit', 'form': CatalogBulkForm(), 'products': [], 'selection_snapshot': '', 'price_changed': False}
+    context = {'step': 'edit', 'form': CatalogBulkForm(), 'products': [], 'selection_snapshot': '', 'price_changed': False, 'return_to': return_to}
     try:
         if action == 'apply':
-            count = apply_bulk_confirmation(request.user, request.POST.get('confirmation', ''))
+            token = request.POST.get('confirmation', '')
+            payload = _read(token, CONFIRMATION_SALT, request.user)
+            count = apply_bulk_confirmation(request.user, token)
+            request.session['catalogue_applied_products'] = [str(row[0]) for row in payload['products']]
             messages.success(request, f'{count} produit(s) mis à jour.' if count else 'Les articles correspondaient déjà aux changements choisis. Aucune modification nécessaire.')
-            return redirect('core:catalog_list')
+            return redirect(return_to or reverse('core:catalog_list'))
         if action == 'back':
             payload = _read(request.POST.get('confirmation', ''), CONFIRMATION_SALT, request.user)
             ids = _ids([row[0] for row in payload['products']])

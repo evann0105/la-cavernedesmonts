@@ -136,3 +136,31 @@
   .category-management-order { flex-basis:100%; }
   .category-management-menu-preview { gap:7px; }
 }
+
+/* Filters and a visible selection count across catalogue pages. */
+.catalog-filters-expanded { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; align-items: end; }
+.catalog-filters-expanded .catalog-filter-search { grid-column: span 2; }
+.catalog-filter-actions { grid-column: span 2; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.catalog-filter-actions .button { white-space: nowrap; }
+.catalog-match-summary { margin: 28px 0 18px; }
+.catalog-match-summary p { margin: 6px 0; }
+.catalog-match-summary span { color: #6b7766; font-size: 14px; }
+.catalog-selection-bar { position: sticky; top: 12px; z-index: 3; box-shadow: 0 3px 14px #203c3210; }
+.catalog-selection-scope { padding: 14px 4px 22px; }
+.catalog-selection-scope .help { margin: 8px 0 0; max-width: 850px; }
+.catalog-selection-feedback { margin: 12px 0 0; border-left: 3px solid #7b8d63; padding: 10px 14px; background: #eef1e8; font-size: 14px; }
+.catalog-quality-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.catalog-quality-badges span { border: 1px solid #d9dfd0; border-radius: 8px; padding: 3px 8px; color: #526249; background: #f8faf5; font-size: 12px; line-height: 1.5; }
+.catalog-quality-badges .catalog-stock-empty { color: #864c38; background: #faf0e9; border-color: #ead6c9; }
+.catalog-selectable-row { scroll-margin-top: 150px; }
+@media (max-width: 950px) {
+  .catalog-filters-expanded { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .catalog-filter-actions { grid-column: 1 / -1; }
+}
+@media (max-width: 600px) {
+  .catalog-filters-expanded { grid-template-columns: 1fr; }
+  .catalog-filters-expanded .catalog-filter-search { grid-column: auto; }
+  .catalog-selection-bar { top: 5px; padding: 14px; gap: 10px; }
+  .catalog-selection-actions { width: 100%; justify-content: space-between; }
+  .catalog-selection-scope button { text-align: left; }
+}

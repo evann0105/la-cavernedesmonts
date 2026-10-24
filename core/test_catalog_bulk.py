@@ -13,7 +13,7 @@ from django.utils import timezone
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from connexion.test_helpers import verify_test_user
-from .catalog_bulk import (CatalogBulkConflict, apply_bulk_confirmation,
+from .catalog_bulk import (MAX_PRODUCTS, CatalogBulkConflict, apply_bulk_confirmation,
     prepare_bulk_preview, selection_snapshot)
 from .catalog_bulk_forms import CatalogBulkForm
 from .models import Category, Product, ProductPromotion
@@ -177,7 +177,7 @@ class CatalogBulkTests(TestCase):
     def test_selection_rejects_empty_duplicate_unknown_archived_and_over_limit(self):
         products = self.products()
         snapshot = selection_snapshot(self.manager, products)
-        for ids in ([], [self.first.pk, self.first.pk], [99999999], [str(i+1) for i in range(101)], ['x'], [True]):
+        for ids in ([], [self.first.pk, self.first.pk], [99999999], [str(i+1) for i in range(MAX_PRODUCTS + 1)], ['x'], ['²'], ['١'], ['9' * 5000], [True]):
             with self.subTest(ids=ids), self.assertRaises(ValidationError):
                 prepare_bulk_preview(self.manager, ids, {'brand': 'Nouvelle'}, snapshot)
         self.second.duplicate_of = self.first

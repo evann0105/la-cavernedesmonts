@@ -5,7 +5,7 @@ import logging
 from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
-from urllib.parse import unquote
+from urllib.parse import unquote, urlencode
 from uuid import uuid4
 
 from django import forms
@@ -21,12 +21,14 @@ from django.db import connection, transaction
 from django.db.models import F
 from django.shortcuts import get_object_or_404, redirect, render
 from django.templatetags.static import static
+from django.urls import reverse
 from django.utils import translation
 from django.views.decorators.http import require_http_methods
 
 from connexion.email_verification import email_access_allowed
 from stocks.models import Variant
 from .catalog_access import can_manage_catalog, catalog_required
+from .catalog_navigation import catalog_return
 from .models import Product, ProductColor, ProductImage
 from .product_images import imported_gallery_urls
 
@@ -238,6 +240,7 @@ def duplicate_product(source_id, *, snapshot, actor):
 @catalog_required
 @require_http_methods(['GET', 'POST'])
 def catalog_duplicate(request, pk):
+    request.catalog_return_to = return_to = catalog_return(request)
     source = get_object_or_404(Product, pk=pk)
     state = None
     status = 200
@@ -256,7 +259,10 @@ def catalog_duplicate(request, pk):
                 status = 409 if isinstance(exc, DuplicationConflict) else 400
             else:
                 messages.success(request, 'La copie existe déjà : vous pouvez continuer à la compléter.' if result.reused else 'La fiche a été copiée en brouillon. Vérifiez les informations et renseignez le stock avant de la publier.')
-                return redirect('core:catalog_edit', pk=result.product.pk)
+                target = reverse('core:catalog_edit', kwargs={'pk': result.product.pk})
+                if return_to:
+                    target += '?' + urlencode({'return_to': return_to})
+                return redirect(target)
         else:
             status = 400
     else:

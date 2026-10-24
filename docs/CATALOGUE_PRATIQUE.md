@@ -12,7 +12,7 @@ Renommer et relire la fiche, ajuster les photos et renseigner les stocks avant d
 
 ## Modifier plusieurs articles ensemble
 
-1. Filtrer le catalogue puis cocher les articles de la page. **Tout sélectionner sur cette page** exclut les doublons archivés. Une autre page ou de nouveaux filtres commencent une nouvelle sélection.
+1. Filtrer le catalogue puis cocher les articles souhaités. **Cocher cette page** agit seulement sur les articles affichés ; **Sélectionner les résultats, toutes pages confondues** ajoute tous les articles correspondant aux filtres. Les doublons archivés sont exclus. La sélection reste conservée dans le même onglet, pour le même compte, lors des changements de page ou de filtre. Le compteur indique aussi les articles cochés hors de la page ; **Tout décocher** vide la sélection complète.
 2. Cliquer **Modifier la sélection**, puis cocher les champs à changer. Les autres informations restent inchangées.
 3. **Vérifier les changements** présente chaque produit avec les valeurs avant et après. **Ajuster mes changements** revient à la préparation ; **Appliquer** enregistre tout ensemble.
 
@@ -20,7 +20,22 @@ Les champs proposés sont la rubrique principale, la marque, le type d’article
 
 Le nouveau prix général est commun aux articles sélectionnés. Les prix spécifiques de tailles/couleurs restent inchangés ; les déclinaisons sans prix spécifique suivent le nouveau prix général. Les promotions déjà programmées restent en place. Pour une réduction temporaire ou un pourcentage, utiliser **Soldes**.
 
-La publication vérifie la description, la photo principale, la rubrique et le prix de chaque article. Une erreur ou un changement concurrent empêche toute l’opération : aucun lot partiellement modifié. La préparation signée expire après deux heures et accepte au maximum 100 articles (la liste affiche 20 articles par page). Aucun stock n’est modifié.
+La publication vérifie la description, la photo principale, la rubrique et le prix de chaque article. Une erreur ou un changement concurrent empêche toute l’opération : aucun lot partiellement modifié. La préparation signée expire après deux heures et accepte au maximum 500 articles (la liste affiche 20 articles par page). Aucun stock n’est modifié.
+
+Après un enregistrement groupé réussi, les articles traités quittent la sélection. Une annulation, une erreur ou une préparation abandonnée conserve les choix. Les identifiants sont revérifiés sur le serveur : un article supprimé ou archivé entre-temps bloque le lot avec une explication.
+
+## Retrouver sa position et les fiches à compléter
+
+Les liens **Modifier**, **Dupliquer**, **Aperçu** et **Ajouter un produit** conservent la recherche, les filtres, le tri et la page. Après enregistrement ou retour à la liste, le défilement est rétabli dans le même onglet ; un repère sur la fiche sert de repli. Si les informations modifiées ne correspondent plus aux filtres, l’article quitte normalement les résultats.
+
+Le filtre **À vérifier** propose :
+
+- **Sans photo principale** : aucune photo principale importée ou statique ; une simple photo de galerie ne suffit pas.
+- **Sans marque** : champ vide ou ne contenant que des espaces.
+- **Stock à renseigner** : aucune déclinaison enregistrée ou au moins une quantité inconnue.
+- **En rupture de stock** : toutes les quantités sont connues et aucune unité n’est disponible après déduction des réservations. Une quantité inconnue n’est jamais assimilée à zéro.
+
+Ces critères se combinent à la recherche, à la rubrique et à la visibilité. Le compteur donne le nombre total de résultats. Le tri propose les nouveautés, le nom dans les deux sens et le prix affiché croissant ou décroissant, à partir du tarif le plus bas des tailles et couleurs (promotions comprises).
 
 ## Rubriques et menu
 

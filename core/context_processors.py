@@ -8,7 +8,7 @@ def catalog_access(request):
     from connexion.email_verification import email_verified
     from avoirs.access import email_confirmation_required
     from retours.access import manager
-    return {'can_manage_returns':manager(request.user), 'email_test_mode': settings.DEBUG and settings.EMAIL_TEST_MODE, 'can_manage_catalog': can_manage_catalog(request.user), 'email_confirmed': email_verified(request.user), 'benefit_email_required': email_confirmation_required()}
+    return {'catalog_return_to': getattr(request, 'catalog_return_to', ''), 'can_manage_returns':manager(request.user), 'email_test_mode': settings.DEBUG and settings.EMAIL_TEST_MODE, 'can_manage_catalog': can_manage_catalog(request.user), 'email_confirmed': email_verified(request.user), 'benefit_email_required': email_confirmation_required()}
 
 
 def back_navigation(request):
@@ -20,6 +20,12 @@ def back_navigation(request):
     name = match.view_name if match else ''
     if name in {'accueil:home', 'editorial:page_preview_frame', 'editorial:page_version_frame'}:
         return {'back_url': None, 'back_fallback': None, 'back_use_history': False}
+    if name in {'core:catalog_add', 'core:catalog_edit', 'core:catalog_duplicate',
+                'core:catalog_preview', 'core:catalog_bulk'}:
+        from .catalog_navigation import catalog_return
+        return_to = catalog_return(request)
+        if return_to:
+            return {'back_url': return_to, 'back_fallback': return_to, 'back_use_history': False}
     fallback = reverse('accueil:home')
     if name.startswith('editorial:'):
         if name in {'editorial:page_preview', 'editorial:page_history', 'editorial:page_publish'}:

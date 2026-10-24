@@ -3,9 +3,9 @@
 {% block styles %}<link rel="stylesheet" href="{% static 'core/css/shop-reviews.css' %}?v=20260923"><link rel="stylesheet" href="{% static 'core/css/product-story.css' %}?v=20261019-programmed-prices">{% endblock %}
 {% block scripts %}<script src="{% static 'core/js/product-story.js' %}?v=20261019-seo-variants" defer></script>{% endblock %}
 {% block content %}
-<div class="wrap section product-page">{% if catalog_preview and product.duplicate_of_id %}<p class="notice">Doublon archivé : cette fiche n’est plus proposée au public. <a href="{% url 'core:catalog_edit' product.duplicate_of_id %}">Voir la fiche conservée ↗</a></p>{% endif %}
+<div class="wrap section product-page">{% if catalog_preview and product.duplicate_of_id %}<p class="notice">Doublon archivé : cette fiche n’est plus proposée au public. <a href="{% url 'core:catalog_edit' product.duplicate_of_id %}{% if catalog_return_to %}?return_to={{ catalog_return_to|urlencode }}{% endif %}">Voir la fiche conservée ↗</a></p>{% endif %}
   <nav class="breadcrumb" aria-label="{% translate 'Fil d’Ariane' %}"><a href="{% url 'accueil:home' %}">{% translate 'Accueil' %}</a><span>/</span><a href="{% url 'core:product_list' %}{% if product.category %}?categorie={{ product.category.slug }}{% endif %}">{{ product.category.name|default:'La collection'|shop_text }}</a><span>/</span><span>{{ product.localized_name }}</span></nav>
-  {% if can_manage_catalog %}<p class="notice">{% if catalog_preview %}{% translate 'Aperçu privé ·' %} {% endif %}<a href="{% url 'core:catalog_edit' product.pk %}">{% translate 'Modifier ce produit' %}</a></p>{% endif %}
+  {% if can_manage_catalog %}<p class="notice">{% if catalog_preview %}{% translate 'Aperçu privé ·' %} {% endif %}<a href="{% url 'core:catalog_edit' product.pk %}{% if catalog_return_to %}?return_to={{ catalog_return_to|urlencode }}{% endif %}">{% translate 'Modifier ce produit' %}</a></p>{% endif %}
   <article class="product-detail">
     <div class="product-gallery">
       {% if gallery %}
