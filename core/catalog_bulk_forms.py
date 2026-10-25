@@ -1,6 +1,8 @@
 """Explicit opt-in changes for a frozen selection of catalogue products."""
 from decimal import Decimal
 from django import forms
+from django.db import transaction
+from .category_forms import category_choice_label
 
 from .models import Category, Product
 
@@ -27,6 +29,9 @@ class CatalogBulkForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        for name in ('category', 'collections_add'):
+            self.fields[name].queryset = Category.objects.filter(archived_at__isnull=True)
+        self.fields['collections_remove'].label_from_instance = category_choice_label
         # Ignore even malformed values when the corresponding change is not selected.
         if self.is_bound:
             for name in self.OPTIONAL_FIELDS:
@@ -40,6 +45,12 @@ class CatalogBulkForm(forms.Form):
                 self.add_error(name, 'Choisissez la nouvelle valeur à appliquer.')
         additions = {item.pk for item in data.get('collections_add', [])}
         removals = {item.pk for item in data.get('collections_remove', [])}
+        chosen = additions | ({data['category'].pk} if data.get('change_category') and data.get('category') else set())
+        # During apply this shares the outer transaction with the product changes.
+        with transaction.atomic():
+            rows = list(Category.objects.select_for_update().filter(pk__in=chosen).order_by('pk'))
+            if len(rows) != len(chosen) or any(row.archived_at for row in rows):
+                raise forms.ValidationError('Une rubrique a été archivée ou supprimée. Rechargez les choix avant de continuer.')
         if additions & removals:
             self.add_error('collections_remove', 'Une rubrique ne peut pas être ajoutée et retirée en même temps.')
         if not any(data.get('change_' + name) for name in self.OPTIONAL_FIELDS) and not additions and not removals:

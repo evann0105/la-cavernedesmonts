@@ -4,6 +4,9 @@ import re
 from uuid import uuid4
 from PIL import Image, ImageOps, UnidentifiedImageError
 from django import forms
+from django.db import transaction
+from django.db.models import Q
+from .category_forms import category_choice_label
 from django.core.files.base import ContentFile
 from django.forms import inlineformset_factory, BaseInlineFormSet
 from .models import Category, Product, ProductImage, ProductColor
@@ -76,6 +79,15 @@ class CatalogProductForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._existing_category_id = self.instance.category_id
+        self._existing_collection_ids = set(self.instance.collections.values_list('pk', flat=True)) if self.instance.pk else set()
+        self.fields['category'].queryset = Category.objects.filter(Q(archived_at__isnull=True) | Q(pk=self._existing_category_id))
+        self.fields['collections'].queryset = Category.objects.filter(Q(archived_at__isnull=True) | Q(pk__in=self._existing_collection_ids))
+        for name in ('category', 'collections'):
+            self.fields[name].label_from_instance = category_choice_label
+        assigned = self._existing_collection_ids | ({self._existing_category_id} if self._existing_category_id else set())
+        if assigned and Category.objects.filter(pk__in=assigned, archived_at__isnull=False).exists():
+            self.fields['collections'].help_text += ' Une rubrique archivée déjà affectée peut être conservée ou retirée.'
         self.fields['availability'].required = False
         if self.instance.benefits is None:
             from django.utils.translation import override
@@ -97,6 +109,19 @@ class CatalogProductForm(forms.ModelForm):
 
     def clean(self):
         data = super().clean()
+        category = data.get('category')
+        collections = list(data.get('collections', []))
+        ids = {item.pk for item in collections} | ({category.pk} if category else set())
+        # The editor's outer transaction keeps these locks until its product save.
+        # Recheck after locking in case a rubric was archived since form validation.
+        with transaction.atomic():
+            current = {row.pk: row for row in Category.objects.select_for_update().filter(pk__in=ids).order_by('pk')}
+            if category and (category.pk not in current or
+                    (current[category.pk].archived_at and category.pk != self._existing_category_id)):
+                self.add_error('category', 'Cette rubrique a été archivée. Choisissez une rubrique active.')
+            if any(item.pk not in current or (current[item.pk].archived_at and item.pk not in self._existing_collection_ids)
+                   for item in collections):
+                self.add_error('collections', 'Une rubrique a été archivée. Rechargez les choix avant d’ajouter une rubrique.')
         for key in ['benefits']:
             lines = [line.strip() for line in data.get(key, '').splitlines() if line.strip()]
             if len(lines) > 3 or any(len(line) > 250 for line in lines):

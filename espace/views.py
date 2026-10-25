@@ -73,7 +73,7 @@ def info(request, page):
         from boutique.editorial_public import page as public_page
         editorial_page = public_page(request, 'about')
         titles['about'] = editorial_page['values']['page_title']
-    return render(request, 'espace/'+page+'.html', {'title':titles[page], 'editorial_page': editorial_page, 'categories':Category.objects.all(), 'sitemap_products':Product.objects.filter(is_published=True).only('name', 'slug').order_by('name') if page == 'sitemap' else []})
+    return render(request, 'espace/'+page+'.html', {'title':titles[page], 'editorial_page': editorial_page, 'categories':Category.objects.filter(archived_at__isnull=True), 'sitemap_products':Product.objects.filter(is_published=True).only('name', 'slug').order_by('name') if page == 'sitemap' else []})
 
 
 @private

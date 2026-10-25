@@ -1,0 +1,8 @@
+{% extends 'core/catalog/base.html' %}
+{% block title %}Historique du catalogue — La Caverne des Monts{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a> / <a href="{% url 'core:catalog_list' %}">Catalogue</a> / <a href="{% url 'core:catalog_history' %}">Historique</a></nav>{% endblock %}
+{% block catalog_content %}
+<div class="catalog-heading"><div><p class="eyebrow">GARDER LE FIL DES CHANGEMENTS</p><h1>Historique du catalogue.</h1><p>Retrouvez les actions réalisées et les valeurs modifiées. Annulez une modification groupée après avoir vérifié ce qui sera rétabli.</p></div><a class="button button-outline" href="{% url 'core:catalog_list' %}">Retour aux produits ↗</a></div>
+<nav class="catalog-workspace-nav" aria-label="Gestion du catalogue"><a href="{% url 'core:catalog_list' %}">Produits</a><a href="{% url 'core:category_list' %}">Rubriques et menu</a><a href="{% url 'core:catalog_history' %}" aria-current="page">Historique</a><a href="{% url 'core:sales_dashboard' %}">Soldes ↗</a></nav>
+{% block history_content %}{% endblock %}
+{% endblock %}

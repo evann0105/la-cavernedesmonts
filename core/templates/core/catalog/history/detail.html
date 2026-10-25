@@ -1,0 +1,11 @@
+{% extends 'core/catalog/history/base.html' %}
+{% block history_content %}
+<section class="catalog-panel catalog-history-overview"><p class="eyebrow">OPÉRATION N° {{ change.pk }}</p><h2>{% if change.kind == 'undo' %}Rétablissement de {{ change.product_count }} article{{ change.product_count|pluralize }}{% else %}Modification de {{ change.product_count }} article{{ change.product_count|pluralize }}{% endif %}</h2><p>Le {{ change.created_at|date:'d/m/Y à H:i' }} · {{ change.actor_label }}</p>
+{% if change.undone_at %}<p class="notice">Modification annulée le {{ change.undone_at|date:'d/m/Y à H:i' }} par {{ change.undone_by_label }}. Les valeurs antérieures ont été rétablies.</p>
+{% elif change.kind == 'bulk' %}<p>Vous pouvez préparer l’annulation de cette opération. Un aperçu vérifiera les valeurs actuelles avant tout changement.</p><a class="button" href="{% url 'core:catalog_history_undo' change.pk %}">Préparer l’annulation ↗</a>
+{% endif %}
+{% if change.reverses_id %}<p><a class="underlined" href="{% url 'core:catalog_history_detail' change.reverses_id %}">Voir la modification d’origine ↗</a></p>{% endif %}</section>
+<p class="help">Les valeurs ci-dessous décrivent cette opération au moment de son enregistrement.</p>
+{% include 'core/catalog/history/differences.html' %}
+<a class="catalog-text-action" href="{% url 'core:catalog_history' %}">← Toutes les opérations</a>
+{% endblock %}

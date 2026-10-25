@@ -1,0 +1,9 @@
+{% extends 'core/catalog/history/base.html' %}
+{% block history_content %}
+<nav class="catalog-history-tabs" aria-label="Type d’historique"><a href="{% url 'core:catalog_history' %}">Modifications groupées</a><a href="{% url 'core:catalog_activity' %}" aria-current="page">Journal complet</a></nav>
+<p>Créations, modifications de fiches et changements de rubriques. Ce journal conserve la trace des actions ; les modifications groupées récentes s’annulent depuis leur détail.</p>
+<form method="get" class="catalog-filters" aria-label="Rechercher dans le journal"><div><label for="activity-search">Produit, rubrique, action ou intervenant</label><input id="activity-search" type="search" name="q" value="{{ query }}" placeholder="Rechercher dans le journal…"></div><button class="button">Rechercher</button>{% if query %}<a class="catalog-text-action" href="{% url 'core:catalog_activity' %}">Effacer la recherche</a>{% endif %}</form>
+<p class="help">{{ page_obj.paginator.count }} action{{ page_obj.paginator.count|pluralize }} trouvée{{ page_obj.paginator.count|pluralize }}.</p>
+<div class="catalog-activity-list">{% for entry in page_obj %}<article class="catalog-panel"><div class="catalog-activity-meta"><span class="catalog-status">{{ entry.catalog_kind }}</span><p class="help"><time datetime="{{ entry.action_time|date:'c' }}">{{ entry.action_time|date:'d/m/Y à H:i' }}</time> · {{ entry.user.get_username }}</p></div><h2>{{ entry.object_repr }}</h2><p>{{ entry.get_change_message|default:'Action enregistrée dans le catalogue.' }}</p></article>{% empty %}<section class="catalog-panel catalog-empty"><h2>Aucune action correspondante.</h2><p>Les actions du catalogue apparaîtront ici après leur enregistrement.</p></section>{% endfor %}</div>
+{% include 'core/catalog/history/pagination.html' %}
+{% endblock %}

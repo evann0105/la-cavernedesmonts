@@ -1,0 +1,9 @@
+{% extends 'core/catalog/history/base.html' %}
+{% block history_content %}
+<section class="catalog-panel catalog-history-overview"><p class="eyebrow">VÉRIFIER AVANT DE RÉTABLIR</p><h2>Annuler l’opération n° {{ change.pk }}</h2><p>Modification du {{ change.created_at|date:'d/m/Y à H:i' }} par {{ change.actor_label }}.</p><p>Seules les informations de cette opération seront rétablies. Les stocks, commandes et réductions programmées restent inchangés.</p></section>
+{% if errors %}<section class="catalog-error" role="alert"><h2>L’annulation n’a pas été appliquée.</h2><ul>{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul><p>Consultez les fiches concernées, puis reprenez l’aperçu si nécessaire.</p></section><div class="catalog-save"><a href="{% url 'core:catalog_history_detail' change.pk %}">Retour au détail</a>{% if change.kind == 'bulk' and not change.undone_at %}<a class="button button-outline" href="{% url 'core:catalog_history_undo' change.pk %}">Vérifier à nouveau ↗</a>{% endif %}</div>
+{% else %}
+{% include 'core/catalog/history/differences.html' with undo_preview=True %}
+<form method="post" class="catalog-save">{% csrf_token %}{{ form.confirmation }}<a href="{% url 'core:catalog_history_detail' change.pk %}">Garder les valeurs actuelles</a><button class="button" type="submit">Confirmer l’annulation · {{ change.product_count }} article{{ change.product_count|pluralize }}</button></form>
+{% endif %}
+{% endblock %}

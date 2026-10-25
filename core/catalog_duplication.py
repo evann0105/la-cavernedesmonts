@@ -29,7 +29,7 @@ from connexion.email_verification import email_access_allowed
 from stocks.models import Variant
 from .catalog_access import can_manage_catalog, catalog_required
 from .catalog_navigation import catalog_return
-from .models import Product, ProductColor, ProductImage
+from .models import Category, Product, ProductColor, ProductImage
 from .product_images import imported_gallery_urls
 
 SALT = 'catalogue-duplication-v1'
@@ -50,6 +50,7 @@ class DuplicationConflict(DuplicationError):
 class DuplicationResult:
     product: Product
     reused: bool = False
+    excluded_categories: tuple = ()
 
 
 class DuplicationForm(forms.Form):
@@ -76,13 +77,19 @@ def _static_path(name):
     return Path(found)
 
 
-def _source_state(source):
+def _source_state(source, *, lock_categories=False):
     # Include every editable relation, even stock: the confirmation must describe
     # the exact source copied. Normal catalog writes lock the parent row first.
     photos = list(source.images.order_by('order', 'pk'))
     colors = list(source.color_photos.order_by('pk'))
     variants = list(source.stock_variants.order_by('pk'))
     collections = list(source.collections.order_by('pk').values_list('pk', flat=True))
+    category_ids = set(collections) | ({source.category_id} if source.category_id else set())
+    category_query = Category.objects.select_for_update() if lock_categories else Category.objects
+    # Match the ordering of product editing, bulk changes and history undo.
+    # Keep both active and archived rows locked until the copy is saved.
+    categories = list(category_query.filter(pk__in=category_ids).order_by('pk'))
+    active_ids = {category.pk for category in categories if category.archived_at is None}
     initial = ([source.image_url] if source.image_url else []) + [photo.image.url for photo in photos]
     imported = imported_gallery_urls(source, initial)[len(initial):]
     prefix = static('')
@@ -109,10 +116,14 @@ def _source_state(source):
 
     payload = {'product': values(source), 'photos': [values(photo) for photo in photos],
                'colors': [values(color) for color in colors], 'variants': [values(variant) for variant in variants],
-               'collections': collections, 'static_files': static_fingerprints}
+               'collections': collections, 'static_files': static_fingerprints,
+               'categories': [[category.pk, category.name, bool(category.archived_at)] for category in categories]}
     digest = hashlib.sha256(json.dumps(payload, cls=DjangoJSONEncoder, sort_keys=True).encode()).hexdigest()
     return {'digest': digest, 'photos': photos, 'colors': colors, 'variants': variants,
-            'collections': collections, 'imported_names': imported_names}
+            'collections': collections, 'imported_names': imported_names,
+            'copied_category_id': source.category_id if source.category_id in active_ids else None,
+            'copied_collections': [pk for pk in collections if pk in active_ids],
+            'excluded_categories': tuple(category.name for category in categories if category.archived_at is not None)}
 
 
 def duplication_snapshot(source, *, actor):
@@ -186,13 +197,14 @@ def duplicate_product(source_id, *, snapshot, actor):
                     raise DuplicationConflict('Cette copie a été retirée. Rechargez la fiche pour en créer une nouvelle.')
                 return DuplicationResult(copy, reused=True)
             list(source.stock_variants.select_for_update().order_by('pk'))
-            state = _source_state(source)
+            state = _source_state(source, lock_categories=True)
             if state['digest'] != payload['digest']:
-                raise DuplicationConflict('Cette fiche a été modifiée depuis votre confirmation. Rechargez la page pour copier sa dernière version.')
+                raise DuplicationConflict('Cette fiche ou ses rubriques ont été modifiées depuis votre confirmation. Rechargez la page pour vérifier la copie à créer.')
             fields = ('category_id', 'price', 'description', 'brand', 'model_reference', 'composition',
                       'brand_contact', 'information_review_notes', 'benefits', 'translations',
                       'main_color', 'sizes', 'article_type')
             values = {field: deepcopy(getattr(source, field)) for field in fields}
+            values['category_id'] = state['copied_category_id']
             # Reviewed legacy benefits are keyed by slug; materialize them before
             # giving the copy a new identity. No imported URL/alias follows it.
             if values['benefits'] is None:
@@ -210,7 +222,7 @@ def duplicate_product(source_id, *, snapshot, actor):
             elif source.static_image:
                 copy.main_image = copy_static(source.static_image)
             copy.save()
-            copy.collections.set(state['collections'])
+            copy.collections.set(state['copied_collections'])
             for photo in state['photos']:
                 ProductImage.objects.create(product=copy, image=copy_upload(photo.image), alt=photo.alt, order=photo.order)
             next_order = max((photo.order for photo in state['photos']), default=0) + 1
@@ -223,7 +235,7 @@ def duplicate_product(source_id, *, snapshot, actor):
                                        reference='', quantity=0, reserved=0, revision=1)
             LogEntry.objects.log_actions(user_id=actor.pk, queryset=Product.objects.filter(pk=copy.pk),
                                          action_flag=ADDITION, change_message=receipt)
-            return DuplicationResult(copy)
+            return DuplicationResult(copy, excluded_categories=state['excluded_categories'])
     except Exception as exc:
         # File storage is outside the database transaction. Only new copy paths
         # are removed on failure; source and other product media stay untouched.
@@ -259,6 +271,8 @@ def catalog_duplicate(request, pk):
                 status = 409 if isinstance(exc, DuplicationConflict) else 400
             else:
                 messages.success(request, 'La copie existe déjà : vous pouvez continuer à la compléter.' if result.reused else 'La fiche a été copiée en brouillon. Vérifiez les informations et renseignez le stock avant de la publier.')
+                if result.excluded_categories:
+                    messages.warning(request, 'Rubriques archivées non reprises : ' + ', '.join(result.excluded_categories) + '. Classez ce brouillon dans les rubriques actives de votre choix.')
                 target = reverse('core:catalog_edit', kwargs={'pk': result.product.pk})
                 if return_to:
                     target += '?' + urlencode({'return_to': return_to})
@@ -276,6 +290,7 @@ def catalog_duplicate(request, pk):
         else:
             form.initial['snapshot'] = snapshot
     return render(request, 'core/catalog/duplicate.html', {'product': source, 'form': form,
+                  'excluded_categories': state['excluded_categories'] if state else (),
                   'variant_count': len(state['variants']) if state else source.stock_variants.count(),
                   'gallery_count': len(state['photos']) + len(state['imported_names']) if state else source.images.count(),
                   'color_count': len(state['colors']) if state else source.color_photos.count()}, status=status)

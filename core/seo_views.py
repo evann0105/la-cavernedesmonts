@@ -34,7 +34,7 @@ def sitemap_paths():
     categories = Category.objects.filter(
         pk__in=published.values('category_id')
     ) | Category.objects.filter(pk__in=published.values('collections__pk'))
-    slugs = set(categories.values_list('slug', flat=True))
+    slugs = set(categories.filter(archived_at__isnull=True).values_list('slug', flat=True))
     for slug in sorted(slugs):
         yield reverse('core:product_list') + '?' + urlencode({'categorie': slug})
     for slug, article_type in CURATED_INTENTS:

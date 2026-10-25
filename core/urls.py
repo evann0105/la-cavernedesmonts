@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views, catalog_views, promotion_views, sales_views, seo_admin, category_views, catalog_bulk, catalog_duplication
 from .catalog_selection import catalog_selection_results
+from . import catalog_history_views
 
 app_name = 'core'
 
@@ -17,6 +18,12 @@ urlpatterns = [
     path('gestion/rubriques/deplacer/', category_views.category_move, name='category_move'),
     path('gestion/rubriques/<int:pk>/modifier/', category_views.category_edit, name='category_edit'),
     path('gestion/rubriques/<int:pk>/menu/', category_views.category_visibility, name='category_visibility'),
+    path('gestion/rubriques/<int:pk>/archiver/', category_views.category_archive, name='category_archive'),
+    path('gestion/rubriques/<int:pk>/restaurer/', category_views.category_restore, name='category_restore'),
+    path('gestion/produits/historique/', catalog_history_views.catalog_history, name='catalog_history'),
+    path('gestion/produits/historique/journal/', catalog_history_views.catalog_activity, name='catalog_activity'),
+    path('gestion/produits/historique/<int:pk>/', catalog_history_views.catalog_history_detail, name='catalog_history_detail'),
+    path('gestion/produits/historique/<int:pk>/annuler/', catalog_history_views.catalog_history_undo, name='catalog_history_undo'),
     path('gestion/produits/modifier-ensemble/', catalog_bulk.catalog_bulk, name='catalog_bulk'),
     path('gestion/produits/selection-resultats/', catalog_selection_results, name='catalog_selection_results'),
     path('gestion/produits/<int:pk>/dupliquer/', catalog_duplication.catalog_duplicate, name='catalog_duplicate'),

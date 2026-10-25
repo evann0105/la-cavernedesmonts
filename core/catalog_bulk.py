@@ -201,6 +201,7 @@ def prepare_bulk_preview(actor, ids, changes, snapshot):
 
 @transaction.atomic
 def apply_bulk_confirmation(actor, token):
+    from .catalog_history import record_catalog_bulk
     _authorize(actor)
     payload = _read(token, CONFIRMATION_SALT, actor)
     ids = _ids([row[0] for row in payload['products']])
@@ -210,6 +211,7 @@ def apply_bulk_confirmation(actor, token):
     if _category_state(changes) != payload.get('categories'):
         raise CatalogBulkConflict('Une rubrique a changé depuis l’aperçu. Aucun changement n’a été appliqué. Recommencez depuis le catalogue.')
     rows = _preview_rows(products, changes)
+    record_catalog_bulk(actor, products, changes)
     changed = 0
     for row in rows:
         if not row['changed']:

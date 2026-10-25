@@ -1,0 +1,17 @@
+{% extends 'core/catalog/base.html' %}
+{% block title %}{% if archiving %}Archiver{% else %}Restaurer{% endif %} une rubrique — La Caverne des Monts{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a> / <a href="{{ return_url }}">Rubriques et menu</a> / {% if archiving %}Archiver{% else %}Restaurer{% endif %}</nav>{% endblock %}
+{% block catalog_content %}
+<div class="category-management category-management-editor">
+  <div class="catalog-heading"><div><p class="eyebrow">GARDER UN CATALOGUE BIEN RANGÉ</p><h1>{% if archiving %}Archiver{% else %}Restaurer{% endif %} cette rubrique.</h1><p>{{ category.name }}</p></div><a href="{{ return_url }}">← Retour aux rubriques</a></div>
+  <form method="post" class="catalog-form">{% csrf_token %}{{ form.revision }}
+    {% if form.errors %}<div class="catalog-error" role="alert"><p>Aucun changement n’a été enregistré.</p>{{ form.non_field_errors }}{{ form.revision.errors }}<a href="{% if archiving %}{% url 'core:category_archive' category.pk %}{% else %}{% url 'core:category_restore' category.pk %}{% endif %}">Recharger les informations de la rubrique</a></div>{% endif %}
+    <section class="catalog-panel"><h2>{% if archiving %}Une rubrique mise de côté{% else %}Une rubrique à nouveau disponible{% endif %}</h2>
+      {% if archiving %}<p>Elle quittera le menu et les choix proposés pour ranger de nouveaux produits. Vous la retrouverez dans l’onglet « Archivées ».</p><p><strong>Ses {{ product_count }} article{{ product_count|pluralize }} restent conservés, avec leurs prix, photos, stocks et rubriques.</strong> Les articles déjà publiés restent en vente. Les liens déjà partagés continuent de fonctionner.</p><p>Vous pourrez restaurer cette rubrique à tout moment.</p>
+      {% else %}<p>Elle reviendra dans les rubriques actives, avec son nom, son adresse et ses {{ product_count }} article{{ product_count|pluralize }}.</p><p><strong>Elle restera hors du menu.</strong> Vous pourrez choisir « Afficher dans le menu » après sa restauration.</p>{% endif %}
+      {% if product_examples %}<details class="category-management-examples"><summary>Quelques articles de cette rubrique</summary><ul>{% for product in product_examples %}<li>{{ product.name }}</li>{% endfor %}</ul><a href="{% url 'core:catalog_list' %}?categorie={{ category.slug|urlencode }}">Voir tous les articles ↗</a></details>{% endif %}
+    </section>
+    <div class="catalog-save"><a href="{{ return_url }}">Annuler</a><button class="button" type="submit">{% if archiving %}Archiver la rubrique{% else %}Restaurer la rubrique{% endif %}</button></div>
+  </form>
+</div>
+{% endblock %}

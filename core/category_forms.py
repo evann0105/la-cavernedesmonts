@@ -26,3 +26,11 @@ class CategoryMoveForm(forms.Form):
 class CategoryVisibilityForm(forms.Form):
     revision = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
     show_in_menu = forms.ChoiceField(choices=[('0', 'Masquer'), ('1', 'Afficher')], widget=forms.HiddenInput)
+
+
+class CategoryArchiveForm(forms.Form):
+    revision = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
+
+
+def category_choice_label(category):
+    return f'{category.name} — archivée' if category.archived_at else category.name

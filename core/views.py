@@ -81,7 +81,7 @@ def product_list(request):
     request._seo_page_number = page.number
     params = request.GET.copy()
     params.pop('page', None)
-    return render(request, 'core/product_list.html', {'products': page, 'page_obj': page, 'pagination_query': params.urlencode(), 'categories': Category.objects.all(), 'selected': category, 'selected_category': selected_category, 'query': query, 'sort': sort, 'article_type': article_type, 'availability': availability, 'size': size, 'size_choices': size_choices, 'type_choices': Product._meta.get_field('article_type').choices, 'availability_choices': Product._meta.get_field('availability').choices, 'intent_title': intent_title, 'intent_intro': intent_intro})
+    return render(request, 'core/product_list.html', {'products': page, 'page_obj': page, 'pagination_query': params.urlencode(), 'categories': Category.objects.filter(archived_at__isnull=True), 'selected': category, 'selected_category': selected_category, 'query': query, 'sort': sort, 'article_type': article_type, 'availability': availability, 'size': size, 'size_choices': size_choices, 'type_choices': Product._meta.get_field('article_type').choices, 'availability_choices': Product._meta.get_field('availability').choices, 'intent_title': intent_title, 'intent_intro': intent_intro})
 
 
 def product_detail(request, slug, catalog_preview=False):

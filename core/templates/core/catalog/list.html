@@ -1,7 +1,7 @@
 {% extends 'core/catalog/base.html' %}{% load static %}
 {% block catalog_content %}
 <div class="catalog-heading"><div><p class="eyebrow">LE CATALOGUE À VOTRE MAIN</p><h1>Gérer les produits.</h1><p>Créez une fiche, reprenez un modèle ou mettez à jour plusieurs articles en une fois.</p></div><a class="button" data-catalog-remember href="{% url 'core:catalog_add' %}?return_to={{ return_to|urlencode }}">Ajouter un produit <span aria-hidden="true">＋</span></a></div>
-<nav class="catalog-workspace-nav" aria-label="Gestion du catalogue"><a href="{% url 'core:catalog_list' %}" aria-current="page">Produits</a><a href="{% url 'core:category_list' %}">Rubriques et menu</a><a href="{% url 'core:sales_dashboard' %}">Soldes ↗</a></nav>
+<nav class="catalog-workspace-nav" aria-label="Gestion du catalogue"><a href="{% url 'core:catalog_list' %}" aria-current="page">Produits</a><a href="{% url 'core:category_list' %}">Rubriques et menu</a><a href="{% url 'core:catalog_history' %}">Historique</a><a href="{% url 'core:sales_dashboard' %}">Soldes ↗</a></nav>
 <div class="catalog-stats"><span><strong>{{ total_count }}</strong> produits</span><span><strong>{{ published_count }}</strong> en ligne</span><span><strong>{{ draft_count }}</strong> brouillons / retirés</span></div>
 <form class="catalog-filters catalog-filters-expanded" method="get" aria-label="Filtrer les produits">
   <div class="catalog-filter-search"><label for="q">Rechercher un produit ou une marque</label><input id="q" name="q" value="{{ query }}" placeholder="Nom, marque ou description…" type="search"></div>

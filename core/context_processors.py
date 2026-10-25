@@ -41,6 +41,9 @@ def back_navigation(request):
             fallback = reverse('editorial:announcements')
         elif name != 'editorial:faq':
             fallback = reverse('espace:account') if name == 'editorial:overview' else reverse('editorial:overview')
+    elif name in {'core:catalog_history_detail', 'core:catalog_history_undo', 'core:catalog_activity'}:
+        fallback = reverse('core:catalog_history_detail', kwargs={'pk': match.kwargs['pk']}) if name == 'core:catalog_history_undo' else reverse('core:catalog_history')
+        return {'back_url': fallback, 'back_fallback': fallback, 'back_use_history': False}
     elif name.startswith('core:category_'):
         fallback = reverse('core:catalog_list') if name == 'core:category_list' else reverse('core:category_list')
     elif name == 'core:catalog_promotions' or name.startswith('core:sales_'):

@@ -8,7 +8,7 @@ Dans **Gérer les produits**, cliquer **Dupliquer** sur l’article voulu. Une p
 
 La copie reprend les textes, les rubriques principales et complémentaires, les photos, les couleurs, les tailles et leurs prix habituels. Les photos sont copiées indépendamment. Son nom commence par « Copie de », elle possède sa propre adresse et reste invisible aux clients. Les stocks sont remis à zéro, les références internes vidées et la disponibilité laissée à confirmer. Les promotions, réservations, commandes et anciens historiques de prix ne sont pas copiés. La mise en avant est désactivée.
 
-Renommer et relire la fiche, ajuster les photos et renseigner les stocks avant de la publier. Un double clic sur la confirmation retrouve la même copie.
+Renommer et relire la fiche, ajuster les photos et renseigner les stocks avant de la publier. Un double clic sur la confirmation retrouve la même copie. Les rubriques archivées ne sont pas reprises : l’aperçu les indique, puis la vendeuse peut ranger la copie dans une rubrique active. La fiche d’origine conserve ses affectations. Une rubrique archivée ou restaurée entre l’aperçu et la confirmation impose de vérifier à nouveau la copie.
 
 ## Modifier plusieurs articles ensemble
 
@@ -45,6 +45,20 @@ La page dédiée **Rubriques et menu** permet de créer et renommer les collecti
 
 Les adresses des rubriques restent stables après un changement de nom. Les choix initiaux reprennent Femme, Homme, Enfant et Petits bonheurs ; les imports suivants ne remplacent pas les réglages de la vendeuse. Le lien **Notre boutique** reste présent.
 
+## Historique et annulation
+
+**Historique du catalogue** rassemble deux vues : les nouvelles **Modifications groupées**, avec leurs valeurs avant/après, et le **Journal complet**, qui permet aussi de retrouver les actions individuelles et les changements de rubriques. La recherche accepte un nom de produit ou d’auteur. Les anciennes actions restent consultables dans le journal ; elles ne disposent pas rétroactivement des valeurs nécessaires à une annulation.
+
+Ouvrir une modification groupée, puis **Préparer l’annulation** affiche les valeurs actuelles et celles à rétablir. Rien n’est modifié avant **Confirmer l’annulation**. Seuls les champs réellement modifiés par ce lot sont rétablis. Les changements plus récents sur d’autres champs sont conservés ; stocks, commandes, promotions et prix spécifiques de tailles/couleurs restent inchangés. Rétablir un prix général crée une nouvelle observation dans son historique.
+
+Si un des champs concernés a changé depuis, si un article a disparu ou si une rubrique à rétablir a été archivée, tout le lot est bloqué avec une explication. La confirmation expire après deux heures et est liée au gestionnaire. Un double clic ne réapplique pas l’annulation. Celle-ci reste visible dans l’historique avec sa date et son auteur ; elle ne peut pas elle-même être annulée automatiquement.
+
+## Archiver et restaurer une rubrique
+
+Dans **Rubriques et menu**, les onglets **Actives / Archivées** séparent les rubriques courantes des anciennes. **Archiver** ouvre une confirmation indiquant les produits concernés. L’archivage enlève la rubrique du menu, des filtres publics et des nouveaux choix d’affectation. Ses produits, leurs prix et stocks, les affectations existantes et l’ancienne adresse publique sont conservés. Une fiche déjà associée à une rubrique archivée peut garder cette affectation lors d’une modification.
+
+**Restaurer** rend la rubrique disponible à nouveau, après confirmation. Elle reste hors du menu jusqu’à un clic explicite sur **Afficher dans le menu**. Les rubriques archivées ne peuvent pas être renommées ou déplacées avant leur restauration. Chaque action est datée dans le journal.
+
 ## Déploiement
 
-Appliquer la migration `core.0019_category_management` avant de démarrer la nouvelle version. Les fichiers des photos restent dans le stockage médias existant et doivent faire partie des sauvegardes, indépendamment de Git. Le menu est lu depuis la base à chaque requête ; aucun redémarrage n’est nécessaire après une modification par la vendeuse.
+Appliquer les migrations jusqu’à `core.0021_catalog_change_history` avant de démarrer la nouvelle version (`0020_category_archival` ajoute l’archivage). Aucun produit existant n’est modifié par ces migrations. Les fichiers des photos restent dans le stockage médias existant et doivent faire partie des sauvegardes, indépendamment de Git. Le menu est lu depuis la base à chaque requête ; aucun redémarrage n’est nécessaire après une modification par la vendeuse.

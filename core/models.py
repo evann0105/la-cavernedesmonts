@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -10,10 +11,12 @@ class Category(models.Model):
 	show_in_menu = models.BooleanField('Afficher dans le menu', default=False)
 	position = models.PositiveIntegerField('Ordre', default=100)
 	revision = models.PositiveIntegerField(default=1, editable=False)
+	archived_at = models.DateTimeField('Archivée le', null=True, blank=True, editable=False)
 
 	class Meta:
 		verbose_name_plural = 'Categories'
 		ordering = ['position', 'name', 'pk']
+		constraints = [models.CheckConstraint(condition=models.Q(archived_at__isnull=True) | models.Q(show_in_menu=False), name='archived_category_hidden_menu')]
 
 	@property
 	def navigation_label(self):
@@ -278,3 +281,31 @@ class PriceObservation(models.Model):
         ordering = ['observed_at', 'pk']
         indexes = [models.Index(fields=['product', 'variant', 'observed_at'], name='observed_product_variant_date')]
         constraints = [models.CheckConstraint(condition=models.Q(price__gt=0), name='observed_price_positive')]
+
+
+class CatalogChange(models.Model):
+    """An immutable record of the fields actually changed by a catalogue batch."""
+    kind = models.CharField(max_length=10, choices=[('bulk', 'Modification groupée'), ('undo', 'Annulation')])
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
+                              related_name='catalogue_changes')
+    actor_label = models.CharField(max_length=150)
+    created_at = models.DateTimeField(auto_now_add=True)
+    items = models.JSONField(default=list)
+    undone_at = models.DateTimeField(null=True, blank=True)
+    undone_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
+                                  related_name='catalogue_undo_actions')
+    undone_by_label = models.CharField(max_length=150, blank=True)
+    reverses = models.OneToOneField('self', null=True, blank=True, on_delete=models.PROTECT,
+                                    related_name='undo_operation')
+
+    class Meta:
+        ordering = ['-created_at', '-pk']
+        constraints = [models.CheckConstraint(condition=models.Q(kind__in=['bulk', 'undo']),
+                                               name='catalog_change_valid_kind')]
+
+    @property
+    def product_count(self):
+        return len(self.items)
+
+    def __str__(self):
+        return f'{self.get_kind_display()} — {self.product_count} article(s)'

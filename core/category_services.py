@@ -5,6 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.db import connection, transaction
 from django.db.models import Max
 from django.utils.text import slugify
+from django.utils import timezone
 
 from connexion.email_verification import email_access_allowed
 from .catalog_access import can_manage_catalog
@@ -84,6 +85,8 @@ def save_category(pk, values, actor):
     with transaction.atomic():
         _write_lock()
         row = Category() if creating else _row(pk, revision)
+        if not creating and row.archived_at:
+            raise CategoryError('Restaurez cette rubrique avant de la modifier.')
         existing_names = Category.objects.exclude(pk=row.pk).values_list('name', flat=True)
         if any(' '.join(name.split()).casefold() == cleaned['name'].casefold() for name in existing_names):
             raise CategoryError('Une rubrique porte déjà ce nom. Choisissez un autre nom ou modifiez la rubrique existante.')
@@ -111,6 +114,8 @@ def set_category_visibility(pk, revision, show_in_menu, actor):
     with transaction.atomic():
         _write_lock()
         row = _row(pk, revision)
+        if row.archived_at:
+            raise CategoryError('Restaurez cette rubrique avant de l’afficher dans le menu.')
         if row.show_in_menu != show_in_menu:
             row.show_in_menu = show_in_menu
             _persist(row, actor, 'Rubrique affichée dans le menu' if show_in_menu else 'Rubrique retirée du menu')
@@ -151,7 +156,12 @@ def move_category(pk, direction, snapshot, actor):
     expected = _snapshot(snapshot, actor)
     with transaction.atomic():
         _write_lock()
-        rows = list(Category.objects.select_for_update().order_by('position', 'name', 'pk'))
+        # Product assignment and undo also lock categories by primary key. Keep
+        # this lock order even when the merchant's display order is different.
+        locked_ids = list(Category.objects.select_for_update().filter(
+            archived_at__isnull=True).order_by('pk').values_list('pk', flat=True))
+        # Read display order after every row is locked, preserving DB collation.
+        rows = list(Category.objects.filter(pk__in=locked_ids).order_by('position', 'name', 'pk'))
         if [[row.pk, row.revision] for row in rows] != expected:
             raise CategoryConflict(CONFLICT_MESSAGE)
         order = [row.pk for row in rows]
@@ -167,3 +177,21 @@ def move_category(pk, direction, snapshot, actor):
                 row.position = position
                 _persist(row, actor, 'Ordre des rubriques modifié')
         return rows
+
+
+def set_category_archived(pk, revision, archived, actor):
+    """Archive only the rubric: its products, memberships and shared URL survive."""
+    _authorized(actor)
+    revision = _version(revision)
+    if type(archived) is not bool:
+        raise CategoryError('Choisissez d’archiver ou de restaurer cette rubrique.')
+    with transaction.atomic():
+        _write_lock()
+        row = _row(pk, revision)
+        if bool(row.archived_at) == archived:
+            raise CategoryConflict('Cette rubrique est déjà archivée.' if archived else 'Cette rubrique est déjà active.')
+        row.archived_at = timezone.now() if archived else None
+        # Returning a collection never silently republishes a navigation entry.
+        row.show_in_menu = False
+        _persist(row, actor, 'Rubrique archivée, produits conservés' if archived else 'Rubrique restaurée, hors du menu')
+        return row
