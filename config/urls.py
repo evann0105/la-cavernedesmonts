@@ -41,6 +41,7 @@ urlpatterns = [
     path('gestion/tableau-de-bord/', include('tableau.urls')),
     path('gestion/stocks/', include('stocks.urls')),
     path('gestion/avoirs-clients/', include('avoirs.urls')),
+    path('gestion/clients/', include('clients.urls')),
     path('', include('boutique.urls')),
     path('', include('boutique.editorial_urls')),
     path('', include(secure_urls)),

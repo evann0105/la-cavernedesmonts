@@ -15,13 +15,14 @@ from connexion.models import SignupQuota
 from connexion.email_verification import email_verified
 from config.encrypted_fields import email_digest
 from avoirs.models import BenefitMail, CustomerBenefit
+from clients.models import SupportCase
 from facturation.models import Invoice
 from paiement.models import Order
 from retours.models import ReturnMail, ReturnRequest, ReturnShipment
 from .models import Address, CreditNote, Voucher
 
 
-VERSION = '2026-10-19'
+VERSION = '2026-10-26'
 ITEM_FIELDS = ('product', 'variant', 'name', 'size', 'color', 'quantity', 'unit_amount', 'image')
 
 
@@ -127,6 +128,13 @@ def subject_export(user):
             'conditions_contractuelles': order.terms_snapshot,
             'retours': returns,
         })
+    # A seller's directory may group contacts by e-mail for its own work, but
+    # customer exports require an explicit account or owned-order assignment.
+    # Also reject inconsistent cross-account links rather than disclosing an
+    # unrelated person's request through an accidentally assigned order.
+    support_scope = (Q(user_id=user.pk) | Q(user_id__isnull=True, order__user_id=user.pk)) & (
+        Q(order_id__isnull=True) | Q(order__user_id__isnull=True) | Q(order__user_id=user.pk))
+    support_cases = SupportCase.objects.filter(support_scope).order_by('created_at', 'pk')
     return {
         'version': VERSION, 'exporte_le': timezone.now(),
         'perimetre': 'Données du compte et commandes qui lui sont rattachées. Les achats invités et les données détenues par les prestataires sont à demander séparément après vérification.',
@@ -161,6 +169,15 @@ def subject_export(user):
             'historique': [{'date': event.created_at, 'evenement': event.label}
                           for event in benefit.events.order_by('created_at', 'pk')],
         } for benefit in CustomerBenefit.objects.filter(benefit_scope).order_by('created_at', 'pk')],
+        'dossiers_sav': [{
+            'reference': case.reference, 'commande': str(case.order_id) if case.order_id else None,
+            'nom': case.customer_name, 'email': case.customer_email, 'telephone': case.phone,
+            'objet': case.subject, 'demande': case.description,
+            'canal': case.get_channel_display(), 'type': case.get_category_display(),
+            'statut': case.get_state_display(), 'cree_le': case.created_at,
+            'modifie_le': case.updated_at, 'resolu_le': case.resolved_at,
+        } for case in support_cases],
+        'dossiers_sav_perimetre': 'Cet export reprend les demandes rattachées à votre compte ou à ses commandes. Pour les échanges internes ou un dossier non rattaché, contactez la boutique afin que votre demande soit examinée après vérification.',
     }
 
 
@@ -183,20 +200,28 @@ def retention_review(now=None):
         last_benefit_reservation=Max('customer_benefits__redemptions__created_at'),
         last_benefit_use=Max('customer_benefits__redemptions__used_at'),
         last_benefit_release=Max('customer_benefits__redemptions__released_at'),
+        last_support_case=Max('support_cases__updated_at'),
+        last_order_support_case=Max('orders__support_cases__updated_at'),
     ).filter(date_joined__lt=inactive_before).filter(
         Q(last_login__isnull=True) | Q(last_login__lt=inactive_before)
     ).filter(Q(last_order__isnull=True) | Q(last_order__lt=inactive_before)).filter(
         Q(last_return__isnull=True) | Q(last_return__lt=inactive_before)
     ).filter(Q(last_shipment__isnull=True) | Q(last_shipment__lt=inactive_before))
     for field in ('last_benefit', 'last_benefit_notification', 'last_benefit_reservation',
-                  'last_benefit_use', 'last_benefit_release'):
+                  'last_benefit_use', 'last_benefit_release', 'last_support_case', 'last_order_support_case'):
         users = users.filter(Q(**{field + '__isnull': True}) | Q(**{field + '__lt': inactive_before}))
     outstanding_benefits = CustomerBenefit.objects.filter(active=True, user_id__isnull=False).filter(
         Q(ends_at__isnull=True) | Q(ends_at__gt=now)
     ).exclude(redemptions__state='used')
     users = users.exclude(pk__in=outstanding_benefits.values('user_id')).exclude(
         customer_benefits__redemptions__state='held')
-    stale_orders = Order.objects.filter(status__in=('pending', 'expired'),
+    open_cases = SupportCase.objects.exclude(state='resolved')
+    users = users.exclude(pk__in=open_cases.filter(user_id__isnull=False).values('user_id')).exclude(
+        pk__in=open_cases.filter(order__user_id__isnull=False).values('order__user_id'))
+    # A pending claim suspends the review of its order, regardless of whether
+    # the caller has an account. This audit remains read-only.
+    review_orders = Order.objects.exclude(pk__in=open_cases.filter(order_id__isnull=False).values('order_id'))
+    stale_orders = review_orders.filter(status__in=('pending', 'expired'),
         created_at__lt=now - timedelta(days=90), returns__isnull=True).filter(
         Q(reservation_expires_at__isnull=True) | Q(reservation_expires_at__lte=now))
     entries = [
@@ -208,7 +233,7 @@ def retention_review(now=None):
          'Revue manuelle, vérifier les contacts récents, notifier avant fermeture et distinguer compte, contrat et archive légale. Les modifications de profil ne sont pas horodatées par ce modèle.'),
         ('abandoned_orders_review', stale_orders.count(), 'Commandes non payées anciennes de plus de 90 jours',
          'Réconcilier le paiement chez Stripe, les réservations et tout litige avant une décision de suppression.'),
-        ('demo_orders_review', Order.objects.filter(status='demo', created_at__lt=now - timedelta(days=90)).count(),
+        ('demo_orders_review', review_orders.filter(status='demo', created_at__lt=now - timedelta(days=90)).count(),
          'Simulations anciennes de plus de 90 jours', 'Vérifier le périmètre de test et les relations protégées avant suppression.'),
         ('return_proofs_review', ReturnShipment.objects.filter(has_proof=True,
          request__state='completed', request__completed_at__lt=now - timedelta(days=90)).count(),
@@ -220,7 +245,11 @@ def retention_review(now=None):
         ('sent_benefit_mails_review', BenefitMail.objects.filter(sent_at__lt=now - timedelta(days=90)).count(),
          'Copies techniques de courriels d’avoirs et bons envoyés depuis plus de 90 jours',
          'Vérifier les avantages encore valables et les preuves nécessaires avant de retirer les copies techniques ; conserver les codes émis et leur historique d’utilisation.'),
-        ('old_paid_orders_review', Order.objects.filter(status='paid', created_at__lt=_years_before(now, 10)).count(),
+        ('closed_support_cases_review', SupportCase.objects.filter(state='resolved',
+         resolved_at__lt=now - timedelta(days=90), updated_at__lt=now - timedelta(days=90)).count(),
+         'Dossiers SAV résolus sans activité depuis plus de 90 jours',
+         'Revue manuelle des données encore utiles ; vérifier les garanties, les demandes associées et les litiges avant toute décision. Aucun dossier ni échange n’est supprimé automatiquement.'),
+        ('old_paid_orders_review', review_orders.filter(status='paid', created_at__lt=_years_before(now, 10)).count(),
          'Commandes payées créées il y a plus de dix ans',
          'Ce seuil déclenche seulement une revue : calculer le terme exact depuis livraison / prestation ou clôture de l’exercice comptable selon la pièce ; suspendre en cas de litige.'),
     ]

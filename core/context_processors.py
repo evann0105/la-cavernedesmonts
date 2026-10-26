@@ -64,6 +64,14 @@ def back_navigation(request):
         fallback = reverse('core:product_list')
     elif name.startswith('paiement:'):
         fallback = reverse('core:cart')
+    elif name.startswith('clients:'):
+        if name == 'clients:directory':
+            fallback = reverse('espace:account')
+        elif name in {'clients:profile', 'clients:case_list'}:
+            fallback = reverse('clients:directory')
+        else:
+            fallback = reverse('clients:case_list')
+        return {'back_url': fallback, 'back_fallback': fallback, 'back_use_history': False}
     elif name.startswith('expeditions:'):
         if name == 'expeditions:contacts' and match and match.kwargs.get('pk'):
             fallback = reverse('expeditions:detail', kwargs={'pk': match.kwargs['pk']})

@@ -3,7 +3,7 @@
 <section class="hub-paper">
   <p class="eyebrow">Vos informations, vos droits</p>
   <h2>Télécharger mes données</h2>
-  <p>Obtenez une copie de votre profil, de vos adresses, des commandes et factures rattachées à votre compte, des retours, des avoirs enregistrés et des bons de réduction. Le fichier est au format JSON, lisible et réutilisable.</p>
+  <p>Obtenez une copie de votre profil, de vos adresses, des commandes et factures rattachées à votre compte, des retours, des avoirs enregistrés, des bons de réduction et des demandes SAV qui lui sont rattachées. Le fichier est au format JSON, lisible et réutilisable.</p>
   <p class="hub-note">Conservez ce fichier dans un endroit privé : il contient des informations personnelles. Les achats réalisés sans rattachement à votre compte ne sont pas ajoutés automatiquement, même si vous avez utilisé la même adresse e-mail.</p>
   <form class="hub-form" method="post" action="{% url 'espace:privacy_export' %}">
     {% csrf_token %}
