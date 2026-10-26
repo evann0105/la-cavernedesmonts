@@ -1,0 +1,5 @@
+{% extends 'alertes/base.html' %}
+{% block alerts_content %}
+<header class="catalog-heading"><div><p class="eyebrow">UNE ALERTE ADAPTÉE</p><h1>{{ row.title }}</h1><p>{{ row.size }} · {{ row.color }} · {% if row.available != None %}{{ row.available }} unité{{ row.available|pluralize }} disponible{{ row.available|pluralize }}{% else %}Stock à compter{% endif %}</p></div><a class="underlined" href="{% url 'alertes:stocks' %}">← Stocks à surveiller</a></header>
+<form method="post" class="alerts-form">{% csrf_token %}{{ form.revision }}{% if form.errors %}<div class="catalog-error" role="alert">{{ form.non_field_errors }}{{ form.revision.errors }}</div>{% endif %}<section class="catalog-panel"><h2>Quand être prévenue ?</h2>{% include 'alertes/checkbox.html' with field=form.enabled %}{% include 'alertes/field.html' with field=form.threshold %}<p class="alerts-help">Ce réglage s’applique uniquement à cette taille et cette couleur. Il ne change pas la quantité disponible.</p></section><div class="catalog-save"><button class="button" type="submit">Enregistrer cette alerte ↗</button></div></form>
+{% endblock %}

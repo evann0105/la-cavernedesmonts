@@ -134,6 +134,12 @@ def settle(session):
             order_confirmation(order)
             from retours.mail import deliver_pending
             transaction.on_commit(deliver_pending, robust=True)
+            from alertes.services import enqueue_paid_order
+            from alertes.mail import deliver_pending as deliver_seller_notice
+            from functools import partial
+            seller_notice = enqueue_paid_order(order)
+            if seller_notice is not None:
+                transaction.on_commit(partial(deliver_seller_notice, notice_id=seller_notice.pk), robust=True)
         elif session.get('status') == 'expired' and session.get('payment_status') == 'unpaid':
             if order.status == 'pending':
                 finish_locked(order,False);order.status='expired';order.save()

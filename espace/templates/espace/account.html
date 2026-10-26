@@ -17,6 +17,7 @@
     <a class="hub-card" href="{% url 'core:catalog_list' %}"><h3>Gérer les produits</h3><p>Créer, dupliquer et modifier plusieurs articles ensemble.</p></a>
     <a class="hub-card" href="{% url 'core:category_list' %}"><h3>Rubriques et menu</h3><p>Créer, ranger, archiver et restaurer les rubriques du catalogue.</p></a>
     <a class="hub-card" href="{% url 'core:catalog_history' %}"><h3>Historique du catalogue</h3><p>Consulter les changements et annuler une modification groupée.</p></a>
+    <a class="hub-card" href="{% url 'alertes:stocks' %}"><h3>Stocks à surveiller</h3><p>Choisir les seuils d’alerte avant la rupture, par taille et couleur.</p></a>
     <a class="hub-card" href="{% url 'stocks:overview' %}"><h3>Stock</h3><p>Ajouter ou retirer des unités et compter les tailles et couleurs.</p></a>
     <a class="hub-card" href="{% url 'core:sales_dashboard' %}"><h3>Soldes</h3><p>Préparer les réductions par catégorie, prix, taille ou couleur et suivre les périodes en cours.</p></a>
     <a class="hub-card" href="{% url 'core:seo_overview' %}"><h3>Référencement Google</h3><p>Voir les titres et descriptions préparés automatiquement et les informations à compléter.</p></a>
@@ -31,6 +32,7 @@
   {% endif %}
   {% if can_manage_returns %}
   <section class="account-admin-section" aria-labelledby="account-service-title"><h3 id="account-service-title">Service client</h3><div class="hub-cards">
+    <a class="hub-card" href="{% url 'alertes:emails' %}"><h3>E-mails et alertes</h3><p>Être prévenue des commandes payées, suivre les échecs d’envoi et préparer les réapprovisionnements.</p></a>
     <a class="hub-card" href="{% url 'clients:directory' %}"><h3>Clients et SAV</h3><p>Retrouver un client, ses commandes et ses documents, puis suivre les demandes reçues par téléphone.</p></a>
     <a class="hub-card" href="{% url 'expeditions:overview' %}"><h3>Préparer et expédier</h3><p>Vérifier les commandes, préparer les colis et prévenir les clients avec leur suivi.</p></a>
     <a class="hub-card" href="{% url 'facturation:management' %}"><h3>Commandes et factures</h3><p>Suivre les commandes et imprimer les documents du colis.</p></a>

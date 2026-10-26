@@ -1,0 +1,8 @@
+{% extends 'core/catalog/base.html' %}{% load static %}
+{% block title %}E-mails et alertes — La Caverne des Monts{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'alertes/alertes.css' %}?v=20261026">{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a><span aria-hidden="true"> / </span><span>E-mails et alertes</span></nav>{% endblock %}
+{% block catalog_content %}
+<nav class="alerts-nav" aria-label="E-mails et alertes">{% if can_manage_returns %}<a href="{% url 'alertes:emails' %}"{% if active == 'emails' %} aria-current="page"{% endif %}>Suivi des e-mails</a>{% endif %}{% if can_manage_catalog %}<a href="{% url 'alertes:stocks' %}"{% if active == 'stocks' %} aria-current="page"{% endif %}>Stocks à surveiller</a>{% endif %}{% if can_configure_alerts %}<a href="{% url 'alertes:settings' %}"{% if active == 'settings' %} aria-current="page"{% endif %}>Réglages des alertes</a>{% endif %}</nav>
+{% block alerts_content %}{% endblock %}
+{% endblock %}

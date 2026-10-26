@@ -64,6 +64,14 @@ def back_navigation(request):
         fallback = reverse('core:product_list')
     elif name.startswith('paiement:'):
         fallback = reverse('core:cart')
+    elif name.startswith('alertes:'):
+        if name == 'alertes:stock_rule':
+            fallback = reverse('alertes:stocks')
+        elif name == 'alertes:email_detail':
+            fallback = reverse('alertes:emails')
+        else:
+            fallback = reverse('espace:account')
+        return {'back_url': fallback, 'back_fallback': fallback, 'back_use_history': False}
     elif name.startswith('clients:'):
         if name == 'clients:directory':
             fallback = reverse('espace:account')

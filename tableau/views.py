@@ -33,6 +33,8 @@ def dashboard(request):
     from clients.worklist import dashboard_attention as sav_dashboard_attention
     return_attention = dashboard_attention() if manager(request.user) else None
     sav_attention = sav_dashboard_attention() if manager(request.user) else None
+    from alertes.dashboard import attention
+    mail_stock_attention = attention(request.user)
     today = timezone.localdate()
     try:
         year = int(request.GET.get('annee', today.year))
@@ -65,6 +67,7 @@ def dashboard(request):
     years = sorted(set(paid.annotate(y=ExtractYear('paid_at')).values_list('y',flat=True)) | {today.year,year}, reverse=True)
     orders = Paginator(selected.order_by('-paid_at','-pk'),15).get_page(request.GET.get('page'))
     response = render(request,'tableau/dashboard.html',{
+        'mail_stock_attention': mail_stock_attention,
         'return_attention':return_attention, 'sav_attention':sav_attention,
         'year':year,'month':month,'years':years,'months':list(enumerate(MONTHS,1)),
         'period':f'{MONTHS[month-1]} {year}' if month else f'Année {year}',

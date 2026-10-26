@@ -1,0 +1,1 @@
+<div class="alerts-field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<p class="alerts-help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</p>{% endif %}{% for error in field.errors %}<p class="catalog-error" role="alert">{{ error }}</p>{% endfor %}</div>

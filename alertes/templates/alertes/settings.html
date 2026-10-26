@@ -1,0 +1,10 @@
+{% extends 'alertes/base.html' %}
+{% block alerts_content %}
+<header class="catalog-heading"><div><p class="eyebrow">VOS PRÉFÉRENCES</p><h1>Réglages des alertes.</h1><p>Choisissez où recevoir les informations utiles et quand être prévenue.</p></div></header>
+{% include 'alertes/mode.html' %}
+<form method="post" class="alerts-form">{% csrf_token %}{{ form.revision }}{% if form.errors %}<div class="catalog-error" role="alert"><strong>Vérifiez les champs ci-dessous.</strong>{{ form.non_field_errors }}{{ form.revision.errors }}</div>{% endif %}
+<section class="catalog-panel"><p class="eyebrow">01 · DESTINATAIRE</p><h2>Qui doit être prévenu ?</h2>{% include 'alertes/field.html' with field=form.recipient %}</section>
+<section class="catalog-panel"><p class="eyebrow">02 · COMMANDES</p><h2>Dès qu’un paiement est confirmé</h2>{% include 'alertes/checkbox.html' with field=form.order_notifications_enabled %}<p class="alerts-help">L’activation concerne les prochaines commandes payées. Elle n’envoie pas d’alerte pour les anciennes ventes ou les simulations.</p></section>
+<section class="catalog-panel"><p class="eyebrow">03 · STOCKS</p><h2>Anticiper le réapprovisionnement</h2>{% include 'alertes/field.html' with field=form.stock_threshold %}{% include 'alertes/checkbox.html' with field=form.stock_notifications_enabled %}<p class="alerts-help">La liste des stocks à surveiller reste disponible même sans e-mail. Un seuil différent peut être choisi pour chaque taille et couleur. Les articles sans quantité renseignée sont classés « À compter ».</p><a class="underlined" href="{% url 'alertes:stocks' %}">Voir les stocks à surveiller ↗</a></section>
+<div class="catalog-save"><button class="button" type="submit">Enregistrer mes réglages ↗</button></div></form>
+{% endblock %}

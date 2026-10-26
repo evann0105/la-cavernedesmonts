@@ -1,0 +1,9 @@
+{% extends 'alertes/base.html' %}
+{% block alerts_content %}
+<header class="catalog-heading"><div><p class="eyebrow">UN MESSAGE À LA FOIS</p><h1>{{ row.title }}.</h1><p>{{ row.reference }}</p></div><a class="underlined" href="{% url 'alertes:emails' %}">← Tous les e-mails</a></header>
+{% include 'alertes/mode.html' %}
+{% if error %}<div class="catalog-error" role="alert">{{ error }}</div>{% endif %}
+<section class="catalog-panel alerts-detail"><span class="alerts-badge alerts-badge--{{ row.status }}">{{ row.status_label }}</span><dl><div><dt>Destinataire</dt><dd>{{ row.recipient|default:'Adresse à vérifier' }}</dd></div><div><dt>Dernière activité</dt><dd>{{ row.date|date:'d/m/Y à H:i' }}</dd></div><div><dt>Tentatives d’envoi</dt><dd>{{ row.attempts }}</dd></div>{% if row.sent_at %}<div><dt>Traité le</dt><dd>{{ row.sent_at|date:'d/m/Y à H:i' }}</dd></div>{% endif %}</dl>{% if row.reason %}<p>{{ row.reason }}</p>{% endif %}
+<div class="alerts-actions">{% if row.can_retry %}<form method="post">{% csrf_token %}<input type="hidden" name="attempts" value="{{ row.attempts }}">{% if row.requires_recipient_confirmation %}<input type="hidden" name="recipient_confirmation_token" value="{{ row.recipient_confirmation_token }}"><div class="alerts-field"><label class="alerts-checkbox"><input type="checkbox" name="confirm_recipient" value="yes" required><span>Je confirme l’envoi de cet ancien message à {{ row.recipient }}.</span></label></div>{% endif %}<button class="button" type="submit">Relancer ce message ↗</button></form>{% endif %}{% if row.url %}<a class="underlined" href="{{ row.url }}">{{ row.action_label }} ↗</a>{% endif %}</div>
+{% if row.can_retry %}<p class="alerts-help">Seul ce message sera relancé vers le destinataire indiqué. La commande et son paiement restent inchangés.</p>{% endif %}</section>
+{% endblock %}

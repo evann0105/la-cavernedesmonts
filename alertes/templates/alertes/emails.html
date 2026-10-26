@@ -1,0 +1,11 @@
+{% extends 'alertes/base.html' %}
+{% block alerts_content %}
+<header class="catalog-heading"><div><p class="eyebrow">GARDER LE FIL</p><h1>Suivi des e-mails.</h1><p>Retrouvez les messages de commande, d’expédition, de retour, d’avoir et les alertes de la boutique.</p></div>{% if can_configure_alerts %}<a class="button button-outline" href="{% url 'alertes:settings' %}">Régler mes alertes ↗</a>{% endif %}</header>
+{% include 'alertes/mode.html' %}
+{% if can_configure_alerts and not preferences.order_notifications_enabled %}<p class="alerts-setup">Pour être prévenue des nouvelles commandes payées, <a href="{% url 'alertes:settings' %}">renseignez votre adresse et activez l’alerte</a>.</p>{% endif %}
+<nav class="alerts-tabs" aria-label="État des e-mails">{% for tab in tabs %}<a href="?etat={{ tab.key }}"{% if state == tab.key %} aria-current="page"{% endif %}>{{ tab.label }} <span>{{ tab.count }}</span></a>{% endfor %}</nav>
+<section class="catalog-panel"><h2>{% if state == 'attention' %}Les messages à vérifier{% elif state == 'pending' %}Les prochains envois{% elif state == 'processed' %}Les messages traités{% else %}Tous les messages{% endif %}</h2>
+{% for row in page_obj %}<article class="alerts-row"><div><span class="alerts-badge alerts-badge--{{ row.status }}">{{ row.status_label }}</span><h3>{{ row.title }}</h3><p class="alerts-recipient">Pour : {{ row.recipient|default:'Adresse à vérifier' }}</p><p class="alerts-help">{{ row.reference }} · {{ row.date|date:'d/m/Y à H:i' }}</p>{% if row.reason %}<p class="alerts-help">{{ row.reason }}</p>{% endif %}</div><a class="button button-outline" href="{% url 'alertes:email_detail' row.source row.pk %}">{% if row.can_retry %}Consulter et relancer{% else %}Voir le suivi{% endif %} ↗</a></article>{% empty %}<div class="alerts-empty"><h3>{% if state == 'attention' %}Aucun message à vérifier.{% else %}Aucun message dans cette liste.{% endif %}</h3><p>Le suivi se complète au fil des commandes et des actions de la boutique.</p></div>{% endfor %}
+{% include 'alertes/pagination.html' %}</section>
+<p class="alerts-help">Le suivi concerne les messages transactionnels enregistrés par le site. Les liens de connexion et de réinitialisation du mot de passe doivent être demandés à nouveau depuis leur page habituelle.</p>
+{% endblock %}

@@ -24,6 +24,10 @@ class Command(BaseCommand):
             reconcile_all()
             deliver_pending()
             deliver_benefits()
+            from alertes.stock import scan_low_stock
+            from alertes.mail import deliver_pending as deliver_seller_notices
+            scan_low_stock()
+            deliver_seller_notices()
             if not options['loop']:break
             time.sleep(60)
 

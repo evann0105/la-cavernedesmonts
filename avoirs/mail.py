@@ -6,6 +6,8 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.db import transaction
 from django.db.models import Q
 from django.urls import reverse
@@ -82,15 +84,40 @@ def enqueue(benefit, key=None, resend=False):
     })[0]
 
 
-def deliver_pending(limit=30, benefit_id=None):
-    if not settings.EMAIL_DELIVERY_ENABLED:
+def blocked_reason(notice):
+    """Read the reason a queued code cannot safely be sent; never reveal details."""
+    benefit, payload = notice.benefit, notice.payload
+    if not isinstance(payload, dict) or not isinstance(payload.get('details'), str):
+        return 'Le contenu de cet ancien message doit être vérifié depuis l’avoir.'
+    if (payload.get('recipient') != benefit.recipient_email
+            or payload.get('revision') != benefit.updated_at.isoformat()
+            or (benefit.bound_user_id and not benefit.user_id)
+            or (benefit.user_id and (benefit.bound_user_id not in (None, benefit.user_id)
+                or email_digest(benefit.user.email) != benefit.recipient_email_hash))):
+        return 'L’avoir ou son destinataire a changé. Préparez un nouveau message depuis sa fiche.'
+    if not benefit.active or benefit.status in ('used', 'expired'):
+        return 'Cet avoir est désactivé, expiré ou déjà utilisé ; ce message n’est plus à envoyer.'
+    try:
+        validate_email(payload['recipient'])
+    except (ValidationError, TypeError):
+        return 'L’adresse e-mail du destinataire est absente ou invalide.'
+    return ''
+
+
+def deliver_pending(limit=30, benefit_id=None, *, notice_id=None, force=False, expected_attempts=None):
+    if not settings.EMAIL_DELIVERY_ENABLED or limit <= 0:
         return 0
+    if force and notice_id is None:
+        raise ValueError('A manual retry must target one notification.')
     cutoff = timezone.now() - timedelta(minutes=5)
     queued = BenefitMail.objects.filter(sent_at__isnull=True, cancelled_at__isnull=True)
     if benefit_id is not None:
         queued = queued.filter(benefit_id=benefit_id)
-    identities = list(queued.filter(Q(last_attempt_at__isnull=True) | Q(last_attempt_at__lt=cutoff))
-                      .order_by('pk').values('pk', 'benefit_id')[:limit])
+    if notice_id is not None:
+        queued = queued.filter(pk=notice_id)
+    if not force:
+        queued = queued.filter(Q(last_attempt_at__isnull=True) | Q(last_attempt_at__lt=cutoff))
+    identities = list(queued.order_by('pk').values('pk', 'benefit_id')[:limit])
     sent = 0
     for identity in identities:
         try:
@@ -100,12 +127,13 @@ def deliver_pending(limit=30, benefit_id=None):
                 notice = BenefitMail.objects.select_for_update().get(pk=identity['pk'])
                 if notice.sent_at or notice.cancelled_at:
                     continue
+                if expected_attempts is not None and notice.attempts != expected_attempts:
+                    raise ValidationError('Ce message a été traité depuis votre ouverture. Actualisez son état avant de le relancer.')
+                if not force and notice.last_attempt_at and notice.last_attempt_at >= cutoff:
+                    continue
+                notice.benefit = benefit
                 payload = notice.payload
-                if (payload.get('recipient') != benefit.recipient_email
-                        or payload.get('revision') != benefit.updated_at.isoformat()
-                        or (benefit.bound_user_id and not benefit.user_id)
-                        or (benefit.user_id and email_digest(benefit.user.email) != benefit.recipient_email_hash)
-                        or not benefit.active or benefit.status in ('used', 'expired')):
+                if blocked_reason(notice):
                     notice.cancelled_at = timezone.now()
                     notice.save(update_fields=['cancelled_at'])
                     continue
@@ -119,13 +147,13 @@ def deliver_pending(limit=30, benefit_id=None):
                     'action': 'Voir mes avoirs', 'url': settings.SITE_URL + reverse('espace:credits'),
                     'details': payload['details'], 'security': False, 'test': test,
                 }
-                text, html = render_message(context)
-                message = EmailMultiAlternatives(
-                    ('[TEST] ' if test else '') + context['subject'] + ' — La Caverne des Monts',
-                    text, settings.DEFAULT_FROM_EMAIL, [payload['recipient']],
-                )
-                message.attach_alternative(html, 'text/html')
                 try:
+                    text, html = render_message(context)
+                    message = EmailMultiAlternatives(
+                        ('[TEST] ' if test else '') + context['subject'] + ' — La Caverne des Monts',
+                        text, settings.DEFAULT_FROM_EMAIL, [payload['recipient']],
+                    )
+                    message.attach_alternative(html, 'text/html')
                     if message.send() != 1:
                         continue
                 except Exception:
