@@ -289,6 +289,11 @@ class CustomerWorkspaceViewsTests(TestCase):
         order = self.order(user=other, email=other.email)
         response = self.client.post(reverse('clients:case_create'), self.create_data(user=other.pk, user_id=other.pk,
                                     order=str(order.pk), order_id=str(order.pk), related_order=str(order.pk)))
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('related_order', response.context['form'].errors)
+        self.assertFalse(SupportCase.objects.exists())
+        response = self.client.post(reverse('clients:case_create'), self.create_data(user=other.pk, user_id=other.pk,
+                                    order=str(order.pk), order_id=str(order.pk), related_order=''))
         self.assertEqual(response.status_code, 302)
         case = SupportCase.objects.get()
         self.assertIsNone(case.user_id)

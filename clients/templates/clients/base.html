@@ -1,6 +1,6 @@
 {% extends 'core/catalog/base.html' %}{% load static %}
 {% block title %}Clients et SAV — La Caverne des Monts{% endblock %}
-{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'clients/clients.css' %}?v=20261026-sav2">{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'clients/clients.css' %}?v=20261026-sav3">{% endblock %}
 {% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a><span aria-hidden="true"> / </span><a href="{% url 'clients:directory' %}">Clients et SAV</a>{% if case %}<span aria-hidden="true"> / </span><span>{{ case.reference }}</span>{% elif customer %}<span aria-hidden="true"> / </span><span>Fiche client</span>{% endif %}</nav>{% endblock %}
 {% block catalog_content %}
 <div class="customer-workspace">

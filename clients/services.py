@@ -88,11 +88,13 @@ def _contact_reference(contact_case, *, user, order):
     return source.contact_reference or source.pk
 
 
-def _fingerprint(data, user_id, order_id, contact_case_id=None):
+def _fingerprint(data, user_id, order_id, contact_case_id=None, contact_order_id=None):
     values = {key: value for key, value in data.items() if key != 'creation_key'}
     values.update(user_id=user_id, order_id=str(order_id) if order_id is not None else None)
     if contact_case_id is not None:
         values['contact_case_id'] = str(contact_case_id)
+    if contact_order_id is not None:
+        values['contact_order_id'] = str(contact_order_id)
     return salted_hmac('clients-support-creation-v1',
         json.dumps(values, default=str, sort_keys=True, ensure_ascii=False), algorithm='sha256').hexdigest()
 
@@ -107,18 +109,25 @@ def _existing_creation(actor, creation_key, fingerprint):
 
 
 @transaction.atomic
-def create_case(actor, cleaned_data, *, user=None, order=None, contact_case=None):
+def create_case(actor, cleaned_data, *, user=None, order=None, contact_case=None, contact_order=None):
     """The caller supplies an explicit customer/order selection, never arbitrary POST IDs."""
     _authorize(actor)
     data = _validated(SupportCaseForm, cleaned_data)
     # The fingerprint uses explicit references even if an account is subsequently
     # removed: a repeated submission never creates a second dossier.
-    fingerprint = _fingerprint(data, _reference_pk(user), _reference_pk(order), _reference_pk(contact_case))
+    if contact_order is not None and any(value is not None for value in (user, order, contact_case)):
+        raise SupportError('Choisissez une seule fiche client pour cette demande.')
+    fingerprint = _fingerprint(data, _reference_pk(user), _reference_pk(order),
+                               _reference_pk(contact_case), _reference_pk(contact_order))
     existing = _existing_creation(actor, data['creation_key'], fingerprint)
     if existing is not None:
         return existing, True
-    user_row, order_row = _identity(data, user=user, order=order)
+    user_row, order_row = _identity(data, user=user, order=contact_order if contact_order is not None else order)
     contact_reference = _contact_reference(contact_case, user=user_row, order=order_row)
+    if contact_order is not None:
+        # Keep the explicitly chosen guest profile even when this request does
+        # not concern a particular order. The source is revalidated above.
+        contact_reference, order_row = order_row.pk, None
     case = SupportCase(**data, user=user_row, order=order_row, created_by=actor, updated_by=actor,
                        creation_fingerprint=fingerprint, contact_reference=contact_reference)
     case.full_clean(validate_unique=False)

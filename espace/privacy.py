@@ -15,7 +15,7 @@ from connexion.models import SignupQuota
 from connexion.email_verification import email_verified
 from config.encrypted_fields import email_digest
 from avoirs.models import BenefitMail, CustomerBenefit
-from clients.models import SupportCase
+from clients.models import SupportCase, SupportRelationship
 from facturation.models import Invoice
 from paiement.models import Order
 from retours.models import ReturnMail, ReturnRequest, ReturnShipment
@@ -220,7 +220,17 @@ def retention_review(now=None):
         pk__in=open_cases.filter(order__user_id__isnull=False).values('order__user_id'))
     # A pending claim suspends the review of its order, regardless of whether
     # the caller has an account. This audit remains read-only.
-    review_orders = Order.objects.exclude(pk__in=open_cases.filter(order_id__isnull=False).values('order_id'))
+    open_links = SupportRelationship.objects.filter(removed_at__isnull=True).exclude(case__state='resolved')
+    protected_orders = Order.objects.filter(
+        Q(pk__in=open_cases.filter(order_id__isnull=False).values('order_id')) |
+        Q(pk__in=open_cases.filter(contact_reference__isnull=False).values('contact_reference')) |
+        Q(pk__in=open_links.filter(return_request__isnull=False).values('return_request__order_id')) |
+        Q(pk__in=open_links.filter(credit_note__isnull=False).values('credit_note__order_id')) |
+        Q(pk__in=open_links.filter(benefit__isnull=False).values('benefit__redemptions__order_id')))
+    users = users.exclude(pk__in=protected_orders.filter(user_id__isnull=False).values('user_id')).exclude(
+        pk__in=open_links.filter(benefit__user_id__isnull=False).values('benefit__user_id')).exclude(
+        pk__in=open_links.filter(benefit__bound_user_id__isnull=False).values('benefit__bound_user_id'))
+    review_orders = Order.objects.exclude(pk__in=protected_orders.values('pk'))
     stale_orders = review_orders.filter(status__in=('pending', 'expired'),
         created_at__lt=now - timedelta(days=90), returns__isnull=True).filter(
         Q(reservation_expires_at__isnull=True) | Q(reservation_expires_at__lte=now))

@@ -1,0 +1,15 @@
+<section class="catalog-panel customer-picker" data-customer-picker data-search-url="{% url 'clients:customer_search' %}" data-pick-url="{% url 'clients:customer_pick' %}" aria-labelledby="customer-picker-title">
+  <p class="eyebrow">RETROUVER LA BONNE FICHE</p>
+  <h2 id="customer-picker-title">Le client est-il déjà connu ?</h2>
+  <p class="customer-muted">Cherchez son nom, son e-mail ou son téléphone, puis choisissez sa fiche. La demande et le suivi déjà saisis sont conservés.</p>
+  <input type="hidden" name="selected_client" value="{{ selected_client }}" data-selected-client>
+  <div class="customer-picker-search"><div class="customer-field"><label for="client-query">Nom, e-mail ou téléphone</label><input id="client-query" type="search" name="client_query" maxlength="150" value="{{ picker_query }}" autocomplete="off" placeholder="Ex. : Camille ou un numéro de téléphone" aria-describedby="customer-picker-help"></div><button class="button button-outline" type="submit" name="picker_action" value="search" formnovalidate data-picker-search>Rechercher</button></div>
+  <p id="customer-picker-help" class="customer-muted">Au moins 2 caractères pour un nom ou un e-mail, 4 chiffres pour un téléphone.</p>
+  <p class="customer-picker-status customer-muted" role="status" aria-live="polite" data-picker-status>{% if picker_query %}{% if picker_results %}{{ picker_results|length }} fiche{{ picker_results|length|pluralize }} proposée{{ picker_results|length|pluralize }}.{% if picker_more %} Affinez la recherche pour voir les autres résultats.{% endif %}{% else %}Aucune fiche trouvée. Vérifiez la recherche ou renseignez les coordonnées d’un nouveau client ci-dessous.{% endif %}{% endif %}</p>
+  <ul class="customer-picker-results" data-picker-results>
+  {% for result in picker_results %}<li><div><strong>{{ result.name }}</strong><p class="customer-muted">{{ result.account_label }} · {{ result.order_count }} commande{{ result.order_count|pluralize }}</p><p class="customer-contact">{{ result.email|default:'Sans e-mail' }}{% if result.phone %} · {{ result.phone }}{% endif %}</p></div><button class="button button-outline" type="submit" name="picker_action" value="select:{{ result.key }}" data-pick-key="{{ result.key }}" formnovalidate aria-label="Choisir la fiche de {{ result.name }}">Choisir cette fiche</button></li>{% endfor %}
+  </ul>
+  <div class="customer-picker-selected customer-selected" data-picker-selected{% if not customer %} hidden{% endif %}><div><span class="eyebrow">CLIENT SÉLECTIONNÉ</span><strong data-picked-name>{{ customer.name }}</strong><span data-picked-contact>{{ picker_initial.email|default:'Sans adresse e-mail' }}{% if customer.phone %} · {{ customer.phone }}{% endif %}</span><span data-picked-account>{{ customer.account_label }}</span></div></div>
+  <button class="customer-text-link customer-picker-new" type="submit" name="picker_action" value="new" formnovalidate data-picker-new>{% if customer %}Saisir un nouveau client{% else %}Continuer avec un nouveau client{% endif %}</button>
+  {{ picker_initial|json_script:'customer-picker-initial' }}
+</section>

@@ -7,6 +7,7 @@ from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -21,6 +22,7 @@ from retours.access import returns_required
 from retours.models import ReturnRequest
 from .forms import SupportCaseForm, SupportUpdateForm
 from .attachments import attachment_context
+from .relationships import relationship_context
 from .models import SupportCase
 from .selectors import find_customers, get_customer
 from .services import create_case, update_case
@@ -153,42 +155,77 @@ def _form_error(form, error):
 @returns_required
 @require_http_methods(['GET', 'POST'])
 def case_create(request):
-    # Only opaque customer references are carried in URLs. A customer selection
-    # is reloaded on every POST; hidden form values never supply account IDs.
-    key = request.GET.get('client', '')
-    customer = get_customer(key) if key else None
+    from .customer_picker import picker_context, picker_results, customer_payload
+
+    is_post = request.method == 'POST'
+    action = request.POST.get('picker_action', '') if is_post else ''
+    key = request.POST.get('selected_client', request.GET.get('client', '')) if is_post else request.GET.get('client', '')
+    if action.startswith('select:'):
+        key = action[len('select:'):]
+    elif action == 'new':
+        key = ''
+    error = None
+    try:
+        customer = get_customer(key) if key else None
+    except Http404:
+        customer = None
+        error = 'Cette fiche client n’est plus disponible. Recherchez le client à nouveau avant d’enregistrer.'
+    if action and action not in ('search', 'new') and not action.startswith('select:'):
+        error = 'Choisissez le client avec les boutons proposés dans le formulaire.'
     orders = list(Order.objects.filter(pk__in=customer.order_ids).order_by('-created_at', '-pk')) if customer else []
     initial = {'channel': 'phone', 'category': 'other', 'priority': 'normal'}
-    if customer:
-        initial.update(customer_name=customer.name,
-                       customer_email=customer.user.email if customer.user_id else customer.email,
-                       phone=customer.phone)
-    form = SupportCaseForm(request.POST if request.method == 'POST' else None, initial=initial)
-    if customer:
-        form.fields['related_order'] = forms.ChoiceField(label='Commande concernée', required=False,
-            choices=[('', 'Sans commande précise')] + [(str(order.pk),
-                f'{str(order.pk)[:8].upper()} · {timezone.localtime(order.created_at):%d/%m/%Y} · {order.display_total:.2f} €'
-                + (' · SIMULATION' if order.is_demo else '')) for order in orders])
-        chosen = request.GET.get('commande', '')
-        if chosen in {str(order.pk) for order in orders}:
-            form.initial['related_order'] = chosen
-        if customer.user_id:
-            form.fields['customer_email'].disabled = True
-            form.fields['customer_email'].help_text = 'Adresse du compte sélectionné.'
+    if is_post and action:
+        # Picker actions never save a case. They preserve the unsaved request,
+        # including the creation key, when JavaScript is unavailable.
+        initial.update({name: request.POST.get(name, '') for name in SupportCaseForm.base_fields})
+        initial['related_order'] = request.POST.get('related_order', '')
+    if customer and (not is_post or action.startswith('select:')):
+        payload = customer_payload(customer)
+        initial.update(customer_name=payload['name'], customer_email=payload['email'], phone=payload['phone'])
+        initial['related_order'] = ''
+    if action == 'new':
+        initial.update(customer_name='', customer_email='', phone='', related_order='')
+    if customer and customer.user_id:
+        initial['customer_email'] = customer.user.email
+    form = SupportCaseForm(request.POST if is_post and not action else None, initial=initial)
+    form.fields['related_order'] = forms.ChoiceField(label='Commande concernée', required=False,
+        choices=[('', 'Sans commande précise')] + [(str(order.pk),
+            f'{str(order.pk)[:8].upper()} · {timezone.localtime(order.created_at):%d/%m/%Y} · {order.display_total:.2f} €'
+            + (' · SIMULATION' if order.is_demo else '')) for order in orders],
+        help_text='Choisissez un client ci-dessus pour retrouver ses commandes.')
+    chosen = request.GET.get('commande', '')
+    if not is_post and chosen in {str(order.pk) for order in orders}:
+        form.initial['related_order'] = chosen
+    if customer and customer.user_id:
+        form.fields['customer_email'].disabled = True
+        form.fields['customer_email'].help_text = 'Adresse du compte sélectionné.'
     status = 200
-    if request.method == 'POST':
+    if error:
+        status = 409 if is_post else 404
+    elif is_post and not action:
         if form.is_valid():
             selected = next((order for order in orders if str(order.pk) == form.cleaned_data.get('related_order')), None)
-            values = {key: value for key, value in form.cleaned_data.items() if key != 'related_order'}
-            contact_case = None
-            if customer and not customer.user_id and not orders and customer.case_ids:
-                contact_case = SupportCase.objects.filter(pk__in=customer.case_ids, user__isnull=True,
-                    order__isnull=True).order_by('created_at', 'pk').first()
+            values = {name: value for name, value in form.cleaned_data.items() if name != 'related_order'}
+            contact_case, contact_order = None, None
+            if customer and not customer.user_id and selected is None:
+                if orders:
+                    contact_order = orders[-1]
+                elif customer.case_ids:
+                    contact_case = SupportCase.objects.filter(pk__in=customer.case_ids, user__isnull=True,
+                        order__isnull=True).order_by('created_at', 'pk').first()
             try:
+                if customer and not customer.user_id and not selected and not contact_order and not contact_case:
+                    # A benefit retained for a deleted account must never fall
+                    # back to a different account reusing the same e-mail.
+                    if CustomerBenefit.objects.filter(pk__in=customer.benefit_ids).filter(
+                            Q(user__isnull=False) | Q(bound_user_id__isnull=False)).exists():
+                        raise ValidationError('Cette ancienne fiche ne correspond plus à un compte client actuel. Recherchez et sélectionnez la fiche actuelle du client avant de créer son dossier.')
+                    if values['customer_email'] != customer.email.strip().lower():
+                        raise ValidationError('Conservez l’adresse e-mail de la fiche sélectionnée, ou choisissez un autre client.')
                 case, reused = create_case(request.user, values, user=customer.user if customer else None,
-                                           order=selected, contact_case=contact_case)
-            except ValidationError as error:
-                _form_error(form, error)
+                    order=selected, contact_case=contact_case, contact_order=contact_order)
+            except ValidationError as exc:
+                _form_error(form, exc)
                 status = 409
             else:
                 messages.success(request, 'Ce dossier existe déjà. Vous pouvez poursuivre son suivi.' if reused else
@@ -196,8 +233,12 @@ def case_create(request):
                 return redirect('clients:case_detail', pk=case.pk)
         else:
             status = 400
+    query = request.POST.get('client_query', '').strip()[:150] if is_post else ''
+    results, more = picker_results(query) if action == 'search' else (None, False)
+    context = picker_context(customer, query=query, results=results, more=more)
+    context['selected_client'] = key
     return _private(render(request, 'clients/case_form.html', {
-        'form': form, 'customer': customer, 'workspace': 'sav',
+        'form': form, 'customer': customer, 'workspace': 'sav', 'picker_error': error, **context,
     }, status=status))
 
 
@@ -224,4 +265,5 @@ def case_detail(request, pk):
         'case': case, 'customer': customer, 'form': form, 'workspace': 'sav',
         'events': case.events.select_related('actor').order_by('-created_at', '-pk'),
         **attachment_context(case),
+        **relationship_context(case, request.user),
     }, status=status))

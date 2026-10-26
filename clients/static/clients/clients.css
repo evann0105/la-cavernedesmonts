@@ -93,3 +93,30 @@
 .customer-attachments-retired li { margin:10px 0; overflow-wrap:anywhere; }
 .customer-event-title { overflow-wrap:anywhere; }
 @media(max-width:600px) { .customer-attachment-row { flex-direction:column; gap:10px; } .customer-attachment-remove form { max-width:none; } .customer-attachment-add .button { width:100%; } .customer-form-actions>.button { width:100%; } }
+
+.customer-picker [hidden] { display:none!important; }
+.customer-picker-search { display:flex; align-items:end; flex-wrap:wrap; gap:16px; }
+.customer-picker-search .customer-field { flex:1; min-width:220px; margin:0!important; }
+.customer-picker-search .button { min-height:48px; flex-shrink:0; }
+.customer-picker-status:empty { display:none; }
+.customer-picker-results { list-style:none; padding:0; margin:16px 0; }
+.customer-picker-results>li { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:20px; margin:12px 0; background:#f4f6ef; border:1px solid #dce2d6; border-radius:14px; }
+.customer-picker-results>li>div { min-width:0; overflow-wrap:anywhere; }
+.customer-picker-results p { margin:7px 0 0; font-size:13px; }
+.customer-picker-results .button { flex-shrink:0; }
+.customer-picker-new { background:transparent; border:0; padding:0; color:inherit; font:inherit; font-size:14px; cursor:pointer; }
+.customer-picker-selected { margin:22px 0 12px; }
+.customer-picker-selected:focus { outline:2px solid #587349; outline-offset:3px; }
+.customer-linked-operation { padding:20px 0; border-top:1px solid #dce2d6; }
+.customer-linked-operation h3 { font-size:18px; margin:0 0 10px; line-height:1.5; }
+.customer-linked-operation p { margin:8px 0; font-size:13px; }
+.customer-linked-operation>div { min-width:0; overflow-wrap:anywhere; }
+.customer-linked-operation .customer-text-link { margin-top:6px; }
+.customer-relationship-choices { border:0; margin:0; padding:0; min-width:0; }
+.customer-relationship-choices legend { margin-bottom:16px; padding:0; }
+.customer-relationship-choices>div>div { margin:12px 0; }
+.customer-relationship-choices label { display:flex; align-items:start; gap:14px; padding:20px; background:#f5f6f0; border:1px solid #dce2d6; border-radius:12px; line-height:1.7; cursor:pointer; font-size:15px; overflow-wrap:anywhere; }
+.customer-relationship-choices label:has(input:checked) { background:#eaf0e1; border-color:#8da67b; }
+.customer-relationship-choices input { width:19px; height:19px; flex-shrink:0; accent-color:#203d33; margin-top:3px; }
+.customer-relationship-choices input:focus-visible { outline:2px solid #587349; outline-offset:4px; }
+@media(max-width:600px) { .customer-picker-search, .customer-picker-results>li { flex-direction:column; align-items:stretch; } .customer-picker-search .customer-field { min-width:0; width:100%; } .customer-picker-results>li { gap:14px; padding:18px; } .customer-picker-search .button { width:100%; } .customer-relationship-choices label { padding:15px; font-size:14px; } }

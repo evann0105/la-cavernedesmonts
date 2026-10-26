@@ -67,7 +67,7 @@ def back_navigation(request):
     elif name.startswith('clients:'):
         if name == 'clients:directory':
             fallback = reverse('espace:account')
-        elif name in {'clients:case_edit', 'clients:attachment_add', 'clients:attachment_download', 'clients:attachment_remove'}:
+        elif name in {'clients:case_edit', 'clients:attachment_add', 'clients:attachment_download', 'clients:attachment_remove', 'clients:relationships_edit'}:
             fallback = reverse('clients:case_detail', kwargs={'pk': request.resolver_match.kwargs['pk']})
         elif name in {'clients:profile', 'clients:case_list'}:
             fallback = reverse('clients:directory')

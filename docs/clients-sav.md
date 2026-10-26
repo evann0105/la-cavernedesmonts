@@ -17,6 +17,18 @@ Les liens ouvrent les documents et les outils dédiés : expédition, retour ou 
 
 Le suivi utilise quatre états : **À traiter**, **En cours**, **En attente du client**, **Résolu**. Chaque modification et note interne est datée et attribuée. La résolution demande une note expliquant la solution. Un dossier résolu peut être rouvert.
 
+Le formulaire **Nouveau dossier SAV** propose aussi une recherche directe par nom, e-mail ou téléphone. Cliquer sur **Choisir cette fiche** préremplit les coordonnées et propose uniquement les commandes du client choisi. La demande, la priorité et la date déjà saisies sont conservées. Le bouton **Saisir un nouveau client** libère les coordonnées sans effacer la demande. La recherche fonctionne également sans JavaScript et n’enregistre aucun dossier à elle seule.
+
+Une fiche invitée reste rattachée à sa commande ou demande d’origine même avec **Sans commande précise**. Une ancienne fiche d’avoir associée à un compte supprimé ne peut pas être réattribuée silencieusement à un nouveau compte ayant repris son e-mail : sélectionner la fiche actuelle du client.
+
+## Relier les retours et les avoirs
+
+Dans le dossier, **Retours et avoirs liés → Choisir les liens** ouvre une page dédiée. Cocher les retours, codes personnels ou documents d’avoir concernés, puis indiquer le motif du rattachement. Plusieurs opérations et plusieurs commandes du même client peuvent être retenues. Les références des commandes, états et montants permettent de les distinguer.
+
+Les opérations liées sont ensuite accessibles directement depuis le dossier. Décocher une opération retire son lien sans supprimer l’opération ; l’auteur, la date et le motif restent dans l’historique. Un conflit de modification est signalé. Un code réattribué à une autre personne n’est plus affiché dans le dossier d’origine.
+
+Ce rattachement n’émet aucun code ni remboursement, et n’envoie aucun e-mail. Les montants, dates et états restent gérés dans les pages dédiées aux retours et aux avoirs.
+
 ## Les rappels sur le tableau de bord
 
 Le bloc **SAV : les rappels à prévoir** distingue les rappels du jour, les retards et les demandes urgentes. Chaque compteur ouvre la liste correspondante. Les cinq dossiers prioritaires sont accessibles directement. Les dossiers résolus sont exclus ; un dossier urgent peut aussi être compté dans les rappels. Ces rappels restent indépendants de la période choisie pour les ventes. Aucune notification n’est envoyée automatiquement.
@@ -46,4 +58,4 @@ Les fichiers et leurs noms sont chiffrés dans la base, sans URL publique. Seul 
 
 ## Installation et vérification
 
-Appliquer les migrations de l’application `clients`, puis les droits du rôle PostgreSQL de l’application. Couverture ciblée : `clients`, `tableau`, `espace.test_privacy_sav` et `core.test_navigation`.
+Appliquer les migrations de l’application `clients`, puis les droits du rôle PostgreSQL de l’application. Couverture ciblée : `clients`, `tableau`, `espace.test_privacy_sav`, `espace.test_privacy_sav_links` et `core.test_navigation`.

@@ -160,3 +160,46 @@ class SupportAttachment(models.Model):
 
     def __str__(self):
         return f'Pièce jointe {self.pk}'
+
+
+class SupportRelationship(models.Model):
+    """An explicit, audited association with an existing customer operation."""
+    case = models.ForeignKey(SupportCase, on_delete=models.CASCADE, related_name='relationships')
+    return_request = models.ForeignKey('retours.ReturnRequest', null=True, blank=True,
+        on_delete=models.PROTECT, related_name='support_relationships')
+    benefit = models.ForeignKey('avoirs.CustomerBenefit', null=True, blank=True,
+        on_delete=models.PROTECT, related_name='support_relationships')
+    credit_note = models.ForeignKey('espace.CreditNote', null=True, blank=True,
+        on_delete=models.PROTECT, related_name='support_relationships')
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='support_relationships_created')
+    removed_at = models.DateTimeField(null=True, blank=True)
+    removed_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='support_relationships_removed')
+
+    class Meta:
+        ordering = ['created_at', 'pk']
+        verbose_name = 'Lien de dossier SAV'
+        verbose_name_plural = 'Liens de dossiers SAV'
+        constraints = [
+            models.CheckConstraint(condition=(
+                models.Q(return_request__isnull=False, benefit__isnull=True, credit_note__isnull=True) |
+                models.Q(return_request__isnull=True, benefit__isnull=False, credit_note__isnull=True) |
+                models.Q(return_request__isnull=True, benefit__isnull=True, credit_note__isnull=False)),
+                name='support_relationship_one_target'),
+            models.UniqueConstraint(fields=['case', 'return_request'], name='support_unique_return_relationship'),
+            models.UniqueConstraint(fields=['case', 'benefit'], name='support_unique_benefit_relationship'),
+            models.UniqueConstraint(fields=['case', 'credit_note'], name='support_unique_credit_relationship'),
+        ]
+
+    @property
+    def target_key(self):
+        if self.return_request_id is not None:
+            return 'return:' + str(self.return_request_id)
+        if self.benefit_id is not None:
+            return 'benefit:' + str(self.benefit_id)
+        return 'credit:' + str(self.credit_note_id)
+
+    def __str__(self):
+        return f'Lien SAV {self.pk}'

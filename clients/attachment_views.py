@@ -15,6 +15,7 @@ from .attachments import (MAX_FILE_SIZE, SupportAttachmentForm, SupportAttachmen
 from .forms import SupportUpdateForm
 from .models import SupportAttachment, SupportCase
 from .selectors import get_customer
+from .relationships import relationship_context
 from .services import SupportConflict
 
 
@@ -42,6 +43,7 @@ def _detail_error(request, case, *, form=None, removal_errors=None, status=400):
         'form': SupportUpdateForm(instance=case), 'workspace': 'sav',
         'events': case.events.select_related('actor').order_by('-created_at', '-pk'),
         **attachment_context(case, form=form),
+        **relationship_context(case, request.user),
         'attachment_remove_errors': removal_errors,
     }
     return _private(render(request, 'clients/case_detail.html', context, status=status))
