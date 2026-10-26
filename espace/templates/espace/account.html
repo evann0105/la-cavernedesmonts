@@ -31,6 +31,9 @@
   </div></section>
   {% endif %}
   {% if can_manage_returns %}
+  <section class="account-admin-section" aria-labelledby="account-accounting-title"><h3 id="account-accounting-title">Comptabilité</h3><div class="hub-cards">
+    <a class="hub-card" href="{% url 'facturation:accounting' %}"><h3>Comptabilité et exports</h3><p>Télécharger les factures du mois et préparer les ventes pour le comptable.</p></a>
+  </div></section>
   <section class="account-admin-section" aria-labelledby="account-service-title"><h3 id="account-service-title">Service client</h3><div class="hub-cards">
     <a class="hub-card" href="{% url 'alertes:emails' %}"><h3>E-mails et alertes</h3><p>Être prévenue des commandes payées, suivre les échecs d’envoi et préparer les réapprovisionnements.</p></a>
     <a class="hub-card" href="{% url 'clients:directory' %}"><h3>Clients et SAV</h3><p>Retrouver un client, ses commandes et ses documents, puis suivre les demandes reçues par téléphone.</p></a>

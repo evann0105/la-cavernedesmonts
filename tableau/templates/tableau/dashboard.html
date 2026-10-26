@@ -3,7 +3,7 @@
 {% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'tableau/dashboard.css' %}?v=20261026-sav">{% endblock %}
 {% block catalog_content %}
 <header class="catalog-heading"><div><p class="eyebrow">ADMINISTRATION · VOTRE ACTIVITÉ</p><h1>Tableau de bord.</h1><p>{{ period }} · Ventes en ligne enregistrées</p></div><a class="button button-outline" href="{% url 'espace:account' %}">Mon compte</a></header>
-<nav class="catalog-filters" aria-label="Gestion commerciale"><a class="button button-outline" href="{% url 'core:sales_dashboard' %}">Soldes · programmer et suivre les réductions ↗</a>{% if can_manage_returns %}<a class="button button-outline" href="{% url 'avoirs:management' %}">Avoirs clients · créer et suivre les codes ↗</a>{% endif %}</nav>
+<nav class="catalog-filters" aria-label="Gestion commerciale"><a class="button button-outline" href="{% url 'core:sales_dashboard' %}">Soldes · programmer et suivre les réductions ↗</a>{% if can_manage_returns %}<a class="button button-outline" href="{% url 'facturation:accounting' %}">Comptabilité et exports ↗</a><a class="button button-outline" href="{% url 'avoirs:management' %}">Avoirs clients · créer et suivre les codes ↗</a>{% endif %}</nav>
 {% include 'alertes/dashboard.html' %}
 {% if return_attention != None %}{% include 'tableau/return_attention.html' %}{% endif %}
 {% if sav_attention != None %}{% include 'tableau/sav_attention.html' %}{% endif %}

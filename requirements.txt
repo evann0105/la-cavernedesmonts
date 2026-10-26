@@ -28,3 +28,4 @@ google-auth-oauthlib==1.4.1
 
 psycopg[binary]==3.3.6
 cryptography==50.0.1
+reportlab==5.1.0

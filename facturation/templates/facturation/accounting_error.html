@@ -1,0 +1,2 @@
+{% extends 'facturation/accounting_base.html' %}
+{% block accounting_content %}<header class="catalog-heading"><div><p class="eyebrow">COMPTABILITÉ ET EXPORTS</p><h1>Un point à vérifier.</h1></div></header><section class="catalog-panel"><p role="alert">{{ error }}</p><div class="accounting-actions"><a class="button" href="{% url 'facturation:accounting' %}">Choisir une période ↗</a><a class="underlined" href="{% url 'facturation:management' %}">Commandes et factures ↗</a></div></section>{% endblock %}
