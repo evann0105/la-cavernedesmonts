@@ -6,6 +6,7 @@ from django.db.models import Count, Sum, Q
 from django.db.models.functions import ExtractMonth, ExtractYear
 from django.shortcuts import render
 from django.utils import timezone
+from django.utils.cache import patch_cache_control
 from django.views.decorators.http import require_GET
 from core.catalog_access import catalog_required
 from paiement.models import Order
@@ -29,7 +30,9 @@ def euros(cents):
 def dashboard(request):
     from retours.access import manager
     from retours.worklist import dashboard_attention
+    from clients.worklist import dashboard_attention as sav_dashboard_attention
     return_attention = dashboard_attention() if manager(request.user) else None
+    sav_attention = sav_dashboard_attention() if manager(request.user) else None
     today = timezone.localdate()
     try:
         year = int(request.GET.get('annee', today.year))
@@ -61,8 +64,9 @@ def dashboard(request):
     top = [{'name':names[key], 'quantity':qty, 'amount':euros(article_amounts[key])} for key,qty in quantities.most_common(8)]
     years = sorted(set(paid.annotate(y=ExtractYear('paid_at')).values_list('y',flat=True)) | {today.year,year}, reverse=True)
     orders = Paginator(selected.order_by('-paid_at','-pk'),15).get_page(request.GET.get('page'))
-    return render(request,'tableau/dashboard.html',{
-        'return_attention':return_attention, 'year':year,'month':month,'years':years,'months':list(enumerate(MONTHS,1)),
+    response = render(request,'tableau/dashboard.html',{
+        'return_attention':return_attention, 'sav_attention':sav_attention,
+        'year':year,'month':month,'years':years,'months':list(enumerate(MONTHS,1)),
         'period':f'{MONTHS[month-1]} {year}' if month else f'Année {year}',
         'refund_amount':euros(refunded),'net_amount':euros(amount-refunded),'amount':euros(amount),'order_count':count,'average':euros(amount)/count if count else Decimal(0),
         'units':sum(quantities.values()),'annual_amount':euros(annual.aggregate(amount=Sum('total_paid'))['amount']),
@@ -72,3 +76,7 @@ def dashboard(request):
         'out_of_stock':Variant.objects.filter(quantity=0).count(),
         'unknown_stock':Variant.objects.filter(quantity__isnull=True).count(),
     })
+    # This response now includes private SAV contacts as well as sales figures.
+    patch_cache_control(response, private=True, no_store=True, max_age=0)
+    response['X-Robots-Tag'] = 'noindex, nofollow'
+    return response

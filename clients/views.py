@@ -20,6 +20,7 @@ from paiement.models import Order
 from retours.access import returns_required
 from retours.models import ReturnRequest
 from .forms import SupportCaseForm, SupportUpdateForm
+from .attachments import attachment_context
 from .models import SupportCase
 from .selectors import find_customers, get_customer
 from .services import create_case, update_case
@@ -96,7 +97,12 @@ def case_list(request):
     priority = request.GET.get('priorite', '')
     if priority not in ('', 'normal', 'urgent'):
         priority = ''
-    due = request.GET.get('relance') == '1'
+    deadline = request.GET.get('echeance', '')
+    legacy_due = not deadline and request.GET.get('relance') == '1'
+    if legacy_due:
+        deadline = 'due'
+    if deadline not in ('', 'today', 'overdue', 'due'):
+        deadline = ''
     cases = SupportCase.objects.select_related('user', 'order').order_by('-updated_at', '-pk')
     counts = {value: cases.filter(state=value).count() for value in states}
     counts['active'] = sum(counts[value] for value in states if value != 'resolved')
@@ -107,8 +113,11 @@ def case_list(request):
         cases = cases.filter(state=state)
     if priority:
         cases = cases.filter(priority=priority)
-    if due:
-        cases = cases.exclude(state='resolved').filter(due_date__lte=timezone.localdate())
+    today = timezone.localdate()
+    if deadline:
+        cases = cases.exclude(state='resolved')
+        lookup = {'today': 'due_date', 'overdue': 'due_date__lt', 'due': 'due_date__lte'}[deadline]
+        cases = cases.filter(**{lookup: today})
     rows = list(cases)
     if query:
         words = _normalized(query).split()
@@ -116,16 +125,16 @@ def case_list(request):
             case.reference, case.customer_name, case.customer_email, case.phone, case.subject,
             str(case.order_id or '')))) for word in words)]
     # Today's callbacks and urgent requests are visible before the rest.
-    today = timezone.localdate()
     rows.sort(key=lambda case: (case.state == 'resolved',
               not (case.due_date and case.due_date <= today), case.priority != 'urgent',
               case.due_date or date.max, -case.updated_at.timestamp()))
-    filters = {'q': query, 'etat': state, 'priorite': priority, 'relance': '1' if due else ''}
+    filters = {'q': query, 'etat': state, 'priorite': priority}
+    filters.update({'relance': '1'} if legacy_due else {'echeance': deadline})
     tabs = [('active', 'À suivre'), ('open', 'À traiter'), ('in_progress', 'En cours'),
             ('waiting_customer', 'En attente du client'), ('resolved', 'Résolus'), ('all', 'Tous')]
     return _private(render(request, 'clients/case_list.html', {
         'page_obj': _page(request, rows), 'query': query, 'state': state,
-        'priority': priority, 'due': due, 'workspace': 'sav',
+        'priority': priority, 'due': bool(deadline), 'deadline': deadline, 'workspace': 'sav',
         'state_tabs': [{'value': value, 'label': label, 'count': counts[value]} for value, label in tabs],
         'filter_query': urlencode({key: value for key, value in filters.items() if value}),
     }))
@@ -214,4 +223,5 @@ def case_detail(request, pk):
     return _private(render(request, 'clients/case_detail.html', {
         'case': case, 'customer': customer, 'form': form, 'workspace': 'sav',
         'events': case.events.select_related('actor').order_by('-created_at', '-pk'),
+        **attachment_context(case),
     }, status=status))

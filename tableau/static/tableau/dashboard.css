@@ -11,3 +11,19 @@
 .dash-return-list .button { flex-shrink: 0; white-space: normal; text-align: center; }
 @media(max-width: 900px) { .dash-return-cards { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media(max-width: 550px) { .dash-return-list article { align-items: stretch; flex-direction: column; } .dash-return-cards a { padding: 14px; } }
+
+.dash-sav-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+.dash-sav-heading > div, .dash-sav-record { min-width: 0; }
+.dash-sav-heading h2 { margin: 8px 0 12px; }
+.dash-sav-heading .eyebrow { margin: 0; }
+.dash-sav-heading .button { flex-shrink: 0; }
+.dash-sav-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dash-sav-cards .dash-sav-card--active { background: #eef2e8; border-color: #9aaa8d; }
+.dash-sav-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; color: #526450; }
+.dash-sav-urgent { border-radius: 20px; padding: 3px 9px; color: #704b27; background: #f5ebd9; font-weight: 600; }
+.dash-sav-record h3, .dash-sav-record p { overflow-wrap: anywhere; }
+.dash-sav-date { font-size: 14px; color: #526450; }
+.dash-sav-date--overdue { color: #8b462f; font-weight: 600; }
+.dash-sav-attention .dash-empty p { margin-bottom: 0; }
+@media(max-width: 900px) { .dash-sav-heading { flex-direction: column; align-items: stretch; } .dash-sav-heading .button { align-self: flex-start; } }
+@media(max-width: 550px) { .dash-sav-cards { grid-template-columns: 1fr; } .dash-sav-cards a { flex-direction: row; align-items: center; gap: 18px; } .dash-sav-cards strong { min-width: 2ch; } }

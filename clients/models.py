@@ -117,3 +117,46 @@ class SupportEvent(models.Model):
             return 'Note ajoutée'
         return ' · '.join(f"{item['label']} : {item['before']} → {item['after']}"
                           for item in self.changes.values()) or 'Dossier mis à jour'
+
+
+class SupportAttachment(models.Model):
+    """Private documents kept encrypted in the database, never under public MEDIA."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    case = models.ForeignKey(SupportCase, on_delete=models.CASCADE, related_name='attachments')
+    submission_key = models.UUIDField(unique=True, editable=False)
+    submission_fingerprint = models.CharField(max_length=64, editable=False)
+    title = EncryptedCharField('Description du document', max_length=160, blank=True,
+        validators=[MaxLengthValidator(160)])
+    filename = EncryptedCharField('Nom du fichier', max_length=200,
+        validators=[MaxLengthValidator(200)])
+    content_type = models.CharField(max_length=30, choices=[('image/webp', 'Photo'), ('application/pdf', 'PDF')])
+    byte_size = models.PositiveIntegerField()
+    payload = EncryptedTextField(editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='support_attachments_created', editable=False)
+    removed_at = models.DateTimeField(null=True, blank=True, editable=False)
+    removed_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='support_attachments_removed', editable=False)
+
+    class Meta:
+        ordering = ['-created_at', '-pk']
+        verbose_name = 'Pièce jointe SAV'
+        verbose_name_plural = 'Pièces jointes SAV'
+        constraints = [
+            models.CheckConstraint(condition=models.Q(byte_size__gte=1, byte_size__lte=5 * 1024 * 1024),
+                name='support_attachment_valid_size'),
+            models.CheckConstraint(condition=models.Q(content_type__in=['image/webp', 'application/pdf']),
+                name='support_attachment_valid_type'),
+        ]
+
+    @property
+    def display_title(self):
+        return self.title or self.filename
+
+    @property
+    def is_removed(self):
+        return self.removed_at is not None
+
+    def __str__(self):
+        return f'Pièce jointe {self.pk}'

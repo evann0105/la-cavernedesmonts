@@ -15,7 +15,25 @@ Les liens ouvrent les documents et les outils dédiés : expédition, retour ou 
 3. Choisir une priorité et, si utile, une date **À reprendre le**.
 4. Enregistrer. Le dossier reçoit une référence SAV et apparaît dans la page Dossiers SAV.
 
-Le suivi utilise quatre états : **À traiter**, **En cours**, **En attente du client**, **Résolu**. Chaque modification et note interne est datée et attribuée. La résolution demande une note expliquant la solution. Un dossier résolu peut être rouvert. Les dates servent à organiser les rappels dans le filtre **À reprendre** ; elles n’envoient aucun message automatiquement.
+Le suivi utilise quatre états : **À traiter**, **En cours**, **En attente du client**, **Résolu**. Chaque modification et note interne est datée et attribuée. La résolution demande une note expliquant la solution. Un dossier résolu peut être rouvert.
+
+## Les rappels sur le tableau de bord
+
+Le bloc **SAV : les rappels à prévoir** distingue les rappels du jour, les retards et les demandes urgentes. Chaque compteur ouvre la liste correspondante. Les cinq dossiers prioritaires sont accessibles directement. Les dossiers résolus sont exclus ; un dossier urgent peut aussi être compté dans les rappels. Ces rappels restent indépendants de la période choisie pour les ventes. Aucune notification n’est envoyée automatiquement.
+
+Dans **Dossiers SAV**, le filtre **Échéance** permet d’afficher aujourd’hui, les retards, les deux, ou toutes les dates. Les jours suivent l’heure de Paris.
+
+## Corriger une demande
+
+Depuis un dossier, **Corriger le dossier** ouvre une page séparée : nom, téléphone, objet, demande, canal, catégorie et commande concernée. Le compte et l’e-mail ne sont pas réattribués. Seules les commandes de cette fiche client sont proposées. Retirer le lien vers une commande conserve le dossier dans la fiche d’origine.
+
+Un motif est demandé. L’historique conserve l’auteur, la date et les informations avant/après. Une modification concurrente est signalée au lieu d’écraser le travail d’un autre membre de l’équipe.
+
+## Photos et justificatifs
+
+La section **Pièces jointes** accepte les photos JPEG, PNG, WebP et les PDF, avec une description facultative. Limites : 5 Mo par fichier, 20 fichiers et 25 Mo par dossier, documents retirés compris. Les images sont normalisées en WebP ; les PDF sont proposés au téléchargement.
+
+Les fichiers et leurs noms sont chiffrés dans la base, sans URL publique. Seul le personnel autorisé au SAV peut les télécharger. Le retrait nécessite une confirmation, révoque le téléchargement et laisse une trace dans l’historique ; ce n’est pas un effacement définitif du document. Aucun fichier n’est envoyé au client ni affiché dans son compte.
 
 ## Protection et limites
 
@@ -28,4 +46,4 @@ Le suivi utilise quatre états : **À traiter**, **En cours**, **En attente du c
 
 ## Installation et vérification
 
-Appliquer les migrations de l’application `clients`, puis les droits du rôle PostgreSQL de l’application. Couverture ciblée : `clients.tests_domain`, `clients.tests_selectors`, `clients.tests_views`, `espace.test_privacy_sav`.
+Appliquer les migrations de l’application `clients`, puis les droits du rôle PostgreSQL de l’application. Couverture ciblée : `clients`, `tableau`, `espace.test_privacy_sav` et `core.test_navigation`.

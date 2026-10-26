@@ -1,0 +1,28 @@
+<section class="catalog-panel dash-sav-attention" aria-labelledby="sav-attention-title">
+  <div class="dash-sav-heading">
+    <div><p class="eyebrow">SERVICE CLIENT</p><h2 id="sav-attention-title">SAV : les rappels à prévoir</h2><p>Les rappels et les urgences de toute la boutique, au {{ sav_attention.today|date:'d/m/Y' }}.</p></div>
+    <a class="button button-outline" href="{% url 'clients:case_list' %}">Tous les dossiers SAV ↗</a>
+  </div>
+  <div class="dash-return-cards dash-sav-cards">
+    {% for card in sav_attention.cards %}<a href="{{ card.url }}"{% if card.count %} class="dash-sav-card--active"{% endif %}><strong>{{ card.count }}</strong><span>{{ card.label }}</span></a>{% endfor %}
+  </div>
+  {% if sav_attention.total %}
+    <p class="dash-note">{{ sav_attention.total }} dossier{{ sav_attention.total|pluralize }} à examiner. Un dossier urgent peut aussi faire partie des rappels.</p>
+    <div class="dash-return-list dash-sav-list">
+      {% for record in sav_attention.records %}
+        <article>
+          <div class="dash-sav-record">
+            <div class="dash-sav-meta"><span>{{ record.reference }} · {{ record.get_state_display }}</span>{% if record.priority == 'urgent' %}<span class="dash-sav-urgent">Urgent</span>{% endif %}</div>
+            <h3>{{ record.subject }}</h3>
+            <p>{{ record.customer_name }}</p>
+            <p class="dash-sav-date{% if record.due_date and record.due_date < sav_attention.today %} dash-sav-date--overdue{% endif %}">{% if record.due_date and record.due_date < sav_attention.today %}Rappel en retard · prévu le {{ record.due_date|date:'d/m/Y' }}{% elif record.due_date == sav_attention.today %}À rappeler aujourd’hui{% elif record.due_date %}Rappel prévu le {{ record.due_date|date:'d/m/Y' }}{% else %}Aucune date de rappel fixée{% endif %}</p>
+          </div>
+          <a class="button button-outline" href="{% url 'clients:case_detail' record.pk %}" aria-label="Ouvrir le dossier {{ record.reference }}">Ouvrir le dossier ↗</a>
+        </article>
+      {% endfor %}
+    </div>
+    {% if sav_attention.total > 5 %}<p class="dash-note">Les 5 dossiers prioritaires sont affichés ici. Retrouvez la suite dans les dossiers SAV.</p>{% endif %}
+  {% else %}
+    <div class="dash-empty"><h3>Vos rappels sont à jour.</h3><p>Aucun rappel prévu aujourd’hui ou en retard, ni dossier urgent à traiter. Les autres demandes restent accessibles dans les dossiers SAV.</p></div>
+  {% endif %}
+</section>

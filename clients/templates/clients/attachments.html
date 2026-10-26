@@ -1,0 +1,30 @@
+<section class="catalog-panel customer-attachments" id="pieces-jointes" aria-labelledby="attachments-title">
+  <div class="customer-section-heading"><div><p class="eyebrow">DOCUMENTS DU DOSSIER</p><h2 id="attachments-title">Pièces jointes</h2></div><span>Réservées à la boutique</span></div>
+  <p class="customer-muted">Conservez ici une photo du problème, un justificatif ou un échange utile. Ces documents ne sont pas visibles dans le compte du client.</p>
+  {% if attachment_remove_errors %}<div class="catalog-error" role="alert"><p>Le document n’a pas été retiré.</p>{{ attachment_remove_errors }}</div>{% endif %}
+  <ul class="customer-attachment-list">
+    {% for attachment in attachments %}
+    <li class="customer-attachment-row">
+      <div><strong>{{ attachment.display_title }}</strong><p class="customer-muted">{{ attachment.get_content_type_display }} · {{ attachment.byte_size|filesizeformat }} · Ajouté le {{ attachment.created_at|date:'d/m/Y à H:i' }}</p>{% if attachment.title %}<p class="customer-muted">{{ attachment.filename }}</p>{% endif %}</div>
+      <div class="customer-row-actions">
+        <a class="customer-text-link" href="{% url 'clients:attachment_download' case.pk attachment.pk %}" aria-label="Télécharger {{ attachment.display_title }}">Télécharger ↗</a>
+        <details class="customer-attachment-remove"><summary>Retirer</summary><form method="post" action="{% url 'clients:attachment_remove' case.pk attachment.pk %}">{% csrf_token %}<input type="hidden" name="revision" value="{{ case.revision }}"><p>Le document sera retiré de la liste et ne pourra plus être téléchargé. La trace de son retrait restera dans l’historique.</p><label><input type="checkbox" name="confirm" required> Confirmer le retrait de « {{ attachment.display_title }} »</label><button class="button button-outline" type="submit">Retirer ce document</button></form></details>
+      </div>
+    </li>
+    {% empty %}<li class="customer-muted">Aucune pièce jointe pour le moment.</li>{% endfor %}
+  </ul>
+  {% if retired_attachments %}<details class="customer-attachments-retired"><summary>Documents retirés</summary><ul>{% for attachment in retired_attachments %}<li>{{ attachment.display_title }} <span class="customer-muted">· Retiré le {{ attachment.removed_at|date:'d/m/Y à H:i' }}</span></li>{% endfor %}</ul></details>{% endif %}
+  {% if attachment_limit_reached %}<p class="catalog-notice">La limite de ce dossier est atteinte : 20 fichiers ou 25 Mo, documents retirés compris.</p>{% else %}
+  <details class="customer-attachment-add"{% if attachment_form.errors %} open{% endif %}>
+    <summary>Ajouter une pièce jointe</summary>
+    <form method="post" enctype="multipart/form-data" action="{% url 'clients:attachment_add' case.pk %}" class="customer-form">{% csrf_token %}
+      {% for hidden in attachment_form.hidden_fields %}{{ hidden }}{% for error in hidden.errors %}<p class="customer-field-error" role="alert">{{ error }}</p>{% endfor %}{% endfor %}
+      {% if attachment_form.errors %}<div class="catalog-error" role="alert">{{ attachment_form.non_field_errors }}<p>La pièce jointe n’a pas été ajoutée. Vérifiez les indications et sélectionnez à nouveau le fichier.</p><a class="customer-text-link" href="{% url 'clients:case_detail' case.pk %}" target="_blank" rel="noopener">Consulter le dossier actuel dans un autre onglet ↗</a></div>{% endif %}
+      {% include 'clients/field.html' with field=attachment_form.title %}
+      {% include 'clients/field.html' with field=attachment_form.file %}
+      <p class="customer-muted">20 fichiers et 25 Mo maximum par dossier, documents retirés compris. Les photos sont optimisées automatiquement. Les PDF sont disponibles en téléchargement.</p>
+      <button class="button" type="submit">Ajouter au dossier ↗</button>
+    </form>
+  </details>
+  {% endif %}
+</section>

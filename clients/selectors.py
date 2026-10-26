@@ -114,7 +114,10 @@ def load_directory():
             # that source preserves a phone-only identity even if the next
             # request supplies a new e-mail address. Sources precede their
             # follow-ups in creation order, including e-mail-based guests.
-            identity = case_groups.get(contact_reference, ('contact', contact_reference))
+            # A corrected guest case can retain its original order as a stable
+            # contact anchor after the seller removes the order association.
+            identity = case_groups.get(contact_reference,
+                order_groups.get(contact_reference, ('contact', contact_reference)))
         elif _email(email):
             identity = ('user', email_users[_email(email)]) if _email(email) in email_users else ('email', _email(email))
         elif case_id is not None:
