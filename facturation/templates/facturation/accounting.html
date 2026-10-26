@@ -1,14 +1,18 @@
 {% extends 'facturation/accounting_base.html' %}
 {% block accounting_content %}
 <header class="catalog-heading">
-  <div><p class="eyebrow">UN MOIS, TOUS VOS DOCUMENTS</p><h1>Comptabilité et exports.</h1><p>Préparez les ventes et les factures à transmettre à votre comptable.</p></div>
-  <a class="underlined" href="{% url 'facturation:management' %}">Commandes et factures ↗</a>
+  <div><p class="eyebrow">VOS DOCUMENTS, LA PÉRIODE DE VOTRE CHOIX</p><h1>Comptabilité et exports.</h1><p>Préparez les ventes et les factures à transmettre à votre comptable.</p></div>
+  <div class="accounting-heading-links"><a class="underlined" href="{% url 'facturation:accounting_history' %}">Historique des exports ↗</a><a class="underlined" href="{% url 'facturation:management' %}">Commandes et factures ↗</a></div>
 </header>
-<form method="get" class="accounting-period catalog-panel">
-  <div><label for="accounting-month">Mois</label><select name="mois" id="accounting-month">{% for number, label in months %}<option value="{{ number }}"{% if period.month == number %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
-  <div class="accounting-year"><label for="accounting-year">Année</label><input id="accounting-year" type="number" name="annee" value="{{ period.year }}" min="2000" max="2100" required></div>
-  <button class="button" type="submit">Afficher ce mois ↗</button>
-  <p>Les simulations et paiements en attente sont exclus.</p>
+<form method="get" class="accounting-period accounting-period-options catalog-panel" data-accounting-period>
+  <div class="accounting-period-kind"><label for="accounting-period-kind">Période à exporter</label><select name="periode" id="accounting-period-kind"><option value="month"{% if period.kind == 'month' %} selected{% endif %}>Un mois</option><option value="quarter"{% if period.kind == 'quarter' %} selected{% endif %}>Un trimestre</option><option value="year"{% if period.kind == 'year' %} selected{% endif %}>Une année</option><option value="custom"{% if period.kind == 'custom' %} selected{% endif %}>Dates personnalisées</option></select></div>
+  <div data-period-kinds="month"><label for="accounting-month">Mois</label><select name="mois" id="accounting-month">{% for number, label in months %}<option value="{{ number }}"{% if period.month == number %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+  <div data-period-kinds="quarter"><label for="accounting-quarter">Trimestre</label><select name="trimestre" id="accounting-quarter">{% for number, label in quarters %}<option value="{{ number }}"{% if period.quarter == number %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+  <div class="accounting-year" data-period-kinds="month quarter year"><label for="accounting-year">Année</label><input id="accounting-year" type="number" name="annee" value="{{ period.year }}" min="2000" max="2100" required></div>
+  <div data-period-kinds="custom"><label for="accounting-start">Du</label><input id="accounting-start" type="date" name="debut" value="{{ period.start_date|date:'Y-m-d' }}" min="2000-01-01" max="2100-12-31" required></div>
+  <div data-period-kinds="custom"><label for="accounting-end">Au, inclus</label><input id="accounting-end" type="date" name="fin" value="{{ period.end_date|date:'Y-m-d' }}" min="2000-01-01" max="2100-12-31" required></div>
+  <button class="button" type="submit">Afficher la période ↗</button>
+  <p>Les simulations et paiements en attente sont exclus. Les dates personnalisées peuvent couvrir jusqu’à 366 jours, début et fin inclus.</p>
 </form>
 <h2 class="accounting-month-title">{{ period.label }}</h2>
 <div class="accounting-metrics">
@@ -21,45 +25,45 @@
 {% endif %}
 <section class="accounting-bundle catalog-panel" aria-labelledby="accounting-bundle-title">
   <div>
-    <span class="accounting-format">DOSSIER DU MOIS · UN SEUL TÉLÉCHARGEMENT</span>
+    <span class="accounting-format">DOSSIER DE LA PÉRIODE · UN SEUL TÉLÉCHARGEMENT</span>
     <h2 id="accounting-bundle-title">Le dossier pour votre comptable</h2>
-    <p>Les factures PDF, les ventes et remboursements, l’index des factures et le récapitulatif du mois, réunis dans un fichier ZIP.</p>
+    <p>Les factures PDF, les ventes et remboursements, l’index des factures et le récapitulatif de la période, réunis dans un fichier ZIP.</p>
     {% if report.missing_invoice_orders or report.warnings %}
     <div class="accounting-bundle-status"><strong>À compléter</strong><span>Les informations manquantes sont indiquées dans le récapitulatif téléchargé.</span></div>
     {% endif %}
     {% if report.missing_invoice_orders %}<a class="underlined" href="{{ reset_url|cut:'#rechercher' }}#a-facturer">Voir les {{ report.missing_invoice_orders|length }} commande{{ report.missing_invoice_orders|length|pluralize }} sans facture ↗</a>{% endif %}
   </div>
   <div class="accounting-bundle-action">
-    {% if archive_too_large %}<p>Ce mois dépasse 500 factures. Retrouvez les documents dans « Commandes et factures ».</p><a class="underlined" href="{% url 'facturation:management' %}">Consulter les documents ↗</a>
-    {% elif has_dossier %}<a class="button" href="{% url 'facturation:accounting_bundle' %}?annee={{ period.year }}&amp;mois={{ period.month }}">Télécharger le dossier comptable ↓</a>
-    {% else %}<span class="button accounting-disabled" aria-disabled="true">Aucun dossier pour ce mois</span>{% endif %}
-    <p class="accounting-help">Les téléchargements regroupent tout le mois sélectionné.</p>
+    {% if archive_too_large %}<p>Cette période dépasse 500 factures. Retrouvez les documents dans « Commandes et factures ».</p><a class="underlined" href="{% url 'facturation:management' %}">Consulter les documents ↗</a>
+    {% elif has_dossier %}<a class="button" href="{% url 'facturation:accounting_bundle' %}?{{ period_query }}">Télécharger le dossier comptable ↓</a>
+    {% else %}<span class="button accounting-disabled" aria-disabled="true">Aucun dossier pour cette période</span>{% endif %}
+    <p class="accounting-help">Les téléchargements regroupent toute la période sélectionnée.</p>
   </div>
 </section>
 <details class="accounting-separate">
   <summary>Télécharger les fichiers séparément</summary>
   <div class="accounting-downloads">
-    <section class="catalog-panel accounting-download"><span class="accounting-format">CSV · TABLEUR</span><h2>Les ventes du mois</h2><p>Une ligne par paiement ou remboursement confirmé, avec la référence de commande, les remises et la livraison lorsqu’elles sont connues.</p><p class="accounting-help">Les remboursements figurent à leur date de confirmation, même si la vente est plus ancienne. Compatible avec Excel.</p>{% if report.rows %}<a class="button" href="{% url 'facturation:sales_export' %}?annee={{ period.year }}&amp;mois={{ period.month }}">Exporter les ventes ↓</a>{% else %}<span class="button accounting-disabled" aria-disabled="true">Aucun mouvement à exporter</span>{% endif %}</section>
-    <section class="catalog-panel accounting-download"><span class="accounting-format">ZIP · FACTURES PDF</span><h2>Les factures du mois</h2><p>{{ summary.invoice_count }} facture{{ summary.invoice_count|pluralize }} émise{{ summary.invoice_count|pluralize }} pendant ce mois, dans un seul dossier avec un index récapitulatif.</p><p class="accounting-help">Le mois retenu est celui de l’émission de la facture. Les numéros et les informations d’origine sont conservés.</p>{% if archive_too_large %}<p class="accounting-warning">Plus de 500 factures : consultez les documents individuellement dans « Commandes et factures ».</p>{% elif report.invoices %}<a class="button" href="{% url 'facturation:invoice_archive' %}?annee={{ period.year }}&amp;mois={{ period.month }}">Télécharger les factures ↓</a>{% else %}<span class="button accounting-disabled" aria-disabled="true">Aucune facture émise ce mois</span>{% endif %}</section>
+    <section class="catalog-panel accounting-download"><span class="accounting-format">CSV · TABLEUR</span><h2>Les ventes de la période</h2><p>Une ligne par paiement ou remboursement confirmé, avec la référence de commande, les remises et la livraison lorsqu’elles sont connues.</p><p class="accounting-help">Les remboursements figurent à leur date de confirmation, même si la vente est plus ancienne. Compatible avec Excel.</p>{% if report.rows %}<a class="button" href="{% url 'facturation:sales_export' %}?{{ period_query }}">Exporter les ventes ↓</a>{% else %}<span class="button accounting-disabled" aria-disabled="true">Aucun mouvement à exporter</span>{% endif %}</section>
+    <section class="catalog-panel accounting-download"><span class="accounting-format">ZIP · FACTURES PDF</span><h2>Les factures de la période</h2><p>{{ summary.invoice_count }} facture{{ summary.invoice_count|pluralize }} émise{{ summary.invoice_count|pluralize }} pendant cette période, dans un seul dossier avec un index récapitulatif.</p><p class="accounting-help">Les factures sont sélectionnées selon leur date d’émission. Les numéros et les informations d’origine sont conservés.</p>{% if archive_too_large %}<p class="accounting-warning">Plus de 500 factures : consultez les documents individuellement dans « Commandes et factures ».</p>{% elif report.invoices %}<a class="button" href="{% url 'facturation:invoice_archive' %}?{{ period_query }}">Télécharger les factures ↓</a>{% else %}<span class="button accounting-disabled" aria-disabled="true">Aucune facture émise sur cette période</span>{% endif %}</section>
   </div>
 </details>
 <p class="accounting-scope">Ces fichiers regroupent les opérations enregistrées sur le site. Ils n’incluent pas les commissions ni les virements du prestataire de paiement. Les informations fiscales inconnues restent à vérifier.</p>
 <section class="catalog-panel accounting-search" id="rechercher" aria-labelledby="accounting-search-title">
   <h2 id="accounting-search-title">Retrouver une opération</h2>
   <form method="get" action="#rechercher">
-    <input type="hidden" name="annee" value="{{ period.year }}"><input type="hidden" name="mois" value="{{ period.month }}">
+    {% for name, value in period.params.items %}<input type="hidden" name="{{ name }}" value="{{ value }}">{% endfor %}
     <div class="accounting-query"><label for="accounting-query">Client, e-mail, commande ou facture</label><input id="accounting-query" name="q" type="search" maxlength="100" value="{{ query }}" placeholder="Un nom ou une référence…" aria-describedby="accounting-search-help"></div>
     <div><label for="accounting-kind">Type de mouvement</label><select name="type" id="accounting-kind"><option value="">Tous les mouvements</option value="payment"{% if kind == 'payment' %} selected{% endif %}>Paiements</option><option value="refund"{% if kind == 'refund' %} selected{% endif %}>Remboursements</option></select></div>
     <button class="button" type="submit">Rechercher ↗</button>
     {% if is_filtered %}<a class="underlined" href="{{ reset_url }}">Effacer les filtres</a>{% endif %}
   </form>
-  <p class="accounting-help" id="accounting-search-help">La recherche s’applique aux listes ci-dessous. Le type filtre uniquement les mouvements. Les totaux et les téléchargements restent ceux du mois entier.</p>
+  <p class="accounting-help" id="accounting-search-help">La recherche s’applique aux listes ci-dessous. Le type filtre uniquement les mouvements. Les totaux et les téléchargements restent ceux de la période entière.</p>
 </section>
 {% if report.missing_invoice_orders %}
 <section class="catalog-panel accounting-missing" id="a-facturer">
   <p class="eyebrow">COMPLÉTER LE DOSSIER</p>
   <header class="accounting-section-heading"><h2>{{ report.missing_invoice_orders|length }} commande{{ report.missing_invoice_orders|length|pluralize }} sans facture émise</h2>{% if query %}<span>{{ missing_invoices.paginator.count }} résultat{{ missing_invoices.paginator.count|pluralize }}</span>{% endif %}</header>
-  <p>Ces commandes ont été payées pendant le mois sélectionné. Ouvrez leur aperçu pour vérifier les informations et confirmer l’émission.</p>
+  <p>Ces commandes ont été payées pendant la période sélectionnée. Ouvrez leur aperçu pour vérifier les informations et confirmer l’émission.</p>
   {% for order in missing_invoices %}
   <article class="accounting-row">
     <div><h3>{{ order.billing_details.name|default:'Client' }} · Commande {{ order.pk|stringformat:'s'|slice:':8'|upper }}</h3><p>{{ order.paid_at|date:'d/m/Y' }}{% if order.total_paid != None %} · {{ order.display_total|floatformat:2 }} €{% endif %}</p>{% if order.customer_email %}<p class="accounting-help">{{ order.customer_email }}</p>{% endif %}</div>
@@ -73,14 +77,14 @@
   <header class="accounting-section-heading"><h2>Les mouvements enregistrés</h2><span>{{ movements.paginator.count }} opération{{ movements.paginator.count|pluralize }}{% if is_filtered %} trouvée{{ movements.paginator.count|pluralize }}{% endif %}</span></header>
   {% for row in movements %}
   <article class="accounting-row"><div><span class="accounting-kind{% if row.kind == 'refund' %} accounting-kind-refund{% endif %}">{% if row.kind == 'refund' %}Remboursement{% else %}Paiement{% endif %}</span><h3>{{ row.date|date:'d/m/Y à H:i' }} · {{ row.customer_name|default:'Client' }}</h3><p>Commande {{ row.order.pk|stringformat:'s'|slice:':8'|upper }}{% if row.invoice_number %} · {{ row.invoice_number }}{% endif %}</p>{% if row.notes %}<p class="accounting-help">{{ row.notes }}</p>{% endif %}</div><div class="accounting-row-end"><strong>{{ row.amount|floatformat:2 }} €</strong>{% if row.kind == 'refund' %}<a class="underlined" href="{% url 'retours:manage_detail' row.refund.pk %}">Voir le remboursement ↗</a>{% else %}<a class="underlined" href="{% url 'facturation:purchase_order' row.order.pk %}">Voir la commande ↗</a>{% endif %}</div></article>
-  {% empty %}<div class="accounting-empty">{% if is_filtered %}<h3>Aucun mouvement ne correspond aux filtres.</h3><a class="underlined" href="{{ reset_url }}">Afficher tous les mouvements du mois ↗</a>{% else %}<h3>Aucun mouvement confirmé ce mois.</h3><p>Choisissez un autre mois pour retrouver les ventes enregistrées.</p>{% endif %}</div>{% endfor %}
+  {% empty %}<div class="accounting-empty">{% if is_filtered %}<h3>Aucun mouvement ne correspond aux filtres.</h3><a class="underlined" href="{{ reset_url }}">Afficher tous les mouvements de la période ↗</a>{% else %}<h3>Aucun mouvement confirmé sur cette période.</h3><p>Choisissez une autre période pour retrouver les ventes enregistrées.</p>{% endif %}</div>{% endfor %}
   {% include 'facturation/accounting_pagination.html' with pagination=movements_pagination pagination_label='Pages des mouvements' %}
 </section>
 <section class="catalog-panel" id="factures">
   <header class="accounting-section-heading"><h2>Les factures émises</h2><span>{{ documents.paginator.count }} document{{ documents.paginator.count|pluralize }}{% if query %} trouvé{{ documents.paginator.count|pluralize }}{% endif %}</span></header>
   {% for invoice in documents %}
   <article class="accounting-row"><div><h3>{{ invoice.number }}</h3><p>Émise le {{ invoice.issued_at|date:'d/m/Y à H:i' }} · Commande {{ invoice.order_id|stringformat:'s'|slice:':8'|upper }}</p>{% if invoice.snapshot.buyer.name %}<p class="accounting-help">{{ invoice.snapshot.buyer.name }}</p>{% endif %}</div><a class="underlined" href="{% url 'facturation:invoice' invoice.order_id %}">Consulter la facture ↗</a></article>
-  {% empty %}<div class="accounting-empty">{% if query %}<h3>Aucune facture ne correspond à votre recherche.</h3><a class="underlined" href="{{ reset_url }}">Afficher les factures du mois ↗</a>{% else %}<h3>Aucune facture émise ce mois.</h3><p>Les factures apparaissent ici après leur émission depuis la fiche de commande.</p>{% endif %}</div>{% endfor %}
+  {% empty %}<div class="accounting-empty">{% if query %}<h3>Aucune facture ne correspond à votre recherche.</h3><a class="underlined" href="{{ reset_url }}">Afficher les factures de la période ↗</a>{% else %}<h3>Aucune facture émise sur cette période.</h3><p>Les factures apparaissent ici après leur émission depuis la fiche de commande.</p>{% endif %}</div>{% endfor %}
   {% include 'facturation/accounting_pagination.html' with pagination=documents_pagination pagination_label='Pages des factures' %}
 </section>
 {% endblock %}

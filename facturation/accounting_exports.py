@@ -1,6 +1,6 @@
-"""Read-only, all-or-nothing monthly accounting archives.
+"""Read-only, all-or-nothing accounting archives for a chosen period.
 
-Callers pass the complete monthly report, before any on-screen search or
+Callers pass the complete period report, before any on-screen search or
 pagination. Generating copies never issues invoices or changes their snapshots.
 """
 import re
@@ -16,6 +16,10 @@ from .services import DocumentError
 
 MAX_ARCHIVE_INVOICES = 500
 MAX_ARCHIVE_BYTES = 50 * 1024 * 1024
+
+
+def _period_copy(data, monthly, other):
+    return monthly if data['period'].get('kind', 'month') == 'month' else other
 
 
 class InvoiceArchiveError(DocumentError):
@@ -55,7 +59,7 @@ def _invoice_names(invoices):
 
 
 def _missing_orders(data):
-    """Include an old sale without invoice when it is refunded this month."""
+    """Include an old sale without invoice when refunded during the chosen period."""
     orders = {str(order.pk): order for order in data['missing_invoice_orders']}
     for row in data['rows']:
         if row['invoice'] is None:
@@ -85,23 +89,23 @@ def _recap(data):
         f'Du {_date(selected["start"])} inclus au {_date(selected["end"])} exclu.',
         f'Généré le {generated.strftime("%d/%m/%Y à %H:%M:%S %Z (UTC%z)")} — Europe/Paris.',
         'État du dossier : ' + ('À COMPLÉTER' if needs_attention else 'EXPORT GÉNÉRÉ'),
-        'Périmètre : totalité du mois choisi, indépendamment de la recherche et des filtres affichés.',
+        _period_copy(data, 'Périmètre : totalité du mois choisi, indépendamment de la recherche et des filtres affichés.', 'Périmètre : totalité de la période choisie, indépendamment de la recherche et des filtres affichés.'),
         '',
-        '1. ENCAISSEMENTS ET REMBOURSEMENTS CONFIRMÉS DU MOIS',
+        _period_copy(data, '1. ENCAISSEMENTS ET REMBOURSEMENTS CONFIRMÉS DU MOIS', '1. ENCAISSEMENTS ET REMBOURSEMENTS CONFIRMÉS DE LA PÉRIODE'),
         f'Paiements : {summary["payment_count"]} | total encaissé : {_amount(summary["payments"])}.',
         f'Remboursements : {summary["refund_count"]} | total remboursé : {_amount(summary["refunds"])}.',
         f'Solde des mouvements (paiements moins remboursements) : {_amount(summary["net"])}.',
         'Les remboursements apparaissent avec un montant négatif dans le fichier des ventes.',
         'Ces montants correspondent aux opérations confirmées du site, avant rapprochement bancaire.',
         '',
-        '2. FACTURES ÉMISES PENDANT LE MOIS',
+        _period_copy(data, '2. FACTURES ÉMISES PENDANT LE MOIS', '2. FACTURES ÉMISES PENDANT LA PÉRIODE'),
         f'Factures PDF jointes : {len(data["invoices"])}.',
         f'Total des factures émises, livraison comprise : {_amount(invoice_total)}.',
         f'Base HT des factures émises : {_amount(invoice_base)}.',
         f'TVA des factures émises : {_amount(invoice_tax)}.',
         'Ces totaux reprennent les données historiques des factures, sans déduire les remboursements.',
         'La date d’émission d’une facture est distincte de la date de paiement.',
-        'Une facture émise ce mois peut concerner un paiement d’un autre mois, et réciproquement.',
+        _period_copy(data, 'Une facture émise ce mois peut concerner un paiement d’un autre mois, et réciproquement.', 'Une facture émise pendant la période peut concerner un paiement d’une autre période, et réciproquement.'),
         'Ne pas additionner les totaux des factures aux encaissements : ce sont deux lectures des mêmes ventes.',
     ]
     if not data['invoices']:
@@ -111,7 +115,7 @@ def _recap(data):
     outside = {row['invoice'].number: row['invoice'] for row in data['rows']
                if row['invoice'] is not None and row['invoice'].number not in included}
     if outside:
-        lines += ['', 'Factures liées aux mouvements mais émises hors du mois (non jointes) :']
+        lines += ['', _period_copy(data, 'Factures liées aux mouvements mais émises hors du mois (non jointes) :', 'Factures liées aux mouvements mais émises hors de la période (non jointes) :')]
         for invoice in outside.values():
             lines.append(f'- {_text(invoice.number)} | commande {_text(invoice.order_id)} | émission : {_date(invoice.issued_at)}.')
         lines.append('Télécharger ces factures depuis leur mois d’émission ou depuis la commande correspondante.')
@@ -120,7 +124,8 @@ def _recap(data):
     if missing:
         lines += [_order_line(order) for order in missing]
         lines.append('Ces commandes ne sont pas représentées par un PDF. Aucune facture n’a été créée par cet export.')
-    lines.append(f'Commandes payées du mois sans montant confirmé : {len(data["incomplete_orders"])}.')
+    lines.append(_period_copy(data, 'Commandes payées du mois', 'Commandes payées de la période')
+                 + f' sans montant confirmé : {len(data["incomplete_orders"])}.')
     if data['incomplete_orders']:
         lines += [_order_line(order) for order in data['incomplete_orders']]
         lines.append('Ces commandes sont exclues des totaux des mouvements et du fichier des ventes ; leurs montants ne sont pas supposés nuls.')
@@ -152,23 +157,24 @@ def _readme(data, *, dossier):
         f'Période : {data["period"]["label"]} (Europe/Paris).',
         f'{len(data["invoices"])} facture(s) PDF, classée(s) par numéro.',
         '',
-        'La sélection des PDF suit la date d’émission de chaque facture, indépendamment du mois de paiement.',
+        _period_copy(data, 'La sélection des PDF suit la date d’émission de chaque facture, indépendamment du mois de paiement.', 'La sélection des PDF suit la date d’émission de chaque facture, indépendamment de la date de paiement.'),
         'Les PDF reprennent les données conservées lors de leur émission. Aucun nouveau numéro n’a été attribué.',
         'Les commandes sans facture émise ne sont pas incluses parmi les PDF.',
         'Les remboursements sont des opérations distinctes : ils ne modifient pas les factures déjà émises.',
-        'Le fichier index-factures.csv répertorie uniquement les factures émises pendant le mois.',
+        _period_copy(data, 'Le fichier index-factures.csv répertorie uniquement les factures émises pendant le mois.', 'Le fichier index-factures.csv répertorie uniquement les factures émises pendant la période.'),
         'Les CSV se lisent dans Excel ou un tableur (UTF-8, séparateur point-virgule, décimales avec une virgule).',
     ]
     if dossier:
         lines += [
-            f'Le fichier ventes-{data["period"]["slug"]}.csv contient les paiements et remboursements confirmés du mois.',
-            'Une facture d’un autre mois peut y être référencée sans que son PDF soit joint.',
+            f'Le fichier ventes-{data["period"]["slug"]}.csv contient les paiements et remboursements confirmés '
+            + _period_copy(data, 'du mois.', 'de la période.'),
+            _period_copy(data, 'Une facture d’un autre mois peut y être référencée sans que son PDF soit joint.', 'Une facture émise hors de la période peut y être référencée sans que son PDF soit joint.'),
             'Lire RECAPITULATIF.txt avant transmission : il indique les totaux distincts, pièces manquantes et contrôles nécessaires.',
             'Un dossier À COMPLÉTER contient les éléments disponibles, mais ne doit pas être présenté comme complet.',
-            'Le téléchargement reprend la totalité du mois choisi, sans appliquer la recherche ni les filtres de l’écran.',
+            _period_copy(data, 'Le téléchargement reprend la totalité du mois choisi, sans appliquer la recherche ni les filtres de l’écran.', 'Le téléchargement reprend la totalité de la période choisie, sans appliquer la recherche ni les filtres de l’écran.'),
         ]
     else:
-        lines.append('Pour les encaissements et remboursements du mois, utilisez aussi « Exporter les ventes » ou le dossier comptable.')
+        lines.append(_period_copy(data, 'Pour les encaissements et remboursements du mois, utilisez aussi « Exporter les ventes » ou le dossier comptable.', 'Pour les encaissements et remboursements de la période, utilisez aussi « Exporter les ventes » ou le dossier comptable.'))
     lines += [
         'Les remboursements doivent être rapprochés de leurs avoirs comptables ; les montants HT/TVA inconnus restent vides.',
         'Ces exports concernent les opérations du site ; ils ne constituent pas un FEC ni un relevé bancaire.',
@@ -183,11 +189,11 @@ def _archive(data, *, dossier):
     invoices = data['invoices']
     if dossier:
         if not (data['rows'] or invoices or data['incomplete_orders']):
-            raise DocumentError('Aucune activité ni facture pour ce mois. Choisissez une période contenant des opérations ou des documents.')
+            raise DocumentError(_period_copy(data, 'Aucune activité ni facture pour ce mois. Choisissez une période contenant des opérations ou des documents.', 'Aucune activité ni facture pour cette période. Choisissez une période contenant des opérations ou des documents.'))
     elif not invoices:
-        raise DocumentError('Aucune facture n’a été émise pendant ce mois. Consultez les commandes à facturer dans « Comptabilité et exports ».')
+        raise DocumentError(_period_copy(data, 'Aucune facture n’a été émise pendant ce mois. Consultez les commandes à facturer dans « Comptabilité et exports ».', 'Aucune facture n’a été émise pendant cette période. Consultez les commandes à facturer dans « Comptabilité et exports ».'))
     if len(invoices) > MAX_ARCHIVE_INVOICES:
-        raise DocumentError('Ce mois dépasse la limite de 500 factures par archive. Les documents restent accessibles dans « Commandes et factures ».')
+        raise DocumentError(_period_copy(data, 'Ce mois dépasse la limite de 500 factures par archive. Les documents restent accessibles dans « Commandes et factures ».', 'Cette période dépasse la limite de 500 factures par archive. Choisissez une période plus courte ou consultez les documents dans « Commandes et factures ».'))
 
     named_invoices = list(_invoice_names(invoices))
     stream = SpooledTemporaryFile(max_size=4 * 1024 * 1024, mode='w+b')
@@ -199,7 +205,7 @@ def _archive(data, *, dossier):
                 nonlocal total_size
                 total_size += len(content)
                 if total_size > MAX_ARCHIVE_BYTES:
-                    raise DocumentError('Les documents de ce mois dépassent 50 Mo. Téléchargez-les séparément depuis « Commandes et factures ».')
+                    raise DocumentError(_period_copy(data, 'Les documents de ce mois dépassent 50 Mo. Téléchargez-les séparément depuis « Commandes et factures ».', 'Les documents de cette période dépassent 50 Mo. Choisissez une période plus courte ou téléchargez-les séparément depuis « Commandes et factures ».'))
                 archive.writestr(name, content)
 
             for invoice, name in named_invoices:
@@ -223,10 +229,10 @@ def _archive(data, *, dossier):
 
 
 def invoice_archive(data):
-    """Return an open file containing copies of all invoices issued this month."""
+    """Return an open file containing copies of all invoices issued in the chosen period."""
     return _archive(data, dossier=False)
 
 
 def dossier_archive(data):
-    """Return one open ZIP of the complete month's invoices, movements and recap."""
+    """Return one open ZIP of the complete period's invoices, movements and recap."""
     return _archive(data, dossier=True)

@@ -268,7 +268,7 @@ class AccountingPolishTests(TestCase):
         response = self.client.get(self.url(q='Aucun client correspondant', type='refund'))
         self.assertContains(response, 'Aucun mouvement ne correspond aux filtres.')
         self.assertContains(response, 'Aucune commande à facturer ne correspond à votre recherche.')
-        self.assertContains(response, 'Les totaux et les téléchargements restent ceux du mois entier.')
+        self.assertContains(response, 'Les totaux et les téléchargements restent ceux de la période entière.')
         self.assertContains(response, 'Afficher toutes les commandes à facturer')
         reset = urlsplit(response.context['reset_url'])
         self.assertEqual(reset.path, reverse('facturation:accounting'))

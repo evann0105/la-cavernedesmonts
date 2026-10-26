@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views, accounting_views
+from . import views, accounting_views, accounting_history_views
 
 app_name = 'facturation'
 urlpatterns = [
@@ -7,6 +7,9 @@ urlpatterns = [
     path('gestion/comptabilite/ventes.csv', accounting_views.export_sales, name='sales_export'),
     path('gestion/comptabilite/factures.zip', accounting_views.export_invoices, name='invoice_archive'),
     path('gestion/comptabilite/dossier.zip', accounting_views.export_bundle, name='accounting_bundle'),
+    path('gestion/comptabilite/historique/', accounting_history_views.history, name='accounting_history'),
+    path('gestion/comptabilite/historique/<uuid:pk>/', accounting_history_views.detail, name='accounting_export_detail'),
+    path('gestion/comptabilite/historique/<uuid:pk>/transmission/', accounting_history_views.transmission, name='accounting_export_transmission'),
     path('gestion/commandes/', views.management, name='management'),
     path('commandes/<uuid:pk>/bon-de-commande/', views.document, {'kind': 'purchase_order'}, name='purchase_order'),
     path('commandes/<uuid:pk>/facture/', views.document, {'kind': 'invoice'}, name='invoice'),

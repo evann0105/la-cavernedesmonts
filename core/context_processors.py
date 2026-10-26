@@ -64,6 +64,9 @@ def back_navigation(request):
         fallback = reverse('core:product_list')
     elif name.startswith('paiement:'):
         fallback = reverse('core:cart')
+    elif name in {'facturation:accounting_history', 'facturation:accounting_export_detail', 'facturation:accounting_export_transmission'}:
+        fallback = reverse('facturation:accounting') if name == 'facturation:accounting_history' else reverse('facturation:accounting_history')
+        return {'back_url': fallback, 'back_fallback': fallback, 'back_use_history': False}
     elif name in {'facturation:accounting', 'facturation:sales_export', 'facturation:invoice_archive', 'facturation:accounting_bundle'}:
         fallback = reverse('espace:account') if name == 'facturation:accounting' else reverse('facturation:accounting')
         return {'back_url': fallback, 'back_fallback': fallback, 'back_use_history': False}

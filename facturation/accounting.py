@@ -1,4 +1,4 @@
-"""Read-only monthly cash movements and issued-document indexes.
+"""Read-only calendar-period cash movements and issued-document indexes.
 
 Payments, refunds and invoice issuance each keep their own date. This is an
 export of activity recorded by the shop, not a bank settlement report or FEC.
@@ -6,42 +6,23 @@ Amounts stay in integer cents until presentation; unknown tax is never zero.
 """
 import csv
 import re
-from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from io import StringIO
-from zoneinfo import ZoneInfo
 
-from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 from paiement.models import Order
 from retours.models import ReturnRequest
 from .models import Invoice
+from .accounting_periods import MONTHS, PARIS, select_period, validated_selection
 
 
-PARIS = ZoneInfo('Europe/Paris')
-MONTHS = ('Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
-          'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre')
 CENT = Decimal('.01')
 
 
 def period(year, month):
-    """A half-open calendar month in the shop's French timezone."""
-    try:
-        if isinstance(year, bool) or isinstance(month, bool):
-            raise ValueError
-        year_text, month_text = str(year), str(month)
-        if not year_text.isdigit() or not month_text.isdigit():
-            raise ValueError
-        year, month = int(year), int(month)
-        if not 2000 <= year <= 2100 or not 1 <= month <= 12:
-            raise ValueError
-    except (TypeError, ValueError, OverflowError) as error:
-        raise ValidationError('Choisissez un mois valide entre janvier 2000 et décembre 2100.') from error
-    start = datetime(year, month, 1, tzinfo=PARIS)
-    end = datetime(year + 1, 1, 1, tzinfo=PARIS) if month == 12 else datetime(year, month + 1, 1, tzinfo=PARIS)
-    return {'year': year, 'month': month, 'start': start, 'end': end,
-            'label': f'{MONTHS[month - 1]} {year}', 'slug': f'{year:04d}-{month:02d}'}
+    """Backward-compatible month selection with validated calendar metadata."""
+    return select_period({'annee': year, 'mois': month})
 
 
 def euros(cents):
@@ -176,14 +157,14 @@ def _refund_row(refund):
             'notes': ' '.join(notes)}
 
 
-def report(year, month):
-    selected = period(year, month)
+def report(year=None, month=None, *, selection=None):
+    selected = validated_selection(selection) if selection is not None else period(year, month)
     start, end = selected['start'], selected['end']
     # No bank/provider call, fallback date or current catalogue price is used.
-    paid_in_month = list(Order.objects.filter(status='paid', paid_at__gte=start, paid_at__lt=end)
+    paid_in_period = list(Order.objects.filter(status='paid', paid_at__gte=start, paid_at__lt=end)
                          .select_related('invoice').order_by('paid_at', 'pk'))
-    incomplete = [order for order in paid_in_month if not _cents(order.total_paid)]
-    payments = [_sale_row(order) for order in paid_in_month if _cents(order.total_paid)]
+    incomplete = [order for order in paid_in_period if not _cents(order.total_paid)]
+    payments = [_sale_row(order) for order in paid_in_period if _cents(order.total_paid)]
     refunds = [_refund_row(refund) for refund in ReturnRequest.objects.filter(
         order__status='paid', refund_state='succeeded', refunded_at__gte=start, refunded_at__lt=end)
         .select_related('order__invoice').prefetch_related('lines').order_by('refunded_at', 'pk')]
@@ -193,16 +174,18 @@ def report(year, month):
     undated_orders = Order.objects.filter(status='paid', paid_at__isnull=True).count()
     undated_refunds = ReturnRequest.objects.filter(order__status='paid', refund_state='succeeded', refunded_at__isnull=True).count()
     warnings = []
+    unknown_scope = 'un mois' if selected['kind'] == 'month' else 'une période'
     if incomplete:
-        warnings.append(f'{len(incomplete)} commande(s) payée(s) du mois sans montant confirmé : exclue(s) des totaux et du fichier des ventes.')
+        scope = 'du mois' if selected['kind'] == 'month' else 'de la période'
+        warnings.append(f'{len(incomplete)} commande(s) payée(s) {scope} sans montant confirmé : exclue(s) des totaux et du fichier des ventes.')
     if undated_orders:
-        warnings.append(f'{undated_orders} commande(s) payée(s) sans date de paiement, toutes périodes confondues : impossible de les rattacher à un mois.')
+        warnings.append(f'{undated_orders} commande(s) payée(s) sans date de paiement, toutes périodes confondues : impossible de les rattacher à {unknown_scope}.')
     if undated_refunds:
-        warnings.append(f'{undated_refunds} remboursement(s) confirmé(s) sans date, toutes périodes confondues : impossible de les rattacher à un mois.')
+        warnings.append(f'{undated_refunds} remboursement(s) confirmé(s) sans date, toutes périodes confondues : impossible de les rattacher à {unknown_scope}.')
     payments_cents = sum(row['amount_cents'] for row in payments)
     refunds_cents = -sum(row['amount_cents'] for row in refunds)
     return {'period': selected, 'rows': rows, 'invoices': invoices,
-            'missing_invoice_orders': [order for order in paid_in_month if getattr(order, 'invoice', None) is None],
+            'missing_invoice_orders': [order for order in paid_in_period if getattr(order, 'invoice', None) is None],
             'incomplete_orders': incomplete, 'undated_orders_count': undated_orders,
             'undated_refunds_count': undated_refunds, 'warnings': warnings,
             'summary': {'payment_count': len(payments), 'refund_count': len(refunds),
