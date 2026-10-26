@@ -1,5 +1,5 @@
 {% extends 'core/catalog/base.html' %}{% load static %}
 {% block title %}Comptabilité et exports — La Caverne des Monts{% endblock %}
-{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'facturation/accounting.css' %}?v=20261026">{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'facturation/accounting.css' %}?v=20261026b">{% endblock %}
 {% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a><span aria-hidden="true"> / </span><a href="{% url 'facturation:accounting' %}">Comptabilité et exports</a></nav>{% endblock %}
 {% block catalog_content %}{% block accounting_content %}{% endblock %}{% endblock %}

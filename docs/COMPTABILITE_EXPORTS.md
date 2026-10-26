@@ -27,6 +27,33 @@ Les opérations sans date ne sont pas affectées arbitrairement à un mois. Ces
 informations manquantes sont signalées au-dessus des téléchargements : il faut
 les vérifier avant de transmettre un dossier présenté comme complet.
 
+## Télécharger le dossier du mois
+
+Le bouton principal télécharge `dossier-comptable-AAAA-MM.zip` avec les PDF des
+factures émises, `index-factures.csv`, `ventes-AAAA-MM.csv`, `RECAPITULATIF.txt` et
+`A-LIRE.txt`. Les remboursements sont compris dans le fichier des ventes.
+
+Le récapitulatif distingue les encaissements des totaux des factures émises,
+indique la date de génération à Paris et les pièces ou informations manquantes.
+Un mois contenant des paiements sans facture, des remboursements seuls ou des
+montants à vérifier reste exportable, avec la mention « À compléter » appropriée.
+Une facture liée à un mouvement mais émise un autre mois est référencée dans le
+récapitulatif ; son PDF se télécharge depuis son mois d’émission ou sa commande.
+Les téléchargements séparés restent disponibles dans le volet du même nom.
+
+## Rechercher et vérifier
+
+La recherche porte sur le nom ou l’e-mail historique du client, la référence de
+commande ou le numéro de facture, sans distinction de casse ou d’accent. Le
+filtre Paiements / Remboursements concerne seulement les mouvements. Les totaux
+et tous les téléchargements restent ceux du mois entier, indépendamment de la
+recherche. Effacer les filtres conserve la période choisie.
+
+Les commandes payées sans facture, les mouvements et les factures sont paginés
+par 25, avec accès à toutes les entrées. Chaque pagination conserve les filtres
+et les pages des autres listes. Une recherche sans résultat propose de retrouver
+la liste complète du mois. L’export ne dépend jamais de la page affichée.
+
 ## Exporter les ventes
 
 `ventes-AAAA-MM.csv` comporte une ligne par paiement ou remboursement confirmé.
@@ -60,9 +87,10 @@ facture et n’attribue aucun nouveau numéro. Les commandes payées du mois san
 facture sont listées séparément, avec un lien vers leur aperçu. L’émission reste
 une action explicite dans la fiche de commande, après vérification.
 
-Un document incohérent bloque l’archive entière avec une explication ; aucun ZIP
-partiel n’est présenté comme complet. La limite est de 500 factures et 50 Mo de
-PDF par archive. Au-delà, les documents restent accessibles individuellement
+Un document incohérent bloque l’archive entière avec une explication et un lien
+vers la facture précise à vérifier ; aucun ZIP partiel n’est téléchargé. Un lien
+permet de revenir au même mois. La limite est de 500 factures et 50 Mo de contenu
+non compressé par archive, CSV et récapitulatif compris. Au-delà, les documents restent accessibles individuellement
 depuis Commandes et factures. Les fichiers temporaires sont privés et fermés
 après la réponse, sans copie dans les médias publics.
 
@@ -81,8 +109,9 @@ Le rendu PDF utilise ReportLab 5.1.0 et ses polices Vera intégrées, sans charg
 de ressources externes. L’installation habituelle de `requirements.txt` suffit.
 Aucune migration de données n’est nécessaire pour cette fonctionnalité.
 
-Les tests `facturation.test_accounting_data`, `facturation.test_accounting_views`
-et `facturation.test_pdf` couvrent les périodes, montants, remboursements,
+Les tests `facturation.test_accounting_data`, `facturation.test_accounting_views`,
+`facturation.test_accounting_search`, `facturation.test_accounting_bundle`,
+`facturation.test_accounting_polish` et `facturation.test_pdf` couvrent les périodes, montants, remboursements,
 permissions, archives, documents historiques et erreurs. Les PDF de vérification
 utilisent des données fictives dans une base de test, sans émission de facture
 réelle.

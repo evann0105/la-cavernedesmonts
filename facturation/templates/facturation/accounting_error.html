@@ -1,2 +1,11 @@
 {% extends 'facturation/accounting_base.html' %}
-{% block accounting_content %}<header class="catalog-heading"><div><p class="eyebrow">COMPTABILITÉ ET EXPORTS</p><h1>Un point à vérifier.</h1></div></header><section class="catalog-panel"><p role="alert">{{ error }}</p><div class="accounting-actions"><a class="button" href="{% url 'facturation:accounting' %}">Choisir une période ↗</a><a class="underlined" href="{% url 'facturation:management' %}">Commandes et factures ↗</a></div></section>{% endblock %}
+{% block accounting_content %}
+<header class="catalog-heading"><div><p class="eyebrow">COMPTABILITÉ ET EXPORTS{% if period %} · {{ period.label }}{% endif %}</p><h1>Un point à vérifier.</h1></div></header>
+<section class="catalog-panel"><p role="alert">{{ error }}</p>
+  <div class="accounting-actions">
+    {% if invoice_to_check %}<a class="button" href="{% url 'facturation:invoice' invoice_to_check.order_id %}">Vérifier la facture {{ invoice_to_check.number }} ↗</a>{% endif %}
+    <a class="{% if invoice_to_check %}underlined{% else %}button{% endif %}" href="{{ overview_url }}">{% if period %}Revenir au dossier de {{ period.label }}{% else %}Choisir une période{% endif %} ↗</a>
+    <a class="underlined" href="{% url 'facturation:management' %}">Commandes et factures ↗</a>
+  </div>
+</section>
+{% endblock %}

@@ -227,7 +227,7 @@ class AccountingDownloadTests(TestCase):
             stream = SpooledTemporaryFile(*args, **kwargs)
             files.append(stream)
             return stream
-        with patch('facturation.accounting_views.SpooledTemporaryFile', side_effect=spool), \
+        with patch('facturation.accounting_exports.SpooledTemporaryFile', side_effect=spool), \
              patch('facturation.pdf.invoice_pdf', side_effect=DocumentError('Snapshot incohérent.')):
             response = self.client.get(self.url('invoice_archive'))
         self.assertContains(response, 'Aucun dossier partiel', status_code=409)
@@ -243,7 +243,7 @@ class AccountingDownloadTests(TestCase):
             stream = SpooledTemporaryFile(*args, **kwargs)
             files.append(stream)
             return stream
-        with patch('facturation.accounting_views.SpooledTemporaryFile', side_effect=spool):
+        with patch('facturation.accounting_exports.SpooledTemporaryFile', side_effect=spool):
             response = self.client.get(self.url('invoice_archive'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(files), 1)
@@ -260,8 +260,8 @@ class AccountingDownloadTests(TestCase):
         self.assertTrue(files[0].closed)
 
     def test_document_limit_rejects_before_creating_a_temporary_file(self):
-        with patch('facturation.accounting_views.MAX_ARCHIVE_INVOICES', 0), \
-             patch('facturation.accounting_views.SpooledTemporaryFile') as temporary:
+        with patch('facturation.accounting_exports.MAX_ARCHIVE_INVOICES', 0), \
+             patch('facturation.accounting_exports.SpooledTemporaryFile') as temporary:
             response = self.client.get(self.url('invoice_archive'))
         self.assertEqual(response.status_code, 409)
         temporary.assert_not_called()
@@ -272,8 +272,8 @@ class AccountingDownloadTests(TestCase):
             stream = SpooledTemporaryFile(*args, **kwargs)
             files.append(stream)
             return stream
-        with patch('facturation.accounting_views.MAX_ARCHIVE_BYTES', 1), \
-             patch('facturation.accounting_views.SpooledTemporaryFile', side_effect=spool):
+        with patch('facturation.accounting_exports.MAX_ARCHIVE_BYTES', 1), \
+             patch('facturation.accounting_exports.SpooledTemporaryFile', side_effect=spool):
             response = self.client.get(self.url('invoice_archive'))
         self.assertContains(response, 'dépassent 50 Mo', status_code=409)
         self.assertTrue(files[0].closed)
@@ -285,7 +285,7 @@ class AccountingDownloadTests(TestCase):
             stream = SpooledTemporaryFile(*args, **kwargs)
             files.append(stream)
             return stream
-        with patch('facturation.accounting_views.SpooledTemporaryFile', side_effect=spool), \
+        with patch('facturation.accounting_exports.SpooledTemporaryFile', side_effect=spool), \
              patch('facturation.pdf.invoice_pdf', side_effect=RuntimeError('generation failure')):
             with self.assertRaises(RuntimeError):
                 invoice_archive({'period': period(2026, 10), 'invoices': [self.invoice]})
