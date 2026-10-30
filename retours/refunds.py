@@ -6,12 +6,16 @@ from django.db import transaction
 from django.db.models import Sum
 from django.utils import timezone
 from paiement.models import Order
+from paiement.test_mode import (assert_test_runtime, assert_test_object,
+                               assert_test_refund, assert_test_refund_list,
+                               assert_test_payment_intent)
 from .models import ReturnRequest, ReturnEvent
 from .services import ReturnError, validate_refund_allocation
 from .mail import return_notice
 
 
 def apply_refund(record, refund):
+    assert_test_refund(refund, ReturnError)
     if (refund.get('currency') != 'eur' or refund.get('amount') != record.amount
         or refund.get('payment_intent') != record.payment_intent
         or refund.get('metadata',{}).get('return_id') != str(record.pk)
@@ -32,6 +36,7 @@ def apply_refund(record, refund):
 
 
 def initiate(pk, actor, verified_problem=False):
+    assert_test_runtime(ReturnError)
     if ReturnRequest.objects.filter(pk=pk,order__status='demo').exists():
         from .demo import simulate_refund
         return simulate_refund(pk,actor)
@@ -57,6 +62,7 @@ def initiate(pk, actor, verified_problem=False):
 
 
 def reconcile(pk):
+    assert_test_runtime(ReturnError)
     order_id=ReturnRequest.objects.values_list('order_id',flat=True).get(pk=pk)
     with transaction.atomic():
         order=Order.objects.select_for_update().get(pk=order_id)
@@ -74,20 +80,24 @@ def reconcile(pk):
             return_notice(record,'refund','Cet article était gratuit après remise : aucun montant ne doit être reversé. Le dossier reste suivi pour la réception des articles.')
             return record
         session=stripe.checkout.Session.retrieve(order.stripe_session_id,api_key=settings.STRIPE_SECRET_KEY)
+        assert_test_object(session, ReturnError)
         if session.get('payment_status')!='paid' or session.get('amount_total')!=order.total_paid or session.get('client_reference_id')!=str(order.pk):raise ReturnError('Le paiement Stripe de cette commande doit être vérifié.')
         intent=session.get('payment_intent')
         if not intent:raise ReturnError('Paiement Stripe introuvable.')
+        assert_test_payment_intent(intent, ReturnError)
         if record.payment_intent and record.payment_intent!=intent:raise ReturnError('Le paiement lié a changé.')
         record.payment_intent=intent;record.save(update_fields=['payment_intent'])
         # A delayed retry must never recreate an old attempt after Stripe's key retention.
         if timezone.now()-record.refund_started_at>timedelta(hours=23):
             matches=stripe.Refund.list(payment_intent=intent,limit=100,api_key=settings.STRIPE_SECRET_KEY)
+            assert_test_refund_list(matches, ReturnError)
             found=next((r for r in matches['data'] if r.get('metadata',{}).get('return_id')==str(record.pk)),None)
             if found:return apply_refund(record,found)
             record.refund_state='review';record.save(update_fields=['refund_state'])
             ReturnEvent.objects.create(request=record,label='Tentative ancienne : rapprochement manuel requis, aucun nouvel envoi.')
             return record
         existing=stripe.Refund.list(payment_intent=intent,limit=100,api_key=settings.STRIPE_SECRET_KEY)
+        assert_test_refund_list(existing, ReturnError)
         own=next((r for r in existing['data'] if r.get('metadata',{}).get('return_id')==str(record.pk)),None)
         if own:return apply_refund(record,own)
         known=set(order.returns.exclude(stripe_refund_id__isnull=True).values_list('stripe_refund_id',flat=True))
@@ -107,6 +117,7 @@ def reconcile_all():
 
 
 def apply_verified_event(refund):
+    assert_test_refund(refund, ReturnError)
     pk=refund.get('metadata',{}).get('return_id')
     if not pk:return False
     try:record=ReturnRequest.objects.get(pk=pk)
@@ -117,6 +128,7 @@ def apply_verified_event(refund):
         if order.is_demo or record.refund_state=='none':return False
         if not record.payment_intent:
             session=stripe.checkout.Session.retrieve(order.stripe_session_id,api_key=settings.STRIPE_SECRET_KEY)
+            assert_test_object(session, ReturnError)
             if session.get('payment_status')!='paid' or session.get('amount_total')!=order.total_paid or session.get('client_reference_id')!=str(order.pk):raise ReturnError('Paiement non vérifié.')
             record.payment_intent=session.get('payment_intent') or ''
             record.save(update_fields=['payment_intent'])

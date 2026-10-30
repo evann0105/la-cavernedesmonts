@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 from .models import Order
 from .shipping import shipping_option
+from .test_mode import assert_test_runtime, assert_test_object
 from stocks.reservations import finish_locked, StockUnavailable
 
 
@@ -15,6 +16,7 @@ def benefit_coupon_id(order):
 
 
 def get_session(order_id, language='fr'):
+    assert_test_runtime(StockUnavailable)
     with transaction.atomic():
         order=Order.objects.select_for_update().get(pk=order_id)
         if not order.checkout_payload:
@@ -83,6 +85,7 @@ def get_session(order_id, language='fr'):
                     name='Avantage client La Caverne des Monts',
                     metadata={'order_id': str(order.pk)},
                 )
+                assert_test_object(coupon, StockUnavailable)
                 redemption.stripe_coupon_id = coupon.id
                 redemption.save(update_fields=['stripe_coupon_id'])
             payload = dict(order.checkout_payload)
@@ -91,13 +94,16 @@ def get_session(order_id, language='fr'):
                 # otherwise non-personal JSON used for payment idempotency.
                 payload['customer_email'] = order.customer_email
             session=stripe.checkout.Session.create(api_key=settings.STRIPE_SECRET_KEY,idempotency_key=f'order-{order.pk}',**payload)
+            assert_test_object(session, StockUnavailable)
             order.stripe_session_id=session.id
             order.save(update_fields=['stripe_session_id'])
+        assert_test_object(session, StockUnavailable)
         return session
 
 
 def settle(session):
     """Only server-retrieved Stripe state may consume or release a reservation."""
+    assert_test_object(session, StockUnavailable)
     order_id=session.get('metadata',{}).get('order_id')
     if not order_id:return False
     with transaction.atomic():

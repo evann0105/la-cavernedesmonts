@@ -10,6 +10,7 @@
 <section class="wrap section checkout">
   <p class="eyebrow">BIENTÔT CHEZ VOUS</p>
   <h1 class="page-title">Un dernier pas.</h1>
+  {% if payment_test_mode %}<p class="notice">Paiement fictif : utilisez la carte <strong>4242 4242 4242 4242</strong>, une date future et le code <strong>123</strong>. Aucun argent ne sera débité.</p>{% endif %}
   <div class="checkout-layout">
     <div class="checkout-summary">
       <h2>Votre commande</h2>

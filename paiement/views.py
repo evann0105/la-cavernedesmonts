@@ -20,6 +20,16 @@ logger = logging.getLogger(__name__)
 def ready():
     from espace.legal import sales_ready
     from .shipping import shipping_ready
+    from .test_mode import enabled, assert_test_runtime, UnsafePaymentTestMode
+    if enabled():
+        try:
+            assert_test_runtime()
+        except UnsafePaymentTestMode:
+            return False
+        # No real sale or external mail leaves this isolated local playground.
+        # The ordinary shop still requires its complete launch validation below.
+        return all((settings.PAYMENTS_ENABLED, settings.STRIPE_WEBHOOK_SECRET,
+                    shipping_ready()))
     return all((sales_ready(), settings.EMAIL_DELIVERY_ENABLED, not settings.EMAIL_TEST_MODE, settings.PAYMENTS_ENABLED, settings.SHOP_READY, settings.STRIPE_SECRET_KEY,
                 settings.STRIPE_WEBHOOK_SECRET, shipping_ready(),
                 settings.DEBUG or settings.SITE_URL.startswith('https://')))
@@ -178,28 +188,41 @@ def confirmation(request, order_id):
 def webhook(request):
     if not settings.STRIPE_WEBHOOK_SECRET or not settings.STRIPE_SECRET_KEY:
         return HttpResponse(status=503)
+    from .test_mode import assert_test_runtime, assert_test_object, assert_test_refund, UnsafePaymentTestMode
+    try:
+        assert_test_runtime()
+    except UnsafePaymentTestMode:
+        return HttpResponse(status=503)
     try:
         event = stripe.Webhook.construct_event(request.body, request.headers.get('Stripe-Signature', ''), settings.STRIPE_WEBHOOK_SECRET)
-    except (ValueError, stripe.SignatureVerificationError):
+        assert_test_object(event)
+        event_type = event['type']
+    except (ValueError, KeyError, TypeError, stripe.SignatureVerificationError):
         return HttpResponse(status=400)
-    if event['type'] in ('refund.created','refund.updated','refund.failed'):
+    if event_type in ('refund.created','refund.updated','refund.failed'):
         from retours.refunds import apply_verified_event
         from retours.services import ReturnError
         from django.core.exceptions import ValidationError
         try:
-            refund=stripe.Refund.retrieve(event['data']['object']['id'],api_key=settings.STRIPE_SECRET_KEY)
+            event_refund = event['data']['object']
+            refund=stripe.Refund.retrieve(event_refund['id'],api_key=settings.STRIPE_SECRET_KEY)
+            assert_test_refund(refund)
             apply_verified_event(refund)
         except stripe.StripeError:return HttpResponse(status=503)
-        except (ReturnError,ValidationError,ValueError,KeyError):return HttpResponse(status=400)
+        except (ReturnError,ValidationError,ValueError,KeyError,TypeError):return HttpResponse(status=400)
         return HttpResponse(status=200)
-    if event['type'] not in ('checkout.session.completed', 'checkout.session.async_payment_succeeded', 'checkout.session.expired'):
+    if event_type not in ('checkout.session.completed', 'checkout.session.async_payment_succeeded', 'checkout.session.expired'):
         return HttpResponse(status=200)
-    event_session = event['data']['object']
     # Retrieve authoritative payment state, never trust the customer's return URL.
     try:
+        event_session = event['data']['object']
+        assert_test_object(event_session)
         session = stripe.checkout.Session.retrieve(event_session['id'], api_key=settings.STRIPE_SECRET_KEY)
+        assert_test_object(session)
     except stripe.StripeError:
         return HttpResponse(status=503)
+    except (ValueError, KeyError, TypeError):
+        return HttpResponse(status=400)
     from django.core.exceptions import ValidationError
     from stocks.reservations import StockUnavailable
     from .stock_checkout import settle

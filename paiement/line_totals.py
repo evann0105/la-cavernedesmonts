@@ -2,6 +2,7 @@
 import stripe
 from django.conf import settings
 from stocks.reservations import StockUnavailable
+from .test_mode import assert_test_runtime, assert_test_object
 
 
 def cents(value):
@@ -32,6 +33,7 @@ def validate_totals(order, totals, paid, shipping):
 
 def capture_line_totals(order, session):
     """Session and line items must come from server-side Stripe retrievals."""
+    assert_test_object(session, StockUnavailable)
     details = session.get('total_details') or {}
     shipping = cents(details.get('amount_shipping', 0))
     paid = cents(session.get('amount_total'))
@@ -59,6 +61,8 @@ def capture_line_totals(order, session):
             seen_ids.add(row['id'])
             price = row.get('price') or {}
             product = price.get('product') or {}
+            assert_test_object(price, StockUnavailable)
+            assert_test_object(product, StockUnavailable)
             metadata = product.get('metadata', {}) if isinstance(product, dict) else {}
             if metadata.get('order_id') == str(order.pk):
                 try:index = int(metadata['order_item'])
@@ -95,9 +99,11 @@ def capture_line_totals(order, session):
 
 def recover_line_totals(order):
     """Caller holds the order lock. Never rewrite existing return records."""
+    assert_test_runtime(StockUnavailable)
     if not settings.STRIPE_SECRET_KEY or not order.stripe_session_id:
         raise StockUnavailable('Le détail des remises de cette ancienne commande doit être vérifié avant remboursement.')
     session = stripe.checkout.Session.retrieve(order.stripe_session_id, api_key=settings.STRIPE_SECRET_KEY)
+    assert_test_object(session, StockUnavailable)
     if (session.get('id') != order.stripe_session_id or not payment_confirmed(session) or
         session.get('currency') != 'eur' or session.get('amount_total') != order.total_paid or
         session.get('amount_subtotal') != order.subtotal or session.get('client_reference_id') != str(order.pk) or

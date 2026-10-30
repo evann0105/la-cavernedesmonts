@@ -104,6 +104,7 @@ TEMPLATES = [
                 'boutique.editorial_public.announcement',
                 'core.context_processors.back_navigation',
                 'core.seo.metadata',
+                'paiement.context_processors.test_environment',
             ],
         },
     },

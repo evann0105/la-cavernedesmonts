@@ -47,6 +47,8 @@ def release_for_cart_change(request):
     from django.conf import settings
     from .stock_checkout import get_session, settle
     from .line_totals import payment_confirmed
+    from .test_mode import assert_test_runtime, assert_test_object
+    assert_test_runtime(StockUnavailable)
     order = current_order(request)
     if order is None:
         return None
@@ -68,6 +70,7 @@ def release_for_cart_change(request):
                         # never infer failure or release on a network timeout.
                         session = stripe.checkout.Session.retrieve(session['id'], api_key=settings.STRIPE_SECRET_KEY)
                 if session is not None:
+                    assert_test_object(session, StockUnavailable)
                     if not (payment_confirmed(session) or
                             (session.get('status') == 'expired' and session.get('payment_status') == 'unpaid')):
                         raise StockUnavailable('Le paiement est encore en cours de vérification. Réessayez dans quelques instants ; votre panier est conservé.')

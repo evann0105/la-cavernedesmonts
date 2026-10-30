@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+PAYMENT_TEST_PROJECT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+cd "$PAYMENT_TEST_PROJECT"
+if [ -n "${CAVERNE_PAYMENT_TEST_PYTHON:-}" ]; then
+    exec "$CAVERNE_PAYMENT_TEST_PYTHON" "$PAYMENT_TEST_PROJECT/scripts/start_payment_test.py" "$@"
+fi
+if [ -x "$PAYMENT_TEST_PROJECT/.venv/bin/python" ]; then
+    exec "$PAYMENT_TEST_PROJECT/.venv/bin/python" "$PAYMENT_TEST_PROJECT/scripts/start_payment_test.py" "$@"
+fi
+if command -v python3 >/dev/null 2>&1; then
+    exec python3 "$PAYMENT_TEST_PROJECT/scripts/start_payment_test.py" "$@"
+fi
+printf '%s\n' 'Python 3.10 ou plus récent et les dépendances du site sont nécessaires.' >&2
+exit 1
