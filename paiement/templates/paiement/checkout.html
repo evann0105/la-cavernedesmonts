@@ -3,43 +3,64 @@
 {% block title %}Votre commande — La Caverne des Monts{% endblock %}
 {% block styles %}{{ block.super }}
 <link rel="stylesheet" href="{% static 'css/shipping.css' %}?v=20261022-delivery">
-<link rel="stylesheet" href="{% static 'paiement/css/checkout.css' %}?v=20261020-avoirs">
 <link rel="stylesheet" href="{% static 'paiement/css/customer-code.css' %}?v=20261021-cart-code">
+<link rel="stylesheet" href="{% static 'paiement/css/checkout.css' %}?v=20261030-layout">
 {% endblock %}
 {% block content %}
 <section class="wrap section checkout">
-  <p class="eyebrow">BIENTÔT CHEZ VOUS</p>
-  <h1 class="page-title">Un dernier pas.</h1>
-  {% if payment_test_mode %}<p class="notice">Paiement fictif : utilisez la carte <strong>4242 4242 4242 4242</strong>, une date future et le code <strong>123</strong>. Aucun argent ne sera débité.</p>{% endif %}
+  <header class="checkout-heading">
+    <p class="eyebrow">BIENTÔT CHEZ VOUS</p>
+    <h1 class="page-title">Votre commande.</h1>
+    <p>Vérifiez vos articles et votre livraison avant de passer au paiement.</p>
+    <nav class="checkout-progress" aria-label="Étapes de la commande">
+      <ol><li><a href="{% url 'core:cart' %}"><span>1</span> Panier</a></li><li aria-current="step"><span>2</span> Commande</li><li><span>3</span> Paiement</li></ol>
+    </nav>
+  </header>
+  {% if payment_test_mode %}
+  <aside class="checkout-test" aria-label="Carte de test">
+    <strong>Paiement fictif</strong><span>Carte <b>4242 4242 4242 4242</b> · Date 12/34 · CVC 123</span><small>Aucun argent débité.</small>
+  </aside>
+  {% endif %}
   <div class="checkout-layout">
-    <div class="checkout-summary">
-      <h2>Votre commande</h2>
-      <ul class="checkout-items">
-        {% for item in cart_items %}
-        <li><span>{{ item.quantity }} × {{ item.product.localized_name }}<small>{{ item.size|shop_text }}{% if item.color %} · {{ item.color }}{% endif %}</small></span><strong>{{ item.subtotal|floatformat:2 }} €</strong></li>
-        {% endfor %}
-      </ul>
-      <div class="checkout-amount"><span>Total des articles</span><strong>{{ total|floatformat:2 }} €</strong></div>
-      {% if discount %}
-      <div class="checkout-amount checkout-discount"><span>{{ benefit.label }}</span><strong>− {{ discount|floatformat:2 }} €</strong></div>
-      <div class="checkout-amount checkout-net"><strong>Articles après remise</strong><strong>{{ discounted_total|floatformat:2 }} €</strong></div>
-      {% endif %}
-      {% include 'core/partials/shipping_summary.html' %}
-      <p class="small">Prix en euros TTC. Les frais et le montant total sont présentés avant validation du paiement. Achat ponctuel, sans abonnement ni renouvellement automatique.</p>
+    <div class="checkout-content">
+      <section class="checkout-panel" aria-labelledby="checkout-items-title">
+        <div class="checkout-panel-heading"><h2 id="checkout-items-title">Vos articles</h2><a href="{% url 'core:cart' %}">Modifier le panier</a></div>
+        <ul class="checkout-items">
+          {% for item in cart_items %}
+          <li>
+            <a class="checkout-item-image" href="{% url 'core:product_detail' item.product.slug %}" tabindex="-1" aria-hidden="true"><img src="{{ item.product.image_url }}" alt="" width="64" height="80"></a>
+            <div class="checkout-item-copy"><a href="{% url 'core:product_detail' item.product.slug %}">{{ item.product.localized_name }}</a><small>{{ item.size|shop_text }}{% if item.color %} · {{ item.color }}{% endif %}</small><small>Quantité : {{ item.quantity }}</small></div>
+            <strong>{{ item.subtotal|floatformat:2 }} €</strong>
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+      <section class="checkout-panel checkout-delivery" aria-label="Votre livraison">
+        {% include 'core/partials/shipping_summary.html' with hide_total=True %}
+        <p class="checkout-delivery-hint">Votre adresse complète sera renseignée à l’étape suivante.</p>
+      </section>
+      <a class="checkout-back" href="{% url 'core:cart' %}">← Revenir à mon panier</a>
     </div>
-    <div class="checkout-next">
+    <aside class="checkout-summary" aria-labelledby="checkout-summary-title">
+      <h2 id="checkout-summary-title">Récapitulatif</h2>
+      <div class="checkout-totals">
+        <div class="checkout-amount"><span>Total des articles</span><strong>{{ total|floatformat:2 }} €</strong></div>
+        {% if discount %}<div class="checkout-amount checkout-discount"><span>Remise · {{ benefit.code }}</span><strong>− {{ discount|floatformat:2 }} €</strong></div>{% endif %}
+        <div class="checkout-amount"><span>Livraison{% if shipping.country_label %} · {{ shipping.country_label }}{% endif %}</span><strong>{% if shipping.managed and not shipping.error %}{% if shipping.amount_eur == 0 %}Offerte{% else %}{{ shipping.amount_eur|floatformat:2 }} €{% endif %}{% elif shipping.is_free %}Offerte{% else %}À calculer{% endif %}</strong></div>
+      </div>
       {% include 'paiement/partials/customer_code.html' with code_return_to='checkout' %}
+      <div class="checkout-grand-total"><span>{% if shipping.managed and not shipping.error or not shipping.managed and shipping.is_free %}Total à payer{% else %}Total hors livraison{% endif %}</span><strong>{% if shipping.managed and not shipping.error %}{{ shipping.total|floatformat:2 }}{% else %}{{ discounted_total|floatformat:2 }}{% endif %} €</strong></div>
+      {% if not shipping.managed and not shipping.is_free %}<p class="checkout-caption">Les frais de livraison seront précisés avant de confirmer le paiement.</p>{% endif %}
       {% if enabled %}
-      <p>Les quantités sont réservées au départ vers Stripe, pour environ 35 minutes. Ajouter un article au panier ne le réserve pas.</p>
-      <p>Vous allez être redirigé vers la page sécurisée de Stripe. Vous y renseignerez votre adresse et consulterez les frais de livraison avant de confirmer le paiement. Vos coordonnées bancaires ne sont pas enregistrées sur notre site.</p>
-      {% if benefit_selected %}<p class="small">Votre code est réservé pendant le paiement et utilisé après confirmation. Pour l’utiliser sur une autre commande, retirez-le ici : le paiement en cours sera d’abord annulé de façon sécurisée.</p>{% endif %}
-      <form method="post">{% csrf_token %}<button class="button checkout-pay" name="action" value="pay"{% if benefit_error %} disabled{% endif %}>Continuer vers le paiement sécurisé →</button></form>
+        <form method="post" class="checkout-payment-form">{% csrf_token %}<button class="button checkout-pay" name="action" value="pay"{% if benefit_error %} disabled{% endif %}>Continuer vers le paiement <span aria-hidden="true">→</span></button></form>
+        <p class="checkout-reassurance"><svg width="15" height="17" viewBox="0 0 20 22" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="9" width="14" height="11" rx="2"/><path d="M6 9V6a4 4 0 0 1 8 0v3"/></svg>Paiement sécurisé par Stripe</p>
+        <p class="checkout-caption">Vos coordonnées bancaires ne sont pas enregistrées sur notre site.</p>
       {% else %}
-      <div class="notice"><h2>Préparons votre commande ensemble.</h2><p>Le paiement en ligne sera bientôt disponible. Pour le moment, contactez-nous pour confirmer les tailles, les disponibilités et la livraison. Votre panier est conservé et aucun paiement n’a été effectué.</p><a class="button" href="{{ shop.phone_href }}">Appeler la boutique ↗</a></div>
+        <div class="checkout-unavailable"><h3>Besoin d’un coup de main ?</h3><p>Le paiement n’est pas disponible pour ce panier. Contactez la boutique pour préparer votre commande. Votre panier est conservé et aucun paiement n’a été effectué.</p><a class="button" href="{{ shop.phone_href }}">Appeler la boutique ↗</a></div>
       {% endif %}
-      <p class="small checkout-legal"><a href="{% url 'espace:sales_terms' %}">Conditions générales de vente</a> · <a href="{% url 'espace:withdrawal' %}">Rétractation et garanties</a> · <a href="{% url 'espace:privacy' %}">Vos données personnelles</a></p>
-    </div>
+      <details class="checkout-details"><summary>À savoir avant de payer</summary><p>Les quantités sont réservées pendant environ 35 minutes à partir de l’ouverture du paiement. Ajouter un article au panier ne le réserve pas.</p>{% if benefit_selected %}<p>Votre code est réservé pendant le paiement et utilisé après confirmation. Pour l’utiliser sur une autre commande, retirez-le ici : le paiement en cours sera d’abord annulé de façon sécurisée.</p>{% endif %}<p>Prix en euros. Achat ponctuel, sans abonnement ni renouvellement automatique.</p></details>
+      <div class="checkout-legal"><a href="{% url 'espace:sales_terms' %}">Conditions de vente</a><a href="{% url 'espace:withdrawal' %}">Rétractation et garanties</a><a href="{% url 'espace:privacy' %}">Données personnelles</a></div>
+    </aside>
   </div>
-  <p class="small"><a href="{% url 'core:cart' %}">← Revenir à mon panier</a></p>
 </section>
 {% endblock %}

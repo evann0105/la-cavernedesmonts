@@ -13,11 +13,10 @@
     <p class="shipping-summary__detail">{{ shipping.service_name }} · {{ shipping.carrier_name }}<br>{{ shipping.country_label }} : <strong>{% if shipping.amount_eur == 0 %}Offerte{% else %}{{ shipping.amount_eur|floatformat:2 }} €{% endif %}</strong></p>
     <p class="shipping-summary__detail">Délai annoncé : <strong>{{ shipping.delivery_min_days }} à {{ shipping.delivery_max_days }} jours ouvrés</strong>, préparation comprise, après confirmation du paiement.</p>
     {% if shipping.threshold != None and not shipping.is_free %}<p class="shipping-summary__note">Livraison offerte dès {{ shipping.threshold|floatformat:'-2' }} € d’articles pour cette destination. Encore {{ shipping.remaining|floatformat:2 }} € pour en profiter.</p>{% endif %}
-    <div class="shipping-total"><span>Total avec livraison</span><strong data-cart-shipping-total="{{ shipping.total|unlocalize }}">{{ shipping.total|floatformat:2 }} €</strong></div>
-    <p class="shipping-summary__note">Le pays indiqué dans l’adresse au paiement doit correspondre à cette destination.</p>
+    {% if not hide_total %}<div class="shipping-total"><span>Total avec livraison</span><strong data-cart-shipping-total="{{ shipping.total|unlocalize }}">{{ shipping.total|floatformat:2 }} €</strong></div>{% endif %}
   {% endif %}
   {% if shipping.notice %}<p class="shipping-summary__note">{{ shipping.notice|linebreaksbr }}</p>{% endif %}
-  <p class="shipping-summary__note">Les seuils sont calculés sur les articles, avant code client et hors livraison. <a href="{% url 'boutique:shipping_information' %}">Tarifs et délais de livraison</a></p>
+  <details class="shipping-summary__conditions"><summary>Conditions de livraison</summary><p class="shipping-summary__note">Le pays indiqué dans l’adresse au paiement doit correspondre à cette destination.</p><p class="shipping-summary__note">Les seuils sont calculés sur les articles, avant code client et hors livraison. <a href="{% url 'boutique:shipping_information' %}">Tarifs et délais de livraison</a></p></details>
 </div>
 {% elif shipping %}
 <div class="shipping-summary{% if shipping.is_free %} shipping-summary--free{% endif %}" aria-label="Livraison">

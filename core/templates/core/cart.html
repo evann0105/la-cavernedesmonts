@@ -1,2 +1,80 @@
-{% extends 'base.html' %}{% load i18n shop_i18n static l10n %}{% block title %}{% translate 'Votre panier — La Caverne des Monts' %}{% endblock %}{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/shipping.css' %}?v=20261022-delivery"><link rel="stylesheet" href="{% static 'paiement/css/customer-code.css' %}?v=20261022-delivery">{% endblock %}{% block content %}<section class="wrap section" data-cart-page><p class="eyebrow">{% translate 'UN PEU DE MONTAGNE À EMPORTER' %}</p><h1 class="page-title">{% translate 'Vos prochaines petites joies.' %}</h1>{% if cart_items %}<div class="cart-layout"><div>{% for item in cart_items %}<article class="cart-line" data-unit-price="{{ item.unit_price|unlocalize }}"><a href="{% url 'core:product_detail' item.product.slug %}"><img src="{{ item.product.image_url }}" alt="{{ item.product.localized_name }}"></a><div><h2><a href="{% url 'core:product_detail' item.product.slug %}">{{ item.product.localized_name }}</a></h2><p>{{ item.size|shop_text }}{% if item.color %} · {{ item.color }}{% endif %}</p><p>{% if not item.variant %}Choisissez une variante sur la fiche produit avant de payer.{% elif not item.stock_ok %}Disponibilité à revérifier au paiement : quantité réservée ou stock insuffisant.{% endif %}</p><p>{{ item.unit_price|floatformat:2 }} {% translate '€ / article' %}</p><form method="post" action="{% url 'core:cart_update' %}" class="quantity-form">{% csrf_token %}<input type="hidden" name="key" value="{{ item.key }}"><label for="qty-{{ forloop.counter }}">{% translate 'Quantité' %}</label><input id="qty-{{ forloop.counter }}" aria-label="{% translate 'Quantité' %} : {{ item.product.localized_name }} {{ item.size }}" type="number" name="quantity" required step="1" min="0" max="10" value="{{ item.quantity }}"><button class="text-button" data-quantity-submit>{% translate 'Mettre à jour' %}</button></form><form method="post" action="{% url 'core:cart_update' %}" data-cart-remove>{% csrf_token %}<input type="hidden" name="key" value="{{ item.key }}"><input type="hidden" name="quantity" value="0"><button class="text-button remove" aria-label="{% translate 'Retirer' %} : {{ item.product.localized_name }} {{ item.size }}">{% translate 'Retirer' %}</button></form></div><strong>{{ item.subtotal|floatformat:2 }} €</strong></article>{% endfor %}<a class="underlined" href="{% url 'core:product_list' %}">{% translate '← Continuer la balade' %}</a></div><aside class="cart-summary"><h2>{% translate 'Votre panier' %}</h2><div class="total"><span>{% translate 'Sous-total' %}</span><strong>{{ total|floatformat:2 }} €</strong></div><div data-cart-code-summary>{% if discount %}<div class="customer-code-amount customer-code-amount--discount"><span>Remise{% if benefit %} · {{ benefit.code }}{% endif %}</span><strong data-cart-discount-amount="{{ discount|unlocalize }}">− {{ discount|floatformat:2 }} €</strong></div><div class="customer-code-amount customer-code-amount--net"><span>Articles après remise</span><strong data-cart-discounted-total="{{ discounted_total|unlocalize }}">{{ discounted_total|floatformat:2 }} €</strong></div>{% endif %}{% include 'paiement/partials/customer_code.html' with code_return_to='cart' %}</div>{% include 'core/partials/shipping_summary.html' %}<a class="button" data-cart-checkout href="{% url 'paiement:checkout' %}">{% translate 'Passer à la commande →' %}</a><p class="small">{% translate 'Aucun compte nécessaire pour commander.' %}</p><hr><p>{% translate 'Une question avant de vous décider ?' %}</p><a href="{{ shop.phone_href }}">{{ shop.phone }}</a></aside></div>{% else %}<div class="empty"><span class="empty-symbol">↟</span><h2>{% translate 'Les beaux jours vous attendent.' %}</h2><p>{% translate 'Votre panier est encore vide. Trouvons de quoi accompagner votre prochaine échappée.' %}</p><a class="button" href="{% url 'core:product_list' %}">{% translate 'Découvrir la collection ↗' %}</a></div>{% endif %}</section>{% endblock %}
+{% extends 'base.html' %}
+{% load i18n shop_i18n static l10n %}
+{% block title %}{% translate 'Votre panier — La Caverne des Monts' %}{% endblock %}
+{% block styles %}{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/shipping.css' %}?v=20261030-checkout">
+<link rel="stylesheet" href="{% static 'paiement/css/customer-code.css' %}?v=20261030-checkout">
+<link rel="stylesheet" href="{% static 'core/css/cart-page.css' %}?v=20261030-checkout">
+{% endblock %}
+{% block content %}
+<section class="wrap section cart-page" data-cart-page>
+  <header class="cart-page__header">
+    <p class="eyebrow">{% translate 'UN PEU DE MONTAGNE À EMPORTER' %}</p>
+    <h1 class="page-title">{% translate 'Votre panier.' %}</h1>
+    {% if cart_items %}<p class="cart-page__intro">{% translate 'Vérifiez vos articles avant de passer à la commande.' %}</p>{% endif %}
+    <ol class="cart-page__steps" aria-label="{% translate 'Les étapes de votre commande' %}">
+      <li aria-current="step"><span>1</span>{% translate 'Panier' %}</li>
+      <li><span>2</span>{% translate 'Commande' %}</li>
+      <li><span>3</span>{% translate 'Paiement' %}</li>
+    </ol>
+  </header>
+  {% if cart_items %}
+  <div class="cart-layout">
+    <div class="cart-page__content">
+      <section class="cart-page__products" aria-labelledby="cart-articles-title">
+        <div class="cart-page__section-heading"><h2 id="cart-articles-title">{% translate 'Vos articles' %}</h2><span>{% blocktranslate count count=cart_items|length %}{{ count }} référence{% plural %}{{ count }} références{% endblocktranslate %}</span></div>
+        {% for item in cart_items %}
+        <article class="cart-line" data-unit-price="{{ item.unit_price|unlocalize }}">
+          <a class="cart-line__image" href="{% url 'core:product_detail' item.product.slug %}"><img src="{{ item.product.image_url }}" alt="{{ item.product.localized_name }}"></a>
+          <div class="cart-line__details">
+            <h3><a href="{% url 'core:product_detail' item.product.slug %}">{{ item.product.localized_name }}</a></h3>
+            <p class="cart-line__variant">{{ item.size|shop_text }}{% if item.color %} · {{ item.color }}{% endif %}</p>
+            {% if not item.variant %}<p class="cart-line__warning">Choisissez une variante sur la fiche produit avant de payer.</p>{% elif not item.stock_ok %}<p class="cart-line__warning">Disponibilité à revérifier au paiement : quantité réservée ou stock insuffisant.</p>{% endif %}
+            <p class="cart-line__unit">{{ item.unit_price|floatformat:2 }} {% translate '€ / article' %}</p>
+            <div class="cart-line__actions">
+              <form method="post" action="{% url 'core:cart_update' %}" class="quantity-form">{% csrf_token %}
+                <input type="hidden" name="key" value="{{ item.key }}">
+                <label for="qty-{{ forloop.counter }}">{% translate 'Quantité' %}</label>
+                <input id="qty-{{ forloop.counter }}" aria-label="{% translate 'Quantité' %} : {{ item.product.localized_name }} {{ item.size }}" type="number" name="quantity" required step="1" min="0" max="10" value="{{ item.quantity }}">
+                <button class="text-button" data-quantity-submit>{% translate 'Mettre à jour' %}</button>
+              </form>
+              <form method="post" action="{% url 'core:cart_update' %}" data-cart-remove>{% csrf_token %}
+                <input type="hidden" name="key" value="{{ item.key }}"><input type="hidden" name="quantity" value="0">
+                <button class="text-button remove" aria-label="{% translate 'Retirer' %} : {{ item.product.localized_name }} {{ item.size }}">{% translate 'Retirer' %}</button>
+              </form>
+            </div>
+          </div>
+          <strong class="cart-line__price">{{ item.subtotal|floatformat:2 }} €</strong>
+        </article>
+        {% endfor %}
+      </section>
+      {% include 'core/partials/shipping_summary.html' with code_return_to='cart' hide_total=True %}
+      <a class="cart-page__continue underlined" href="{% url 'core:product_list' %}">{% translate '← Continuer la balade' %}</a>
+    </div>
+    <aside class="cart-summary" aria-labelledby="cart-summary-title">
+      <h2 id="cart-summary-title">{% translate 'Récapitulatif' %}</h2>
+      <div class="total"><span>{% translate 'Sous-total' %}</span><strong>{{ total|floatformat:2 }} €</strong></div>
+      <div data-cart-code-summary>
+        {% if discount %}
+        <div class="customer-code-amount customer-code-amount--discount"><span>Remise{% if benefit %} · {{ benefit.code }}{% endif %}</span><strong data-cart-discount-amount="{{ discount|unlocalize }}">− {{ discount|floatformat:2 }} €</strong></div>
+        <div class="customer-code-amount customer-code-amount--net"><span>Articles après remise</span><strong data-cart-discounted-total="{{ discounted_total|unlocalize }}">{{ discounted_total|floatformat:2 }} €</strong></div>
+        {% endif %}
+        {% if shipping.managed %}
+          <div class="cart-page__delivery-amount"><span>{% translate 'Livraison' %}</span><strong>{% if shipping.error %}{% translate 'À calculer' %}{% elif shipping.amount_eur == 0 %}{% translate 'Offerte' %}{% else %}{{ shipping.amount_eur|floatformat:2 }} €{% endif %}</strong></div>
+          {% if not shipping.error %}<div class="cart-page__grand-total"><span>{% translate 'Total avec livraison' %}</span><strong data-cart-shipping-total="{{ shipping.total|unlocalize }}">{{ shipping.total|floatformat:2 }} €</strong></div>{% else %}<p class="cart-page__delivery-note">{% translate 'Choisissez une destination disponible pour calculer le total.' %}</p>{% endif %}
+        {% else %}
+          <p class="cart-page__delivery-note">{% translate 'Les frais de livraison seront confirmés avant le paiement.' %}</p>
+        {% endif %}
+        {% include 'paiement/partials/customer_code.html' with code_return_to='cart' %}
+      </div>
+      <a class="button cart-page__checkout" data-cart-checkout href="{% url 'paiement:checkout' %}">{% translate 'Passer à la commande →' %}</a>
+      <p class="cart-page__guest-note">{% translate 'Aucun compte nécessaire pour commander.' %}</p>
+      <div class="cart-page__help"><p>{% translate 'Une question sur votre commande ?' %}</p><a href="{{ shop.phone_href }}">{{ shop.phone }}</a></div>
+    </aside>
+  </div>
+  {% else %}
+  <div class="empty"><span class="empty-symbol">↟</span><h2>{% translate 'Les beaux jours vous attendent.' %}</h2><p>{% translate 'Votre panier est encore vide. Trouvons de quoi accompagner votre prochaine échappée.' %}</p><a class="button" href="{% url 'core:product_list' %}">{% translate 'Découvrir la collection ↗' %}</a></div>
+  {% endif %}
+</section>
+{% endblock %}
 {% block scripts %}<script src="{% static 'core/js/cart.js' %}?v=20261022-delivery" defer></script>{% endblock %}
