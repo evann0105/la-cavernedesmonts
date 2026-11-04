@@ -2,11 +2,21 @@
 
 Le mode local est activé par `EMAIL_TEST_MODE=True` dans `.env`, uniquement lorsque `DEBUG=True`. Il remplace le transport SMTP par une capture sur disque : même une adresse réelle ne reçoit rien. Aucun compte Gmail, mot de passe d’application ou compte professionnel n’est nécessaire. Redémarrer `./start` après tout changement de configuration.
 
-Dans Mon compte → Administration → Boîte e-mail de test (`/gestion/emails-test/`), les gestionnaires autorisés voient les 50 derniers messages et leur aperçu HTML. L’aperçu reste isolé par une politique de sécurité. Pour les liens de confirmation appartenant au site, la boîte propose aussi « Ouvrir le lien de confirmation » en dehors de cet aperçu : se connecter au compte destinataire, ouvrir ce lien, puis cliquer sur le bouton de confirmation de la page. La visite seule ne confirme pas l’adresse. Les liens externes ou d’autres fonctions ne deviennent pas des boutons d’action. La boîte est inaccessible aux clients et désactivée hors développement.
+Dans Espace vendeuse → Tous les outils → Boîte e-mail de test
+(`/gestion/emails-test/`), les gestionnaires autorisés voient les 50 derniers
+messages et leur aperçu HTML. L’aperçu reste isolé par une politique de sécurité.
+Pour les liens de confirmation appartenant au site, la boîte propose aussi
+« Ouvrir le lien de confirmation » : se connecter au compte destinataire, ouvrir
+ce lien, puis confirmer son adresse. Pour la récupération d’accès, le bouton
+« Choisir un nouveau mot de passe » ouvre le formulaire protégé. Une simple
+visite ne confirme aucune adresse et ne change aucun mot de passe. Seules ces
+deux routes de sécurité de la même origine sont autorisées comme actions ; les
+liens externes restent du texte. La boîte est inaccessible aux clients et
+désactivée hors développement.
 
 Les messages sont stockés dans `.emails-test/`, exclu de Git, avec des permissions privées. Ils peuvent contenir des liens de confirmation : ne pas publier ce dossier ni le déployer. Supprimer les fichiers de test lorsqu’ils ne sont plus utiles.
 
-Pour recréer les six exemples :
+Pour recréer les exemples de modèles :
 
 ```sh
 .venv/bin/python manage.py test_emails
@@ -23,9 +33,19 @@ Les pages précisent qu’une capture locale n’arrive pas dans une boîte
 personnelle. Le transport reste commun aux autres messages du site ; aucun
 SMTP professionnel n’est activé par cette modification.
 
-## Modèles préparés, sans automatisation ajoutée
+Le parcours « Mot de passe oublié ? » utilise aussi cette capture. Les demandes
+sont préparées par le worker `reconcile_reservations`, sans attendre SMTP pendant
+le formulaire. Attendre environ une minute, puis consulter la boîte de test avec
+un gestionnaire autorisé. La réponse publique reste générique même si aucune
+adresse ne correspond ; une capture n’est créée que pour un compte récupérable.
+Voir [le guide de récupération](MOT_DE_PASSE_OUBLIE.md).
 
-Réinitialisation du mot de passe, confirmation de commande, expédition, remboursement et accusé de réception du formulaire de contact. Leur contenu doit être alimenté par les événements réellement confirmés, avec les vrais montants, références et liens. Ne jamais envoyer une confirmation de paiement simplement après un retour navigateur ; gérer aussi les nouvelles tentatives et doublons avant activation.
+## Autres modèles et parcours
+
+Les confirmations de commande, expéditions et remboursements suivent leurs
+événements confirmés dans les parcours métier. Le modèle de contact reste à
+raccorder si ce formulaire doit produire un accusé de réception. Ne jamais
+envoyer une confirmation de paiement simplement après un retour navigateur.
 
 Les modèles sont actuellement en français, en HTML et texte brut. Ils n’ont pas été testés dans Gmail/Outlook réels : la boîte locale vérifie la génération et la capture, pas la délivrabilité ni le rendu propre à chaque logiciel.
 

@@ -30,6 +30,9 @@ class Command(BaseCommand):
             deliver_seller_notices()
             from paiement.anti_abuse import purge_old_admissions
             purge_old_admissions()
+            from connexion.password_reset import deliver_pending_password_resets, purge_password_reset_data
+            deliver_pending_password_resets(limit=5)
+            purge_password_reset_data(limit=500)
             if not options['loop']:break
             time.sleep(60)
 

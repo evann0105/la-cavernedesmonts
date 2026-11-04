@@ -12,13 +12,8 @@ from django.views.decorators.http import require_GET
 from core.catalog_access import catalog_required
 
 
-def confirmation_path(body):
-    """Expose only this site's confirmation page outside the isolated preview.
-
-    Visiting it does not confirm an address: the signed token, recipient login
-    and explicit CSRF-protected confirmation still have to pass their checks.
-    Never turn arbitrary links from a captured message into mailbox actions.
-    """
+def _security_path(body, view_name):
+    """Keep explicitly allowed, same-origin security links outside the preview."""
     origin = urlsplit(settings.SITE_URL)
     for candidate in re.findall(r'https?://[^\s<>"\']+', body):
         try:
@@ -26,11 +21,21 @@ def confirmation_path(body):
             if ((url.scheme, url.netloc) != (origin.scheme, origin.netloc)
                     or url.query or url.fragment):
                 continue
-            if resolve(url.path).view_name == 'connexion:confirm_email':
+            if resolve(url.path).view_name == view_name:
                 return url.path
         except (ValueError, Resolver404):
             continue
     return ''
+
+
+def confirmation_path(body):
+    # Opening this page still requires recipient login and explicit confirmation.
+    return _security_path(body, 'connexion:confirm_email')
+
+
+def password_reset_path(body):
+    # A GET only opens the password form; POST+CSRF consumes the private token.
+    return _security_path(body, 'connexion:password_reset_confirm')
 
 
 def local_only(view):
@@ -55,6 +60,7 @@ def inbox(request):
             letter = json.loads(path.read_text(encoding='utf-8'))
             letter['id'] = uuid.UUID(path.stem)
             letter['confirmation_path'] = confirmation_path(letter.get('body', ''))
+            letter['password_reset_path'] = password_reset_path(letter.get('body', ''))
             letters.append(letter)
         except (OSError, ValueError):
             continue

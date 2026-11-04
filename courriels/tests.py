@@ -97,3 +97,35 @@ class MailboxTests(TestCase):
         ):
             with self.subTest(url=url):
                 self.assertEqual(confirmation_path(url), '')
+
+    @override_settings(SITE_URL='http://localhost:8001')
+    def test_reset_action_is_limited_to_this_sites_confirmation_route(self):
+        from .views import confirmation_path, password_reset_path
+        path = reverse('connexion:password_reset_confirm', kwargs={'uidb64': 'MQ', 'token': 'fictitious-token'})
+        self.assertEqual(password_reset_path('Choisir : http://localhost:8001' + path), path)
+        self.assertEqual(confirmation_path('http://localhost:8001' + path), '')
+        for url in (
+            'https://other.example' + path,
+            'http://localhost:8001@other.example' + path,
+            'https://localhost:8001' + path,
+            'http://localhost:8001' + path + '?next=https://other.example',
+            'http://localhost:8001' + path + '#fragment',
+            'http://localhost:8001/accounts/logout/',
+            'http://localhost:8001/does-not-exist/',
+        ):
+            with self.subTest(url=url):
+                self.assertEqual(password_reset_path(url), '')
+        LocalMailboxBackend().send_messages([
+            build_message('password_reset', 'fictitious@example.test', 'http://localhost:8001' + path)
+        ])
+        inbox = self.client.get(reverse('test_email_inbox'))
+        self.assertContains(inbox, 'Choisir un nouveau mot de passe')
+        self.assertContains(inbox, 'href="' + path + '"')
+
+    def test_recovery_test_message_is_honest_and_change_alert_is_not_dismissed(self):
+        reset = build_message('password_reset', 'fictitious@example.test', 'https://example.test/recovery', test=True)
+        self.assertIn('MODE TEST', reset.body)
+        self.assertNotIn('aucune commande ni opération réelle', reset.body)
+        changed = build_message('password_changed', 'fictitious@example.test', 'https://example.test/login', test=True)
+        self.assertIn('contactez rapidement la boutique', changed.body)
+        self.assertNotIn('ignorez ce message', changed.body)

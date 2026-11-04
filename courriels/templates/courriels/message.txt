@@ -1,5 +1,5 @@
 LA CAVERNE DES MONTS · LÉLEX
-{% if test %}EXEMPLE DE TEST — aucune commande ni opération réelle.{% endif %}
+{% if test %}{% if security %}MODE TEST — message conservé dans la boîte e-mail de test du site, sans envoi à votre messagerie personnelle.{% else %}EXEMPLE DE TEST — aucune commande ni opération réelle.{% endif %}{% endif %}
 {{ title }}
 
 {{ intro }}
@@ -8,7 +8,11 @@ LA CAVERNE DES MONTS · LÉLEX
 {% endif %}
 {{ action }} : {{ url }}
 {% if security %}
+{% if security_alert %}
+Si vous n’êtes pas à l’origine de cette modification, contactez rapidement la boutique. Ne communiquez jamais votre mot de passe.
+{% else %}
 Si vous n’êtes pas à l’origine de cette demande, ignorez ce message. Ne partagez pas ce lien.
+{% endif %}
 {% endif %}
 {% if withdrawal_url %}
 Besoin de retourner un article ? Déclarer ma rétractation : {{ withdrawal_url }}

@@ -69,6 +69,15 @@ Dans l’administration, renseigner les tailles réellement vendables (séparée
 
 Les commandes ne deviennent payées qu’après réception d’un webhook signé et vérification de la session auprès de Stripe (statut, devise, montant des articles, référence). Un simple retour sur la page de confirmation ne marque jamais une commande payée. Les répétitions du webhook ne créent pas une deuxième commande. La confirmation est accessible uniquement depuis la session cliente d’origine. Le panier est conservé lors d’une annulation ou erreur et les quantités achetées sont retirées après confirmation.
 
+## Mot de passe oublié
+
+Le lien de récupération est disponible sur la page de connexion, pour les clients
+et la vendeuse. Il prépare un e-mail privé via le transport déjà configuré, avec
+un lien valable une heure et à usage unique. Le worker `reconcile_reservations`
+doit fonctionner pour préparer les messages. En mode test, ils restent dans la
+boîte locale et ne sont pas envoyés aux adresses personnelles.
+Voir [le parcours et ses protections](docs/MOT_DE_PASSE_OUBLIE.md).
+
 ## Exploitation et limites
 
 La vendeuse dispose des commandes, factures, préparations/expéditions, retours,

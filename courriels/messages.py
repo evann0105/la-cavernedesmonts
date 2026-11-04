@@ -6,7 +6,8 @@ MODELS = {
     'cancellation_requested': ('Votre commande est annulée avant expédition', 'Votre demande est prise en compte.', 'La boutique a annulé votre commande avant son départ. Le remboursement est suivi séparément et vous sera confirmé.', 'Voir ma commande'),
     'cancellation_refund': ('Le remboursement de votre annulation est confirmé', 'Le point sur votre annulation.', 'Votre commande ne sera pas expédiée. Retrouvez ci-dessous le montant du remboursement confirmé.', 'Voir ma commande'),
     'verification': ('Confirmez votre adresse e-mail', 'Bienvenue dans votre petit coin de montagne.', 'Confirmez votre adresse e-mail pour accéder à votre compte. Ce lien expire après une heure et ne peut être utilisé qu’une fois.', 'Confirmer mon adresse'),
-    'password_reset': ('Réinitialisez votre mot de passe', 'Retrouvons votre compte.', 'Vous avez demandé à choisir un nouveau mot de passe. Utilisez le lien sécurisé ci-dessous.', 'Choisir un mot de passe'),
+    'password_reset': ('Réinitialisez votre mot de passe', 'Retrouvons votre compte.', 'Vous avez demandé à choisir un nouveau mot de passe. Ce lien est valable une heure et ne peut être utilisé qu’une fois. Utilisez uniquement le lien de votre demande la plus récente.', 'Choisir un mot de passe'),
+    'password_changed': ('Votre mot de passe a été modifié', 'Votre accès a été mis à jour.', 'Un nouveau mot de passe vient d’être enregistré pour votre compte. Les connexions précédentes devront se reconnecter avec ce nouveau mot de passe.', 'Ouvrir la connexion'),
     'order': ('Votre commande est confirmée', 'Merci pour votre confiance.', 'Votre paiement a été confirmé. Retrouvez ci-dessous le récapitulatif de votre commande.', 'Voir ma commande'),
     'shipping': ('Votre commande a été expédiée', 'Un peu de montagne arrive chez vous.', 'Votre colis a été confié au transporteur. Vous pouvez suivre son acheminement avec le lien ci-dessous.', 'Suivre mon colis'),
     'shipping_ready': ('Votre commande est prête', 'Votre commande est préparée.', 'La boutique a préparé votre commande. Elle reste à remettre au transporteur ; un nouvel avis vous indiquera son expédition.', 'Voir ma commande'),
@@ -22,7 +23,7 @@ MODELS = {
 
 def context_for(kind, url, details='', test=False):
     subject, title, intro, action = MODELS[kind]
-    return {'subject':subject, 'title':title, 'intro':intro, 'action':action, 'url':url, 'details':details, 'test':test, 'security':kind in ('verification','password_reset')}
+    return {'subject':subject, 'title':title, 'intro':intro, 'action':action, 'url':url, 'details':details, 'test':test, 'security':kind in ('verification','password_reset','password_changed'), 'security_alert':kind == 'password_changed'}
 
 
 def render_message(context):

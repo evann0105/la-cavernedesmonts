@@ -52,6 +52,10 @@ def back_navigation(request):
             return {'back_url': return_to, 'back_fallback': return_to, 'back_use_history': False}
     fallback = reverse('accueil:home')
     seller_home = reverse('tableau:home')
+    if name in {'connexion:password_reset', 'connexion:password_reset_done',
+                'connexion:password_reset_confirm', 'connexion:password_reset_complete'}:
+        fallback = reverse('connexion:login')
+        return {'back_url': fallback, 'back_fallback': fallback, 'back_use_history': False}
     if name.startswith('phototheque:'):
         if name == 'phototheque:overview':
             fallback = reverse('tableau:tools')

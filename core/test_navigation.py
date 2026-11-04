@@ -21,3 +21,15 @@ class BackNavigationTests(TestCase):
 
     def test_old_location_address_redirects_to_current_shop_page(self):
         self.assertRedirects(self.client.get('/localisation/'), '/magasins/', status_code=301)
+
+    def test_password_recovery_back_links_always_return_to_login(self):
+        from django.urls import reverse
+        paths = [reverse('connexion:' + name) for name in (
+            'password_reset', 'password_reset_done', 'password_reset_complete',
+        )]
+        paths.append(reverse('connexion:password_reset_confirm', kwargs={'uidb64': 'MQ', 'token': 'invalid-token'}))
+        for path in paths:
+            with self.subTest(path=path):
+                page = self.client.get(path, HTTP_REFERER='http://testserver/produits/')
+                self.assertEqual(page.context['back_url'], reverse('connexion:login'))
+                self.assertFalse(page.context['back_use_history'])

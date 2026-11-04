@@ -1,5 +1,19 @@
 ARTICLES = (
     {
+        'id': 'recuperer-mot-de-passe', 'category': 'quotidien', 'permission': 'seller',
+        'title': 'Comment retrouver mon accès si j’ai oublié mon mot de passe ?',
+        'summary': 'Le lien « Mot de passe oublié ? » est disponible sur la page de connexion.',
+        'steps': (
+            'Ouvrez la page de connexion, puis cliquez sur « Mot de passe oublié ? ».',
+            'Indiquez l’adresse e-mail enregistrée dans votre compte. Le site ne précise pas si un compte correspond à l’adresse saisie.',
+            'Consultez votre messagerie et les courriers indésirables, puis ouvrez le lien le plus récent. La préparation du message peut prendre environ une minute.',
+            'Choisissez et confirmez un nouveau mot de passe. Le lien expire après une heure et ne peut être utilisé qu’une fois.',
+            'Reconnectez-vous avec le nouveau mot de passe. Si trop d’essais avaient bloqué votre connexion, le blocage peut durer jusqu’à quinze minutes.',
+        ),
+        'notes': ('En mode test, le message reste dans la boîte e-mail de test du site ; il n’arrive pas dans votre boîte personnelle.',
+                  'Ne partagez aucun lien de récupération. Ce parcours ne modifie ni les droits de votre compte ni sa confirmation d’adresse.'),
+    },
+    {
         'id': 'retrouver-une-fonction', 'category': 'quotidien', 'permission': 'seller',
         'title': 'Où retrouver les outils de la boutique ?',
         'summary': 'L’espace vendeuse rassemble les tâches du jour et les outils classés par activité.',
