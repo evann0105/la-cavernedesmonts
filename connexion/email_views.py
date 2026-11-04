@@ -83,7 +83,10 @@ def confirm_email(request,token):
         if confirm_token(request.user,token):
             messages.success(request,_('Adresse e-mail confirmée. Bienvenue dans votre compte !'))
             destination = request.session.pop('email_verification_return_to', None)
-            return redirect(destination if destination in VERIFICATION_DESTINATIONS else 'espace:account')
+            if destination not in VERIFICATION_DESTINATIONS:
+                from tableau.access import can_access_seller_home
+                destination = 'tableau:home' if can_access_seller_home(request.user) else 'espace:account'
+            return redirect(destination)
         valid=False
     response=render(request,'connexion/confirm_email.html',{'valid':valid},status=200 if valid else 400)
     response['Referrer-Policy']='no-referrer'

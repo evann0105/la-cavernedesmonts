@@ -1,0 +1,3 @@
+<div class="order-pause-notice" data-orders-paused{% if not order_pause.paused %} hidden{% endif %}>
+  <strong>Commandes en pause</strong><p data-orders-message>{{ order_pause.message }}</p><p class="order-pause-resume" data-orders-resume>{{ order_pause.resume_label }}</p><p class="order-pause-hint">Votre panier est conservé.</p>
+</div>

@@ -1,0 +1,13 @@
+{% extends 'phototheque/management/base.html' %}
+{% block library_content %}
+<header class="photo-heading"><div><p class="eyebrow">ENRICHIR VOTRE BIBLIOTHÈQUE</p><h1>Ajouter des photos.</h1><p>Sélectionnez plusieurs photos en une seule fois et choisissez où les ranger.</p></div><a class="photo-link" href="{{ back_url }}">← Revenir aux photos</a></header>
+<form method="post" enctype="multipart/form-data" class="photo-editor photo-panel">{% csrf_token %}<input type="hidden" name="back" value="{{ back }}">
+  {% include 'phototheque/management/_errors.html' %}
+  {% include 'phototheque/management/_field.html' with field=form.photos %}
+  {% include 'phototheque/management/_field.html' with field=form.folder %}
+  <p class="photo-help"><a class="photo-link" href="{% url 'phototheque:folders' %}">Créer un dossier avant l’ajout</a></p>
+  <div class="photo-note"><strong>Vos photos sont préparées automatiquement.</strong><p>Elles sont optimisées pour le site. Une photo déjà présente n’est pas ajoutée en double et garde son rangement. Une photo archivée reste archivée jusqu’à sa réactivation.</p></div>
+  {% if form.errors %}<p class="photo-help">Après correction, sélectionnez à nouveau les fichiers avant de valider.</p>{% endif %}
+  <div class="photo-save"><a class="photo-link" href="{{ back_url }}">Annuler</a><button class="button" type="submit">Ajouter à la bibliothèque</button></div>
+</form>
+{% endblock %}

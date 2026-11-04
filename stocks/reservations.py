@@ -24,6 +24,13 @@ def reserve(session_key, user_id, snapshot, benefit=None, benefit_quote=None, sh
         identity.append([benefit.pk, revision])
     fingerprint = hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest()
     with transaction.atomic():
+        from suspensions.services import assert_purchases_open, PurchasesPaused
+        try:
+            # Admission precedes every order/stock write. The short shared
+            # gate serializes this decision with the seller's pause changes.
+            assert_purchases_open(lock=True)
+        except PurchasesPaused as error:
+            raise StockUnavailable(str(error)) from error
         order, created = Order.objects.get_or_create(checkout_fingerprint=fingerprint, defaults={'session_key':session_key,'user_id':user_id,'items':snapshot,'subtotal':sum(i['unit_amount']*i['quantity'] for i in snapshot),'shipping_snapshot':shipping_quote or {},'reservation_expires_at':timezone.now()+timedelta(minutes=35)})
         order = Order.objects.select_for_update().get(pk=order.pk)
         if not created:

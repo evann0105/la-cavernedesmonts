@@ -256,9 +256,11 @@ def apply_catalog_undo(actor, token, *, expected_change_id=None):
     rows, categories = _undo_rows(change, lock=True)
     if categories != payload['categories']:
         raise CatalogUndoConflict('Une rubrique a changé depuis l’aperçu. Préparez à nouveau l’annulation.')
+    from historique.products import snapshot_product, record_change
     inverse_items = []
     for row in rows:
         product = row['product']
+        history_before = snapshot_product(product)
         update_fields = []
         inverse = {}
         for field, values in row['changes'].items():
@@ -272,6 +274,7 @@ def apply_catalog_undo(actor, token, *, expected_change_id=None):
                               'before_label': values['after_label'], 'after_label': values['before_label']}
         if update_fields:
             product.save(update_fields=update_fields)
+        record_change(product, history_before, actor=actor, label='Annulation d’une modification groupée')
         inverse_items.append({'product_id': product.pk, 'product_name': product.name, 'changes': inverse})
         LogEntry.objects.log_actions(user_id=actor.pk, queryset=Product.objects.filter(pk=product.pk), action_flag=CHANGE,
             change_message=f'Annulation de la modification groupée n° {change.pk}. ' + ' ; '.join(

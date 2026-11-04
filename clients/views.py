@@ -65,9 +65,9 @@ def profile(request, key):
     tab = request.GET.get('onglet', 'overview')
     if tab not in ('overview', 'orders', 'invoices', 'returns', 'benefits', 'cases'):
         tab = 'overview'
-    orders = Order.objects.filter(pk__in=customer.order_ids).select_related('invoice', 'fulfillment').order_by('-created_at', '-pk')
+    orders = Order.objects.filter(pk__in=customer.order_ids).select_related('invoice', 'fulfillment', 'cancellation__refund').order_by('-created_at', '-pk')
     invoices = Invoice.objects.filter(order_id__in=customer.order_ids).select_related('order').order_by('-issued_at', '-pk')
-    returns = ReturnRequest.objects.filter(order_id__in=customer.order_ids).select_related('order').order_by('-created_at', '-pk')
+    returns = ReturnRequest.objects.filter(order_id__in=customer.order_ids).exclude(kind='cancellation').select_related('order').order_by('-created_at', '-pk')
     benefits = CustomerBenefit.objects.filter(pk__in=customer.benefit_ids).prefetch_related('redemptions').order_by('-created_at', '-pk')
     credit_notes = CreditNote.objects.filter(order_id__in=customer.order_ids).select_related('order')
     vouchers = Voucher.objects.filter(user_id=customer.user_id) if customer.user_id else Voucher.objects.none()
@@ -100,12 +100,17 @@ def case_list(request):
     if priority not in ('', 'normal', 'urgent'):
         priority = ''
     deadline = request.GET.get('echeance', '')
+    attention_only = request.GET.get('attention') == '1'
     legacy_due = not deadline and request.GET.get('relance') == '1'
     if legacy_due:
         deadline = 'due'
     if deadline not in ('', 'today', 'overdue', 'due'):
         deadline = ''
     cases = SupportCase.objects.select_related('user', 'order').order_by('-updated_at', '-pk')
+    today = timezone.localdate()
+    if attention_only:
+        # Same union as the seller home: one case can be both overdue and urgent.
+        cases = cases.exclude(state='resolved').filter(Q(due_date__lte=today) | Q(priority='urgent'))
     counts = {value: cases.filter(state=value).count() for value in states}
     counts['active'] = sum(counts[value] for value in states if value != 'resolved')
     counts['all'] = sum(counts[value] for value in states)
@@ -115,7 +120,6 @@ def case_list(request):
         cases = cases.filter(state=state)
     if priority:
         cases = cases.filter(priority=priority)
-    today = timezone.localdate()
     if deadline:
         cases = cases.exclude(state='resolved')
         lookup = {'today': 'due_date', 'overdue': 'due_date__lt', 'due': 'due_date__lte'}[deadline]
@@ -131,12 +135,15 @@ def case_list(request):
               not (case.due_date and case.due_date <= today), case.priority != 'urgent',
               case.due_date or date.max, -case.updated_at.timestamp()))
     filters = {'q': query, 'etat': state, 'priorite': priority}
+    if attention_only:
+        filters['attention'] = '1'
     filters.update({'relance': '1'} if legacy_due else {'echeance': deadline})
     tabs = [('active', 'À suivre'), ('open', 'À traiter'), ('in_progress', 'En cours'),
             ('waiting_customer', 'En attente du client'), ('resolved', 'Résolus'), ('all', 'Tous')]
     return _private(render(request, 'clients/case_list.html', {
         'page_obj': _page(request, rows), 'query': query, 'state': state,
         'priority': priority, 'due': bool(deadline), 'deadline': deadline, 'workspace': 'sav',
+        'attention_only': attention_only,
         'state_tabs': [{'value': value, 'label': label, 'count': counts[value]} for value, label in tabs],
         'filter_query': urlencode({key: value for key, value in filters.items() if value}),
     }))

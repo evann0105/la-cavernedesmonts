@@ -19,10 +19,11 @@ from .forms import FORM_CLASSES, AddressCorrectionForm, EmailCorrectionForm
 from .contacts import correct_contacts, locked_country
 from .priorities import waiting_time
 from .selectors import summary
+from .cancellation import cancellation_for
 from .services import change_state, FulfillmentError, RevisionConflict
 
 
-STATES = [('preparing', 'À préparer'), ('ready', 'Prêtes'), ('shipped', 'Expédiées')]
+STATES = [('preparing', 'À préparer'), ('ready', 'Prêtes'), ('shipped', 'Expédiées'), ('cancelled', 'Annulées')]
 
 
 def _private(response):
@@ -65,7 +66,10 @@ def _resolution(info, order):
     if not info.get('blocked_reason'):
         return info
     kind = info.get('blocked_kind')
-    if kind == 'return' and info.get('blocked_return_id'):
+    if kind == 'cancellation':
+        info.update(resolution_url=reverse('annulations:detail', args=[order.pk]),
+                    resolution_label='Suivre l’annulation et le remboursement')
+    elif kind == 'return' and info.get('blocked_return_id'):
         info.update(resolution_url=reverse('retours:manage_detail', args=[info['blocked_return_id']]),
                     resolution_label='Ouvrir le dossier concerné')
     elif kind in ('address', 'email') and info.get('can_correct_contacts'):
@@ -87,16 +91,21 @@ def overview(request):
     query = request.GET.get('q', '').strip()[:100]
     # A checkout created earlier but paid later must not jump ahead of an
     # already paid purchase. Simulations and legacy rows may have no paid_at.
-    orders = Order.objects.filter(status=scope).select_related('fulfillment').prefetch_related('returns').annotate(
+    orders = Order.objects.filter(status=scope).select_related('fulfillment', 'cancellation__refund').prefetch_related('returns').annotate(
         fulfillment_priority_at=Coalesce('paid_at', 'created_at'))
-    preparing = Q(fulfillment__isnull=True) | Q(fulfillment__state='preparing')
+    active = Q(cancellation__isnull=True)
+    preparing = active & (Q(fulfillment__isnull=True) | Q(fulfillment__state='preparing'))
+    cancelled = Q(cancellation__isnull=False) | Q(fulfillment__state='cancelled')
     counts = orders.aggregate(preparing=Count('pk', filter=preparing),
-        ready=Count('pk', filter=Q(fulfillment__state='ready')),
-        shipped=Count('pk', filter=Q(fulfillment__state='shipped')))
+        ready=Count('pk', filter=active & Q(fulfillment__state='ready')),
+        shipped=Count('pk', filter=active & Q(fulfillment__state='shipped')),
+        cancelled=Count('pk', filter=cancelled))
     if state == 'preparing':
         orders = orders.filter(preparing)
+    elif state == 'cancelled':
+        orders = orders.filter(cancelled)
     elif state != 'all':
-        orders = orders.filter(fulfillment__state=state)
+        orders = orders.filter(active, fulfillment__state=state)
     if state in ('preparing', 'ready'):
         orders = orders.order_by('fulfillment_priority_at', 'created_at', 'pk')
         ordering_label = 'Les commandes les plus anciennes sont affichées en premier.'
@@ -118,7 +127,7 @@ def overview(request):
         shipment = _resolution(summary(order), order)
         shipping = shipment.get('contact_shipping') or {}
         since = order.paid_at or order.created_at
-        waiting = None if shipment['state'] == 'shipped' else {
+        waiting = None if shipment['state'] in ('shipped', 'cancelled') else {
             'since': since, 'label': 'En attente d’expédition depuis ' + waiting_time(since, now)}
         rows.append({'order': order, 'shipment': shipment, 'waiting': waiting,
                      'customer_name': str(shipping.get('name') or ''),
@@ -138,6 +147,8 @@ def overview(request):
 def detail(request, pk):
     statuses = ('paid', 'demo') if settings.DEBUG else ('paid',)
     order = get_object_or_404(Order.objects.select_related('fulfillment', 'invoice').prefetch_related('returns'), pk=pk, status__in=statuses)
+    if cancellation_for(order) is not None:
+        return _private(redirect('annulations:detail', pk=order.pk))
     info = _resolution(summary(order), order)
     action = request.POST.get('action', '') if request.method == 'POST' else ''
     forms = _forms(order, info, action=action, data=request.POST if request.method == 'POST' else None)
@@ -189,6 +200,8 @@ def contacts(request, pk):
     statuses = ('paid', 'demo') if settings.DEBUG else ('paid',)
     order = get_object_or_404(Order.objects.select_related('fulfillment').prefetch_related('returns'),
                               pk=pk, status__in=statuses)
+    if cancellation_for(order) is not None:
+        return _private(redirect('annulations:detail', pk=order.pk))
     info = _resolution(summary(order), order)
     posted_kind = request.POST.get('kind', '') if request.method == 'POST' else ''
     section = posted_kind if request.method == 'POST' else request.GET.get('section', 'address')

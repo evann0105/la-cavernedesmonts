@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_GET, require_http_methods
 
 from core.catalog_access import catalog_required
+from historique.exceptions import HistoryError
 from .configuration import configuration, public_configuration
 from .forms import SectionForm, SectionsVisibilityForm, FeaturedProductsForm
 from .models import HeroSlide
@@ -94,7 +95,7 @@ def sections(request):
             save_visibility(form.cleaned_data, actor=request.user)
         except HomepageConflict as exc:
             _error(form, exc); status = 409
-        except (HomepageError, ValidationError) as exc:
+        except (HomepageError, HistoryError, ValidationError) as exc:
             _error(form, exc)
         else:
             messages.success(request, 'Les sections visibles sur l’accueil ont été enregistrées.')
@@ -121,7 +122,7 @@ def section(request, section):
             save_section(section, form.cleaned_data, actor=request.user)
         except HomepageConflict as exc:
             _error(form, exc); status = 409
-        except (HomepageError, ValidationError) as exc:
+        except (HomepageError, HistoryError, ValidationError) as exc:
             _error(form, exc)
         else:
             messages.success(request, 'Le bloc « ' + SECTIONS[section]['title'] + ' » a été enregistré sur l’accueil.')
@@ -147,7 +148,7 @@ def featured(request):
             save_featured(form.cleaned_data, actor=request.user)
         except HomepageConflict as exc:
             _error(form, exc); status = 409
-        except (HomepageError, ValidationError) as exc:
+        except (HomepageError, HistoryError, ValidationError) as exc:
             _error(form, exc)
         else:
             messages.success(request, 'La sélection et l’ordre des produits de l’accueil ont été enregistrés.')
@@ -238,7 +239,7 @@ def slides(request, section='hero'):
             except HomepageConflict as exc:
                 _error(form, exc)
                 status = 409
-            except (HomepageError, ValidationError) as exc:
+            except (HomepageError, HistoryError, ValidationError) as exc:
                 _error(form, exc)
             else:
                 messages.success(request, 'Les photos du diaporama et ses réglages ont été enregistrés.')

@@ -1,7 +1,7 @@
 {% extends 'core/catalog/base.html' %}{% load static %}
 {% block title %}{{ section.title }} — Réglages de la boutique{% endblock %}
 {% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'boutique/settings.css' %}?v=20261021-linked-address">{% endblock %}
-{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a><span aria-hidden="true"> / </span><a href="{% url 'boutique:settings' %}">Réglages de la boutique</a><span aria-hidden="true"> / </span><span aria-current="page">{{ section.title }}</span></nav>{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'tableau:home' %}">Espace vendeuse</a><span aria-hidden="true"> / </span><a href="{% url 'boutique:settings' %}">Réglages de la boutique</a><span aria-hidden="true"> / </span><span aria-current="page">{{ section.title }}</span></nav>{% endblock %}
 {% block catalog_content %}
 <div class="shop-settings">
   <header class="settings-heading"><div><p class="eyebrow">RÉGLAGES DE LA BOUTIQUE</p><h1>{{ section.title }}.</h1><p>{{ section.description }}</p></div><a class="settings-text-link" href="{% url 'boutique:settings' %}">← Tous les réglages</a></header>

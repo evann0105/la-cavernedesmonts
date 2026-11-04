@@ -25,11 +25,7 @@ def _section_key(section):
 
 
 class SlideshowPhotoField(MultiPhotoField):
-    def clean(self, data, initial=None):
-        files = data if isinstance(data, (list, tuple)) else ([data] if data else [])
-        if len(files) > 5:
-            raise forms.ValidationError('Ajoutez au maximum cinq photos supplémentaires au diaporama.')
-        return super().clean(files, initial)
+    max_files = 5
 
 
 class SlidesForm(forms.Form):
@@ -179,6 +175,8 @@ def save_slideshow(cleaned_data, rows, actor, section='hero'):
     try:
         with transaction.atomic():
             configuration, is_new = _locked(expected_revision)
+            from historique.homepage import record_homepage
+            record_homepage(actor=actor, label='Accueil avant modification du diaporama', source='baseline')
             existing = list(HeroSlide.objects.select_for_update().filter(configuration_id=1, section=section).order_by('position', 'pk'))
             by_id = {slide.pk: slide for slide in existing}
             seen_ids, seen_positions = set(), set()
@@ -255,6 +253,8 @@ def save_slideshow(cleaned_data, rows, actor, section='hero'):
                 slide.position = position
                 slide.full_clean(validate_unique=False, validate_constraints=False)
                 slide.save()
+            record_homepage(actor=actor, label='Diaporama de la grande introduction' if section == 'hero'
+                            else 'Diaporama de l’invitation au grand air')
             return configuration
     except Exception:
         _cleanup_new_files(new_files)

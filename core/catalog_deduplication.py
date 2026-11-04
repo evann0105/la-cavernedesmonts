@@ -68,6 +68,8 @@ def archive_verified_duplicate(source, target, *, expected_source_url, expected_
     if not apply:
         return DuplicateArchiveResult(duplicate, canonical, True)
 
+    from historique.products import snapshot_product, record_change
+    before_duplicate, before_canonical = snapshot_product(duplicate), snapshot_product(canonical)
     existing_files = set(canonical.images.values_list('image', flat=True))
     if canonical.main_image:
         existing_files.add(canonical.main_image.name)
@@ -96,4 +98,6 @@ def archive_verified_duplicate(source, target, *, expected_source_url, expected_
     duplicate.is_featured = False
     duplicate.information_sources = sources
     duplicate.save(update_fields=['duplicate_of', 'is_published', 'is_featured', 'information_sources'])
+    record_change(duplicate, before_duplicate, label='Doublon vérifié et archivé')
+    record_change(canonical, before_canonical, label='Photos du doublon vérifié conservées')
     return DuplicateArchiveResult(duplicate, canonical, True, copied_images)

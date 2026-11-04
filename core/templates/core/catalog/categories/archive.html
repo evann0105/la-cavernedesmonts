@@ -1,6 +1,6 @@
 {% extends 'core/catalog/base.html' %}
 {% block title %}{% if archiving %}Archiver{% else %}Restaurer{% endif %} une rubrique — La Caverne des Monts{% endblock %}
-{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a> / <a href="{{ return_url }}">Rubriques et menu</a> / {% if archiving %}Archiver{% else %}Restaurer{% endif %}</nav>{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'tableau:home' %}">Espace vendeuse</a> / <a href="{{ return_url }}">Rubriques et menu</a> / {% if archiving %}Archiver{% else %}Restaurer{% endif %}</nav>{% endblock %}
 {% block catalog_content %}
 <div class="category-management category-management-editor">
   <div class="catalog-heading"><div><p class="eyebrow">GARDER UN CATALOGUE BIEN RANGÉ</p><h1>{% if archiving %}Archiver{% else %}Restaurer{% endif %} cette rubrique.</h1><p>{{ category.name }}</p></div><a href="{{ return_url }}">← Retour aux rubriques</a></div>

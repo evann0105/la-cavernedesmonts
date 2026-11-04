@@ -80,6 +80,11 @@ def order_confirmation(order):
 
 
 def return_notice(record, kind, label):
+    if record.kind == 'cancellation':
+        if kind == 'refund':
+            from annulations.mail import notice
+            notice(record.cancellation, 'cancellation_refund')
+        return
     order = record.order
     details = f'Dossier {record.short_reference} · Commande {order.pk}\n{label}\n'
     details += '\n'.join(f'{i.quantity} × {i.name} — {i.size} {i.color}' for i in record.lines.all())

@@ -1,0 +1,1 @@
+{% if warnings %}<aside class="history-warning" aria-label="Points à vérifier"><strong>À vérifier pour cette version</strong><ul>{% for warning in warnings %}<li>{{ warning }}</li>{% endfor %}</ul><p>Les vérifications seront reprises avant toute restauration.</p></aside>{% endif %}

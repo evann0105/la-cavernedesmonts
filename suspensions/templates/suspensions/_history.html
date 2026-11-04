@@ -1,0 +1,43 @@
+{% if pause_history %}
+<section class="pause-history" id="pause-history" aria-labelledby="pause-history-title">
+  <header class="pause-history__heading">
+    <div><h2 id="pause-history-title">Historique de cette pause</h2><p>Retrouvez les changements enregistrés, du plus récent au plus ancien. Les dates et heures sont celles de Paris.</p></div>
+    {% if pause_history_page %}<span class="pause-history__count">{{ pause_history_page.paginator.count }} événement{{ pause_history_page.paginator.count|pluralize }}</span>{% endif %}
+  </header>
+  <ol class="pause-history__events">
+    {% for event in pause_history %}
+    <li>
+      <details class="pause-history__event"{% if forloop.first %} open{% endif %}>
+        <summary>
+          <span class="pause-history__summary"><strong>{{ event.label }}</strong><span class="pause-history__metadata">{% if event.created.iso %}<time datetime="{{ event.created.iso }}" title="{{ event.created.title }}">{{ event.created.text }}</time>{% else %}{{ event.created.text }}{% endif %}<span aria-hidden="true"> · </span>{{ event.actor_label }}</span></span>
+          <span class="pause-history__toggle" aria-hidden="true">＋</span>
+        </summary>
+        <div class="pause-history__body">
+          {% if event.incomplete %}<p class="pause-history__warning">Certaines valeurs de cet ancien événement n’ont pas été conservées ou ne peuvent plus être lues.</p>{% endif %}
+          {% if event.rows %}
+          <dl class="pause-history__changes">
+            {% for change in event.rows %}
+            <div class="pause-history__change">
+              <dt>{{ change.label }}</dt>
+              <dd>
+                <div class="pause-history__value pause-history__value--before"><span class="pause-history__value-label">Avant</span><p>{% if change.before.iso %}<time datetime="{{ change.before.iso }}" title="{{ change.before.title }}">{{ change.before.text }}</time>{% else %}{{ change.before.text }}{% endif %}</p></div>
+                <div class="pause-history__value pause-history__value--after"><span class="pause-history__value-label">Après</span><p>{% if change.after.iso %}<time datetime="{{ change.after.iso }}" title="{{ change.after.title }}">{{ change.after.text }}</time>{% else %}{{ change.after.text }}{% endif %}</p></div>
+              </dd>
+            </div>
+            {% endfor %}
+          </dl>
+          {% else %}<p class="pause-history__empty">{{ event.empty_message }}</p>{% endif %}
+        </div>
+      </details>
+    </li>
+    {% endfor %}
+  </ol>
+  {% if pause_history_page.has_other_pages %}
+  <nav class="pause-history__pagination" aria-label="Pages de l’historique de cette pause">
+    {% if pause_history_page.has_previous %}<a href="?history_page={{ pause_history_page.previous_page_number }}#pause-history">← Événements plus récents</a>{% endif %}
+    <span>Page {{ pause_history_page.number }} sur {{ pause_history_page.paginator.num_pages }}</span>
+    {% if pause_history_page.has_next %}<a href="?history_page={{ pause_history_page.next_page_number }}#pause-history">Événements plus anciens →</a>{% endif %}
+  </nav>
+  {% endif %}
+</section>
+{% endif %}

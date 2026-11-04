@@ -3,6 +3,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
 MODELS = {
+    'cancellation_requested': ('Votre commande est annulée avant expédition', 'Votre demande est prise en compte.', 'La boutique a annulé votre commande avant son départ. Le remboursement est suivi séparément et vous sera confirmé.', 'Voir ma commande'),
+    'cancellation_refund': ('Le remboursement de votre annulation est confirmé', 'Le point sur votre annulation.', 'Votre commande ne sera pas expédiée. Retrouvez ci-dessous le montant du remboursement confirmé.', 'Voir ma commande'),
     'verification': ('Confirmez votre adresse e-mail', 'Bienvenue dans votre petit coin de montagne.', 'Confirmez votre adresse e-mail pour accéder à votre compte. Ce lien expire après une heure et ne peut être utilisé qu’une fois.', 'Confirmer mon adresse'),
     'password_reset': ('Réinitialisez votre mot de passe', 'Retrouvons votre compte.', 'Vous avez demandé à choisir un nouveau mot de passe. Utilisez le lien sécurisé ci-dessous.', 'Choisir un mot de passe'),
     'order': ('Votre commande est confirmée', 'Merci pour votre confiance.', 'Votre paiement a été confirmé. Retrouvez ci-dessous le récapitulatif de votre commande.', 'Voir ma commande'),

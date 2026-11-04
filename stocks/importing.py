@@ -71,7 +71,7 @@ def process_inventory(rows, user, apply=False):
                 if row[column] == spreadsheet_text(original):
                     row[column] = original
         # Use a separate model instance: ModelForm mutates it during validation.
-        instance = Variant(pk=old.pk, product=product) if old else Variant(product=product)
+        instance = Variant(pk=old.pk, product=product, price=old.price) if old else Variant(product=product)
         form = VariantForm({'size':row['taille'], 'color':row['couleur'], 'reference':row['reference'], 'quantity':row['quantite'], 'revision':row['revision']}, instance=instance)
         if not form.is_valid():
             raise ImportInvalid(prefix + ' '.join(str(error) for errors in form.errors.values() for error in errors))
@@ -88,6 +88,8 @@ def process_inventory(rows, user, apply=False):
         saved.reserved = old.reserved if old else 0
         saved.revision = old.revision + 1 if old else 1
         plan.append((saved, old, product))
+    from historique.products import snapshot_product, record_change
+    before = {pk: snapshot_product(product) for pk, product in products.items()} if apply else {}
     result = []
     for saved, old, product in plan:
         changed = old is None or (old.quantity, old.reference) != (saved.quantity, saved.reference)
@@ -95,6 +97,9 @@ def process_inventory(rows, user, apply=False):
         if apply and changed:
             saved.save()
             LogEntry.objects.log_actions(user_id=user.pk, queryset=Variant.objects.filter(pk=saved.pk), action_flag=CHANGE if old else ADDITION, change_message=f'Import CSV : stock {old.quantity if old else "nouveau"} → {saved.quantity}, référence {saved.reference}.')
+    if apply:
+        for pk, product in products.items():
+            record_change(product, before[pk], actor=user, label='Import des tailles, couleurs et références')
     return result
 
 

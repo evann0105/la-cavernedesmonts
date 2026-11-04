@@ -1,12 +1,13 @@
 """Read-only admin summaries and a small separate customer-facing projection."""
 from django.core.exceptions import ObjectDoesNotExist
 from .mail import notification_state
+from .cancellation import cancellation_for, is_cancelled
 from .contacts import effective_email, effective_shipping, locked_country
 from .services import FulfillmentError, _order_reason, blocking_issue, recipient_email
 from .tracking import tracking_url
 
 
-STATE_LABELS = {'preparing': 'En préparation', 'ready': 'Prête à expédier', 'shipped': 'Expédiée'}
+STATE_LABELS = {'preparing': 'En préparation', 'ready': 'Prête à expédier', 'shipped': 'Expédiée', 'cancelled': 'Annulée'}
 
 
 def _fulfillment(order):
@@ -18,7 +19,7 @@ def _fulfillment(order):
 
 def summary(order):
     fulfillment = _fulfillment(order)
-    state = fulfillment.state if fulfillment else 'preparing'
+    state = 'cancelled' if is_cancelled(order) else (fulfillment.state if fulfillment else 'preparing')
     issue = blocking_issue(order)
     reason = issue['message']
     try:
@@ -30,6 +31,8 @@ def summary(order):
         mail_reason = str(error)
     ship_reason = reason or mail_reason
     return {
+        'cancellation': cancellation_for(order),
+        'can_cancel': state in ('preparing', 'ready') and not _order_reason(order),
         'fulfillment': fulfillment, 'state': state, 'state_label': STATE_LABELS[state],
         'revision': fulfillment.revision if fulfillment else 0,
         'ready_at': fulfillment.ready_at if fulfillment else None,
@@ -49,9 +52,9 @@ def summary(order):
         'contact_country_locked': locked_country(order),
         'shipping_is_corrected': bool(fulfillment and fulfillment.delivery_address_override),
         'recipient_is_corrected': bool(fulfillment and fulfillment.notification_email_override),
-        'can_correct_contacts': state != 'shipped' and not _order_reason(order),
+        'can_correct_contacts': state in ('preparing', 'ready') and not _order_reason(order),
         'can_ready': state == 'preparing' and not reason,
-        'can_reopen': state == 'ready',
+        'can_reopen': state == 'ready' and not _order_reason(order),
         'can_ship': state == 'ready' and not ship_reason,
         'can_update_tracking': state == 'shipped' and recipient_available,
         'can_resend_notice': state == 'shipped' and recipient_available,
@@ -67,7 +70,7 @@ def state_for_order(order):
 def public_status(order):
     """Never expose internal notes, blockers, staff identities or outbox state."""
     fulfillment = _fulfillment(order)
-    state = fulfillment.state if fulfillment else 'preparing'
+    state = 'cancelled' if is_cancelled(order) else (fulfillment.state if fulfillment else 'preparing')
     if order.status not in ('paid', 'demo'):
         return None
     return {

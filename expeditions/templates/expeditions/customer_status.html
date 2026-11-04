@@ -1,9 +1,15 @@
 {% load static %}{% if shipment.show %}
-<link rel="stylesheet" href="{% static 'expeditions/customer.css' %}?v=20261023">
+<link rel="stylesheet" href="{% static 'expeditions/customer.css' %}?v=20261102">
 <section class="customer-shipment" aria-label="Préparation et expédition">
-  <p class="customer-shipment__kicker">{% if shipment.is_demo %}SIMULATION · {% endif %}VOTRE COLIS</p>
+  <p class="customer-shipment__kicker">{% if shipment.is_demo %}SIMULATION · {% endif %}{% if shipment.state == 'cancelled' %}VOTRE COMMANDE{% else %}VOTRE COLIS{% endif %}</p>
   <h3>{{ shipment.label }}</h3>
-  {% if shipment.state == 'preparing' %}<p>La boutique prépare votre commande. Le suivi sera disponible après son expédition.</p>
+  {% if shipment.state == 'cancelled' %}
+    <p>Votre commande a été annulée avant son expédition{% if shipment.cancelled_at %} le {{ shipment.cancelled_at|date:'d/m/Y à H:i' }}{% endif %}. Aucun colis ne sera envoyé et aucun retour n’est nécessaire.</p>
+    {% if shipment.cancellation_reason %}<p><strong>Motif de la boutique :</strong> {{ shipment.cancellation_reason|linebreaksbr }}</p>{% endif %}
+    {% if shipment.refund_state == 'succeeded' %}<p><strong>{% if shipment.is_demo %}Remboursement simulé{% else %}Remboursement confirmé{% endif %} : {{ shipment.refund_amount|floatformat:2 }} €.</strong>{% if not shipment.is_demo %} Le délai d’apparition sur votre compte dépend de votre banque.{% endif %}</p>
+    {% else %}<p><strong>Remboursement en cours de traitement par la boutique.</strong> La confirmation apparaîtra ici dès qu’elle sera reçue. Votre commande reste annulée pendant ce traitement.</p>{% endif %}
+    {% if shipment.is_demo %}<p class="customer-shipment__note">Simulation : aucun paiement, remboursement ni stock réel n’est modifié.</p>{% endif %}
+  {% elif shipment.state == 'preparing' %}<p>La boutique prépare votre commande. Le suivi sera disponible après son expédition.</p>
   {% elif shipment.state == 'ready' %}<p>Votre commande est prête. Elle reste à remettre au transporteur.</p>
   {% elif shipment.state == 'shipped' %}<p>{% if shipment.is_demo %}Expédition simulée{% else %}Expédition enregistrée{% endif %} le {{ shipment.shipped_at|date:'d/m/Y à H:i' }} · {{ shipment.carrier_name }}</p><p>Numéro de suivi : <strong class="customer-shipment__number">{{ shipment.tracking_number }}</strong></p>
     {% if shipment.tracking_url and not shipment.is_demo %}<p><a class="customer-shipment__link" href="{{ shipment.tracking_url }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Suivre mon colis sur La Poste ↗</a></p>{% endif %}

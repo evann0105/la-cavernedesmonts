@@ -1,0 +1,26 @@
+  <section class="cancellation-panel cancellation-history" aria-labelledby="cancellation-stock-title">
+    <p class="eyebrow">La trace de chaque quantité</p><h2 id="cancellation-stock-title">Historique de la remise en stock</h2>
+    {% if order.is_demo %}
+    <p class="cancellation-intro">Cette annulation est une simulation. Aucun mouvement de stock réel n’a été enregistré.</p>
+    {% elif stock_movements %}
+    <p class="cancellation-intro">Valeurs enregistrées au moment du traitement. Le stock total comprend les articles réservés à d’autres commandes ; ces réservations restent inchangées.</p>
+    <div class="cancellation-stock-table-wrap">
+      <table class="cancellation-stock-table">
+        <caption>Quantités réintégrées pour cette annulation</caption>
+        <thead><tr><th scope="col">Article</th><th scope="col">Stock total avant</th><th scope="col">Remis en stock</th><th scope="col">Stock total après</th><th scope="col">Dont réservés</th><th scope="col">Traitement</th></tr></thead>
+        <tbody>{% for movement in stock_movements %}<tr>
+          <th scope="row"><strong>{{ movement.product_name }}</strong><span>{{ movement.size }}{% if movement.size and movement.color %} · {% endif %}{{ movement.color }}</span></th>
+          <td data-label="Stock total avant">{{ movement.quantity_before }}</td>
+          <td data-label="Remis en stock"><strong>+{{ movement.quantity_added }}</strong></td>
+          <td data-label="Stock total après">{{ movement.quantity_after }}</td>
+          <td data-label="Dont réservés">{{ movement.reserved }}</td>
+          <td data-label="Traitement"><div>{{ movement.created_at|date:'d/m/Y à H:i' }}<span>{% if movement.source == 'manual' %}Reprise manuelle{% if movement.actor %} par {{ movement.actor.get_full_name|default:movement.actor.get_username }}{% else %} · compte supprimé{% endif %}{% else %}Traitement automatique{% endif %}</span></div></td>
+        </tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    {% elif cancellation.stock_completed_at %}
+    <p class="cancellation-intro">La remise en stock a été enregistrée le {{ cancellation.stock_completed_at|date:'d/m/Y à H:i' }}. Pour cet ancien dossier, les quantités avant et après le traitement n’ont pas été conservées.</p>
+    {% else %}
+    <p class="cancellation-intro">Aucun mouvement de stock n’a encore été enregistré pour cette annulation. Le résultat apparaîtra ici une fois la remise en stock terminée.</p>
+    {% endif %}
+  </section>

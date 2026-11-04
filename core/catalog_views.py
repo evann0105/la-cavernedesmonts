@@ -52,10 +52,22 @@ def catalog_list(request):
 def catalog_edit(request, pk=None):
     from .catalog_navigation import catalog_return
     request.catalog_return_to = return_to = catalog_return(request)
-    products = Product.objects.select_for_update() if request.method == 'POST' else Product.objects.all()
+    # Keep the rendered values and their signed version from the same state.
+    products = Product.objects.select_for_update()
     product = get_object_or_404(products, pk=pk) if pk else Product(is_published=False)
+    from historique.products import snapshot_product, record_change, editor_token, validate_editor_token
+    from historique.exceptions import HistoryConflict
+    history_before = snapshot_product(product) if product.pk else None
+    history_error = ''
+    if request.method == 'POST' and product.pk:
+        try:
+            validate_editor_token(product, request.user, request.POST.get('history_token', ''))
+        except HistoryConflict as error:
+            history_error = str(error)
     previous_product_price = product.price
     form = CatalogProductForm(request.POST if request.method == 'POST' else None, request.FILES or None, instance=product)
+    if request.method != 'POST' and product.pk:
+        form.initial['history_token'] = editor_token(product, request.user)
     photos = GalleryFormSet(request.POST if request.method == 'POST' else None, request.FILES or None, instance=product, prefix='photos')
     initial_stock = InitialStockForms(request.POST if request.method == 'POST' else None, prefix='stock', product=product)
     colors = ColorPhotoForms(request.POST if request.method == 'POST' else None, request.FILES or None, instance=product, prefix='colors')
@@ -65,7 +77,7 @@ def catalog_edit(request, pk=None):
     original_color_form.initial['name'] = original_color_name
     original_color_form.original_image_url = product.image_url
     existing_stock = {}
-    stock_variants = list(product.stock_variants.select_for_update() if request.method == 'POST' and product.pk else product.stock_variants.all()) if product.pk else []
+    stock_variants = list(product.stock_variants.select_for_update().order_by('pk') if request.method == 'POST' and product.pk else product.stock_variants.all()) if product.pk else []
     price_data = request.POST if request.method == 'POST' and any(key.startswith('variant_prices-') for key in request.POST) else None
     variant_prices = VariantPriceForms(price_data, product=product, variants=stock_variants, prefix='variant_prices',
         initial=[{'variant_id': variant.pk, 'revision': variant.revision, 'price': variant.price} for variant in stock_variants])
@@ -128,6 +140,9 @@ def catalog_edit(request, pk=None):
                 else:
                     color_prices[key] = values['color_price']
         valid_form, valid_photos = form.is_valid(), photos.is_valid()
+        if history_error:
+            form.add_error(None, history_error)
+            valid_form = False
         if valid_form and valid_photos:
             remaining = sum(1 for photo in photos.forms if not photo.cleaned_data.get('DELETE'))
             if remaining + len(form.cleaned_data['new_photos']) > 50:
@@ -169,6 +184,7 @@ def catalog_edit(request, pk=None):
                 order = product.images.aggregate(last=Max('order'))['last'] or 0
                 for index, image in enumerate(form.cleaned_data['new_photos'], start=1):
                     ProductImage.objects.create(product=product, image=image, alt=product.name, order=order+index)
+                record_change(product, history_before, actor=request.user, label='Fiche modifiée' if pk else 'Fiche créée')
                 LogEntry.objects.log_actions(user_id=request.user.pk, queryset=Product.objects.filter(pk=product.pk), action_flag=CHANGE if pk else ADDITION, change_message='Produit enregistré depuis la gestion de la boutique.')
             messages.success(request, 'Produit enregistré. Il est visible dans la boutique.' if product.is_published else 'Produit enregistré en brouillon. Il reste invisible aux clients.')
             if return_to:
@@ -214,18 +230,28 @@ def catalog_homepage_collections(request, legacy=False):
     from .catalog_forms import HomepageSelectionForm
     from .homepage import WORLD_CARDS, world_cards
     from .models import HomepageSelection
+    from accueil.configuration import configuration
+    from historique.homepage import save_collections
+    from historique.exceptions import HistoryError
+    from accueil.services import HomepageConflict, HomepageError
+    current = configuration()
     initial = dict(HomepageSelection.objects.values_list('slot', 'product_id'))
     for card in world_cards():
         if card['slot'] not in initial and card['product']:
             initial[card['slot']] = card['product'].pk
+    initial['revision'] = current['revision']
+    status = 200
     form = HomepageSelectionForm(request.POST if request.method == 'POST' else None, initial=initial)
     if request.method == 'POST' and form.is_valid():
-        with transaction.atomic():
-            for spec in WORLD_CARDS:
-                HomepageSelection.objects.update_or_create(slot=spec['slot'], defaults={'product':form.cleaned_data[spec['slot']]})
-            LogEntry.objects.log_actions(user_id=request.user.pk, queryset=HomepageSelection.objects.filter(slot__in=[s['slot'] for s in WORLD_CARDS]), action_flag=CHANGE, change_message='Sélection des cartes de l’accueil modifiée.')
-        messages.success(request, 'Les trois cartes de « Votre envie du moment » ont été mises à jour.')
-        return redirect('core:catalog_homepage' if legacy else 'core:homepage_collections')
+        try:
+            save_collections(form.cleaned_data, actor=request.user)
+        except HomepageConflict as error:
+            form.add_error(None, str(error)); status = 409
+        except (HistoryError, HomepageError) as error:
+            form.add_error(None, str(error)); status = 400
+        else:
+            messages.success(request, 'Les trois cartes de « Votre envie du moment » ont été mises à jour.')
+            return redirect('core:catalog_homepage' if legacy else 'core:homepage_collections')
     cards = world_cards()
     choices = {}
     for spec in WORLD_CARDS:
@@ -233,4 +259,4 @@ def catalog_homepage_collections(request, legacy=False):
         choices[spec['slot']] = {str(p.pk): {'image':p.image_url, 'name':p.name} for p in products}
         choices[spec['slot']][''] = {'image':products[0].image_url, 'name':products[0].name} if products else {'image':'', 'name':'Aucun produit publié avec photo'}
     panels = [{'card':card, 'field':form[card['slot']]} for card in cards]
-    return render(request, 'core/catalog/homepage.html', {'form':form, 'panels':panels, 'choices':choices})
+    return render(request, 'core/catalog/homepage.html', {'form':form, 'panels':panels, 'choices':choices}, status=status)

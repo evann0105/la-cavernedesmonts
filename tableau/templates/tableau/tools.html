@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Tous les outils — Espace vendeuse{% endblock %}
+{% block body_class %}seller-landing{% endblock %}
+{% block content %}
+<div class="wrap seller-home">
+  <header class="seller-page-heading"><div><p class="eyebrow">ESPACE VENDEUSE</p><h1>Tous les outils.</h1><p>Choisissez ce que vous souhaitez faire.</p></div><a class="seller-text-link" href="{% url 'tableau:home' %}">Revenir aux tâches du jour <span aria-hidden="true">↗</span></a></header>
+  <nav class="seller-tool-index" aria-label="Rubriques des outils">{% if can_manage_returns %}<a href="#commandes">Commandes & clients</a>{% endif %}{% if can_manage_catalog %}<a href="#catalogue">Catalogue & stocks</a><a href="#contenus">Site & contenus</a><a href="#reglages">Réglages</a>{% endif %}{% if can_manage_returns %}<a href="#comptabilite">Comptabilité</a>{% endif %}</nav>
+  <div class="seller-tools-grid">
+    {% if can_manage_returns %}
+    <section class="seller-panel seller-tool-group" id="commandes"><p class="eyebrow">VENDRE & ACCOMPAGNER</p><h2>Commandes & clients</h2><ul>
+      <li><a href="{% url 'expeditions:overview' %}"><span><strong>Préparer et expédier</strong><small>Les colis à préparer, les départs et les suivis.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'annulations:overview' %}"><span><strong>Annulations à vérifier</strong><small>Suivre les remboursements et les articles remis en stock.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'facturation:management' %}"><span><strong>Commandes et factures</strong><small>Retrouver une commande et ses documents.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'clients:directory' %}"><span><strong>Clients et SAV</strong><small>Chercher un client et ouvrir une demande.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'retours:manage' %}"><span><strong>Retours et remboursements</strong><small>Suivre la réception et le traitement des retours.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'avoirs:management' %}"><span><strong>Avoirs clients</strong><small>Créer des codes et choisir leurs conditions.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'alertes:emails' %}"><span><strong>E-mails et alertes</strong><small>Vérifier les envois et relancer les échecs.</small></span><span aria-hidden="true">↗</span></a></li>
+    </ul></section>
+    {% endif %}
+    {% if can_manage_catalog %}
+    <section class="seller-panel seller-tool-group" id="catalogue"><p class="eyebrow">GÉRER LES ARTICLES</p><h2>Catalogue & stocks</h2><ul>
+      <li><a href="{% url 'core:catalog_list' %}"><span><strong>Gérer les produits</strong><small>Créer, dupliquer et modifier les fiches.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'core:category_list' %}"><span><strong>Rubriques et menu</strong><small>Ranger les collections et choisir leur visibilité.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'stocks:overview' %}"><span><strong>Stock · ajouter / retirer</strong><small>Ajuster les quantités par taille et couleur.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'alertes:stocks' %}"><span><strong>Stocks à surveiller</strong><small>Repérer les ruptures et régler les seuils d’alerte.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'core:sales_dashboard' %}"><span><strong>Soldes</strong><small>Programmer les réductions et suivre les périodes.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'historique:index' %}"><span><strong>Historique et récupération</strong><small>Retrouver une ancienne fiche produit ou une version de l’accueil.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'core:seo_overview' %}"><span><strong>Référencement Google</strong><small>Vérifier les informations des fiches produit.</small></span><span aria-hidden="true">↗</span></a></li>
+    </ul></section>
+    <section class="seller-panel seller-tool-group" id="contenus"><p class="eyebrow">FAIRE VIVRE LA BOUTIQUE</p><h2>Site & contenus</h2><ul>
+      <li><a href="{% url 'phototheque:overview' %}"><span><strong>Bibliothèque de photos</strong><small>Retrouver, ranger et réutiliser les images déjà envoyées.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'core:catalog_homepage' %}"><span><strong>Personnaliser l’accueil</strong><small>Textes, photos, diaporamas et produits mis en avant.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'editorial:overview' %}"><span><strong>Pages et annonces</strong><small>Présentation, FAQ et bandeaux programmés.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'boutique:hours' %}"><span><strong>Horaires du magasin</strong><small>Horaires habituels et périodes de vacances.</small></span><span aria-hidden="true">↗</span></a></li>
+    </ul></section>
+    <section class="seller-panel seller-tool-group" id="reglages"><p class="eyebrow">LES INFORMATIONS PRATIQUES</p><h2>Réglages de la boutique</h2><ul>
+      <li><a href="{% url 'boutique:settings' %}"><span><strong>Coordonnées et entreprise</strong><small>Téléphone, e-mail, magasin et adresse de retour.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'boutique:shipping_overview' %}"><span><strong>Livraison</strong><small>Destinations, frais, gratuité, délais et transporteur.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'suspensions:overview' %}"><span><strong>Pause des commandes</strong><small>Prévoir une absence et reprendre les achats automatiquement.</small></span><span aria-hidden="true">↗</span></a></li>
+      <li><a href="{% url 'espace:legal_readiness' %}"><span><strong>Préparer l’ouverture des ventes</strong><small>Les informations à vérifier avant la mise en vente.</small></span><span aria-hidden="true">↗</span></a></li>
+      {% if email_test_mode %}<li><a href="{% url 'test_email_inbox' %}"><span><strong>Boîte e-mail de test</strong><small>Les messages générés pendant les essais.</small></span><span aria-hidden="true">↗</span></a></li>{% endif %}
+    </ul></section>
+    {% endif %}
+    {% if can_manage_returns %}<section class="seller-panel seller-tool-group" id="comptabilite"><p class="eyebrow">PRÉPARER LES DOCUMENTS</p><h2>Comptabilité</h2><ul><li><a href="{% url 'facturation:accounting' %}"><span><strong>Comptabilité et exports</strong><small>Télécharger les factures et les ventes du mois.</small></span><span aria-hidden="true">↗</span></a></li>{% if can_manage_catalog %}<li><a href="{% url 'tableau:dashboard' %}"><span><strong>Statistiques de vente</strong><small>Les encaissements et les articles les plus vendus.</small></span><span aria-hidden="true">↗</span></a></li>{% endif %}</ul></section>{% endif %}
+  </div>
+  <aside class="seller-tools-callout"><div><h2>Une question sur une manipulation ?</h2><p>Recherchez une réponse dans le guide : produits, commandes, stocks, contenus et réglages.</p></div><a class="seller-button" href="{% url 'aide:index' %}">Aide & mode d’emploi <span aria-hidden="true">↗</span></a></aside>
+</div>
+{% endblock %}

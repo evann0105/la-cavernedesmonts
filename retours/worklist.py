@@ -23,7 +23,7 @@ def action_definitions():
 
 
 def open_returns():
-    return ReturnRequest.objects.filter(order__status='paid').exclude(state='completed').select_related('order').annotate(
+    return ReturnRequest.objects.filter(order__status='paid').exclude(state='completed').exclude(kind='cancellation').select_related('order').annotate(
         new_shipments=Count('shipments', filter=Q(shipments__seen_at__isnull=True)))
 
 

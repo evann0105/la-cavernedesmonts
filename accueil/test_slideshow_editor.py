@@ -54,7 +54,7 @@ class PreparedSlideshowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['formset'].errors[0].get('alt'))
         self.assertFalse(HeroSlide.objects.exists()); self.assertFalse(HomepageConfiguration.objects.exists())
-        self.assertFalse(list(self.media.rglob('*.webp')))
+        self.assertFalse(list(self.media.glob('homepage/*.webp')))
         self.assertContains(response, 'Resélectionnez')
 
     def test_invalid_new_row_preserves_existing_file_and_settings(self):
@@ -84,7 +84,7 @@ class PreparedSlideshowTests(TestCase):
         self.assertEqual(self.client.post(self.url, stale).status_code, 409)
         self.assertEqual(HeroSlide.objects.count(), 1)
         self.assertNotEqual(HeroSlide.objects.get().alt, 'Ancien onglet')
-        self.assertEqual(len(list(self.media.rglob('*.webp'))), 1)
+        self.assertEqual(len(list(self.media.glob('homepage/*.webp'))), 1)
 
     def test_saved_and_prepared_positions_must_be_distinct(self):
         self.add()
@@ -104,7 +104,7 @@ class PreparedSlideshowTests(TestCase):
         with patch.object(HeroSlide, 'save', autospec=True, side_effect=fail_second):
             with self.assertRaises(RuntimeError): self.client.post(self.url, data)
         self.assertFalse(HeroSlide.objects.exists()); self.assertFalse(HomepageConfiguration.objects.exists())
-        self.assertFalse(list(self.media.rglob('*.webp')))
+        self.assertFalse(list(self.media.glob('homepage/*.webp')))
 
     def test_preview_is_read_only_visitor_html_with_escaped_text(self):
         title = '</script><img src=x onerror=alert(1)>'

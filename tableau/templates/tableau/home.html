@@ -1,0 +1,85 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}À faire aujourd’hui — Espace vendeuse{% endblock %}
+{% block body_class %}seller-landing{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'suspensions/dashboard.css' %}?v=20261104">{% endblock %}
+{% block scripts %}{{ block.super }}<script src="{% static 'suspensions/dashboard.js' %}?v=20261104" defer></script>{% endblock %}
+{% block content %}
+<div class="wrap seller-home">
+  <header class="seller-page-heading">
+    <div><p class="eyebrow">VOTRE BOUTIQUE AU QUOTIDIEN</p><h1>Bonjour, {{ seller_name }}.</h1><p>Vos prochaines actions, au même endroit.</p></div>
+    <time class="seller-date" datetime="{{ today|date:'Y-m-d' }}">{{ today|date:'l j F Y'|capfirst }}</time>
+  </header>
+
+  {% include 'suspensions/_dashboard.html' %}
+
+  <section class="seller-section" aria-labelledby="today-title">
+    <div class="seller-section-heading"><div><h2 id="today-title">À faire aujourd’hui</h2><p>Les tâches en cours, y compris celles des jours précédents.</p></div><a class="seller-text-link" href="{% url 'tableau:tools' %}">Tous les outils <span aria-hidden="true">↗</span></a></div>
+    <div class="seller-actions{% if action_cards|length == 7 %} seller-actions--seven{% endif %}">
+      {% for card in action_cards %}
+      <a class="seller-action{% if card.count %} seller-action--pending{% endif %}" href="{{ card.url }}">
+        <span class="seller-action-top"><span>{{ card.label }}</span><span aria-hidden="true">↗</span></span>
+        <strong>{{ card.count }}</strong><span class="seller-action-note">{{ card.description }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% if cancellation_attention != None %}
+  <section class="seller-panel seller-cancellations" aria-labelledby="cancellations-title">
+    <div class="seller-panel-heading"><div><p class="eyebrow">ANNULATIONS AVANT EXPÉDITION</p><h2 id="cancellations-title">Annulations à vérifier</h2></div><a class="seller-text-link" href="{{ cancellation_attention.url }}">Tout voir ({{ cancellation_attention.total }}) <span aria-hidden="true">↗</span></a></div>
+    <p class="seller-muted">Les problèmes à corriger passent avant les remboursements en attente. Aucun colis ne doit être préparé pour ces commandes.</p>
+    <div class="seller-task-list">
+      {% for row in cancellation_attention.rows %}<a class="seller-task" href="{{ row.url }}"><div class="seller-task-body"><span class="seller-task-meta">Commande {{ row.order.pk|stringformat:'s'|slice:':8'|upper }} · Annulée le {{ row.since|date:'d/m/Y' }}</span><h3>{{ row.label }}</h3><p>{{ row.note }}</p><p>Enregistrée depuis {{ row.waiting_label }} · {{ row.amount|floatformat:2 }} €</p></div><span class="seller-task-end"><span class="seller-badge{% if row.needs_action %} seller-badge--attention{% endif %}">{% if row.needs_action %}Action nécessaire{% else %}Confirmation attendue{% endif %}</span><span class="seller-open">{{ row.action }} <span aria-hidden="true">↗</span></span></span></a>{% empty %}<div class="seller-empty"><span class="seller-empty-mark" aria-hidden="true">✓</span><h3>Aucune annulation à vérifier.</h3><p>Les dossiers restent ici jusqu’à la confirmation du remboursement et de la remise en stock.</p></div>{% endfor %}
+    </div>
+    {% if cancellation_attention.total > 5 %}<div class="seller-bottom-link"><a class="seller-text-link" href="{{ cancellation_attention.url }}">Voir les {{ cancellation_attention.total }} annulations à suivre <span aria-hidden="true">↗</span></a></div>{% endif %}
+  </section>
+  {% endif %}
+
+  {% if shipment_attention != None %}
+  <div class="seller-work-grid">
+    <section class="seller-panel" aria-labelledby="shipments-title">
+      <div class="seller-panel-heading"><div><p class="eyebrow">PRÉPARATION & EXPÉDITION</p><h2 id="shipments-title">Les prochains colis</h2></div><a class="seller-text-link" href="{% url 'expeditions:overview' %}?state=all">Tout voir <span aria-hidden="true">↗</span></a></div>
+      <p class="seller-muted">Les commandes payées les plus anciennes passent en premier.</p>
+      <div class="seller-task-list">
+        {% for row in shipment_attention.rows %}
+        <a class="seller-task" href="{{ row.url }}">
+          <div class="seller-task-body"><span class="seller-task-meta">Commande {{ row.order.pk|stringformat:'s'|slice:':8' }} · {{ row.since|date:'d/m/Y' }}</span>
+            <h3>{{ row.shipment.contact_shipping.name|default:'Commande à vérifier' }}</h3>
+            <p>En attente depuis {{ row.waiting_label }}</p>
+            {% if row.shipment.blocked_reason %}<p class="seller-blocker">{{ row.shipment.blocked_reason }}</p>{% endif %}
+          </div>
+          <span class="seller-task-end"><span class="seller-badge{% if row.shipment.blocked_reason %} seller-badge--attention{% endif %}">{% if row.shipment.blocked_reason %}À vérifier{% else %}{{ row.shipment.state_label }}{% endif %}</span><span class="seller-open">Ouvrir <span aria-hidden="true">↗</span></span></span>
+        </a>
+        {% empty %}<div class="seller-empty"><span class="seller-empty-mark" aria-hidden="true">✓</span><h3>Aucun colis en attente.</h3><p>Les prochaines commandes payées apparaîtront ici.</p></div>{% endfor %}
+      </div>
+      {% if shipment_attention.total > 5 %}<nav class="seller-bottom-link" aria-label="Toutes les commandes en attente"><a class="seller-text-link" href="{{ shipment_attention.preparing_url }}">À préparer ({{ shipment_attention.preparing }}) ↗</a><a class="seller-text-link" href="{{ shipment_attention.ready_url }}">Prêtes ({{ shipment_attention.ready }}) ↗</a></nav>{% endif %}
+    </section>
+
+    <section class="seller-panel" aria-labelledby="requests-title">
+      <div class="seller-panel-heading"><div><p class="eyebrow">SERVICE CLIENT</p><h2 id="requests-title">Les demandes à suivre</h2></div></div>
+      <div class="seller-request-group"><h3>Rappels & urgences SAV</h3>
+        {% for record in sav_attention.records|slice:':3' %}
+        <a class="seller-request" href="{% url 'clients:case_detail' record.pk %}"><span><strong>{{ record.subject }}</strong><span>{{ record.customer_name }}</span><span class="seller-due{% if record.due_date and record.due_date < today %} seller-due--late{% endif %}">{% if record.due_date and record.due_date < today %}Rappel en retard · {{ record.due_date|date:'d/m' }}{% elif record.due_date == today %}À rappeler aujourd’hui{% elif record.priority == 'urgent' %}Dossier urgent{% else %}Rappel le {{ record.due_date|date:'d/m' }}{% endif %}</span></span><span aria-hidden="true">↗</span></a>
+        {% empty %}<p class="seller-muted">Aucun rappel du jour, rappel en retard ou dossier urgent.</p>{% endfor %}
+        <a class="seller-text-link" href="{% url 'clients:case_list' %}">Tous les dossiers SAV <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="seller-request-group"><h3>Retours & remboursements</h3>
+        {% for record in return_attention.records|slice:':2' %}
+        <a class="seller-request" href="{% url 'retours:manage_detail' record.pk %}"><span><strong>Retour {{ record.short_reference }}</strong><span>{{ record.get_return_state_display }} · {{ record.get_refund_state_display }}</span>{% if record.new_shipments %}<span>Nouveau suivi à consulter</span>{% endif %}</span><span aria-hidden="true">↗</span></a>
+        {% empty %}<p class="seller-muted">Aucun dossier ouvert.</p>{% endfor %}
+        <a class="seller-text-link" href="{% url 'retours:manage' %}">Tous les retours <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </div>
+  {% endif %}
+
+  <section class="seller-section seller-shortcuts" aria-labelledby="shortcuts-title">
+    <div class="seller-section-heading"><div><h2 id="shortcuts-title">Les raccourcis du quotidien</h2><p>Une action précise, sans chercher dans les menus.</p></div></div>
+    <div class="seller-shortcut-grid">
+      {% if can_manage_catalog %}<a href="{% url 'core:catalog_add' %}"><span class="seller-shortcut-icon" aria-hidden="true">＋</span><span><strong>Ajouter un produit</strong><small>Créer une nouvelle fiche</small></span><span aria-hidden="true">↗</span></a><a href="{% url 'stocks:overview' %}"><span class="seller-shortcut-icon" aria-hidden="true">≡</span><span><strong>Modifier un stock</strong><small>Après une vente ou un arrivage</small></span><span aria-hidden="true">↗</span></a>{% endif %}
+      {% if can_manage_returns %}<a href="{% url 'clients:directory' %}"><span class="seller-shortcut-icon" aria-hidden="true">⌕</span><span><strong>Retrouver un client</strong><small>Ses commandes et ses demandes</small></span><span aria-hidden="true">↗</span></a><a href="{% url 'avoirs:management' %}"><span class="seller-shortcut-icon" aria-hidden="true">%</span><span><strong>Gérer les avoirs</strong><small>Créer et suivre les codes clients</small></span><span aria-hidden="true">↗</span></a>{% endif %}
+    </div>
+  </section>
+  <aside class="seller-tools-callout"><div><h2>Un réglage ou une autre tâche ?</h2><p>Catalogue, boutique, clients et comptabilité : tous vos outils sont rangés par activité.</p></div><a class="seller-button" href="{% url 'tableau:tools' %}">Tous les outils <span aria-hidden="true">↗</span></a></aside>
+</div>
+{% endblock %}

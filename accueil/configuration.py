@@ -56,7 +56,7 @@ def _slideshow_settings(data, key):
             'interval': interval if type(interval) is int and interval in (5, 6, 8, 10) else 6}
 
 
-def configuration(instance=None):
+def configuration(instance=None, *, slide_rows=None, featured_ids=None):
     """A missing singleton is revision zero, never a reason to write on GET."""
     if instance is None:
         instance = HomepageConfiguration.objects.select_related('updated_by').filter(pk=1).first()
@@ -81,7 +81,9 @@ def configuration(instance=None):
                     for key in OPTIONAL_SECTIONS})
     slides_by_section = {'hero': [], 'feature': []}
     # Both independent carousels share this one bounded-content table read.
-    for slide in HeroSlide.objects.filter(configuration_id=1, section__in=slides_by_section).order_by('section', 'position', 'pk'):
+    if slide_rows is None:
+        slide_rows = HeroSlide.objects.filter(configuration_id=1, section__in=slides_by_section).order_by('section', 'position', 'pk')
+    for slide in slide_rows:
         slides = slides_by_section[slide.section]
         if len(slides) >= 5:
             continue
@@ -94,8 +96,8 @@ def configuration(instance=None):
         'revision': instance.revision if instance is not None else 0,
         'values': values, 'visible': visible,
         'images': {field: _image_metadata(instance, field) for field in IMAGE_FIELDS},
-        'featured_ids': list(FeaturedHomepageProduct.objects.order_by('position', 'pk')
-                             .values_list('product_id', flat=True)),
+        'featured_ids': (list(FeaturedHomepageProduct.objects.order_by('position', 'pk')
+                             .values_list('product_id', flat=True)) if featured_ids is None else list(featured_ids)),
         'updated_at': instance.updated_at if instance is not None else None,
         'updated_by': instance.updated_by if instance is not None else None,
         'slides': slides_by_section['hero'],
@@ -124,11 +126,11 @@ def target_url(target, shop):
     return ''
 
 
-def public_configuration(shop=None):
+def public_configuration(shop=None, *, current=None):
     if shop is None:
         from boutique.configuration import configuration as shop_configuration
         shop = shop_configuration()
-    current = configuration()
+    current = configuration() if current is None else current
     home = {'images': deepcopy(current['images']), 'visible': dict(current['visible'])}
     for section in SECTION_SPECS:
         values = deepcopy(current['values'][section['key']])
@@ -170,9 +172,9 @@ def public_configuration(shop=None):
     return home
 
 
-def featured_products():
-    ordered_ids = list(FeaturedHomepageProduct.objects.order_by('position', 'pk')
-                       .values_list('product_id', flat=True))
+def featured_products(ordered_ids=None):
+    ordered_ids = (list(FeaturedHomepageProduct.objects.order_by('position', 'pk')
+                       .values_list('product_id', flat=True)) if ordered_ids is None else list(ordered_ids))
     if ordered_ids:
         eligible_ids = set(eligible_featured_products().filter(pk__in=ordered_ids)
                            .values_list('pk', flat=True))

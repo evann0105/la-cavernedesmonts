@@ -57,6 +57,8 @@ class SizeColorVariantTests(TestCase):
             'stock-1-size': 'M', 'stock-1-color': 'Noir', 'stock-1-quantity': '2',
             'stock-2-size': 'L', 'stock-2-color': 'Bleu', 'stock-2-quantity': '3',
         }
+        from historique.products import editor_token
+        data['history_token'] = editor_token(self.product, self.manager)
         data.update(overrides)
         return data
 

@@ -275,7 +275,7 @@ class OpeningHoursTests(TestCase):
         self.assertFalse(OpeningHours.objects.exists())
 
     def test_account_and_native_admin_link_to_single_friendly_editor(self):
-        self.assertContains(self.client.get(reverse('espace:account')), self.url)
+        self.assertContains(self.client.get(reverse('tableau:tools')), self.url)
         changelist = reverse('admin:boutique_openinghours_changelist')
         self.assertContains(self.client.get(reverse('admin:index')), changelist)
         self.assertRedirects(self.client.get(changelist), self.url)

@@ -31,7 +31,7 @@
   const field = (card, name) => card.querySelector(`[name$="-${name}"]`);
   const removed = card => Boolean(field(card, 'DELETE')?.checked);
   const existing = card => card.dataset.existing === 'true';
-  const hasFile = (card, name) => Boolean(field(card, name)?.files?.length);
+  const hasFile = (card, name) => Boolean(field(card, name)?.files?.length || field(card, name)?.dataset.libraryPreview);
   const hasContent = card => existing(card) || hasFile(card, 'image') || hasFile(card, 'mobile_image') || Boolean(field(card, 'alt')?.value.trim());
   const activeCards = () => cards().filter(card => !removed(card) && hasContent(card));
   const say = message => { if (announcement) announcement.textContent = message; };
@@ -55,9 +55,9 @@
     return url;
   }
   function photoFor(card) {
-    const desktop = fileURL(card, 'image') || card.dataset.savedImage || '';
+    const desktop = fileURL(card, 'image') || field(card, 'image')?.dataset.libraryPreview || card.dataset.savedImage || '';
     const clear = card.querySelector('[data-slide-mobile-clear]')?.checked;
-    const mobile = clear ? '' : fileURL(card, 'mobile_image') || card.dataset.savedMobile || '';
+    const mobile = clear ? '' : fileURL(card, 'mobile_image') || field(card, 'mobile_image')?.dataset.libraryPreview || card.dataset.savedMobile || '';
     return {desktop, mobile, alt: field(card, 'alt')?.value.trim() || card.dataset.savedAlt || 'Photo sans description'};
   }
   function updateCardPreview(card) {
@@ -101,7 +101,7 @@
       if (positionBox) positionBox.hidden = true;
       ['image', 'alt', 'position'].forEach(name => {
         const input = field(card, name);
-        if (input) input.required = live && (name !== 'image' || !card.dataset.savedImage);
+        if (input) input.required = live && (name !== 'image' || (!card.dataset.savedImage && !input.dataset.libraryPreview));
       });
       updateCardPreview(card);
     });
@@ -109,7 +109,15 @@
     if (count) count.textContent = `${active.length} / ${MAX_SLIDES} photo${active.length > 1 ? 's' : ''} dans votre sélection`;
     const add = form.querySelector('[data-slide-add]');
     if (add) add.disabled = active.length >= MAX_SLIDES;
-    if (picker) picker.disabled = active.length >= MAX_SLIDES;
+    if (picker) {
+      picker.disabled = active.length >= MAX_SLIDES;
+      const libraryField = picker.closest('[data-photo-library-field]');
+      if (libraryField) {
+        libraryField.dataset.libraryLimit = String(Math.max(1, MAX_SLIDES - active.length));
+        const libraryButton = libraryField.querySelector('[data-library-open]');
+        if (libraryButton) libraryButton.disabled = picker.disabled;
+      }
+    }
     if (preview && !preview.hidden) refreshPreview();
   }
   function blankCard() {
@@ -120,10 +128,14 @@
     card.querySelectorAll('input').forEach(input => {
       if (input.type === 'checkbox') input.checked = false;
       else input.value = '';
+      delete input.dataset.libraryPreview;
+      delete input.dataset.libraryPhotos;
       input.removeAttribute('aria-invalid');
     });
     card.querySelectorAll('.errorlist').forEach(node => node.remove());
     card.querySelectorAll('.has-error').forEach(node => node.classList.remove('has-error'));
+    card.querySelectorAll('[data-library-selection]').forEach(node => { node.replaceChildren(); node.hidden = true; });
+    card.querySelectorAll('[data-library-field-status]').forEach(node => { node.textContent = ''; });
     card.hidden = false;
     return card;
   }
@@ -231,6 +243,29 @@
   }
   form.addEventListener('change', event => {
     if (event.target.name === 'autoplay' && preview && !preview.hidden) refreshPreview();
+  });
+  form.addEventListener('phototheque:selection', event => {
+    const source = event.target.closest('[data-photo-library-field]');
+    if (!source || !picker || !source.contains(picker)) { update(); return; }
+    const photos = event.detail?.photos || [];
+    if (!photos.length) { update(); return; }
+    const free = MAX_SLIDES - activeCards().length;
+    if (photos.length > free) {
+      source.dispatchEvent(new CustomEvent('phototheque:assign', {bubbles: true, detail: {photos: []}}));
+      showError(`Il reste ${free} place${free > 1 ? 's' : ''}. Retirez une photo avant d’en ajouter une autre.`);
+      return;
+    }
+    let first;
+    for (const photo of photos) {
+      const card = newCard();
+      if (!card) break;
+      const target = field(card, 'image').closest('[data-photo-library-field]');
+      target.dispatchEvent(new CustomEvent('phototheque:assign', {bubbles: true, detail: {photos: [photo]}}));
+      first ||= card;
+      update();
+    }
+    source.dispatchEvent(new CustomEvent('phototheque:assign', {bubbles: true, detail: {photos: []}}));
+    if (first) say(`${photos.length} photo${photos.length > 1 ? 's' : ''} ajoutée${photos.length > 1 ? 's' : ''}. Renseignez leur description avant d’enregistrer.`);
   });
   form.addEventListener('submit', () => {
     // Empty placeholders do not consume one of the five allowed photos.

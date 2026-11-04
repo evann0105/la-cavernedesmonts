@@ -429,21 +429,22 @@ class CustomerWorkspaceViewsTests(TestCase):
         self.assertFalse(SupportCase.objects.exists())
 
     def test_admin_account_shows_workspace_link_but_customer_account_does_not(self):
-        url = reverse('espace:account')
+        url = reverse('tableau:tools')
         destination = reverse('clients:directory')
         response = self.client.get(url)
-        self.assertContains(response, f'href="{destination}"', count=2)
+        self.assertContains(response, f'href="{destination}"')
         self.assertContains(response, 'Clients et SAV')
         customer = self.user('customer', 'customer@example.test')
         verify_test_user(customer)
         self.login(customer)
-        response = self.client.get(url)
+        response = self.client.get(reverse('espace:account'))
         self.assertNotContains(response, f'href="{destination}"')
+        self.assertEqual(self.client.get(url).status_code, 403)
 
     def test_workspace_back_links_use_stable_parents_even_after_a_post(self):
         case = self.case()
         expected = {
-            reverse('clients:directory'): reverse('espace:account'),
+            reverse('clients:directory'): reverse('tableau:home'),
             reverse('clients:profile', args=[f'u-{self.manager.pk}']): reverse('clients:directory'),
             reverse('clients:case_list'): reverse('clients:directory'),
             reverse('clients:case_create'): reverse('clients:case_list'),

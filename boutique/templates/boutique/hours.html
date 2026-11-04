@@ -1,7 +1,7 @@
 {% extends 'core/catalog/base.html' %}{% load static %}
 {% block title %}Horaires du magasin — La Caverne des Monts{% endblock %}
 {% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'boutique/hours.css' %}?v=20261018-periods">{% endblock %}
-{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Navigation de gestion"><a href="{% url 'espace:account' %}">Mon compte</a> / Boutique / Horaires du magasin</nav>{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Navigation de gestion"><a href="{% url 'tableau:home' %}">Espace vendeuse</a> / Boutique / Horaires du magasin</nav>{% endblock %}
 {% block catalog_content %}
 <header class="catalog-heading hours-heading">
   <div><p class="eyebrow">BOUTIQUE · INFORMATIONS PRATIQUES</p><h1>Horaires du magasin.</h1><p>Vos horaires habituels et vos périodes de vacances, réunis au même endroit.</p></div>

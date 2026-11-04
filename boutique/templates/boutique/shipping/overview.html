@@ -1,7 +1,7 @@
 {% extends 'core/catalog/base.html' %}{% load static %}
 {% block title %}{% if section %}{{ section.title }} — {% endif %}Livraison — La Caverne des Monts{% endblock %}
 {% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'boutique/shipping.css' %}?v=20261022-shipping-settings">{% endblock %}
-{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a><span aria-hidden="true"> / </span>{% if section %}<a href="{% url 'boutique:shipping_overview' %}">Livraison</a><span aria-hidden="true"> / </span><span aria-current="page">{{ section.title }}</span>{% else %}<span aria-current="page">Livraison</span>{% endif %}</nav>{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'tableau:home' %}">Espace vendeuse</a><span aria-hidden="true"> / </span>{% if section %}<a href="{% url 'boutique:shipping_overview' %}">Livraison</a><span aria-hidden="true"> / </span><span aria-current="page">{{ section.title }}</span>{% else %}<span aria-current="page">Livraison</span>{% endif %}</nav>{% endblock %}
 {% block catalog_content %}
 <div class="shipping-management">
   <header class="shipping-heading"><div><p class="eyebrow">BOUTIQUE · EXPÉDITIONS</p><h1>{% if section %}{{ section.title }}{% else %}Livraison{% endif %}.</h1><p>{% if section %}{{ section.description }}{% else %}Préparez vos frais, vos délais et vos destinations, au même endroit.{% endif %}</p></div>{% if section %}<a class="shipping-text-link" href="{% url 'boutique:shipping_overview' %}">← Toute la livraison</a>{% endif %}</header>

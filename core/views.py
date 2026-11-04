@@ -217,6 +217,17 @@ def cart(request):
 @require_POST
 def cart_add(request, slug):
     product = get_object_or_404(Product, slug=slug, is_published=True)
+    from paiement.cart_checkout import sync_paid_cart
+    from suspensions.exceptions import PurchasesPaused
+    from suspensions.services import assert_purchases_open
+    # Reconcile completed payments even during a pause, without releasing any
+    # payment still in progress merely because an old add button was clicked.
+    sync_paid_cart(request)
+    try:
+        assert_purchases_open()
+    except PurchasesPaused as error:
+        messages.info(request, str(error))
+        return redirect('core:product_detail', slug=slug)
     if product.availability == 'unavailable':
         messages.error(request, _('Indisponible'))
         return redirect('core:product_detail', slug=slug)

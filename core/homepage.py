@@ -12,8 +12,8 @@ def eligible_products(slot):
     return Product.objects.filter(is_published=True).filter(Q(category__slug=slot) | Q(collections__slug=slot)).exclude(Q(main_image='') | Q(main_image__isnull=True), static_image='').distinct().order_by('name', 'pk')
 
 
-def world_cards():
-    chosen = dict(HomepageSelection.objects.values_list('slot', 'product_id'))
+def world_cards(chosen=None):
+    chosen = dict(HomepageSelection.objects.values_list('slot', 'product_id')) if chosen is None else dict(chosen)
     cards = []
     for spec in WORLD_CARDS:
         eligible = eligible_products(spec['slot'])

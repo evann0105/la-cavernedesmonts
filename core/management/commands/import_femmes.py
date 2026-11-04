@@ -1,3 +1,4 @@
+from historique.products import snapshot_product, record_change, record_product
 import json
 from pathlib import Path
 
@@ -38,10 +39,11 @@ class Command(BaseCommand):
             for image in item['images']:
                 if not (root / 'core/static' / image).is_file():
                     raise CommandError(f"Photo manquante : {image}")
-            product = Product.objects.filter(slug=item['slug']).first()
+            product = Product.objects.select_for_update().filter(slug=item['slug']).first()
             if product is not None:
                 if not item['existing'] or product.source_url:
                     raise CommandError(f"Conflit de référence : {item['slug']}")
+                before = snapshot_product(product)
                 original = originals[item['slug']]
                 # Enrich the original seed only; keep edits already made by the merchant.
                 if product.name == original['name']:
@@ -65,6 +67,7 @@ class Command(BaseCommand):
                 product.save(update_fields=['name', 'price', 'description', 'source_url', 'category'])
                 if self.share_collection and product.category_id != category.pk:
                     product.collections.add(category)
+                record_change(product, before, label='Informations du catalogue importées')
                 updated_count += 1
             else:
                 initial_category = category
@@ -79,6 +82,7 @@ class Command(BaseCommand):
                     baby_slug = baby_categories[item['slug']]
                     baby_category, _ = Category.objects.get_or_create(slug=baby_slug, defaults={'name':'Polaires bébé' if baby_slug == 'polaires-bebe' else 'Accessoires bébé'})
                     created_product.collections.add(baby_category)
+                record_product(created_product, label='Fiche créée lors de l’import')
                 created_count += 1
         self.stdout.write(self.style.SUCCESS(
             f'Collection {self.category_name} : {created_count} articles ajoutés, {updated_count} fiches enrichies.'

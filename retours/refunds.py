@@ -29,6 +29,9 @@ def apply_refund(record, refund):
     record.stripe_refund_id=refund['id'];record.refund_state=state
     if state=='succeeded' and not record.refunded_at:record.refunded_at=timezone.now()
     record.save(update_fields=['stripe_refund_id','refund_state','refunded_at'])
+    if state == 'succeeded' and record.kind == 'cancellation':
+        from annulations.services import finalize_refund
+        finalize_refund(record.pk)
     if changed:
         ReturnEvent.objects.create(request=record,label='Stripe : '+record.get_refund_state_display()+'.')
         if state=='succeeded':return_notice(record,'refund','Remboursement confirmé auprès de Stripe. L’apparition sur votre compte dépend des délais bancaires.')
@@ -77,6 +80,9 @@ def reconcile(pk):
         if record.amount==0:
             record.refund_state='succeeded';record.refunded_at=timezone.now();record.save(update_fields=['refund_state','refunded_at'])
             ReturnEvent.objects.create(request=record,label='Aucun montant à rembourser (article gratuit).')
+            if record.kind == 'cancellation':
+                from annulations.services import finalize_refund
+                finalize_refund(record.pk)
             return_notice(record,'refund','Cet article était gratuit après remise : aucun montant ne doit être reversé. Le dossier reste suivi pour la réception des articles.')
             return record
         session=stripe.checkout.Session.retrieve(order.stripe_session_id,api_key=settings.STRIPE_SECRET_KEY)

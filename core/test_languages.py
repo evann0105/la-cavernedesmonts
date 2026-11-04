@@ -65,11 +65,13 @@ class LanguageTests(TestCase):
             self.assertNotContains(response, 'Exemple fictif')
 
     def test_product_translation_editor_is_removed_and_existing_copy_preserved(self):
-        self.verified_manager()
+        manager = self.verified_manager()
+        from historique.products import editor_token
         url = reverse('core:catalog_edit', args=[self.product.pk])
         self.assertNotContains(self.client.get(url), 'name="description_en"')
         original = self.product.translations.copy()
         response = self.client.post(url, {
+            'history_token': editor_token(self.product, manager),
             'name':self.product.name, 'price':'40', 'description':self.product.description,
             'category':str(self.category.pk), 'sizes':'Taille unique', 'is_published':'on',
             'photos-TOTAL_FORMS':0, 'photos-INITIAL_FORMS':0,

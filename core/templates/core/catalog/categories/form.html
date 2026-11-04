@@ -1,6 +1,6 @@
 {% extends 'core/catalog/base.html' %}
 {% block title %}{% if category %}Modifier une rubrique{% else %}Créer une rubrique{% endif %} — La Caverne des Monts{% endblock %}
-{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a> / <a href="{% url 'core:category_list' %}">Rubriques et menu</a> / {% if category %}Modifier{% else %}Créer une rubrique{% endif %}</nav>{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'tableau:home' %}">Espace vendeuse</a> / <a href="{% url 'core:category_list' %}">Rubriques et menu</a> / {% if category %}Modifier{% else %}Créer une rubrique{% endif %}</nav>{% endblock %}
 {% block catalog_content %}
 <div class="category-management category-management-editor">
   <div class="catalog-heading"><div><p class="eyebrow">LES COLLECTIONS À VOTRE IMAGE</p><h1>{% if category %}Modifier une rubrique.{% else %}Créer une rubrique.{% endif %}</h1><p>{% if category %}{{ category.name }}{% else %}Donnez un nom à votre collection, puis choisissez sa place dans le menu.{% endif %}</p></div><a class="underlined" href="{% url 'core:category_list' %}">← Toutes les rubriques</a></div>

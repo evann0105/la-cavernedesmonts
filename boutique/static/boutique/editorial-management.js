@@ -26,6 +26,10 @@
           image.src = localURL;
           caption.textContent = 'Aperçu de votre nouvelle photo · avant enregistrement';
           status.textContent = 'La nouvelle photo sera conservée dans votre brouillon, puis visible sur le site après publication.';
+        } else if (input.dataset.libraryPreview && !(reset && reset.checked)) {
+          image.src = input.dataset.libraryPreview;
+          caption.textContent = 'Photo de la bibliothèque · avant enregistrement';
+          status.textContent = 'Cette photo sera conservée dans votre brouillon, puis visible sur le site après publication.';
         } else {
           image.src = reset && reset.checked ? originalSource : savedSource;
           caption.textContent = reset && reset.checked ? 'Photo d’origine · avant enregistrement' : savedCaption;
@@ -44,6 +48,7 @@
       });
       window.addEventListener('pagehide', revoke);
       window.addEventListener('pageshow', showSelected);
+      pageForm.addEventListener('phototheque:selection', showSelected);
       showSelected();
     }
   }

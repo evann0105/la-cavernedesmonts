@@ -25,7 +25,7 @@ def _order_text(order):
 def relationship_options(case, customer=None):
     """Read current membership every time; former associations confer no access."""
     customer = customer or get_customer(f'c-{case.pk}')
-    returns = ReturnRequest.objects.filter(order_id__in=customer.order_ids).select_related('order').order_by('-created_at', '-pk')
+    returns = ReturnRequest.objects.filter(order_id__in=customer.order_ids).exclude(kind='cancellation').select_related('order').order_by('-created_at', '-pk')
     benefits = CustomerBenefit.objects.filter(pk__in=customer.benefit_ids).prefetch_related('redemptions').order_by('-created_at', '-pk')
     credits = CreditNote.objects.filter(order_id__in=customer.order_ids).select_related('order').order_by('-issued_at', '-pk')
     groups = {'returns': [], 'benefits': [], 'credits': []}

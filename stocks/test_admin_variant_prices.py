@@ -34,6 +34,8 @@ class AdminVariantPriceTests(TestCase):
             'colors-TOTAL_FORMS': '0', 'colors-INITIAL_FORMS': '0',
             'stock-TOTAL_FORMS': '0', 'stock-INITIAL_FORMS': '0',
         }
+        from historique.products import editor_token
+        values['history_token'] = editor_token(self.product, self.manager)
         values.update(overrides)
         return values
 

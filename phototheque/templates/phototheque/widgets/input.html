@@ -1,0 +1,7 @@
+<div class="photo-library-field" data-photo-library-field data-library-limit="{{ widget.library_limit }}" data-library-multiple="{{ widget.library_multiple|yesno:'true,false' }}">
+  <div data-library-native>{% include widget.native_template %}</div>
+  <input type="hidden" name="{{ widget.name }}-library" value="{{ widget.library_value }}" data-library-value>
+  <div class="photo-library-field-actions"><button class="photo-library-button" type="button" data-library-open hidden>Choisir dans la bibliothèque <span aria-hidden="true">↗</span></button><span class="photo-library-field-hint">ou ajoutez une nouvelle photo depuis vos fichiers.</span></div>
+  <ul class="photo-library-selection" data-library-selection{% if not widget.library_selected %} hidden{% endif %}>{% for photo in widget.library_selected %}<li data-library-id="{{ photo.id }}" data-library-url="{{ photo.url }}">{% if photo.thumb %}<img src="{{ photo.thumb }}" width="48" height="48" alt="">{% endif %}<span>{{ photo.title }}</span><button class="photo-library-remove" type="button" data-library-remove="{{ photo.id }}" aria-label="Retirer {{ photo.title }} de la sélection">Retirer</button></li>{% endfor %}</ul>
+  <p class="photo-library-field-status" data-library-field-status role="status" aria-live="polite"></p>
+</div>

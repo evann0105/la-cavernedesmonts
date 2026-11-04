@@ -235,6 +235,8 @@ def duplicate_product(source_id, *, snapshot, actor):
                                        reference='', quantity=0, reserved=0, revision=1)
             LogEntry.objects.log_actions(user_id=actor.pk, queryset=Product.objects.filter(pk=copy.pk),
                                          action_flag=ADDITION, change_message=receipt)
+            from historique.products import record_product
+            record_product(copy, actor=actor, label='Fiche créée par duplication')
             return DuplicationResult(copy, excluded_categories=state['excluded_categories'])
     except Exception as exc:
         # File storage is outside the database transaction. Only new copy paths

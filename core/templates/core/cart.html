@@ -67,7 +67,8 @@
         {% endif %}
         {% include 'paiement/partials/customer_code.html' with code_return_to='cart' %}
       </div>
-      <a class="button cart-page__checkout" data-cart-checkout href="{% url 'paiement:checkout' %}">{% translate 'Passer à la commande →' %}</a>
+      {% include 'suspensions/partials/purchase_notice.html' %}
+      <div data-orders-open{% if order_pause.paused %} hidden{% endif %}><a class="button cart-page__checkout" data-cart-checkout href="{% url 'paiement:checkout' %}">{% translate 'Passer à la commande →' %}</a></div>
       <p class="cart-page__guest-note">{% translate 'Aucun compte nécessaire pour commander.' %}</p>
       <div class="cart-page__help"><p>{% translate 'Une question sur votre commande ?' %}</p><a href="{{ shop.phone_href }}">{{ shop.phone }}</a></div>
     </aside>

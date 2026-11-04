@@ -1,0 +1,6 @@
+{% extends 'core/catalog/base.html' %}{% load static %}
+{% block title %}{{ page_title|default:'Historique et récupération' }} — La Caverne des Monts{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'historique/history.css' %}">{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'tableau:home' %}">Espace vendeuse</a><span aria-hidden="true"> / </span>{% if version or object_id %}<a href="{% url 'historique:index' %}">Historique et récupération</a><span aria-hidden="true"> / </span>{% if version %}<a href="{{ history_url }}">{% if scope == 'homepage' %}Accueil{% else %}{{ version.object_label }}{% endif %}</a><span aria-hidden="true"> / </span><span aria-current="page">Version {{ version.sequence }}</span>{% else %}<span aria-current="page">{{ object_label }}</span>{% endif %}{% else %}<span aria-current="page">Historique et récupération</span>{% endif %}</nav>{% endblock %}
+{% block catalog_content %}<div class="history-workspace">{% block history_content %}{% endblock %}</div>{% endblock %}
+{% block scripts %}{{ block.super }}<script src="{% static 'historique/history.js' %}" defer></script>{% endblock %}

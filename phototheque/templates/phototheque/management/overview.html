@@ -1,0 +1,25 @@
+{% extends 'phototheque/management/base.html' %}
+{% block library_content %}
+<header class="photo-heading"><div><p class="eyebrow">VOS IMAGES, AU MÊME ENDROIT</p><h1>Bibliothèque de photos.</h1><p>Retrouvez vos photos, rangez-les par dossier et réutilisez-les dans vos produits, pages et accueil.</p></div><div class="photo-actions"><a class="button button-outline" href="{% url 'phototheque:folders' %}">Gérer les dossiers</a><a class="button" href="{% url 'phototheque:upload' %}?back={{ back|urlencode }}">Ajouter des photos <span aria-hidden="true">＋</span></a></div></header>
+<form method="get" class="photo-filter photo-panel" aria-label="Rechercher et filtrer les photos">
+  {% include 'phototheque/management/_field.html' with field=form.q %}{% include 'phototheque/management/_field.html' with field=form.folder %}{% include 'phototheque/management/_field.html' with field=form.state %}
+  <div class="photo-filter-actions"><button class="button" type="submit">Afficher</button><a class="photo-link" href="{% url 'phototheque:overview' %}">Effacer les filtres</a></div>
+  {{ form.non_field_errors }}
+</form>
+<div class="photo-results-heading"><h2>{{ page_obj.paginator.count }} photo{{ page_obj.paginator.count|pluralize }}{% if is_archived %} archivée{{ page_obj.paginator.count|pluralize }}{% endif %}</h2><p>{{ counts.active }} disponible{{ counts.active|pluralize }} · {{ counts.archived }} archivée{{ counts.archived|pluralize }} dans la bibliothèque</p></div>
+{% if is_archived %}<p class="photo-note">Les photos archivées ne sont plus proposées lors d’un nouveau choix. Les produits et les pages qui les utilisent restent inchangés. Ouvrez une photo pour la réactiver.</p>{% endif %}
+{% if rows %}
+<form method="post" action="{% url 'phototheque:move' %}" aria-label="Ranger une sélection de photos">{% csrf_token %}<input type="hidden" name="back" value="{{ back }}">
+  {% if move_form.errors %}<div class="photo-error" role="alert"><strong>Les photos n’ont pas été déplacées.</strong>{{ move_form.non_field_errors }}{{ move_form.photo_ids.errors }}{{ move_form.folder.errors }}</div>{% endif %}
+  <div class="photo-grid">
+  {% for row in rows %}<article class="photo-card">
+    <a class="photo-card-image" href="{{ row.detail_url }}" aria-label="Ouvrir la photo : {{ row.photo.title }}">{% if row.url %}<img src="{{ row.thumb }}" alt="{{ row.photo.title }}" width="{{ row.photo.width }}" height="{{ row.photo.height }}" loading="lazy" decoding="async">{% else %}<span class="photo-unavailable">Fichier indisponible</span>{% endif %}</a>
+    <div class="photo-card-body"><div class="photo-card-name"><input type="checkbox" id="photo-select-{{ row.photo.pk }}" name="photo_ids" value="{{ row.photo.pk }}"{% if row.selected %} checked{% endif %}><label for="photo-select-{{ row.photo.pk }}"><span class="photo-sr-only">Sélectionner </span>{{ row.photo.title }}</label></div><p>{{ row.photo.folder.name|default:'Non classée' }} · {{ row.photo.width }} × {{ row.photo.height }} px</p><a class="photo-link" href="{{ row.detail_url }}">Voir et modifier <span aria-hidden="true">↗</span></a></div>
+  </article>{% endfor %}
+  </div>
+  <section class="photo-bulk photo-panel" aria-labelledby="photo-bulk-title"><div><h2 id="photo-bulk-title">Ranger les photos sélectionnées</h2><p>Cochez les photos de cette page, puis choisissez leur dossier.</p></div><div class="photo-bulk-field">{% include 'phototheque/management/_field.html' with field=move_form.folder %}</div><button class="button" type="submit">Ranger la sélection</button></section>
+</form>
+{% else %}<section class="photo-empty photo-panel"><h2>Aucune photo dans cette sélection.</h2><p>Essayez un autre nom ou un autre dossier. Vous pouvez aussi ajouter vos premières photos.</p><div class="photo-actions"><a class="photo-link" href="{% url 'phototheque:overview' %}">Voir les photos disponibles</a><a class="button" href="{% url 'phototheque:upload' %}?back={{ back|urlencode }}">Ajouter des photos</a></div>{% if move_form.errors %}<div class="photo-error" role="alert">{{ move_form.errors }}</div>{% endif %}</section>{% endif %}
+{% if page_obj.paginator.num_pages > 1 %}<nav class="photo-pagination" aria-label="Pages de photos">{% if previous_url %}<a class="photo-link" href="{{ previous_url }}">← Page précédente</a>{% endif %}<span>Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>{% if next_url %}<a class="photo-link" href="{{ next_url }}">Page suivante →</a>{% endif %}</nav>{% endif %}
+<p class="photo-help photo-footnote">Ranger ou renommer une photo ici ne modifie pas les images ni les textes déjà affichés sur le site.</p>
+{% endblock %}

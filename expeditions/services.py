@@ -9,6 +9,7 @@ from connexion.email_verification import email_access_allowed
 from paiement.models import Order
 from retours.access import manager
 from .models import Fulfillment, FulfillmentEvent
+from .cancellation import is_cancelled
 from .tracking import TrackingError, normalize_tracking
 from .mail import enqueue_notice, supersede_pending
 
@@ -37,6 +38,8 @@ def recipient_email(order):
 
 
 def _order_reason(order):
+    if is_cancelled(order):
+        return "Cette commande est annulée avant expédition. Sa préparation et son expédition sont bloquées, même si le remboursement reste à confirmer."
     if order.status not in ('paid', 'demo'):
         return 'Seules les commandes payées peuvent être préparées et expédiées.'
     if order.is_demo and not settings.DEBUG:
@@ -48,9 +51,9 @@ def blocking_issue(order):
     """Stable read-only blocker, including the relevant return dossier when known."""
     reason = _order_reason(order)
     if reason:
-        return {'kind': 'order', 'message': reason, 'return_id': None}
+        return {'kind': 'cancellation' if is_cancelled(order) else 'order', 'message': reason, 'return_id': None}
     # RelatedManager uses prefetched returns without changing their priority.
-    returns = list(order.returns.all())
+    returns = [record for record in order.returns.all() if record.kind != 'cancellation']
     refunded = next((record for record in returns if record.refund_state == 'succeeded'), None)
     if refunded is not None:
         return {'kind': 'return', 'return_id': refunded.pk,

@@ -1,5 +1,6 @@
 """Only the customer's shipment information, never seller notes or events."""
 from django.core.exceptions import ObjectDoesNotExist
+from .cancellation import cancellation_for, is_cancelled
 
 
 def public_status(order):
@@ -9,13 +10,18 @@ def public_status(order):
         record = order.fulfillment
     except ObjectDoesNotExist:
         record = None
-    state = record.state if record else 'preparing'
+    cancellation = cancellation_for(order)
+    state = 'cancelled' if is_cancelled(order) else (record.state if record else 'preparing')
     labels = {'preparing': 'En préparation', 'ready': 'Prête à être remise au transporteur',
-              'shipped': 'Expédiée'}
+              'shipped': 'Expédiée', 'cancelled': 'Commande annulée'}
     result = {'show': True, 'state': state, 'label': labels[state], 'is_demo': order.is_demo,
               'ready_at': record.ready_at if record else None,
               'shipped_at': record.shipped_at if record else None,
               'carrier_name': '', 'tracking_number': '', 'tracking_url': ''}
+    if cancellation is not None:
+        result.update(cancelled_at=cancellation.created_at, cancellation_reason=cancellation.reason,
+                      refund_state=cancellation.refund.refund_state,
+                      refund_amount=cancellation.refund.display_amount)
     if record and state == 'shipped':
         from .tracking import tracking_url
         result.update(carrier_name='Colissimo · La Poste' if record.carrier == 'colissimo' else record.carrier_name,

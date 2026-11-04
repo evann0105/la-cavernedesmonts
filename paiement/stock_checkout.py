@@ -19,11 +19,25 @@ def get_session(order_id, language='fr'):
     assert_test_runtime(StockUnavailable)
     with transaction.atomic():
         order=Order.objects.select_for_update().get(pk=order_id)
-        if not order.checkout_payload:
-            if order.reservation_expires_at <= timezone.now():
-                # No payload means no request was ever sent to Stripe.
-                finish_locked(order,False);order.status='expired';order.save()
-                return None
+        if order.status != 'pending':
+            return None
+        # Existing Stripe sessions and previously admitted attempts must remain
+        # reconcilable even while new purchases are suspended. The admission
+        # commits with the payload, before the separate network phase below.
+        if not order.stripe_session_id:
+            from suspensions.services import admit_order, PauseError
+            # An unsubmitted hold can still expire normally during a pause.
+            if not order.checkout_payload:
+                if order.reservation_expires_at is None:
+                    raise StockUnavailable('Cette réservation nécessite une vérification par la boutique avant le paiement.')
+                if order.reservation_expires_at <= timezone.now():
+                    finish_locked(order,False);order.status='expired';order.save()
+                    return None
+            try:
+                admit_order(order)
+            except PauseError as error:
+                raise StockUnavailable(str(error)) from error
+        if not order.checkout_payload and not order.stripe_session_id:
             from espace.legal import contract_snapshot, profile as legal_profile
             from facturation.profile import capture_profile
             # Read the live identity once: both purchase records must describe

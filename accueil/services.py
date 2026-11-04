@@ -4,7 +4,7 @@ from copy import deepcopy
 from django.contrib.admin.models import ADDITION, CHANGE, LogEntry
 from django.core.exceptions import PermissionDenied
 from django.core.files.base import File
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, connection, transaction
 from django.db.models.fields.files import FieldFile
 
 from connexion.email_verification import email_access_allowed
@@ -46,9 +46,14 @@ def _validate(form):
 
 
 def _locked(expected_revision):
+    # The singleton may not exist on the first edit. Serialize that case too,
+    # including its first historical snapshot, without ever creating it on GET.
+    if connection.vendor == 'postgresql':
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT pg_advisory_xact_lock(%s, %s)', [73012, 1])
     instance = HomepageConfiguration.objects.select_for_update().filter(pk=1).first()
     revision = instance.revision if instance is not None else 0
-    if revision != expected_revision:
+    if expected_revision is not None and revision != expected_revision:
         raise HomepageConflict('L’accueil a été modifié dans un autre onglet. Rechargez la page avant de continuer.')
     return instance or HomepageConfiguration(), instance is None
 
@@ -101,6 +106,8 @@ def save_section(key, cleaned_data, actor):
     try:
         with transaction.atomic():
             instance, is_new = _locked(expected_revision)
+            from historique.homepage import record_homepage
+            record_homepage(actor=actor, label='Accueil avant modification', source='baseline')
             current = configuration(instance=instance)
             values = {'revision': expected_revision}
             files = {}
@@ -135,6 +142,7 @@ def save_section(key, cleaned_data, actor):
                     uploaded_fields.append(name)
                     setattr(instance, name, value)
             _save(instance, is_new, actor, SECTIONS[key]['title'])
+            record_homepage(actor=actor, label=SECTIONS[key]['title'])
             return instance
     except Exception:
         _cleanup_new_files(instance, uploaded_fields, original_names)
@@ -148,6 +156,8 @@ def save_visibility(cleaned_data, actor):
         raise HomepageError('Choisissez les sections à afficher à l’aide des cases de cette page.')
     with transaction.atomic():
         instance, is_new = _locked(expected_revision)
+        from historique.homepage import record_homepage
+        record_homepage(actor=actor, label='Accueil avant modification', source='baseline')
         current = configuration(instance=instance)
         validated = _validate(SectionsVisibilityForm(cleaned_data, configuration=current))
         data = _data(instance)
@@ -155,6 +165,7 @@ def save_visibility(cleaned_data, actor):
         data['visible']['hero'] = True
         instance.data = data
         _save(instance, is_new, actor, 'Sections affichées')
+        record_homepage(actor=actor, label='Sections affichées')
         return instance
 
 
@@ -163,6 +174,8 @@ def save_featured(cleaned_data, actor):
     expected_revision = _revision(cleaned_data)
     with transaction.atomic():
         instance, is_new = _locked(expected_revision)
+        from historique.homepage import record_homepage
+        record_homepage(actor=actor, label='Accueil avant modification', source='baseline')
         current = configuration(instance=instance)
         if any(type(cleaned_data.get(f'position_{position}')) is bool for position in range(1, 5)):
             raise HomepageError('Choisissez les produits dans les listes proposées.')
@@ -177,4 +190,5 @@ def save_featured(cleaned_data, actor):
             FeaturedHomepageProduct(product=product, position=position)
             for position, product in enumerate(products, 1)
         ])
+        record_homepage(actor=actor, label='Produits mis en avant')
         return instance

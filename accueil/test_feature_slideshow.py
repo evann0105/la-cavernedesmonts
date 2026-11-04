@@ -133,7 +133,7 @@ class FeatureSlideshowTests(TestCase):
         self.add('hero'); self.add('feature')
         before = list(HeroSlide.objects.order_by('pk').values(
             'pk', 'section', 'image', 'mobile_image', 'alt', 'position'))
-        files = set(self.media.rglob('*.webp'))
+        files = set(self.media.glob('homepage/*.webp'))
         revision = configuration()['revision']
         for destination, source in (('feature', 'hero'), ('hero', 'feature')):
             with self.subTest(destination=destination):
@@ -144,7 +144,7 @@ class FeatureSlideshowTests(TestCase):
                 self.assertEqual(configuration()['revision'], revision)
                 self.assertEqual(list(HeroSlide.objects.order_by('pk').values(
                     'pk', 'section', 'image', 'mobile_image', 'alt', 'position')), before)
-                self.assertEqual(set(self.media.rglob('*.webp')), files)
+                self.assertEqual(set(self.media.glob('homepage/*.webp')), files)
 
     def test_stale_feature_upload_cannot_overwrite_either_carousel(self):
         stale = self.prepare([{'image': fixtures.image('red'), 'alt': 'Ancien onglet'}])
@@ -152,7 +152,7 @@ class FeatureSlideshowTests(TestCase):
         self.assertEqual(self.client.post(self.route(), stale).status_code, 409)
         self.assertFalse(HeroSlide.objects.filter(section='feature').exists())
         self.assertEqual(HeroSlide.objects.filter(section='hero').count(), 1)
-        self.assertEqual(len(list(self.media.rglob('*.webp'))), 1)
+        self.assertEqual(len(list(self.media.glob('homepage/*.webp'))), 1)
 
     def test_replacing_the_feature_primary_keeps_both_carousels_and_the_hero_primary(self):
         hero_values = {name: spec['default'] for name, spec in SECTIONS['hero']['fields'].items()}

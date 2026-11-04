@@ -15,8 +15,20 @@ from .models import Category, Product, ProductImage, ProductColor
 class ShopImageField(forms.ImageField):
     MAX_PIXELS = 64_000_000
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from phototheque.widgets import library_widget
+        self.widget = library_widget(self.widget)
+        self.widget.is_required = self.required
+
     def to_python(self, data):
+        from phototheque.widgets import selection_files
+        data = selection_files(data)
         if not data or not hasattr(data, 'read'):
+            return data
+        from phototheque.services import is_library_photo_file
+        if is_library_photo_file(data):
+            data.seek(0)
             return data
         if data.size > 10 * 1024 * 1024:
             raise forms.ValidationError('Chaque photo doit peser moins de 10 Mo.')
@@ -47,21 +59,36 @@ class ShopImageField(forms.ImageField):
             data.seek(0)
 
 
-class MultiPhotoInput(forms.ClearableFileInput):
+from phototheque.widgets import LibraryClearableFileInput
+
+
+class MultiPhotoInput(LibraryClearableFileInput):
     allow_multiple_selected = True
+    library_limit = 12
 
 
 class MultiPhotoField(ShopImageField):
     widget = MultiPhotoInput(attrs={'accept': 'image/jpeg,image/png,image/webp'})
+    max_files = 12
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.widget.library_limit = self.max_files
 
     def clean(self, data, initial=None):
+        from phototheque.widgets import selection_files
+        from django.forms.widgets import FILE_INPUT_CONTRADICTION
+        if data is FILE_INPUT_CONTRADICTION:
+            raise forms.ValidationError(self.error_messages['contradiction'], code='contradiction')
+        data = selection_files(data, multiple=True, maximum=self.max_files)
         files = data if isinstance(data, (list, tuple)) else ([data] if data else [])
-        if len(files) > 12:
-            raise forms.ValidationError('Ajoutez au maximum 12 photos à la fois.')
+        if len(files) > self.max_files:
+            raise forms.ValidationError('Ajoutez au maximum %(maximum)s photos à la fois.', params={'maximum': self.max_files})
         return [super(MultiPhotoField, self).clean(item, initial) for item in files]
 
 
 class CatalogProductForm(forms.ModelForm):
+    history_token = forms.CharField(required=False, widget=forms.HiddenInput)
     benefits = forms.CharField(label='Pourquoi le choisir ?', required=False, max_length=750, widget=forms.Textarea(attrs={'rows':4}), help_text='Un bénéfice concret par ligne, 3 maximum : douceur, coupe, fermeture… Appuyez chaque phrase sur la description ou une fiche fabricant. Ne promettez pas une performance technique ni un entretien sans preuve. Videz ce champ pour masquer le bloc.')
     main_image = ShopImageField(label='Photo principale', required=False, widget=forms.ClearableFileInput(attrs={'accept':'image/jpeg,image/png,image/webp'}), help_text='JPEG, PNG ou WebP, 10 Mo et 64 mégapixels maximum. La photo est redimensionnée et optimisée automatiquement.')
     new_photos = MultiPhotoField(label='Ajouter des photos à la galerie', required=False, help_text='Vous pouvez sélectionner plusieurs photos (12 maximum par enregistrement). JPEG, PNG ou WebP : 10 Mo et 64 mégapixels maximum par photo.')
@@ -170,6 +197,8 @@ GalleryFormSet = inlineformset_factory(Product, ProductImage, form=GalleryPhotoF
 
 
 class HomepageSelectionForm(forms.Form):
+    revision = forms.IntegerField(min_value=0, widget=forms.HiddenInput)
+
     def __init__(self, *args, **kwargs):
         from .homepage import WORLD_CARDS, eligible_products
         super().__init__(*args, **kwargs)

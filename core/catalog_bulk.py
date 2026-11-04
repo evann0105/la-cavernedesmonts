@@ -202,6 +202,7 @@ def prepare_bulk_preview(actor, ids, changes, snapshot):
 @transaction.atomic
 def apply_bulk_confirmation(actor, token):
     from .catalog_history import record_catalog_bulk
+    from historique.products import snapshot_product, record_change
     _authorize(actor)
     payload = _read(token, CONFIRMATION_SALT, actor)
     ids = _ids([row[0] for row in payload['products']])
@@ -217,6 +218,7 @@ def apply_bulk_confirmation(actor, token):
         if not row['changed']:
             continue
         product = row['product']
+        history_before = snapshot_product(product)
         update_fields = []
         for name in CatalogBulkForm.OPTIONAL_FIELDS:
             if name not in changes:
@@ -233,6 +235,7 @@ def apply_bulk_confirmation(actor, token):
             product.collections.add(*changes['collections_add'])
         if changes.get('collections_remove'):
             product.collections.remove(*changes['collections_remove'])
+        record_change(product, history_before, actor=actor, label='Modification groupée du catalogue')
         details = [f"{item['label']} : {item['before']} → {item['after']}" for item in row['details'] if item['changed']]
         LogEntry.objects.log_actions(user_id=actor.pk, queryset=Product.objects.filter(pk=product.pk), action_flag=CHANGE, change_message='Modification groupée. ' + ' ; '.join(details))
         changed += 1

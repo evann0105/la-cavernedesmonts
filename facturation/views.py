@@ -56,7 +56,7 @@ def document(request, pk, kind):
 @returns_required
 @require_GET
 def management(request):
-    orders = Order.objects.select_related('invoice').filter(status__in=('paid', 'demo')).order_by('-created_at')
+    orders = Order.objects.select_related('invoice', 'cancellation__refund').filter(status__in=('paid', 'demo')).order_by('-created_at')
     query = request.GET.get('q', '').strip()[:100]
     if query:
         orders = orders.filter(id__icontains=query)

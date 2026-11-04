@@ -1,3 +1,4 @@
+from historique.products import snapshot_product, record_change, record_product
 """Small, repeatable fixtures for the separate payment playground only."""
 from datetime import timedelta
 from decimal import Decimal
@@ -130,7 +131,7 @@ class Command(BaseCommand):
         })
         for key, name, price, article_type, image, combinations in PRODUCTS:
             reference = f'FICTIF-{key.upper()}'
-            product, _ = Product.objects.get_or_create(slug=f'essai-paiement-{key}', defaults={
+            product, created = Product.objects.select_for_update().get_or_create(slug=f'essai-paiement-{key}', defaults={
                 'name': name, 'price': Decimal(price), 'category': category,
                 'description': 'Article fictif réservé aux essais de paiement. Photo illustrative, aucun article expédié.',
                 'brand': 'MARQUE FICTIVE', 'model_reference': reference,
@@ -141,12 +142,15 @@ class Command(BaseCommand):
                 'is_published': True, 'availability': 'available',
                 'include_imported_gallery': False,
             })
+            before = None if created else snapshot_product(product)
             if product.model_reference != reference:
                 raise CommandError('Une référence de produit fictif est déjà utilisée par un autre article.')
             for size, color in combinations:
                 Variant.objects.get_or_create(product=product, size=size, color=color, defaults={
                     'quantity': 20, 'reference': f'{reference}-{size}-{color.upper()}',
                 })
+
+            record_change(product, before, label='Article fictif de paiement préparé')
 
     def seed_shop(self, admin):
         ShopConfiguration.objects.get_or_create(pk=1, defaults={

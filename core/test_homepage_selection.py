@@ -27,7 +27,8 @@ class HomepageSelectionTests(TestCase):
         self.url = reverse('core:catalog_homepage')
 
     def payload(self):
-        return {slot:str(p.pk) for slot,p in self.products.items()}
+        from accueil.configuration import configuration
+        return {'revision': configuration()['revision'], **{slot:str(p.pk) for slot,p in self.products.items()}}
 
     def test_save_all_three_and_render_real_images(self):
         self.assertEqual(self.client.get(self.url).status_code, 200)
@@ -75,7 +76,7 @@ class HomepageSelectionTests(TestCase):
         data = self.payload(); data['femmes'] = str(product.pk)
         self.assertEqual(self.client.post(self.url, data).status_code, 302)
         self.assertEqual(self.client.get('/').context['world_cards'][0]['product'], product)
-        self.assertEqual(self.client.post(self.url, {slot:'' for slot in self.products}).status_code, 302)
+        self.assertEqual(self.client.post(self.url, {**self.payload(), **{slot:'' for slot in self.products}}).status_code, 302)
         self.assertEqual(HomepageSelection.objects.filter(product=None).count(), 3)
         self.assertTrue(all(c['product'] for c in self.client.get('/').context['world_cards']))
 

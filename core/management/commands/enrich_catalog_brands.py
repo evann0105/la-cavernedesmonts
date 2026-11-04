@@ -1,3 +1,4 @@
+from historique.products import snapshot_product, record_change, record_product
 """Import reviewed brand evidence without replacing the merchant's decisions."""
 
 import json
@@ -123,6 +124,7 @@ class Command(BaseCommand):
                 if product.brand or not isinstance(existing, dict) or 'brand' in existing:
                     counts['merchant'] += 1
                     continue
+                before = snapshot_product(product) if options['apply'] else None
                 information = deepcopy(existing)
                 brand = entry['brand']
                 information['_brand_review'] = {
@@ -142,6 +144,7 @@ class Command(BaseCommand):
                 product.information_sources = information
                 if options['apply']:
                     product.save(update_fields=fields)
+                    record_change(product, before, label='Marque documentée')
                 counts['brands' if brand is not None else 'unconfirmed'] += 1
         mode = 'Enregistré' if options['apply'] else 'Simulation — aucune modification enregistrée'
         self.stdout.write(

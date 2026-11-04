@@ -1,7 +1,7 @@
 {% extends 'core/catalog/base.html' %}{% load static %}
 {% block title %}{% if is_new %}Prévoir des horaires différents{% else %}Modifier la période{% endif %} — La Caverne des Monts{% endblock %}
 {% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'boutique/hours.css' %}?v=20261018-periods">{% endblock %}
-{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Navigation de gestion"><a href="{% url 'espace:account' %}">Mon compte</a> / Boutique / <a href="{% url 'boutique:hours' %}">Horaires du magasin</a> / {% if is_new %}Nouvelle période{% else %}{{ period.name }}{% endif %}</nav>{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Navigation de gestion"><a href="{% url 'tableau:home' %}">Espace vendeuse</a> / Boutique / <a href="{% url 'boutique:hours' %}">Horaires du magasin</a> / {% if is_new %}Nouvelle période{% else %}{{ period.name }}{% endif %}</nav>{% endblock %}
 {% block catalog_content %}
 <header class="catalog-heading hours-heading">
   <div><p class="eyebrow">BOUTIQUE · VACANCES ET EXCEPTIONS</p><h1>{% if is_new %}Prévoir des horaires différents.{% else %}Modifier la période.{% endif %}</h1><p>Choisissez les dates et les horaires à appliquer pendant cette période.</p></div>

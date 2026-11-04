@@ -1,6 +1,6 @@
 {% extends 'core/catalog/base.html' %}
 {% block title %}Rubriques et menu — La Caverne des Monts{% endblock %}
-{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a> / Rubriques et menu</nav>{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'tableau:home' %}">Espace vendeuse</a> / Rubriques et menu</nav>{% endblock %}
 {% block catalog_content %}
 <div class="category-management">
   <div class="catalog-heading"><div><p class="eyebrow">UN CATALOGUE BIEN RANGÉ</p><h1>Rubriques et menu.</h1><p>Créez vos collections, choisissez leur ordre et les liens proposés aux clients.</p></div><a class="button" href="{% url 'core:category_create' %}">Créer une rubrique <span aria-hidden="true">＋</span></a></div>

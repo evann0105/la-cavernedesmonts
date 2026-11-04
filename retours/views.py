@@ -16,6 +16,7 @@ from django.views.decorators.http import require_http_methods
 from paiement.models import Order
 from espace.views import private
 from .access import owns_order, returns_required
+from expeditions.cancellation import is_cancelled
 from .forms import LookupForm, RequestForm, CompleteForm, ShipmentForm
 from .models import ReturnRequest, ReturnShipment
 from .services import submit, mark_shipped, mark_received, mark_checked, complete, add_shipment, acknowledge_shipments, ReturnError
@@ -50,7 +51,7 @@ def entry(request):
 @private
 def mine(request):
     from django.core.paginator import Paginator
-    records=Paginator(ReturnRequest.objects.filter(order__user=request.user).select_related('order').prefetch_related('lines','events', Prefetch('shipments', queryset=ReturnShipment.objects.defer('proof'))),20).get_page(request.GET.get('page'))
+    records=Paginator(ReturnRequest.objects.filter(order__user=request.user).exclude(kind='cancellation').select_related('order').prefetch_related('lines','events', Prefetch('shipments', queryset=ReturnShipment.objects.defer('proof'))),20).get_page(request.GET.get('page'))
     return render(request,'retours/mine.html',{'title':'Mes retours et remboursements','records':records})
 
 
@@ -71,32 +72,37 @@ def order_returns(request,pk):
             url=reverse('retours:order',args=[order.pk])+(('?' + urlencode({'token':token})) if token else '')
             return confidential(redirect(url))
         except ReturnError as error:form.add_error(None,str(error))
-    records=order.returns.prefetch_related('lines','events', Prefetch('shipments', queryset=ReturnShipment.objects.defer('proof')))
-    return confidential(render(request,'retours/order.html',{'title':'Retour de votre commande','order':order,'form':form,'can_request':order.status in ('paid','demo') and any(r['remaining']>0 for r in form.rows),'records':records,'return_address':configuration()['return_address'],'costs_text':settings.RETURN_COSTS_TEXT}))
+    records=order.returns.exclude(kind='cancellation').prefetch_related('lines','events', Prefetch('shipments', queryset=ReturnShipment.objects.defer('proof')))
+    return confidential(render(request,'retours/order.html',{'title':'Retour de votre commande','order':order,'form':form,'is_cancelled':is_cancelled(order),'can_request':not is_cancelled(order) and order.status in ('paid','demo') and any(r['remaining']>0 for r in form.rows),'records':records,'return_address':configuration()['return_address'],'costs_text':settings.RETURN_COSTS_TEXT}))
 
 
 @returns_required
 @require_http_methods(['GET'])
 def management(request):
     from django.core.paginator import Paginator
-    records=ReturnRequest.objects.select_related('order').prefetch_related('lines').annotate(new_shipments=Count('shipments', filter=Q(shipments__seen_at__isnull=True)))
+    records=ReturnRequest.objects.exclude(kind='cancellation').select_related('order').prefetch_related('lines').annotate(new_shipments=Count('shipments', filter=Q(shipments__seen_at__isnull=True)))
     from .worklist import action_definitions, open_returns
     action=request.GET.get('action','')
     action_label=''
+    if action == 'open':
+        records = open_returns().order_by('created_at', 'pk')
+        action_label = 'Retours en cours'
     for key,label,condition in action_definitions():
         if action == key:
-            records=open_returns().filter(condition)
+            records=open_returns().filter(condition).order_by('created_at', 'pk')
             action_label=label
             break
     state=request.GET.get('etat','')
     if state in ('requested','received','completed'):records=records.filter(state=state)
-    return render(request,'retours/manage.html',{'records':Paginator(records,20).get_page(request.GET.get('page')),'state':state,'action_filter':action,'action_label':action_label})
+    return render(request,'retours/manage.html',{'records':Paginator(records.order_by('-created_at', '-pk'),20).get_page(request.GET.get('page')),'state':state,'action_filter':action,'action_label':action_label})
 
 
 @returns_required
 @require_http_methods(['GET','POST'])
 def manage_detail(request,pk):
     record=get_object_or_404(ReturnRequest.objects.select_related('order').prefetch_related('lines__variant','events', Prefetch('shipments', queryset=ReturnShipment.objects.defer('proof'))),pk=pk)
+    if record.kind == 'cancellation':
+        return confidential(redirect('annulations:detail', pk=record.order_id))
     form=CompleteForm(record,request.POST if request.POST.get('action') in ('review_complete','edit_complete') else None)
     if request.method=='POST':
         try:
@@ -140,7 +146,7 @@ def manage_detail(request,pk):
 @never_cache
 @require_http_methods(['GET', 'POST'])
 def shipment(request, pk):
-    record = get_object_or_404(ReturnRequest.objects.select_related('order'), pk=pk)
+    record = get_object_or_404(ReturnRequest.objects.exclude(kind='cancellation').select_related('order'), pk=pk)
     if (record.order.is_demo and not settings.DEBUG) or not owns_order(request, record.order):
         raise PermissionDenied
     form = ShipmentForm(request.POST if request.method == 'POST' else None, request.FILES or None)

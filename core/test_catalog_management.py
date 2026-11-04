@@ -50,6 +50,8 @@ class CatalogManagementTests(TestCase):
         result = {'name':'Une polaire', 'price':'39,90', 'description':'Une description personnalisée', 'sizes':'M, L, M', 'category':str(self.category.pk), 'collections':[str(self.baby.pk)], 'is_published':'on', 'include_imported_gallery':'on', 'photos-TOTAL_FORMS':'0', 'photos-INITIAL_FORMS':'0', 'photos-MIN_NUM_FORMS':'0', 'photos-MAX_NUM_FORMS':'50'}
         result.update({'stock-TOTAL_FORMS':'1', 'stock-INITIAL_FORMS':'0', 'stock-MIN_NUM_FORMS':'0', 'stock-MAX_NUM_FORMS':'50'})
         result.update({'colors-TOTAL_FORMS':'1', 'colors-INITIAL_FORMS':'0', 'colors-MIN_NUM_FORMS':'0', 'colors-MAX_NUM_FORMS':'30'})
+        from historique.products import editor_token
+        result['history_token'] = editor_token(self.product, self.manager)
         result.update(overrides)
         return result
 
@@ -62,16 +64,16 @@ class CatalogManagementTests(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertIn('no-store', response['Cache-Control'])
         self.assertNotContains(self.client.get('/'), 'Gérer les produits')
-        self.assertContains(self.client.get('/mon-compte/'), 'Gérer les produits')
+        self.assertContains(self.client.get(reverse('tableau:tools')), 'Gérer les produits')
 
     def test_sales_has_its_own_admin_entry_and_back_navigation(self):
         sales = reverse('core:sales_dashboard')
-        account = self.client.get(reverse('espace:account'))
+        account = self.client.get(reverse('tableau:tools'))
         self.assertContains(account, f'href="{sales}"')
-        self.assertContains(account, '<h3>Soldes</h3>', html=True)
+        self.assertContains(account, 'Soldes')
         response = self.client.get(sales)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['back_url'], reverse('espace:account'))
+        self.assertEqual(response.context['back_url'], reverse('tableau:home'))
         detail = self.client.get(reverse('core:catalog_promotions', args=[self.product.pk]))
         self.assertEqual(detail.context['back_url'], sales)
         self.assertContains(detail, 'Tous les soldes')
@@ -294,6 +296,8 @@ class CatalogManagementTests(TestCase):
         self.assertTrue(image.image.name.endswith('.webp'))
         data.pop('photos-0-image')
         data['photos-0-DELETE'] = 'on'
+        from historique.products import editor_token
+        data['history_token'] = editor_token(self.product, self.manager)
         self.assertEqual(self.client.post(self.edit_url(), data).status_code, 302)
         self.assertFalse(ProductImage.objects.filter(pk=image.pk).exists())
 

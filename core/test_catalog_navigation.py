@@ -99,6 +99,9 @@ class CatalogContextTests(TestCase):
                   'stock-MIN_NUM_FORMS':'0', 'stock-MAX_NUM_FORMS':'50',
                   'colors-TOTAL_FORMS':'1', 'colors-INITIAL_FORMS':'0',
                   'colors-MIN_NUM_FORMS':'0', 'colors-MAX_NUM_FORMS':'30'}
+        from historique.products import editor_token
+        user = get_user_model().objects.get(username='catalogue-navigation')
+        values['history_token'] = editor_token(self.product, user)
         values.update(overrides)
         return values
 

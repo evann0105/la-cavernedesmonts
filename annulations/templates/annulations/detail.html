@@ -1,0 +1,120 @@
+{% extends 'expeditions/base.html' %}{% load static %}
+{% block title %}Annuler avant expédition — La Caverne des Monts{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'annulations/cancellation.css' %}">{% endblock %}
+{% block scripts %}{{ block.super }}<script src="{% static 'annulations/reasons-notes.js' %}" defer></script>{% if cancellation %}<script src="{% static 'annulations/live-followup.js' %}" defer></script>{% endif %}{% endblock %}
+{% block catalog_breadcrumb %}
+<nav class="breadcrumb" aria-label="Fil d’Ariane">
+  <a href="{% url 'tableau:home' %}">Espace vendeuse</a><span aria-hidden="true"> / </span>
+  <a href="{% url 'expeditions:overview' %}">Préparer et expédier</a><span aria-hidden="true"> / </span>
+  <a href="{{ return_url }}">{% if cancellation %}Commandes annulées{% else %}Commande {{ order.pk|stringformat:'s'|slice:':8'|upper }}{% endif %}</a><span aria-hidden="true"> / </span>
+  <span aria-current="page">Annulation{% if cancellation %} {{ order.pk|stringformat:'s'|slice:':8'|upper }}{% endif %}</span>
+</nav>
+{% endblock %}
+{% block fulfillment_content %}
+<div class="cancellation-workspace"{% if cancellation %} data-cancellation-live data-status-url="{% url 'annulations:status' order.pk %}" data-live-version="{{ live_state.version }}" data-live-active="{{ live_state.active|yesno:'true,false' }}"{% endif %}>
+  <header class="fulfillment-heading">
+    <div><p class="eyebrow">Commande {{ order.pk|stringformat:'s'|slice:':8'|upper }}</p><h1>{% if cancellation %}Suivre l’annulation{% else %}Annuler avant expédition{% endif %}</h1><p>{% if cancellation %}Le remboursement et la remise en stock, au même endroit.{% else %}Vérifiez le montant et les articles avant de confirmer.{% endif %}</p></div>
+    <a class="fulfillment-text-link" href="{{ return_url }}">← {% if cancellation %}Voir les commandes annulées{% else %}Revenir à la commande{% endif %}</a>
+  </header>
+
+  {% if order.is_demo %}<div class="fulfillment-notice fulfillment-notice--demo"><strong>Commande de démonstration</strong><p>L’annulation, le remboursement et le stock sont simulés. Aucun argent n’est transféré et aucun message réel n’est envoyé au client.</p></div>{% endif %}
+  {% if action_error %}<div class="fulfillment-form-errors" role="alert"><p>{{ action_error }}</p></div>{% endif %}
+  {% if preview_refreshed %}<div class="fulfillment-notice" role="status"><strong>Le récapitulatif a été actualisé</strong><p>Votre motif et votre note sont conservés. Relisez les montants et les articles, puis cochez à nouveau la confirmation avant de continuer.</p></div>{% endif %}
+  {% if form.errors %}<div class="fulfillment-form-errors" role="alert"><strong>Vérifiez les informations avant de confirmer.</strong>{{ form.non_field_errors }}{% for hidden in form.hidden_fields %}{{ hidden.errors }}{% endfor %}</div>{% endif %}
+
+  {% if not cancellation and not summary.eligible %}
+  <div class="fulfillment-notice fulfillment-notice--warning"><strong>Cette commande ne peut pas être annulée ici</strong><p>{{ summary.blocked_reason }}</p><a class="fulfillment-text-link" href="{% url 'expeditions:detail' order.pk %}">Consulter le suivi de la commande →</a></div>
+  {% if form.is_bound %}<section class="cancellation-panel cancellation-private-note" aria-labelledby="cancellation-retained-draft-title">
+    <p class="eyebrow">Aucune annulation enregistrée</p><h2 id="cancellation-retained-draft-title">Votre saisie est conservée sur cette page</h2>
+    <p class="cancellation-intro">Ces textes ne sont pas enregistrés. Vous pouvez les sélectionner et les copier avant de quitter cette page.</p>
+    {% if retained_reason_label %}<p><strong>Motif sélectionné :</strong> {{ retained_reason_label }}</p>{% endif %}
+    <div class="fulfillment-form cancellation-retained-draft">
+      <div class="catalog-field"><label for="retained-public-reason">Motif prévu pour le client</label><textarea id="retained-public-reason" rows="4" readonly>{{ form.reason.value|default_if_none:'' }}</textarea>{{ form.reason.errors }}{{ form.reason_code.errors }}</div>
+      <div class="catalog-field"><label for="retained-internal-note">Note interne à la boutique — privée</label><textarea id="retained-internal-note" rows="4" readonly>{{ form.internal_note.value|default_if_none:'' }}</textarea>{{ form.internal_note.errors }}</div>
+    </div>
+  </section>{% endif %}
+  {% endif %}
+
+  {% if cancellation or summary.eligible %}<div class="cancellation-layout">
+    <section class="cancellation-panel" aria-labelledby="cancellation-summary-title">
+      <p class="eyebrow">{% if cancellation %}Montants enregistrés{% else %}Vérifier la commande{% endif %}</p>
+      <h2 id="cancellation-summary-title">Le remboursement complet</h2>
+      <p class="cancellation-intro">Montants réellement payés, après les réductions appliquées à l’achat.</p>
+      <ul class="cancellation-lines">
+        {% for line in summary.lines %}
+        <li>
+          <div class="cancellation-line-details"><strong>{{ line.name }}</strong>{% if line.size or line.color %}<span>{{ line.size }}{% if line.size and line.color %} · {% endif %}{{ line.color }}</span>{% endif %}<span>Quantité : {{ line.quantity }}</span>{% if line.stock_label %}<small>Stock concerné : {{ line.stock_label }}</small>{% endif %}</div>
+          <strong class="cancellation-line-amount">{{ line.amount|floatformat:2 }} €</strong>
+        </li>
+        {% empty %}<li><p>Les articles ne peuvent pas être présentés. Consultez la commande avant de poursuivre.</p></li>{% endfor %}
+      </ul>
+      <dl class="cancellation-totals">
+        <div><dt>Articles après réduction</dt><dd>{{ summary.merchandise_amount|floatformat:2 }} €</dd></div>
+        <div><dt>Livraison remboursée</dt><dd>{{ summary.shipping_amount|floatformat:2 }} €</dd></div>
+        <div class="cancellation-total"><dt><span data-live-total-label>{% if cancellation.refund.refund_state == 'succeeded' %}{% if order.is_demo %}Total simulé{% else %}Total remboursé{% endif %}{% else %}Total à rembourser{% endif %}</span></dt><dd>{{ summary.amount|floatformat:2 }} €</dd></div>
+      </dl>
+      <div class="cancellation-explanation"><h3>Et les articles ?</h3><p>{% if order.is_demo %}Les quantités sont simulées. Aucun stock réel n’est modifié.{% else %}Toutes les quantités indiquées ci-dessus sont remises en stock une seule fois, après confirmation du remboursement.{% endif %}</p><p>Un code de réduction utilisé pour cette commande reste utilisé. Seul le montant réellement payé est remboursé.</p></div>
+    </section>
+
+    {% if cancellation %}
+    <section class="cancellation-panel cancellation-followup" aria-labelledby="cancellation-followup-title">
+      <p class="eyebrow">Suivi de l’opération</p><h2 id="cancellation-followup-title">Annulation enregistrée</h2>
+      <p class="cancellation-intro">Le {{ cancellation.created_at|date:'d/m/Y à H:i' }}{% if cancellation.requested_by %}, par {{ cancellation.requested_by.get_full_name|default:cancellation.requested_by.get_username }}{% endif %}. L’expédition est bloquée.</p>
+      <div class="cancellation-reason"><h3>Motif communiqué au client</h3><p>{{ cancellation.reason|linebreaksbr }}</p></div>
+      <div class="cancellation-live-controls">
+        <p data-live-status role="status" aria-live="polite">État du dossier à l’ouverture de cette page.</p>
+        <button class="button outline" type="button" data-live-refresh hidden>Actualiser le suivi</button>
+      </div>
+      <div data-live-region="progress" data-live-version="{{ live_state.region_versions.progress }}">{% include 'annulations/_progress.html' %}</div>
+      <p class="cancellation-small">Le client retrouve le suivi dans sa commande. Retrouvez ses deux notifications ci-dessous.</p>
+    </section>
+    {% elif summary.eligible %}
+    <section class="cancellation-panel" aria-labelledby="cancellation-confirm-title">
+      <p class="eyebrow">Confirmer avec le client</p><h2 id="cancellation-confirm-title">Annuler toute la commande</h2>
+      <p class="cancellation-intro">Cette action bloque son expédition et demande le remboursement complet sur le moyen de paiement utilisé à l’achat.</p>
+      <form method="post" class="fulfillment-form cancellation-form" data-cancellation-reason-form data-reason-unsaved="{{ form.is_bound|yesno:'true,false' }}">
+        {% csrf_token %}<input type="hidden" name="action" value="confirm">{{ form.preview_token }}
+        {% include 'core/catalog/field.html' with field=form.reason_code %}
+        {% include 'core/catalog/field.html' with field=form.reason %}
+        <div class="cancellation-reason-proposal" data-reason-proposal hidden>
+          <p>Votre texte personnalisé est conservé. Voici la proposition pour ce motif :</p>
+          <blockquote data-reason-proposal-text></blockquote>
+          <button class="button outline" type="button" data-apply-reason>Appliquer le texte proposé</button>
+        </div>
+        <p class="cancellation-reason-feedback" data-reason-feedback role="status" aria-live="polite"></p>
+        <fieldset class="cancellation-private-fields"><legend>Pour la boutique uniquement</legend>
+          {% include 'core/catalog/field.html' with field=form.internal_note %}
+        </fieldset>
+        {% include 'core/catalog/field.html' with field=form.confirmed %}
+        <button class="button cancellation-confirm" type="submit">{% if order.is_demo %}Simuler l’annulation et le remboursement de{% else %}Annuler et rembourser{% endif %} {{ summary.amount|floatformat:2 }} €</button>
+      </form>
+      <p class="cancellation-small">La préparation ne pourra plus reprendre. Le résultat du remboursement et de la remise en stock sera affiché sur cette page.</p>
+    </section>
+    {% endif %}
+  </div>{% endif %}
+
+  {% if cancellation %}
+  <section class="cancellation-panel cancellation-private-note" id="note-interne" aria-labelledby="cancellation-note-title">
+    <p class="eyebrow">Réservé à la boutique</p><h2 id="cancellation-note-title">Note interne</h2>
+    <p class="cancellation-intro">Pour garder une précision utile à l’équipe. Cette note n’est jamais affichée au client ni ajoutée à ses e-mails.</p>
+    {% if cancellation.internal_note_updated_at %}<p class="cancellation-note-author">Dernier enregistrement le {{ cancellation.internal_note_updated_at|date:'d/m/Y à H:i' }}{% if cancellation.internal_note_updated_by %}, par {{ cancellation.internal_note_updated_by.get_full_name|default:cancellation.internal_note_updated_by.get_username }}{% else %} · auteur non conservé{% endif %}.</p>{% endif %}
+    {% if note_conflict %}<div class="cancellation-note-conflict" role="alert">
+      <h3>Une autre note a été enregistrée entre-temps</h3>
+      <p>Votre saisie est conservée dans le champ ci-dessous. Comparez-la avec cette dernière version avant d’enregistrer.</p>
+      <div class="cancellation-note-saved"><strong>Version actuellement enregistrée</strong><p>{% if cancellation.internal_note %}{{ cancellation.internal_note|linebreaksbr }}{% else %}La note est actuellement vide.{% endif %}</p></div>
+    </div>{% endif %}
+    <form method="post" class="fulfillment-form cancellation-note-form" data-cancellation-note-form data-note-unsaved="{{ note_form.is_bound|yesno:'true,false' }}">
+      {% csrf_token %}<input type="hidden" name="action" value="save_note">{{ note_form.revision }}
+      {% if note_form.errors %}<div class="fulfillment-form-errors" role="alert">{{ note_form.non_field_errors }}{{ note_form.revision.errors }}</div>{% endif %}
+      {% include 'core/catalog/field.html' with field=note_form.internal_note %}
+      <div class="cancellation-note-actions">
+        {% if note_conflict %}<button class="button" type="submit" name="reviewed_revision" value="{{ cancellation.internal_note_revision }}">Enregistrer ma saisie après vérification</button>{% else %}<button class="button" type="submit">Enregistrer la note interne</button>{% endif %}
+        <span data-note-feedback role="status" aria-live="polite"></span>
+      </div>
+    </form>
+  </section>
+  <div data-live-region="stock" data-live-version="{{ live_state.region_versions.stock }}">{% include 'annulations/_stock_history.html' %}</div>
+  <div data-live-region="notifications" data-live-version="{{ live_state.region_versions.notifications }}">{% include 'annulations/_notifications.html' %}</div>
+  {% endif %}
+</div>
+{% endblock %}

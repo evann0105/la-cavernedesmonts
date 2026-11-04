@@ -1,0 +1,10 @@
+{% if order_pause.show_public %}
+{{ order_pause|json_script:'order-pause-state' }}
+<aside class="order-pause-banner" data-orders-banner data-orders-status-url="{{ order_pause.status_url }}" aria-label="Disponibilité des commandes"{% if not order_pause.paused %} hidden{% endif %}>
+  <div class="wrap order-pause-banner__inner">
+    <svg class="order-pause-banner__icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 8v8m6-8v8"/></svg>
+    <div><strong data-orders-title>Les commandes sont momentanément en pause.</strong><p data-orders-message>{{ order_pause.message }}</p><p class="order-pause-resume" data-orders-resume>{{ order_pause.resume_label }}</p><p class="order-pause-hint">Vous pouvez continuer à découvrir la collection. Votre panier est conservé.</p></div>
+  </div>
+</aside>
+<p class="order-pause-sr" data-orders-announcement role="status" aria-live="polite" aria-atomic="true"></p>
+{% endif %}

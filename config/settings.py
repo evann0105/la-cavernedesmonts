@@ -40,6 +40,11 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1", "[:
 # Application definition
 
 INSTALLED_APPS = [
+    "phototheque",
+    "suspensions",
+    "historique",
+    "annulations",
+    "aide",
     "alertes",
     "clients",
     "courriels",
@@ -79,6 +84,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'phototheque.signals.PhotoActorMiddleware',
     'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -99,9 +105,11 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.basket',
                 'core.context_processors.catalog_access',
+                'aide.context_processors.seller_help',
                 'core.category_navigation.category_navigation',
                 'boutique.context_processors.shop_information',
                 'boutique.editorial_public.announcement',
+                'suspensions.public.public_information',
                 'core.context_processors.back_navigation',
                 'core.seo.metadata',
                 'paiement.context_processors.test_environment',

@@ -11,6 +11,14 @@
     if (changed) { event.preventDefault(); event.returnValue = ''; }
   });
   const previewsByInput = new WeakMap();
+  form.addEventListener('phototheque:selection', event => {
+    const input = event.target.querySelector('input[type="file"]');
+    const state = input && previewsByInput.get(input);
+    if (!state || input.files?.length) return;
+    state.urls.forEach(url => URL.revokeObjectURL(url));
+    state.urls = [];
+    state.previews.replaceChildren();
+  });
   form.addEventListener('change', event => {
     const input = event.target;
     if (!(input instanceof HTMLInputElement) || input.type !== 'file') return;

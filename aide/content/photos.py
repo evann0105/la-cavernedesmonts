@@ -1,0 +1,75 @@
+"""A shared photo library, without changing images already used on the site."""
+ARTICLES = (
+    {'id': 'photos-retrouver-ranger', 'category': 'photos', 'permission': 'catalog',
+     'title': 'Comment retrouver et ranger mes photos ?',
+     'summary': 'Recherchez une image déjà envoyée et classez-la dans un dossier.',
+     'steps': (
+         'Dans Tous les outils, ouvrez Bibliothèque de photos.',
+         'Recherchez le titre d’une photo ou filtrez par dossier. Les aperçus permettent de reconnaître chaque image.',
+         'Ouvrez une photo pour la voir en grand, modifier son titre et choisir son dossier.',
+         'Pour ranger plusieurs images ensemble, cochez-les dans la grille, choisissez un dossier et validez le rangement de la sélection.',
+         'Dans Gérer les dossiers, créez vos dossiers et renommez-les selon vos besoins.',
+     ),
+     'notes': (
+         'Les photos déjà présentes sont récupérées à la mise en place de la bibliothèque. Les nouveaux envois enregistrés sur les produits, l’accueil et les pages sont ajoutés automatiquement.',
+         'Ranger une photo ou changer son titre ne modifie ni son contenu ni les pages où elle est déjà utilisée.',
+         'Les photos identiques sont reconnues pour éviter les doublons dans la bibliothèque.',
+     ),
+     'keywords': ('bibliothèque', 'photothèque', 'dossier', 'ranger', 'image', 'aperçu'),
+     'actions': ({'label': 'Bibliothèque de photos', 'view': 'phototheque:overview', 'permission': 'catalog'},
+                 {'label': 'Gérer les dossiers', 'view': 'phototheque:folders', 'permission': 'catalog'}),},
+    {'id': 'photos-reutiliser', 'category': 'photos', 'permission': 'catalog',
+     'title': 'Comment réutiliser une photo sans la chercher sur mon ordinateur ?',
+     'summary': 'Choisissez une image de la bibliothèque depuis le formulaire que vous remplissez.',
+     'steps': (
+         'Sur un produit, un bloc de l’accueil, un diaporama ou une page, repérez le champ photo.',
+         'Ouvrez Choisir dans la bibliothèque, recherchez votre image ou choisissez son dossier.',
+         'Sélectionnez la photo puis validez votre choix. Pour une galerie, vous pouvez sélectionner plusieurs photos.',
+         'Vérifiez la sélection dans votre formulaire et enregistrez normalement le produit ou la page.',
+     ),
+     'notes': (
+         'Choisir une photo ne publie rien et ne réinitialise pas les autres champs du formulaire.',
+         'Chaque usage conserve sa propre photo : un changement ou un archivage dans la bibliothèque ne modifie pas les images déjà enregistrées sur le site.',
+         'La description de la photo reste adaptée à son emplacement. Vérifiez ce texte dans le formulaire concerné.',
+     ),
+     'keywords': ('réutiliser', 'choisir une image', 'galerie', 'couleur', 'diaporama', 'ordinateur'),
+     'actions': ({'label': 'Bibliothèque de photos', 'view': 'phototheque:overview', 'permission': 'catalog'},),},
+    {'id': 'photos-ajouter', 'category': 'photos', 'permission': 'catalog',
+     'title': 'Comment ajouter de nouvelles photos à la bibliothèque ?',
+     'summary': 'Préparez des images réutilisables avant de les placer sur le site.',
+     'steps': (
+         'Dans la bibliothèque, ouvrez Ajouter des photos.',
+         'Choisissez jusqu’à douze fichiers JPEG, PNG ou WebP et, si vous le souhaitez, un dossier.',
+         'Validez l’ajout. Les images sont vérifiées et optimisées avant d’apparaître dans la bibliothèque.',
+         'Retrouvez-les ensuite depuis les champs photo des produits, de l’accueil et des pages.',
+     ),
+     'notes': ('Chaque fichier peut peser jusqu’à 10 Mo et contenir au maximum 64 mégapixels.',
+               'Ajouter une image à la bibliothèque ne la place pas automatiquement sur une page publique.'),
+     'keywords': ('envoyer', 'téléverser', 'importer', 'photo', 'ajout'),
+     'actions': ({'label': 'Ajouter des photos', 'view': 'phototheque:upload', 'permission': 'catalog'},),},
+    {'id': 'photos-archiver', 'category': 'photos', 'permission': 'catalog',
+     'title': 'Comment retirer une photo des choix sans abîmer le site ?',
+     'summary': 'Archivez une photo pour la masquer dans la bibliothèque de sélection, puis réactivez-la au besoin.',
+     'steps': (
+         'Ouvrez la photo dans la bibliothèque et choisissez Archiver.',
+         'Relisez la confirmation et validez. La photo ne sera plus proposée pour de nouveaux choix.',
+         'Pour la réutiliser plus tard, ouvrez les photos archivées puis réactivez la photo.',
+     ),
+     'notes': ('L’archivage ne supprime pas les fichiers des produits, de l’accueil, des pages ou de leur historique.',
+               'Pour retirer une photo d’une page publique, modifiez cette page ou ce produit directement.'),
+     'keywords': ('archiver', 'retirer', 'supprimer une photo', 'restaurer', 'réactiver'),
+     'actions': ({'label': 'Bibliothèque de photos', 'view': 'phototheque:overview', 'permission': 'catalog'},),},
+)
+
+PAGE_HELP = {
+    'phototheque:overview': ('photos-retrouver-ranger', 'photos-reutiliser', 'photos-ajouter', 'photos-archiver'),
+    'phototheque:upload': ('photos-ajouter', 'photos-reutiliser'),
+    'phototheque:detail': ('photos-retrouver-ranger', 'photos-reutiliser', 'photos-archiver'),
+    'phototheque:folders': ('photos-retrouver-ranger',),
+    'phototheque:folder_edit': ('photos-retrouver-ranger',),
+    'phototheque:photo_action': ('photos-archiver',),
+}
+NON_PAGE_ROUTES = {
+    'phototheque:photos_json': 'Liste privée et paginée des photos, affichée dans le sélecteur du formulaire déjà guidé.',
+    'phototheque:move': 'Rangement de la sélection envoyé depuis la grille déjà guidée, sans page distincte.',
+}

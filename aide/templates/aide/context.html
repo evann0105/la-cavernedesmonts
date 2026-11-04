@@ -1,0 +1,12 @@
+{% if seller_page_help %}
+<aside class="wrap help-context" aria-label="Aide de cette page">
+  <details class="help-context-panel">
+    <summary><span class="help-mark" aria-hidden="true">?</span><span><strong>Aide pour cette page</strong><small>Des réponses courtes pour vous guider.</small></span><span class="help-toggle" aria-hidden="true">+</span></summary>
+    <div class="help-context-content">
+      <p class="help-context-intro">Choisissez votre question. Vous pouvez lire ces conseils sans perdre votre saisie.</p>
+      {% for article in seller_page_help %}<details class="help-question"><summary>{{ article.title }}<span class="help-toggle" aria-hidden="true">+</span></summary>{% include 'aide/answer.html' with help_links_new_tab=True %}</details>{% endfor %}
+      <div class="help-context-footer"><p>Un autre sujet ? Retrouvez toutes les explications dans le guide.</p><a href="{% url 'aide:index' %}" target="_blank" rel="noopener">Ouvrir le guide complet <span class="help-new-tab">(nouvel onglet)</span> <span aria-hidden="true">↗</span></a></div>
+    </div>
+  </details>
+</aside>
+{% endif %}

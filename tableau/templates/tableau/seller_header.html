@@ -1,0 +1,19 @@
+{% load static %}
+<header class="seller-header">
+  <div class="wrap seller-header-inner">
+    <a class="seller-brand" href="{% url 'tableau:home' %}" aria-label="La Caverne des Monts — accueil vendeuse">
+      <svg viewBox="0 0 1224 394" width="185" height="60" aria-hidden="true"><defs><filter id="seller-brand-ink" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1 0 0 0 1"/></filter></defs><image href="{% static 'core/img/logo.png' %}" width="1224" height="394" filter="url(#seller-brand-ink)"/></svg>
+      <span>Espace vendeuse</span>
+    </a>
+    <nav class="seller-header-actions" aria-label="Votre espace">
+      <a href="{% url 'accueil:home' %}">Voir la boutique <span aria-hidden="true">↗</span></a>
+      <a href="{% url 'espace:account' %}">Mon compte personnel</a>
+      <form method="post" action="{% url 'connexion:logout' %}">{% csrf_token %}<button type="submit">Déconnexion</button></form>
+    </nav>
+  </div>
+  <nav class="wrap seller-tabs" aria-label="Navigation de l’espace vendeuse">
+    <a href="{% url 'tableau:home' %}"{% if request.resolver_match.view_name == 'tableau:home' %} aria-current="page"{% endif %}>À faire aujourd’hui</a>
+    <a href="{% url 'tableau:tools' %}"{% if request.resolver_match.view_name == 'tableau:tools' %} aria-current="page"{% endif %}>Tous les outils</a>
+    {% if can_manage_catalog %}<a href="{% url 'tableau:dashboard' %}"{% if request.resolver_match.view_name == 'tableau:dashboard' %} aria-current="page"{% endif %}>Statistiques de vente</a>{% endif %}
+  </nav>
+</header>

@@ -35,6 +35,7 @@ class Variant(models.Model):
 
     def save(self, *args, **kwargs):
         from django.db import transaction
+        record_price_history = kwargs.pop('record_price_history', True)
         price_may_change = kwargs.get('update_fields') is None or 'price' in kwargs['update_fields']
         previous = None
         if self.pk and price_may_change:
@@ -42,7 +43,7 @@ class Variant(models.Model):
         price_changed = price_may_change and (previous is None or previous['price'] != self.price or previous['product_id'] != self.product_id)
         with transaction.atomic(using=kwargs.get('using') or self._state.db or 'default'):
             super().save(*args, **kwargs)
-            if price_changed:
+            if price_changed and record_price_history:
                 from core.pricing import record_variant_price
                 record_variant_price(self)
         if price_changed:

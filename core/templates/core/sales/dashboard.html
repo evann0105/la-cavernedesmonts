@@ -1,7 +1,7 @@
 {% extends 'core/catalog/base.html' %}{% load static tz %}
 {% block title %}Soldes — La Caverne des Monts{% endblock %}
 {% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'core/css/sales.css' %}?v=20261019-sales-live-selection">{% endblock %}
-{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'espace:account' %}">Mon compte</a><span aria-hidden="true"> / </span><span aria-current="page">Soldes</span></nav>{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'tableau:home' %}">Espace vendeuse</a><span aria-hidden="true"> / </span><span aria-current="page">Soldes</span></nav>{% endblock %}
 {% block catalog_content %}
 <div class="sales-shell">
 <header class="sales-heading"><div><p class="eyebrow">VOTRE ESPACE COMMERCIAL</p><h1>Soldes<span class="sales-heading-dot">.</span></h1><p>Vos réductions, leurs dates et les produits concernés, au même endroit.</p></div><a href="{% url 'core:sales_create' %}" class="button sales-primary"><span aria-hidden="true">＋</span> Nouvelle opération</a></header>

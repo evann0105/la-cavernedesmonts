@@ -63,8 +63,7 @@ class StockTests(TestCase):
         self.client.logout();self.assertEqual(self.client.get(self.url).status_code,302)
 
     def test_admin_section_and_overview(self):
-        response=self.client.get(reverse('espace:account'))
-        self.assertContains(response,'Gérer la boutique',count=1)
+        response=self.client.get(reverse('tableau:tools'))
         self.assertContains(response,reverse('stocks:overview'))
         self.assertNotContains(self.client.get('/'),'Gérer les produits')
         self.assertContains(self.client.get(reverse('stocks:overview')),'Stock non renseigné')

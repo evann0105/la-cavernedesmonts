@@ -39,7 +39,7 @@ class SecurityTests(TestCase):
         from .test_helpers import verify_test_user
         verify_test_user(self.staff)
         TOTPDevice.objects.create(user=self.staff,name='default',confirmed=True)
-        self.assertRedirects(self.authenticate('admin-test'),reverse('espace:account'))
+        self.assertRedirects(self.authenticate('admin-test'),reverse('tableau:home'))
         self.assertEqual(self.client.get('/admin/').status_code,200)
         self.assertEqual(self.client.get('/gestion/produits/').status_code,200)
 

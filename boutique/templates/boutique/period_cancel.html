@@ -1,7 +1,7 @@
 {% extends 'core/catalog/base.html' %}{% load static %}
 {% block title %}{% if is_restoring %}Réactiver{% else %}Annuler{% endif %} la période — La Caverne des Monts{% endblock %}
 {% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'boutique/hours.css' %}?v=20261018-periods">{% endblock %}
-{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Navigation de gestion"><a href="{% url 'espace:account' %}">Mon compte</a> / Boutique / <a href="{% url 'boutique:hours' %}">Horaires du magasin</a> / {% if is_restoring %}Réactiver{% else %}Annuler{% endif %} la période</nav>{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Navigation de gestion"><a href="{% url 'tableau:home' %}">Espace vendeuse</a> / Boutique / <a href="{% url 'boutique:hours' %}">Horaires du magasin</a> / {% if is_restoring %}Réactiver{% else %}Annuler{% endif %} la période</nav>{% endblock %}
 {% block catalog_content %}
 <header class="catalog-heading hours-heading"><div><p class="eyebrow">BOUTIQUE · VACANCES ET EXCEPTIONS</p><h1>{% if is_restoring %}Réactiver cette période ?{% else %}Annuler cette période ?{% endif %}</h1><p>Les horaires habituels restent conservés.</p></div></header>
 <section class="catalog-panel hours-cancel-panel" aria-labelledby="hours-cancel-title">

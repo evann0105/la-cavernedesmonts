@@ -1,0 +1,19 @@
+  <section class="cancellation-panel cancellation-notifications" aria-labelledby="cancellation-notifications-title">
+    <div class="cancellation-section-heading"><div><p class="eyebrow">Informer le client</p><h2 id="cancellation-notifications-title">Ses messages d’annulation</h2></div><a class="fulfillment-text-link" href="{% url 'alertes:emails' %}">Tous les e-mails →</a></div>
+    <p class="cancellation-intro">Chaque message garde son propre suivi. Une relance concerne uniquement le message choisi et ne modifie ni le remboursement ni le stock.</p>
+    <div class="cancellation-notification-grid">{% for notice in notification_cards %}
+      <article class="cancellation-notification-card" aria-labelledby="notification-{{ notice.kind }}-title">
+        <h3 id="notification-{{ notice.kind }}-title">{{ notice.title }}</h3>
+        <span class="cancellation-mail-status cancellation-mail-status--{{ notice.status }}">{{ notice.status_label }}</span>
+        {% if notice.exists %}<dl class="cancellation-mail-metadata">
+          <div><dt>Destinataire prévu pour ce message</dt><dd>{{ notice.recipient }}</dd></div>
+          <div><dt>{{ notice.date_label }}</dt><dd>{% if notice.date %}{{ notice.date|date:'d/m/Y à H:i' }}{% else %}Date non conservée{% endif %}</dd></div>
+          <div><dt>Tentatives d’envoi</dt><dd>{{ notice.attempts }}</dd></div>
+        </dl>{% endif %}
+        <p class="cancellation-mail-explanation">{{ notice.reason }}</p>
+        <div class="cancellation-mail-actions">
+          {% if notice.can_retry %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="retry_email"><input type="hidden" name="notice_id" value="{{ notice.pk }}"><input type="hidden" name="expected_attempts" value="{{ notice.attempts }}"><button class="button outline" type="submit">Relancer ce message</button></form>{% endif %}
+          {% if notice.detail_url %}<a class="fulfillment-text-link" href="{{ notice.detail_url }}">Voir le suivi de ce message →</a>{% endif %}
+        </div>
+      </article>{% endfor %}</div>
+  </section>

@@ -14,6 +14,11 @@ class ReturnError(ValueError):
     pass
 
 
+def _require_physical_return(record):
+    if record.kind == 'cancellation':
+        raise ReturnError('Cette commande est annulée avant expédition. Suivez son annulation : aucun colis ne doit être retourné et aucune remise en stock ne doit être faite ici.')
+
+
 def declaration_identity(order):
     """Only prefill known identity; never infer a name from the e-mail address."""
     billing = getattr(order, 'billing_details', None) or {}
@@ -63,6 +68,9 @@ def allocation(order):
 @transaction.atomic
 def submit(order_id, quantities, submission_id, kind='withdrawal', reason='', declarant=None):
     order = Order.objects.select_for_update().get(pk=order_id)
+    from expeditions.cancellation import is_cancelled
+    if is_cancelled(order):
+        raise ReturnError('Cette commande est déjà annulée avant expédition. Aucun retour de colis n’est nécessaire.')
     previous = ReturnRequest.objects.filter(submission_id=submission_id).first()
     if previous:
         if previous.order_id != order.pk:raise ReturnError('Identifiant de demande invalide.')
@@ -110,6 +118,7 @@ def _advance_return(pk, actor, target):
     if order.is_demo and not settings.DEBUG:
         raise ReturnError('Simulation indisponible hors développement.')
     record = ReturnRequest.objects.select_for_update().get(pk=pk)
+    _require_physical_return(record)
     stages = ['declared', 'shipped', 'received', 'checked']
     if record.state == 'completed' or stages.index(target) <= stages.index(record.return_state):
         return record
@@ -150,6 +159,7 @@ def complete(pk, actor, received, restock, expected_snapshot=None):
     order=Order.objects.select_for_update().get(pk=order_id)
     if order.is_demo and not settings.DEBUG:raise ReturnError('Simulation indisponible hors développement.')
     record = ReturnRequest.objects.select_for_update().get(pk=pk)
+    _require_physical_return(record)
     if record.state=='completed':return record
     if record.refund_state != 'succeeded':raise ReturnError('Confirmez d’abord le remboursement. Un remboursement en attente ou échoué ne peut pas être clôturé.')
     lines = list(record.lines.select_for_update().order_by('item_index'))
@@ -190,6 +200,7 @@ def add_shipment(pk, submission_id, carrier='', tracking_number='', proof=None):
     order_id = ReturnRequest.objects.values_list('order_id', flat=True).get(pk=pk)
     order = Order.objects.select_for_update().get(pk=order_id)
     record = ReturnRequest.objects.select_for_update().get(pk=pk)
+    _require_physical_return(record)
     previous = ReturnShipment.objects.filter(submission_id=submission_id).first()
     if previous:
         if previous.request_id != record.pk:
@@ -229,6 +240,7 @@ def add_shipment(pk, submission_id, carrier='', tracking_number='', proof=None):
 def acknowledge_shipments(pk, actor):
     from .models import ReturnShipment
     record = ReturnRequest.objects.select_for_update().get(pk=pk)
+    _require_physical_return(record)
     count = ReturnShipment.objects.filter(request=record, seen_at__isnull=True).update(seen_at=timezone.now())
     if count:
         ReturnEvent.objects.create(request=record, actor=actor, label=f'La boutique a consulté {count} nouvelle(s) information(s) d’expédition.')

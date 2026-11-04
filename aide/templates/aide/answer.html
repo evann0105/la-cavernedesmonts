@@ -1,0 +1,6 @@
+<div class="help-answer">
+  <p class="help-summary">{{ article.summary }}</p>
+  <ol>{% for step in article.steps %}<li>{{ step }}</li>{% endfor %}</ol>
+  {% if article.notes %}<div class="help-notes">{% for note in article.notes %}<p>{{ note }}</p>{% endfor %}</div>{% endif %}
+  {% if article.actions %}<nav class="help-actions" aria-label="Outils liés à cette réponse">{% for action in article.actions %}<a href="{{ action.url }}"{% if help_links_new_tab %} target="_blank" rel="noopener"{% endif %}>{{ action.label }}{% if help_links_new_tab %} <span class="help-new-tab">(nouvel onglet)</span>{% endif %} <span aria-hidden="true">↗</span></a>{% endfor %}</nav>{% endif %}
+</div>

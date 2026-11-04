@@ -41,7 +41,7 @@
       if (mainClear?.checked) existing = removeOriginal?.checked ? '' : staticImage;
       else if (removeOriginal?.checked && originalImage === staticImage) existing = '';
     }
-    const source = file ? URL.createObjectURL(file) : existing;
+    const source = file ? URL.createObjectURL(file) : input?.dataset.libraryPreview || existing;
     if (file) previews.set(row, source);
     if (source) {
       image.src = source;
@@ -87,5 +87,10 @@
     if (!row) return;
     updateCard(row);
     if (event.target.matches('input[type="file"][name$="-image"]')) updatePreview(row);
+  });
+  document.addEventListener('phototheque:selection', event => {
+    const row = event.target.closest('[data-color-row]');
+    if (row) updatePreview(row);
+    else if (originalCard && event.target.contains(mainInput)) updatePreview(originalCard);
   });
 })();

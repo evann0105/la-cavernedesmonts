@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}{{ help_article.title }} — Aide vendeuse{% endblock %}
+{% block body_class %}seller-landing{% endblock %}
+{% block content %}
+<div class="wrap seller-home help-page">
+  <header class="seller-page-heading"><div><p class="eyebrow">AIDE · {{ help_article.category_label|upper }}</p><h1>{{ help_article.title }}</h1></div><a class="seller-text-link" href="{% url 'aide:index' %}">Toutes les réponses <span aria-hidden="true">↗</span></a></header>
+  <div class="help-detail-layout"><article class="help-detail-answer">{% include 'aide/answer.html' with article=help_article %}</article>
+  {% if related_articles %}<aside class="help-related"><h2>Sur le même sujet</h2>{% for article in related_articles %}<a href="{{ article.url }}">{{ article.title }} <span aria-hidden="true">↗</span></a>{% endfor %}</aside>{% endif %}</div>
+</div>
+{% endblock %}

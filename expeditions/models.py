@@ -7,7 +7,7 @@ from config.encrypted_fields import EncryptedEmailField, EncryptedJSONField, Enc
 
 
 class Fulfillment(models.Model):
-    STATES = [('preparing', 'En préparation'), ('ready', 'Prête à expédier'), ('shipped', 'Expédiée')]
+    STATES = [('preparing', 'En préparation'), ('ready', 'Prête à expédier'), ('shipped', 'Expédiée'), ('cancelled', 'Annulée')]
     CARRIERS = [('colissimo', 'Colissimo / La Poste'), ('other', 'Autre transporteur')]
     order = models.OneToOneField('paiement.Order', related_name='fulfillment', on_delete=models.PROTECT)
     state = models.CharField('État de préparation', max_length=12, choices=STATES, default='preparing')
@@ -32,7 +32,8 @@ class Fulfillment(models.Model):
             models.CheckConstraint(condition=Q(revision__gte=1), name='fulfillment_positive_revision'),
             models.CheckConstraint(condition=Q(carrier__in=['colissimo', 'other']), name='fulfillment_known_carrier'),
             models.CheckConstraint(condition=(
-                Q(state='preparing', ready_at__isnull=True, shipped_at__isnull=True)
+                Q(state='cancelled', shipped_at__isnull=True)
+                | Q(state='preparing', ready_at__isnull=True, shipped_at__isnull=True)
                 | Q(state='ready', ready_at__isnull=False, shipped_at__isnull=True)
                 | Q(state='shipped', ready_at__isnull=False, shipped_at__isnull=False,
                     shipped_at__gte=F('ready_at'))

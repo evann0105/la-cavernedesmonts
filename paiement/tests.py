@@ -49,7 +49,7 @@ class PaymentTests(TestCase):
     @override_settings(PAYMENTS_ENABLED=False)
     @patch('paiement.views.stripe.checkout.Session.create')
     def test_disabled_checkout_never_calls_stripe(self, create):
-        self.assertContains(self.client.get('/paiement/'), 'bientôt disponible')
+        self.assertContains(self.client.get('/paiement/'), 'Le paiement n’est pas disponible pour ce panier.')
         self.client.post('/paiement/')
         create.assert_not_called(); self.assertFalse(Order.objects.exists())
 

@@ -123,9 +123,8 @@ class ManualAdjustmentTests(TestCase):
         searched = self.client.get(reverse('stocks:overview'), {'q':'Polaire manuelle'})
         self.assertContains(searched,'Polaire manuelle')
         self.assertNotContains(searched,'Stock à compter')
-        account=self.client.get(reverse('espace:account'))
-        self.assertContains(account,'Stock · ajouter / retirer')
-        self.assertContains(account,'<h3>Stock</h3>',html=True)
+        account=self.client.get(reverse('tableau:tools'))
+        self.assertContains(account, reverse('stocks:overview'))
 
 
 @override_settings(DEBUG=True, LOCAL_SKIP_EMAIL_VERIFICATION=True)

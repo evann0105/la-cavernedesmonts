@@ -22,7 +22,7 @@ from retours.models import ReturnMail, ReturnRequest, ReturnShipment
 from .models import Address, CreditNote, Voucher
 
 
-VERSION = '2026-10-26'
+VERSION = '2026-11-02'
 ITEM_FIELDS = ('product', 'variant', 'name', 'size', 'color', 'quantity', 'unit_amount', 'image')
 
 
@@ -45,7 +45,8 @@ def subject_export(user):
         # a reused email address, even after that account was deleted.
         benefit_scope |= Q(user_id__isnull=True, bound_user_id__isnull=True,
                            recipient_email_hash=email_digest(user.email))
-    orders = list(Order.objects.filter(user_id=user.pk).select_related('benefit_redemption', 'fulfillment').order_by('created_at', 'pk'))
+    orders = list(Order.objects.filter(user_id=user.pk).select_related(
+        'benefit_redemption', 'fulfillment', 'cancellation__refund').order_by('created_at', 'pk'))
     invoices = {invoice.order_id: invoice for invoice in Invoice.objects.filter(
         order_id__in=[order.pk for order in orders]).only('order_id', 'number', 'issued_at', 'snapshot')}
     records = []
@@ -86,8 +87,23 @@ def subject_export(user):
                 'reserve_le': redemption.created_at, 'utilise_le': redemption.used_at,
                 'libere_le': redemption.released_at,
             }
+        cancellation = getattr(order, 'cancellation', None)
+        # Only customer-facing facts belong here. Internal refund/stock errors,
+        # staff identities and the technical refund ledger's events stay private.
+        cancellation_record = None
+        if cancellation is not None:
+            refund = cancellation.refund
+            cancellation_record = {
+                'motif': cancellation.reason, 'demandee_le': cancellation.created_at,
+                'remboursement': refund.get_refund_state_display(),
+                'montant_centimes': refund.amount, 'livraison_centimes': refund.shipping_amount,
+                'rembourse_le': refund.refunded_at,
+                'stock_retabli_le': cancellation.stock_completed_at,
+            }
         returns = []
         for record in order.returns.prefetch_related('lines', 'events', Prefetch('shipments', queryset=ReturnShipment.objects.defer('proof'))).order_by('created_at', 'pk'):
+            if record.kind == 'cancellation':
+                continue
             returns.append({
                 'reference': str(record.pk), 'type': record.get_kind_display(),
                 'dossier': record.get_state_display(), 'retour': record.get_return_state_display(),
@@ -126,6 +142,7 @@ def subject_export(user):
                          for item in order.items if isinstance(item, dict)],
             'conditions_acceptees_le': order.terms_accepted_at,
             'conditions_contractuelles': order.terms_snapshot,
+            'annulation': cancellation_record,
             'retours': returns,
         })
     # A seller's directory may group contacts by e-mail for its own work, but

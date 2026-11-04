@@ -57,11 +57,14 @@ def product_stock(request, pk, variant_pk=None):
                 elif old and old.reserved and (form.cleaned_data['quantity'] is None or form.cleaned_data['quantity'] < old.reserved or form.cleaned_data['size'] != old.size or form.cleaned_data['color'] != old.color):
                     form.add_error(None, 'Des articles sont réservés : conservez cette taille/couleur et une quantité au moins égale au stock réservé.')
                 else:
+                    from historique.products import snapshot_product, record_change
+                    history_before = snapshot_product(product)
                     saved = form.save(commit=False)
                     saved.reserved = old.reserved if old else 0
                     saved.revision = (old.revision + 1) if old else 1
                     saved.save()
                     record_label_correction(old, saved)
+                    record_change(product, history_before, actor=request.user, label='Tailles, couleurs ou prix modifiés')
                     before = old.quantity if old else 'nouvelle variante'
                     labels = (f'Taille : {old.size} → {saved.size}. Couleur : {old.color} → {saved.color}.'
                         if old else f'Taille : {saved.size}. Couleur : {saved.color}.')

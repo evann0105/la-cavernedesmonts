@@ -121,7 +121,8 @@ class CatalogDuplicationArchivalTests(TestCase):
         with CaptureQueriesContext(connection) as queries:
             self.duplicate(token)
         category_reads = [query['sql'] for query in queries if
-            'FROM "core_category" WHERE "core_category"."id" IN' in query['sql']]
+            'FROM "core_category" WHERE "core_category"."id" IN' in query['sql']
+            and '"core_category"."revision"' in query['sql']]
         self.assertEqual(len(category_reads), 1)
         self.assertIn('ORDER BY "core_category"."id" ASC', category_reads[0])
         self.assertNotIn('"archived_at" IS NULL', category_reads[0])

@@ -1,0 +1,25 @@
+/* A compact status panel; other dashboard tasks remain untouched. */
+.pause-dashboard { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:23px 26px; margin:0 0 32px; border:1px solid #cddac4; border-radius:18px; background:#edf3e7; color:#203c32; overflow-wrap:anywhere; }
+.pause-dashboard[data-state="paused"] { background:#fbf1df; border-color:#e3ceb0; }
+.pause-dashboard[data-state="scheduled"] { background:#f2f4ec; border-color:#d7dfcb; }
+.pause-dashboard-main { min-width:0; }
+.pause-dashboard-heading { display:flex; align-items:center; flex-wrap:wrap; gap:10px 16px; margin-bottom:9px; }
+.seller-home .pause-dashboard h2 { margin:0; font-size:20px; letter-spacing:-.3px; }
+.pause-dashboard-badge { display:inline-flex; align-items:center; gap:7px; padding:5px 9px; border-radius:20px; background:#fff9; font-size:11px; font-weight:600; line-height:1.4; }
+.pause-dashboard-badge::before { content:""; width:6px; height:6px; border-radius:50%; background:#506e3d; flex-shrink:0; }
+.pause-dashboard[data-state="paused"] .pause-dashboard-badge::before { background:#8c5c26; }
+.pause-dashboard p { margin:0; }
+.pause-dashboard-schedule { font-size:14px; line-height:1.65; font-variant-numeric:tabular-nums; }
+.pause-dashboard .pause-dashboard-message { margin-top:7px; font-size:13px; line-height:1.6; }
+.pause-dashboard .pause-dashboard-hint { margin-top:10px; font-size:12px; line-height:1.5; color:#5b6854; }
+.pause-dashboard .pause-dashboard-feedback { margin-top:9px; font-size:12px; line-height:1.55; }
+.pause-dashboard[data-stale="true"] { border-color:#b3aa96; }
+.pause-dashboard[data-stale="true"] .pause-dashboard-feedback { color:#80491e; font-weight:600; }
+.pause-dashboard-actions { display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0; gap:5px; }
+.pause-dashboard-actions a,.pause-dashboard-actions button { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:44px; padding:8px 11px; font:inherit; font-size:13px; line-height:1.5; color:inherit; border:1px solid #bfccb4; border-radius:10px; background:#fff9; cursor:pointer; text-align:center; }
+.pause-dashboard-actions button { border-color:transparent; background:none; font-size:12px; text-decoration:underline; text-underline-offset:4px; }
+.pause-dashboard-actions button:disabled { cursor:wait; opacity:.65; }
+.pause-dashboard a:focus-visible,.pause-dashboard button:focus-visible { outline:3px solid #709452; outline-offset:3px; }
+.pause-dashboard [hidden] { display:none !important; }
+@media(max-width:740px) { .pause-dashboard { align-items:stretch; flex-direction:column; gap:14px; padding:20px; } .pause-dashboard-actions { align-items:center; flex-direction:row; flex-wrap:wrap; gap:6px 12px; } }
+@media(max-width:380px) { .pause-dashboard { padding:17px; } .seller-home .pause-dashboard h2 { font-size:18px; } .pause-dashboard-actions { align-items:stretch; flex-direction:column; } }

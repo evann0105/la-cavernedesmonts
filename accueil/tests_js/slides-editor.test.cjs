@@ -249,6 +249,47 @@ function fixture({saved = [], extraBlank = true, totalForms, dataTransfer = true
 const file = name => ({name, type: 'image/webp', size: 1200});
 const live = page => page.cards().filter(card => !card.fields.DELETE.checked && (card.dataset.existing === 'true' || card.fields.image.files.length || card.fields.alt.value));
 
+test('library desktop and mobile selections update live cards and public preview without fake uploads', async () => {
+  const page = fixture();
+  const card = page.cards()[0];
+  card.fields.image.dataset.libraryPreview = '/media/library-desktop.webp';
+  card.fields.mobile_image.dataset.libraryPreview = '/media/library-mobile.webp';
+  card.fields.alt.value = 'Description personnelle conservée';
+  await page.form.emit('phototheque:selection');
+  assert.equal(card.fields.image.required, false);
+  assert.equal(card.fields.position.value, '1');
+  assert.equal(card.querySelector('[data-image-preview="desktop"]').querySelector('img').src, '/media/library-desktop.webp');
+  await page.openPreview();
+  await page.preview.querySelector('[data-preview-next]').emit('click');
+  assert.equal(page.image.src, 'https://boutique.example/media/library-desktop.webp');
+  await page.preview.querySelector('[data-preview-mode="mobile"]').emit('click');
+  assert.equal(page.image.src, 'https://boutique.example/media/library-mobile.webp');
+  assert.equal(card.fields.alt.value, 'Description personnelle conservée');
+  assert.equal(card.fields.image.files.length, 0);
+  assert.equal(page.submitted, 0);
+  assert.deepEqual(page.network, []);
+});
+
+test('removing a new library slide clears its staged selection before the row is recycled', async () => {
+  const page = fixture();
+  const card = page.cards()[0];
+  const selection = new Element('ul', {'data-library-selection': ''}); selection.append(new Element('li'));
+  const note = new Element('p', {'data-library-field-status': ''}); note.textContent = 'Photo sélectionnée';
+  card.append(selection, note);
+  card.fields.image.dataset.libraryPreview = '/media/library.webp';
+  card.fields.alt.value = 'Photo temporaire';
+  await page.form.emit('phototheque:selection');
+  card.fields.DELETE.checked = true;
+  await card.fields.DELETE.emit('change');
+  assert.equal(card.fields.image.dataset.libraryPreview, undefined);
+  assert.equal(selection.children.length, 0);
+  assert.equal(selection.hidden, true);
+  assert.equal(note.textContent, '');
+  await page.add.emit('click');
+  assert.equal(card.fields.image.dataset.libraryPreview, undefined);
+  assert.equal(card.fields.alt.value, '');
+});
+
 
 test('saved cards with no new files initialize normally and retain their original images and identities', () => {
   const page = fixture({saved: [{id: '41', desktop: '/media/saved.webp', alt: 'Forêt', position: '1'}]});

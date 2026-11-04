@@ -38,6 +38,8 @@ TITLES = {
     'refund': 'Confirmation du remboursement', 'return_shipment': 'Expédition d’un retour signalée',
     'return_access': 'Lien de retour demandé', 'return_requested': 'Demande de retour reçue',
     'return_completed': 'Dossier de retour terminé',
+    'cancellation_requested': 'Annulation de commande enregistrée',
+    'cancellation_refund': 'Remboursement de la commande annulée',
 }
 EPOCH = datetime.min.replace(tzinfo=datetime_timezone.utc)
 RECIPIENT_CONFIRMATION_SALT = 'mail-monitor-legacy-recipient-v1'
@@ -122,7 +124,10 @@ def return_row(notice):
             prepared_at = None
     except (ValueError, TypeError):
         prepared_at = None
-    if kind in ('shipping_ready', 'shipping', 'shipping_update'):
+    if (kind in ('cancellation_requested', 'cancellation_refund')
+            or (notice.request_id and notice.request.kind == 'cancellation')):
+        url, action = reverse('annulations:detail', args=[notice.order_id]), 'Ouvrir l’annulation'
+    elif kind in ('shipping_ready', 'shipping', 'shipping_update'):
         url, action = reverse('expeditions:detail', args=[notice.order_id]), 'Ouvrir l’expédition'
     elif notice.request_id:
         url, action = reverse('retours:manage_detail', args=[notice.request_id]), 'Ouvrir le retour'
@@ -163,7 +168,7 @@ def benefit_row(notice):
 
 def mail_rows(actor, state='all'):
     _authorize(actor)
-    rows = [return_row(notice) for notice in ReturnMail.objects.select_related('order', 'order__fulfillment').iterator(chunk_size=250)]
+    rows = [return_row(notice) for notice in ReturnMail.objects.select_related('order', 'order__fulfillment', 'request').iterator(chunk_size=250)]
     rows += [benefit_row(notice) for notice in BenefitMail.objects.select_related('benefit', 'benefit__user').prefetch_related('benefit__redemptions').iterator(chunk_size=250)]
     if state in STATUS_LABELS:
         rows = [row for row in rows if row['status'] == state]
@@ -174,7 +179,7 @@ def get_mail_row(actor, source, pk):
     _authorize(actor)
     try:
         if source == 'return':
-            return return_row(ReturnMail.objects.select_related('order', 'order__fulfillment').get(pk=pk))
+            return return_row(ReturnMail.objects.select_related('order', 'order__fulfillment', 'request').get(pk=pk))
         if source == 'benefit':
             return benefit_row(BenefitMail.objects.select_related('benefit', 'benefit__user').get(pk=pk))
     except (ReturnMail.DoesNotExist, BenefitMail.DoesNotExist, ValueError, TypeError):

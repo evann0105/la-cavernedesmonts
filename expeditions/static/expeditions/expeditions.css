@@ -10,7 +10,7 @@
 .fulfillment-scopes { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 20px; margin-bottom: 24px; border-bottom: 1px solid var(--fulfillment-line); }
 .fulfillment-scopes a { padding: 10px 16px; border: 1px solid transparent; border-radius: 28px; font-size: 14px; text-decoration: none; }
 .fulfillment-scopes a[aria-current] { color: #fff; background: var(--fulfillment-ink); }
-.fulfillment-state-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0 0 28px; }
+.fulfillment-state-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 0 0 28px; }
 .fulfillment-state-cards a { display: grid; grid-template-columns: 1fr auto; gap: 14px; min-width: 0; padding: 22px; border: 1px solid var(--fulfillment-line); border-radius: 15px; background: #fff; text-decoration: none; font-size: 14px; }
 .fulfillment-state-cards a > span:first-child { grid-column: 1 / -1; }
 .fulfillment-state-cards strong { font-size: 38px; line-height: 1; letter-spacing: -.04em; font-weight: 500; font-variant-numeric: tabular-nums; }
@@ -144,3 +144,11 @@
 .fulfillment-contact-history > div > p { margin: 0; overflow-wrap: anywhere; }
 @media (max-width: 1000px) { .fulfillment-contact-layout { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 700px) { .fulfillment-contact-tabs a { padding: 10px 12px; font-size: 12px; } .fulfillment-contact-actions { align-items: stretch; flex-direction: column; gap: 14px; } .fulfillment-contact-actions .button { width: 100%; white-space: normal; line-height: 1.5; } .fulfillment-contact-actions > a { align-self: flex-start; } .fulfillment-history li > .fulfillment-contact-history { grid-template-columns: minmax(0, 1fr); } }
+
+.fulfillment-status--cancelled { background: #f3e8e2; color: #754934; }
+.fulfillment-cancel-action { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 22px 24px; margin-bottom: 24px; border: 1px solid var(--fulfillment-line); border-radius: 13px; background: #faf8f4; }
+.fulfillment-cancel-action strong { font-size: 14px; }
+.fulfillment-cancel-action p { color: var(--fulfillment-muted); margin: 8px 0 0; font-size: 12px; line-height: 1.6; }
+.fulfillment-cancel-action .button { flex-shrink: 0; font-size: 13px; }
+@media (max-width: 1000px) { .fulfillment-state-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .fulfillment-cancel-action { align-items: stretch; flex-direction: column; padding: 22px; gap: 16px; } .fulfillment-cancel-action .button { white-space: normal; justify-content: center; } }

@@ -1,0 +1,6 @@
+{% extends 'core/catalog/base.html' %}{% load static %}
+{% block title %}{{ page_title|default:'Pause des commandes' }} — La Caverne des Monts{% endblock %}
+{% block styles %}{{ block.super }}<link rel="stylesheet" href="{% static 'suspensions/management.css' %}"><link rel="stylesheet" href="{% static 'suspensions/history.css' %}">{% endblock %}
+{% block catalog_breadcrumb %}<nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="{% url 'tableau:home' %}">Espace vendeuse</a><span aria-hidden="true"> / </span><a href="{% url 'boutique:settings' %}">Réglages de la boutique</a><span aria-hidden="true"> / </span>{% if current_page == 'overview' %}<span aria-current="page">Pause des commandes</span>{% else %}<a href="{% url 'suspensions:overview' %}">Pause des commandes</a><span aria-hidden="true"> / </span><span aria-current="page">{{ page_title }}</span>{% endif %}</nav>{% endblock %}
+{% block catalog_content %}<div class="pause-management">{% block pause_content %}{% endblock %}</div>{% endblock %}
+{% block scripts %}{{ block.super }}<script src="{% static 'suspensions/management.js' %}" defer></script>{% endblock %}

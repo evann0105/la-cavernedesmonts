@@ -141,13 +141,14 @@ class Product(models.Model):
 			while Product.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
 				self.slug = f'{base}-{uuid4().hex[:10]}'
 		from django.db import transaction
+		record_price_history = kwargs.pop('record_price_history', True)
 		price_may_change = kwargs.get('update_fields') is None or 'price' in kwargs['update_fields']
 		previous_price = None
 		if self.pk and price_may_change:
 			previous_price = Product.objects.filter(pk=self.pk).values_list('price', flat=True).first()
 		with transaction.atomic(using=kwargs.get('using') or self._state.db or 'default'):
 			super().save(*args, **kwargs)
-			if price_may_change and (previous_price is None or previous_price != self.price):
+			if record_price_history and price_may_change and (previous_price is None or previous_price != self.price):
 				from .pricing import record_product_price
 				record_product_price(self)
 		self.__dict__.pop('_pricing_context', None)

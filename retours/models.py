@@ -14,7 +14,7 @@ class ReturnRequest(models.Model):
     shipped_at = models.DateTimeField(null=True, blank=True)
     received_at = models.DateTimeField(null=True, blank=True)
     checked_at = models.DateTimeField(null=True, blank=True)
-    kind = models.CharField(max_length=12, choices=[('withdrawal','Rétractation'),('problem','Article défectueux / erreur')], default='withdrawal')
+    kind = models.CharField(max_length=12, choices=[('withdrawal','Rétractation'),('problem','Article défectueux / erreur'),('cancellation','Annulation avant expédition')], default='withdrawal')
     reason = EncryptedTextField(blank=True)
     declarant = EncryptedJSONField(default=dict, blank=True)
     amount = models.PositiveIntegerField()

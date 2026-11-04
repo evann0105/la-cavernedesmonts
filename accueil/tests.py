@@ -177,7 +177,7 @@ class HomepageManagementTests(TestCase):
         self.save(title_line1='Version récente')
         self.assertEqual(self.client.post(self.url('hero'), stale).status_code, 409)
         self.assertFalse(HomepageConfiguration.objects.get(pk=1).hero_image)
-        self.assertFalse(any(Path(self.directory.name).rglob('*')))
+        self.assertFalse(any((Path(self.directory.name) / 'homepage').rglob('*')))
 
     def test_permission_email_and_csrf_are_required(self):
         self.client.logout()

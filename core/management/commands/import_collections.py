@@ -1,3 +1,4 @@
+from historique.products import snapshot_product, record_change, record_product
 import json
 from pathlib import Path
 from django.conf import settings
@@ -22,12 +23,14 @@ class Command(BaseCommand):
         gifts, _ = Category.objects.get_or_create(slug='accessoires', defaults={'name':'Petits bonheurs'})
         for item in data['products']:
             category = categories[item['collection']]
-            product, created = Product.objects.get_or_create(slug=item['slug'], defaults={
+            product, created = Product.objects.select_for_update().get_or_create(slug=item['slug'], defaults={
                 'name': item['name'], 'price': item['price'], 'description': item['description'],
                 'static_image': item['image'], 'category': gifts if item['collection'] in ('accessoires-bebe', 'polaires-bebe') else category,
             })
+            before = None if created else snapshot_product(product)
             # Associate an existing sock with the baby collection, preserving its original category.
             # Only initialize membership once; merchant edits survive subsequent starts.
             if created or (item.get('existing') and category.pk in initialized):
                 product.collections.add(category)
+            record_change(product, before, label='Rubriques complétées lors de l’import')
         self.stdout.write(self.style.SUCCESS('Rubriques bébé et offres spéciales prêtes.'))

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Aide et mode d’emploi — Espace vendeuse{% endblock %}
+{% block body_class %}seller-landing{% endblock %}
+{% block content %}
+<div class="wrap seller-home help-page">
+  <header class="seller-page-heading"><div><p class="eyebrow">VOUS ACCOMPAGNER AU QUOTIDIEN</p><h1>Aide & mode d’emploi.</h1><p>Une question, des étapes simples et le bon outil pour avancer.</p></div></header>
+  <form method="get" class="help-search" role="search" aria-label="Rechercher dans l’aide">
+    <div class="help-search-query"><label for="help-search">Que souhaitez-vous faire ?</label><input id="help-search" type="search" name="q" maxlength="160" value="{{ query }}" placeholder="Ajouter une taille, corriger un stock…"></div>
+    <div class="help-search-category"><label for="help-category">Rubrique</label><select id="help-category" name="rubrique"><option value="">Toutes les rubriques</option>{% for key,label in help_categories %}<option value="{{ key }}"{% if key == selected_category %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <button class="seller-button" type="submit">Rechercher <span aria-hidden="true">↗</span></button>
+  </form>
+  <div class="help-result-heading"><p>{{ result_count }} réponse{{ result_count|pluralize }}{% if query %} pour « {{ query }} »{% endif %}</p>{% if query or selected_category %}<a href="{% url 'aide:index' %}">Effacer la recherche</a>{% endif %}</div>
+  {% if help_groups %}
+    <div class="help-guide-groups">{% for group in help_groups %}<details class="help-guide-group" id="aide-{{ group.key }}"{% if query or selected_category %} open{% endif %}><summary><h2>{{ group.label }}<small>{{ group.articles|length }} réponse{{ group.articles|length|pluralize }}</small></h2><span class="help-toggle" aria-hidden="true">+</span></summary><ul>{% for article in group.articles %}<li><a href="{{ article.url }}"><span><strong>{{ article.title }}</strong><small>{{ article.summary }}</small></span><span aria-hidden="true">↗</span></a></li>{% endfor %}</ul></details>{% endfor %}</div>
+  {% else %}<div class="help-no-results"><h2>Aucune réponse trouvée.</h2><p>Essayez un mot plus simple, comme « taille », « stock », « facture » ou « remboursement », ou choisissez une autre rubrique.</p><a class="seller-button" href="{% url 'aide:index' %}">Voir toutes les réponses <span aria-hidden="true">↗</span></a></div>{% endif %}
+  <p class="help-bottom-note">Sur chaque page de gestion, l’encart « Aide pour cette page » vous propose les explications qui correspondent à votre travail.</p>
+</div>
+{% endblock %}

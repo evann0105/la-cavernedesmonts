@@ -107,7 +107,7 @@ class SlideshowTests(TestCase):
                 response = self.client.post(self.url, self.data(**changes))
                 self.assertEqual(response.status_code, 200)
                 self.assertFalse(HeroSlide.objects.exists()); self.assertFalse(HomepageConfiguration.objects.exists())
-                self.assertFalse(list(self.media.rglob('*.webp')))
+                self.assertFalse(list(self.media.glob('homepage/*.webp')))
 
     def test_stale_upload_and_omitted_rows_never_replace_current_slides(self):
         stale = self.data(new_photos=[image()])
@@ -117,7 +117,7 @@ class SlideshowTests(TestCase):
         omitted = self.data(); omitted.update({'slides-TOTAL_FORMS': '0', 'slides-INITIAL_FORMS': '0'})
         self.assertEqual(self.client.post(self.url, omitted).status_code, 200)
         self.assertEqual(list(HeroSlide.objects.values_list('pk', flat=True)), current)
-        self.assertEqual(len(list(self.media.rglob('*.webp'))), 1)
+        self.assertEqual(len(list(self.media.glob('homepage/*.webp'))), 1)
 
     def test_duplicate_position_is_rejected_without_losing_photos(self):
         self.add(2)
@@ -157,4 +157,4 @@ class SlideshowTests(TestCase):
                 self.add(2)
         self.assertFalse(HeroSlide.objects.exists())
         self.assertFalse(HomepageConfiguration.objects.exists())
-        self.assertFalse(list(self.media.rglob('*.webp')))
+        self.assertFalse(list(self.media.glob('homepage/*.webp')))

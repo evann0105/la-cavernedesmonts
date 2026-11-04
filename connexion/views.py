@@ -24,7 +24,11 @@ class SecureLoginView(LoginView):
                 return target
             send_verification(self.request.user)
             return reverse('connexion:verify_email')
-        return self.get_redirect_url() or reverse('espace:account')
+        if target:
+            return target
+        from tableau.access import can_access_seller_home
+        destination = 'tableau:home' if can_access_seller_home(self.request.user) else 'espace:account'
+        return reverse(destination)
 
 
 login_view = SecureLoginView.as_view()

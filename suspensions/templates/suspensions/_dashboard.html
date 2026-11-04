@@ -1,0 +1,13 @@
+<section class="pause-dashboard" data-pause-dashboard data-state="{{ purchase_pause.state }}" data-status-url="{% url 'suspensions:dashboard_status' %}" data-checked-at="{{ purchase_pause.checked_at }}" data-next-change-at="{{ purchase_pause.next_change_at|default:'' }}" aria-labelledby="pause-dashboard-title">
+  <div class="pause-dashboard-main">
+    <div class="pause-dashboard-heading"><h2 id="pause-dashboard-title" data-pause-title>{{ purchase_pause.title }}</h2><span class="pause-dashboard-badge" data-pause-badge>{{ purchase_pause.badge }}</span></div>
+    <p class="pause-dashboard-schedule" data-pause-schedule>{{ purchase_pause.schedule }}</p>
+    <p class="pause-dashboard-message" data-pause-message{% if not purchase_pause.message %} hidden{% endif %}>{{ purchase_pause.message }}</p>
+    <p class="pause-dashboard-hint">Cet indicateur concerne les pauses. Les réglages de paiement et de livraison restent applicables.</p>
+    <p class="pause-dashboard-feedback" data-pause-feedback role="status" aria-live="polite" aria-atomic="true" hidden></p>
+  </div>
+  <div class="pause-dashboard-actions">
+    {% if can_manage_catalog %}<a href="{% url 'suspensions:overview' %}">Gérer les pauses <span aria-hidden="true">↗</span></a>{% endif %}
+    <button type="button" data-pause-refresh hidden>Actualiser le statut</button>
+  </div>
+</section>

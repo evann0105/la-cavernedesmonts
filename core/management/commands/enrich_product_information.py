@@ -1,3 +1,4 @@
+from historique.products import snapshot_product, record_change, record_product
 """Apply reviewed facts without overwriting a merchant's later corrections."""
 import json
 from pathlib import Path
@@ -19,6 +20,7 @@ class Command(BaseCommand):
             if not product:continue
             if entry['source_url'] and product.source_url != entry['source_url']:
                 skipped+=1;continue
+            before = snapshot_product(product)
             evidence=dict(product.information_sources)
             updates=[]
             for field,value in entry['facts'].items():
@@ -41,4 +43,5 @@ class Command(BaseCommand):
             # Notes and deleted facts can be edited without being restored at next startup.
             if updates:
                 product.save(update_fields=updates);changed+=1
+                record_change(product, before, label='Informations produit documentées')
         self.stdout.write(f'{changed} fiche(s) complétée(s) ; {skipped} référence(s) différente(s) ignorée(s).')

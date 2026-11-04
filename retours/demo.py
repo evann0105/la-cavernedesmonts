@@ -21,6 +21,9 @@ def simulate_refund(pk, actor):
     if committed+record.amount>order.total_paid:raise ReturnError('Le montant dépasse la commande fictive.')
     record.refund_state='succeeded';record.refunded_at=timezone.now()
     record.save(update_fields=['refund_state','refunded_at'])
+    if record.kind == 'cancellation':
+        from annulations.services import finalize_refund
+        finalize_refund(record.pk)
     ReturnEvent.objects.create(request=record,actor=actor,label='SIMULATION : remboursement confirmé, sans appel Stripe ni transfert d’argent.')
     return_notice(record,'refund','SIMULATION : remboursement fictif confirmé. Aucun paiement, appel Stripe ou transfert d’argent n’a eu lieu.')
     return record

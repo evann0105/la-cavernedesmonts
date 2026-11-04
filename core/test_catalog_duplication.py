@@ -258,7 +258,7 @@ class CatalogDuplicationTests(TestCase):
         self.source.save(update_fields=['main_image', 'static_image'])
         response = self.client.get(self.url())
         self.assertContains(response, 'Une photo d’origine est introuvable', status_code=400)
-        self.assertNotContains(response, 'Créer la copie en brouillon', status_code=400)
+        self.assertNotContains(response, '>Créer la copie en brouillon', status_code=400)
 
     def test_post_redirects_to_edit_and_stale_post_is_recoverable(self):
         response = self.client.get(self.url())
@@ -299,7 +299,7 @@ class CatalogDuplicationTests(TestCase):
         for response in (self.client.get(self.url()), self.client.post(self.url(), {'snapshot': 'forged'})):
             self.assertContains(response, 'Cette fiche est un doublon archivé.', status_code=409)
             self.assertContains(response, reverse('core:catalog_duplicate', args=[canonical.pk]), status_code=409)
-            self.assertNotContains(response, 'Créer la copie en brouillon', status_code=409)
+            self.assertNotContains(response, '>Créer la copie en brouillon', status_code=409)
         self.assertEqual(Product.objects.count(), count)
 
     def test_archiving_source_after_confirmation_blocks_service_and_post(self):

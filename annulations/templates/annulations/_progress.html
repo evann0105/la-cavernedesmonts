@@ -1,0 +1,14 @@
+      <ol class="cancellation-progress">
+        <li class="{% if cancellation.refund.refund_state == 'succeeded' %}is-complete{% else %}is-pending{% endif %}">
+          <div class="cancellation-step-heading"><span class="cancellation-step-number" aria-hidden="true">1</span><h3>{{ cancellation.refund.get_refund_state_display }}</h3></div>
+          <p>{{ cancellation.refund.refund_tracking_note }}</p>
+          {% if cancellation.refund_error %}<p class="cancellation-attention">{{ cancellation.refund_error }}</p>{% endif %}
+          {% if cancellation.refund.refund_state != 'succeeded' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="reconcile"><button class="button outline" type="submit">{% if cancellation.refund.refund_state == 'none' %}Reprendre le remboursement{% else %}Vérifier le remboursement{% endif %}</button></form>{% endif %}
+        </li>
+        <li class="{% if cancellation.stock_completed_at %}is-complete{% elif cancellation.refund.refund_state == 'succeeded' %}is-pending{% endif %}">
+          <div class="cancellation-step-heading"><span class="cancellation-step-number" aria-hidden="true">2</span><h3>{% if cancellation.stock_completed_at %}{% if order.is_demo %}Stock simulé{% else %}Articles remis en stock{% endif %}{% elif cancellation.refund.refund_state == 'succeeded' %}Remise en stock à vérifier{% else %}Remise en stock en attente{% endif %}</h3></div>
+          {% if cancellation.stock_completed_at %}<p>{% if order.is_demo %}Simulation terminée le {{ cancellation.stock_completed_at|date:'d/m/Y à H:i' }}. Aucun stock réel modifié.{% else %}Les quantités ont été réintégrées le {{ cancellation.stock_completed_at|date:'d/m/Y à H:i' }}.{% endif %}</p>{% elif cancellation.refund.refund_state == 'succeeded' %}<p>Le remboursement est confirmé. La remise en stock reste à terminer.</p>{% else %}<p>La remise en stock aura lieu après confirmation du remboursement.</p>{% endif %}
+          {% if cancellation.stock_error %}<p class="cancellation-attention">{{ cancellation.stock_error }}</p>{% endif %}
+          {% if cancellation.refund.refund_state == 'succeeded' and not cancellation.stock_completed_at %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="restock"><button class="button outline" type="submit">Réessayer la remise en stock</button></form><p class="cancellation-small">Cette action ne demande aucun nouveau remboursement.</p>{% endif %}
+        </li>
+      </ol>

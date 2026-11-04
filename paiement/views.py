@@ -116,6 +116,15 @@ def checkout(request):
             return redirect(destination)
         if action != 'pay':
             return HttpResponse(status=400)
+        from suspensions.services import assert_purchases_open, PurchasesPaused
+        try:
+            # Keep ready()/enabled independent from the holiday calendar:
+            # they also describe technical readiness and physical stock to SEO.
+            # reserve() and get_session() repeat this check under their locks.
+            assert_purchases_open()
+        except PurchasesPaused as error:
+            messages.info(request, str(error))
+            return redirect('paiement:checkout')
         if not enabled:
             messages.info(request, _('Le paiement en ligne n’est pas encore disponible pour ce panier. Contactez-nous pour préparer votre commande.'))
             return redirect('paiement:checkout')
