@@ -52,7 +52,9 @@
       <div class="checkout-grand-total"><span>{% if shipping.managed and not shipping.error or not shipping.managed and shipping.is_free %}Total à payer{% else %}Total hors livraison{% endif %}</span><strong>{% if shipping.managed and not shipping.error %}{{ shipping.total|floatformat:2 }}{% else %}{{ discounted_total|floatformat:2 }}{% endif %} €</strong></div>
       {% if not shipping.managed and not shipping.is_free %}<p class="checkout-caption">Les frais de livraison seront précisés avant de confirmer le paiement.</p>{% endif %}
       {% include 'suspensions/partials/purchase_notice.html' %}
-      {% if enabled %}
+      {% if checkout_limit %}
+        <div class="checkout-unavailable" role="alert"><h3>Patientez avant de réessayer</h3><p>{{ checkout_limit }}</p><a href="{% url 'core:cart' %}">Revenir à mon panier</a></div>
+      {% elif enabled %}
         <form method="post" class="checkout-payment-form">{% csrf_token %}<fieldset data-orders-fieldset{% if order_pause.paused %} disabled{% endif %}><legend class="order-pause-legend">Accéder au paiement sécurisé</legend><button class="button checkout-pay" name="action" value="pay"{% if benefit_error %} disabled{% endif %}>Continuer vers le paiement <span aria-hidden="true">→</span></button></fieldset></form>
         <p class="checkout-reassurance"><svg width="15" height="17" viewBox="0 0 20 22" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="9" width="14" height="11" rx="2"/><path d="M6 9V6a4 4 0 0 1 8 0v3"/></svg>Paiement sécurisé par Stripe</p>
         <p class="checkout-caption">Vos coordonnées bancaires ne sont pas enregistrées sur notre site.</p>

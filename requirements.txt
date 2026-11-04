@@ -1,8 +1,9 @@
-# Versions vérifiées le 17 septembre 2026. Relancer pip-audit après les mises à jour.
+# Correctifs de sécurité du 4 novembre 2026. Python 3.11 minimum (3.13 recommandé).
+# Relancer pip-audit après les mises à jour.
 asgiref==3.12.1
-certifi==2026.7.22
+certifi==2026.10.18
 charset-normalizer==3.5.1
-Django==5.2.17
+Django==5.2.19
 django-axes==8.3.1
 django-environ==0.14.0
 django-formtools==2.7
@@ -12,11 +13,11 @@ django-two-factor-auth==1.18.1
 idna==3.19
 packaging==26.3
 phonenumberslite==9.0.39
-pillow==12.3.0
+pillow==13.0.0
 pip==26.2.1
 qrcode==8.2
 requests==2.34.2
-setuptools==84.0.0
+setuptools==84.1.0
 sqlparse==0.6.0
 stripe==14.4.1
 typing_extensions==4.16.0

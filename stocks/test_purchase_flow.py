@@ -32,7 +32,9 @@ class StockPurchaseFlowTests(TestCase):
         self.variant=Variant.objects.create(product=self.product,size='M',color='Gris',quantity=5)
 
     def buy(self, quantity):
-        buyer=Client()
+        # Each invocation represents an independent buyer, not a browser reset
+        # from the same network attempting to evade checkout admission limits.
+        buyer=Client(REMOTE_ADDR=f'203.0.113.{Order.objects.count()+1}')
         before=self.variant.quantity
         buyer.post(reverse('core:cart_add',args=[self.product.slug]),{'variant':self.variant.pk,'quantity':quantity})
         identifier=f'cs_stock_{Order.objects.count()+1}'

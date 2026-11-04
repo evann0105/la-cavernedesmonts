@@ -201,7 +201,9 @@ def _normalize(data):
     try:
         with warnings.catch_warnings():
             warnings.simplefilter('error', Image.DecompressionBombWarning)
-            with Image.open(BytesIO(data)) as opened:
+            # JPEG's factory also recognizes MPO. Never run other image
+            # parsers merely to identify an upload we would then refuse.
+            with Image.open(BytesIO(data), formats=('JPEG', 'PNG', 'WEBP')) as opened:
                 if opened.format not in ('JPEG', 'MPO', 'PNG', 'WEBP'):
                     raise PhotoError('Utilisez une photo JPEG, PNG ou WebP.')
                 if opened.width * opened.height > MAX_PIXELS:

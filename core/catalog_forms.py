@@ -33,7 +33,10 @@ class ShopImageField(forms.ImageField):
         if data.size > 10 * 1024 * 1024:
             raise forms.ValidationError('Chaque photo doit peser moins de 10 Mo.')
         try:
-            image = Image.open(data)
+            # Restrict decoders before parsing headers, rather than only
+            # rejecting an unsupported format after its parser has run.
+            # The JPEG parser also recognizes multi-picture JPEG (MPO).
+            image = Image.open(data, formats=('JPEG', 'PNG', 'WEBP'))
             # MPO is a JPEG container used by multi-picture phone photos.
             # Keep only its primary photograph; never trust the filename.
             if image.format not in ('JPEG', 'MPO', 'PNG', 'WEBP'):
@@ -49,7 +52,7 @@ class ShopImageField(forms.ImageField):
             image.load()
             image = ImageOps.exif_transpose(image)
             image.thumbnail((2400, 2400))
-            image = image.convert('RGBA' if 'A' in image.getbands() else 'RGB')
+            image = image.convert('RGBA' if 'A' in image.getbands() or 'transparency' in image.info else 'RGB')
             output = BytesIO()
             image.save(output, format='WEBP', quality=88)
             return ContentFile(output.getvalue(), name=f'{uuid4().hex}.webp')

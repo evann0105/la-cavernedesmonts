@@ -2,6 +2,7 @@ import uuid
 from config.encrypted_fields import EncryptedEmailField, EncryptedJSONField
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 
 class Order(models.Model):
@@ -36,3 +37,12 @@ class Order(models.Model):
     def display_total(self):
         from decimal import Decimal
         return Decimal(self.total_paid if self.total_paid is not None else self.subtotal) / 100
+
+
+class CheckoutAdmission(models.Model):
+    """Short-lived anti-abuse evidence, never a clear IP or session secret."""
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='checkout_admission')
+    ip_hash = models.CharField(max_length=64, db_index=True)
+    session_hash = models.CharField(max_length=64, db_index=True)
+    account_hash = models.CharField(max_length=64, blank=True, db_index=True)
+    created_at = models.DateTimeField(default=timezone.now, db_index=True)

@@ -6,6 +6,12 @@ Boutique Django en français, avec catalogue administrable, panier en session et
 
 Depuis le dossier du projet :
 
+Utiliser **Python 3.13** (version recommandée dans `.python-version`). Le minimum
+est Python 3.11 ; Python 3.10 n’est plus pris en charge. Après un changement de
+version majeure/mineure de Python, recréer `.venv` et réinstaller les dépendances ;
+ne pas recopier les anciens `site-packages`. Les données, clés privées et fichiers
+de configuration restent hors de l’environnement Python.
+
 ```sh
 ./start
 ```
@@ -31,7 +37,7 @@ L’adresse IPv4 du réseau actif est détectée à chaque lancement, en Wi-Fi, 
 ## Installation manuelle
 
 ```sh
-python3 -m venv .venv
+python3.13 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 # Configurer .env à partir de .env.example, sans écraser un .env existant.
 .venv/bin/python manage.py migrate
@@ -65,7 +71,13 @@ Les commandes ne deviennent payées qu’après réception d’un webhook signé
 
 ## Exploitation et limites
 
-Les commandes, coordonnées client et adresses sont visibles dans l’administration. La préparation/expédition, les remboursements et la disponibilité par taille restent à gérer par la boutique ; il n’y a pas de réservation de stock automatique. Activer les reçus dans Stripe si souhaité : aucun e-mail de commande n’est envoyé directement par Django. Les taxes sont incluses dans les prix saisis, sans calcul fiscal automatique. La récupération automatique du mot de passe et l’historique de commandes client restent à prévoir si souhaités. Prévoir sauvegardes et surveillance sur le serveur de production ; la limitation des connexions est décrite ci-dessous.
+La vendeuse dispose des commandes, factures, préparations/expéditions, retours,
+remboursements et stocks par taille/couleur. Les articles sont réservés lors du
+départ vers Stripe, puis vendus ou libérés après rapprochement avec le prestataire.
+Les notifications passent par l’envoi d’e-mails configuré pour le site ; la boîte
+locale de test ne livre rien aux adresses réelles. L’espace client regroupe ses
+commandes et documents. Prévoir sauvegardes, surveillance et traitements en tâche
+de fond sur le serveur de production ; voir les guides spécialisés dans `docs/`.
 
 Aucun déploiement ni changement du site public n’a été effectué. Les collections bébé, les 50 références Femme et les 25 références Homme et les 32 références Enfant du site public sont importées ; les autres rubriques et les clients ne sont pas migrés. Prévoir une correspondance des anciennes URL publiques avant bascule du domaine.
 
@@ -87,9 +99,11 @@ La bannière originale « Offres spéciales » pointe vers une catégorie suppri
 
 `./start` et `import_catalogue` importent aussi ces collections via `import_collections`, sans écraser les prix, descriptions ni associations modifiés par la boutique. Les données source sont dans `core/collection_seed.json`.
 
-## Sécurité des comptes (17 septembre 2026)
+## Sécurité des comptes et paiements (4 novembre 2026)
 
-- Django 5.2.17 et dépendances mises à jour, versions directes et transitives figées dans `requirements.txt`. Analyse de l’environnement avec pip-audit : aucune vulnérabilité connue détectée au moment du contrôle. Ce résultat doit être renouvelé régulièrement.
+- Django 5.2.19, Pillow 13.0.0, Certifi 2026.10.18 et Setuptools 84.1.0 sont figés dans `requirements.txt`. Relancer `pip-audit` régulièrement : une analyse passée ne garantit pas l’absence de nouveaux avis. Voir [le suivi des corrections de sécurité](docs/SECURITE_2026-11-04.md).
+- Le transport Stripe utilise explicitement le magasin Certifi maintenu, avec vérification des certificats activée. Les photos sont ouvertes seulement avec les parseurs JPEG/PNG/WebP autorisés, puis réencodées ; la première photo des MPO est conservée.
+- Les nouvelles réservations disposent de quotas persistants par réseau, session et compte. Les tentatives déjà ouvertes restent reprenables et ne sont jamais libérées sur la seule horloge. Les budgets et le besoin de transmettre l’IP réelle depuis un proxy de confiance sont documentés dans le suivi de sécurité.
 - Clé secrète renouvelée avec un générateur cryptographique ; `.env` lisible/inscriptible uniquement par son propriétaire (0600), ignoré par Git. Les anciennes sessions doivent se reconnecter. Le site refuse les clés absentes, courtes ou les valeurs d’exemple. Une clé différente doit être générée pour la production.
 - `./start` génère une clé privée pour une nouvelle installation sans `.env`. Il ne remplace jamais un fichier existant. Si vous copiez `.env.example`, remplacez sa clé d’exemple avant de lancer.
 - Cinq échecs de mot de passe depuis une adresse IP entraînent un blocage temporaire de quinze minutes, partagé entre les deux URL de connexion et persistant dans la base. Les inscriptions sont limitées à cinq tentatives par IP et par fenêtre de trente minutes.
@@ -104,15 +118,21 @@ Aucun compte administrateur n’a été créé automatiquement. Le propriétaire
 .venv/bin/python manage.py createsuperuser
 ```
 
-Puis ouvrir http://127.0.0.1:8000/admin/, saisir ses identifiants, suivre l’assistant d’activation, scanner le QR code dans son application d’authentification et saisir le code temporaire. Après activation, générer et conserver les codes de secours dans un endroit privé. Ne pas partager le QR code, la clé d’authentification ou les codes de secours.
-
-L’accès admin reste bloqué tant que cet appairage n’est pas terminé. Les appareils réels et les codes de secours de l’utilisateur ne sont pas créés par les tests. Un code de secours permet une connexion si le téléphone est perdu. Si téléphone et codes sont tous perdus, le propriétaire devra récupérer l’accès depuis le serveur après vérification de son identité ; ne pas désactiver globalement la protection.
+Puis ouvrir http://127.0.0.1:8000/admin/ et saisir ses identifiants. L’accès exige
+un compte actif avec les droits nécessaires et, en production, une adresse e-mail
+confirmée. Le parcours actuel utilise un lien de confirmation d’adresse ; il ne
+demande pas d’appairer une application d’authentification. Le contournement local
+optionnel de cette confirmation reste limité à DEBUG et ne s’applique jamais en
+production. En cas de perte d’accès, l’opérateur doit vérifier l’identité du
+propriétaire avant toute intervention depuis le serveur.
 
 En cas de blocage local par essais répétés, attendre quinze minutes. L’opérateur ayant accès au terminal peut utiliser `manage.py axes_reset_ip 127.0.0.1` pour débloquer uniquement cette IP.
 
 ### Base de données et Git
 
-`db.sqlite3` a été retiré de l’index Git avec `git rm --cached` : les données locales restent intactes. La suppression du suivi est préparée dans l’index et sera enregistrée au prochain commit. Les bases, sauvegardes et secrets sont ignorés. Aucun commit ni envoi distant n’a été réalisé.
+`db.sqlite3` n’est plus suivi par Git. Les bases, sauvegardes, secrets, médias
+téléversés et courriels de test sont ignorés ; leur présence locale n’autorise pas
+leur publication. Ne jamais utiliser `git add --force` sur ces fichiers.
 
 L’ancien commit `4f894d7` conserve une copie historique de la base ; les références distantes locales contiennent ce commit. La copie vérifiée ne contient aucun utilisateur ni aucune session, et `.env` n’apparaît pas dans l’historique consulté. Retirer un fichier du suivi n’efface jamais ses anciennes versions. Aucune réécriture de l’historique partagé n’a été faite.
 
@@ -126,7 +146,10 @@ L’ancien commit `4f894d7` conserve une copie historique de la base ; les réf�
 DEBUG=False .venv/bin/python manage.py check --deploy
 ```
 
-Le contrôle de déploiement conserve l’avertissement HSTS : son activation dépend de la configuration HTTPS finale (hors de ces quatre corrections). Le paiement réel, les stocks, sauvegardes et alertes restent les étapes suivantes déjà identifiées.
+Le contrôle de déploiement conserve l’avertissement HSTS : son activation dépend
+de la configuration HTTPS finale. Les accès professionnels Stripe, SMTP et
+Colissimo, la configuration de l’hébergement et la validation de restauration des
+sauvegardes restent à finaliser avant l’ouverture des ventes réelles.
 
 
 ## Collection Femme

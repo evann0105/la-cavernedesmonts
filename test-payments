@@ -8,8 +8,10 @@ fi
 if [ -x "$PAYMENT_TEST_PROJECT/.venv/bin/python" ]; then
     exec "$PAYMENT_TEST_PROJECT/.venv/bin/python" "$PAYMENT_TEST_PROJECT/scripts/start_payment_test.py" "$@"
 fi
-if command -v python3 >/dev/null 2>&1; then
-    exec python3 "$PAYMENT_TEST_PROJECT/scripts/start_payment_test.py" "$@"
-fi
-printf '%s\n' 'Python 3.10 ou plus récent et les dépendances du site sont nécessaires.' >&2
+for CAVERNE_PAYMENT_PYTHON in python3.13 python3.14 python3.12 python3.11 python3; do
+    if command -v "$CAVERNE_PAYMENT_PYTHON" >/dev/null 2>&1; then
+        exec "$CAVERNE_PAYMENT_PYTHON" "$PAYMENT_TEST_PROJECT/scripts/start_payment_test.py" "$@"
+    fi
+done
+printf '%s\n' 'Python 3.11 minimum et les dépendances du site sont nécessaires. Python 3.13 est recommandé.' >&2
 exit 1

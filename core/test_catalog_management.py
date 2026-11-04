@@ -355,7 +355,7 @@ class ShopImageUploadTests(SimpleTestCase):
     def test_renaming_unsupported_image_does_not_bypass_validation(self):
         from django.core.exceptions import ValidationError
         from .catalog_forms import ShopImageField
-        with self.assertRaisesMessage(ValidationError, 'Format détecté : GIF'):
+        with self.assertRaisesMessage(ValidationError, 'JPEG, PNG ou WebP valide'):
             ShopImageField().clean(self.upload('GIF'))
 
 

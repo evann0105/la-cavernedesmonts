@@ -28,6 +28,8 @@ class Command(BaseCommand):
             from alertes.mail import deliver_pending as deliver_seller_notices
             scan_low_stock()
             deliver_seller_notices()
+            from paiement.anti_abuse import purge_old_admissions
+            purge_old_admissions()
             if not options['loop']:break
             time.sleep(60)
 

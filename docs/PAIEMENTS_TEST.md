@@ -6,6 +6,9 @@ Le site d’essai est indépendant de la boutique habituelle. Il utilise sa prop
 
 Depuis le dossier du site, avec le cluster PostgreSQL local déjà démarré :
 
+Utiliser Python 3.13 (minimum 3.11), puis installer les versions figées dans
+`requirements.txt`. Un ancien environnement Python 3.10 doit être recréé.
+
 ```sh
 ./test-payments
 ```
@@ -29,6 +32,12 @@ Utiliser exclusivement les cartes de test Stripe, une date future, par exemple 1
 Les trois produits d’essai coûtent 80 €, 35 € et 110 €. La livraison Colissimo fictive coûte 6,90 €, offerte dès 99 € d’articles. Les codes personnels de **client-test** sont **TEST15** (15 %, minimum 70 €) et **TEST10** (10 €), chacun à usage unique. Le stock et les codes ne sont définitivement consommés qu’après validation du paiement auprès de Stripe. Une session abandonnée peut conserver temporairement sa réservation jusqu’à l’expiration confirmée par Stripe.
 
 Vérifier successivement le montant du panier, la page Stripe, la commande payée, la facture fictive et les e-mails dans la boîte de test. Les pages de préparation, d’expédition et de remboursement utilisent les mêmes parcours que la boutique, avec les données séparées. Un paiement refusé ne doit pas devenir une commande payée. Les retours de navigateur ne remplacent jamais les confirmations signées de Stripe.
+
+La protection contre les réservations abusives est également active pendant les
+essais. Reprendre le même paiement ne consomme pas de nouveau budget ; créer
+plusieurs navigateurs ne contourne pas les limites du réseau. Une réservation
+encore en attente de confirmation Stripe conserve son encours, même si l’heure
+d’expiration locale est passée. Voir [les règles antiabus](SECURITE_2026-11-04.md).
 
 ## Raccordement Stripe
 

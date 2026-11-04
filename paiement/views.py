@@ -38,6 +38,8 @@ def ready():
 @never_cache
 @require_http_methods(['GET', 'POST'])
 def checkout(request):
+    from .anti_abuse import CheckoutLimited
+    checkout_limit = None
     from .cart_checkout import sync_paid_cart, current_order, release_for_cart_change
     paid_order = sync_paid_cart(request)
     if paid_order:
@@ -156,7 +158,8 @@ def checkout(request):
                 if paid_order:
                     return redirect('paiement:confirmation', order_id=paid_order.pk)
             order=reserve(request.session.session_key,request.user.pk if request.user.is_authenticated else None,snapshot,
-                          benefit=benefit, benefit_quote=displayed_quote(benefit, quoted), shipping_quote=delivery['shipping_quote'])
+                          benefit=benefit, benefit_quote=displayed_quote(benefit, quoted), shipping_quote=delivery['shipping_quote'],
+                          client_ip=request.META.get('REMOTE_ADDR') or '')
             request.session['checkout_order']=str(order.pk)
             session=get_session(order.pk,getattr(request,'LANGUAGE_CODE','fr'))
             if session is None:
@@ -170,18 +173,26 @@ def checkout(request):
                     return redirect('paiement:checkout')
                 return redirect('paiement:confirmation',order_id=order.pk)
             return redirect(session.url,permanent=False)
+        except CheckoutLimited as error:
+            checkout_limit = error
+            previous = current_order(request)
         except (StockUnavailable, BenefitError) as error:
             messages.error(request,str(error))
         except stripe.StripeError:
             logger.warning('Stripe Checkout unavailable; pending stock reservation preserved.')
             messages.error(request, _('Le paiement est momentanément indisponible. Votre panier est conservé ; réessayez pour reprendre la même tentative.'))
-        return redirect('paiement:checkout')
+        if checkout_limit is None:
+            return redirect('paiement:checkout')
     discount = summary_context(request, subtotal, benefit, quoted, benefit_error)['discount']
     delivery = shipping_context(request, subtotal, discount=discount, order=previous)
-    return render(request,'paiement/checkout.html',{
+    response = render(request,'paiement/checkout.html',{
         'enabled':enabled, 'total':subtotal, 'cart_items':items, **delivery,
         **summary_context(request, subtotal, benefit, quoted, benefit_error), 'code_return_to': 'checkout',
-    })
+        'checkout_limit': checkout_limit,
+    }, status=429 if checkout_limit else 200)
+    if checkout_limit:
+        response['Retry-After'] = str(checkout_limit.retry_after)
+    return response
 
 
 @never_cache

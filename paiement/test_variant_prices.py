@@ -83,7 +83,7 @@ class VariantPriceCheckoutTests(TestCase):
     def test_shipping_threshold_follows_real_variant_totals_in_summary_and_stripe(self, create):
         for variant, quantity, free, total in ((self.junior, 3, False, '89.70'), (self.red, 2, True, '100.00')):
             with self.subTest(variant=variant.pk):
-                buyer = Client()
+                buyer = Client(REMOTE_ADDR=f'203.0.113.{1 if free else 2}')
                 self.add(variant, quantity, buyer)
                 for route in ('core:cart', 'paiement:checkout'):
                     page = buyer.get(reverse(route))

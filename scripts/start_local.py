@@ -87,8 +87,8 @@ def main():
     args = parser.parse_args()
     if not 1024 <= args.port <= 65535:
         parser.error('Le port doit être compris entre 1024 et 65535.')
-    if sys.version_info < (3, 10):
-        parser.error('Python 3.10 ou plus récent est nécessaire.')
+    if sys.version_info < (3, 11):
+        parser.error('Python 3.11 minimum est nécessaire ; utilisez Python 3.13 et recréez un ancien environnement .venv avant de relancer.')
 
     host = '127.0.0.1'
     if args.lan:

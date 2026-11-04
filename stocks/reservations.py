@@ -13,7 +13,13 @@ class StockUnavailable(ValueError):
     pass
 
 
-def reserve(session_key, user_id, snapshot, benefit=None, benefit_quote=None, shipping_quote=None):
+def reserve(session_key, user_id, snapshot, benefit=None, benefit_quote=None, shipping_quote=None, *, client_ip=None):
+    """Reserve stock atomically; public callers must pass the real remote IP.
+
+    ``None`` is reserved for trusted in-process allocations and tests, never a
+    fallback for missing HTTP metadata. The checkout view supplies an empty
+    string in that case so that the strict shared unknown-IP bucket is used.
+    """
     identity = [session_key, user_id, snapshot]
     if shipping_quote is not None:
         identity.append({'shipping': shipping_quote})
@@ -31,6 +37,12 @@ def reserve(session_key, user_id, snapshot, benefit=None, benefit_quote=None, sh
             assert_purchases_open(lock=True)
         except PurchasesPaused as error:
             raise StockUnavailable(str(error)) from error
+        from paiement.anti_abuse import oversized_basket, validate_basket
+        if oversized_basket(snapshot) and not Order.objects.filter(checkout_fingerprint=fingerprint).exists():
+            # Reject before inserting a new order. Historical identical attempts
+            # remain resumable; the created-branch check below also closes the
+            # race where that historical fingerprint is consumed meanwhile.
+            validate_basket(snapshot)
         order, created = Order.objects.get_or_create(checkout_fingerprint=fingerprint, defaults={'session_key':session_key,'user_id':user_id,'items':snapshot,'subtotal':sum(i['unit_amount']*i['quantity'] for i in snapshot),'shipping_snapshot':shipping_quote or {},'reservation_expires_at':timezone.now()+timedelta(minutes=35)})
         order = Order.objects.select_for_update().get(pk=order.pk)
         if not created:
@@ -40,6 +52,10 @@ def reserve(session_key, user_id, snapshot, benefit=None, benefit_quote=None, sh
                 redemption = reserve_locked(order, benefit, get_user_model().objects.get(pk=user_id))
                 _check_benefit_quote(redemption, benefit_quote, order)
             return order
+        validate_basket(snapshot)
+        if client_ip is not None:
+            from paiement.anti_abuse import admit
+            admit(order, client_ip=client_ip)
         from boutique.shipping import configuration as delivery_configuration, ShippingUnavailable
         if shipping_quote is not None or delivery_configuration()['managed']:
             from paiement.shipping import validate_snapshot

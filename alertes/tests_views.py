@@ -136,9 +136,23 @@ class AlertViewsTests(TestCase):
             self.login(user)
             response = self.client.get('/mon-compte/')
             self.assertEqual(response.status_code, 200)
-            for url, expected in ((reverse('alertes:emails'), email_link), (reverse('alertes:stocks'), stock_link)):
-                with self.subTest(user=user.username, url=url):
-                    (self.assertContains if expected else self.assertNotContains)(response, 'href="' + url + '"')
+            for url in (reverse('alertes:emails'), reverse('alertes:stocks')):
+                with self.subTest(user=user.username, page='account', url=url):
+                    self.assertNotContains(response, 'href="' + url + '"')
+            if user == self.customer:
+                self.assertNotContains(response, 'href="' + reverse('tableau:home') + '"')
+            else:
+                self.assertContains(response, 'href="' + reverse('tableau:home') + '"')
+            for page in (reverse('tableau:home'), reverse('tableau:tools')):
+                response = self.client.get(page)
+                if user == self.customer:
+                    self.assertEqual(response.status_code, 403)
+                    continue
+                self.assertEqual(response.status_code, 200)
+                for url, expected in ((reverse('alertes:emails'), email_link),
+                                      (reverse('alertes:stocks'), stock_link)):
+                    with self.subTest(user=user.username, page=page, url=url):
+                        (self.assertContains if expected else self.assertNotContains)(response, 'href="' + url + '"')
 
     def test_settings_invalid_recipient_and_threshold_do_not_write(self):
         self.login(self.seller)
